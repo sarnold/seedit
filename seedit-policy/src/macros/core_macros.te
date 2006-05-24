@@ -1,0 +1,84 @@
+# Core macros
+# Written by Yuichi Nakamura <ynakam@gwu.edu>
+
+define(`allow_admin_swapon',`
+#Obsolate
+')
+
+###
+#macros used in converter
+#no allow rules are included in following
+
+#allowtty create
+define(`allow_tty_create',`
+type_change $1 tty_device_t:chr_file $2;
+type_change $1 ttyfile:chr_file $2;
+')
+
+
+#allowpts create
+define(`allow_pts_create',`
+type_change $1 ptyfile:chr_file $2;
+type_transition $1 devpts_t:chr_file $2;
+')
+
+###Domain transition
+define(`domain_trans',`
+domain_trans_allow($1,$2,$3)
+')
+
+define(`domain_auto_trans',`
+domain_trans_allow($1,$2,$3)
+type_transition $1 $2:process $3;
+')
+
+define(`domain_dyn_trans',`
+domain_dyn_trans_allow($1,NULL,$3)
+')
+
+define(`file_type_auto_trans',`
+file_type_trans_allow($1,$2,$3)
+type_transition $1 $2: all_file_class $3;
+')
+
+ define(`allow_admin_all',`
+allow $1 {self security_t}:security *;
+allow $1 domain:process ~transition;
+allow $1 domain:system *;
+allow $1 self:capability *;
+allow $1 fs_type:filesystem *;
+allow $1 {file_type fs_type domain }:file *;
+allow $1 {file_type fs_type domain }:dir *;
+allow $1 domain:fd *;
+allow $1 {file_type fs_type domain }:lnk_file *;
+allow $1 {file_type fs_type domain }:chr_file *;
+allow $1 {file_type fs_type domain }:blk_file *;
+allow $1 {file_type fs_type domain }:sock_file *;
+allow $1 {file_type fs_type domain }:fifo_file *;
+allow $1 {domain port_type node_type netif_type}:socket *;
+allow $1 {domain port_type node_type netif_type}:tcp_socket *;
+allow $1 {domain port_type node_type netif_type}:udp_socket *;
+allow $1 {domain port_type node_type netif_type}:rawip_socket *;
+allow $1 {node_type}:node *;
+allow $1 {netif_type}:netif *;
+allow $1 domain:netlink_socket *;
+allow $1 domain:packet_socket *;
+allow $1 domain:key_socket *;
+allow $1 domain:unix_stream_socket *;
+allow $1 domain:unix_dgram_socket *;
+allow $1 domain:sem *;
+allow $1 domain:msg *;
+allow $1 domain:msgq *;
+allow $1 domain:shm *;
+allow $1 domain:ipc *;
+allow $1 domain:netlink_route_socket *;
+allow $1 domain:netlink_firewall_socket *;
+allow $1 domain:netlink_tcpdiag_socket *;
+allow $1 domain:netlink_nflog_socket *;
+allow $1 domain:netlink_xfrm_socket *;
+allow $1 domain:netlink_selinux_socket *;
+allow $1 domain:netlink_audit_socket *;
+allow $1 domain:netlink_ip6fw_socket *;
+allow $1 domain:netlink_dnrt_socket *;
+allow $1 domain:netlink_kobject_uevent_socket *;
+')

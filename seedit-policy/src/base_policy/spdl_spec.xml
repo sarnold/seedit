@@ -1,0 +1,2262 @@
+<?xml version="1.0" ?>
+<!DOCTYPE spdl
+  SYSTEM 'spdl_spec.dtd'>
+<spdl>
+  <unsupported>
+    <description>Unsupported permission</description>
+    <section>
+      <description>Dead Permission</description>
+      <rules>
+	<rule disabled="yes" value="allow">
+	  <domain value="global"/>
+	  <type value="file_type"/>
+	  <secclass value="dir"/><secclass value="file"/><secclass value="lnk_file"/><secclass value="sock_file"/><secclass value="fifo_file"/><secclass value="chr_file"/><secclass value="blk_file"/>
+	  <permission value="swapon"/>
+	</rule>
+	<rule disabled="yes" value="allow">
+	  <domain value="global"/>
+	  <type value="global"/>
+	  <secclass value="all_socket_class"/>
+	  <permission value="relabelfrom"/>
+	  <permission value="relabelto"/>
+	</rule>
+	<rule disabled="yes" value="allow">
+	  <domain value="global"/>
+	  <type value="global"/>
+	  <secclass value="unix_stream_socket"/>
+	  <permission value="newconn"/>
+	  <permission value="acceptfrom"/>
+	</rule>
+	<rule disabled="yes" value="allow">
+	  <domain value="global"/>
+	  <type value="global"/>
+	  <secclass value="netlink_firewall_socket"/>
+	  <permission value="nlmsg_read"/>
+	</rule>
+	<rule disabled="yes" value="allow">
+	  <domain value="global"/>
+	  <type value="global"/>
+	  <secclass value="netlink_ip6fw_socket"/>
+	  <permission value="ioctl"/><permission value="read"/><permission value="write"/><permission value="create"/><permission value="getattr"/><permission value="setattr"/><permission value="lock"/><permission value="relabelfrom"/><permission value="relabelto"/><permission value="append"/><permission value="bind"/><permission value="connect"/><permission value="listen"/><permission value="accept"/><permission value="getopt"/><permission value="setopt"/><permission value="shutdown"/><permission value="recvfrom"/><permission value="sendto"/><permission value="recv_msg"/><permission value="send_msg"/><permission value="name_bind"/>
+	  <permission value="nlmsg_read"/>
+	  <permission value="nlmsg_write"/>
+	</rule>
+	<rule disabled="yes" value="allow">
+	  <domain value="global"/>
+	  <type value="self"/>
+	  <secclass value="netlink_tcpdiag_socket"/>
+	  <permission value="nlmsg_write"/>
+	</rule>
+	<rule disabled="yes" value="allow">
+	  <domain value="global"/>
+	  <type value="global"/>
+	  <secclass value="ipc"/>
+	  <permission value="create"/>
+	  <permission value="destroy"/>
+	  <permission value="getattr"/>
+	  <permission value="setattr"/>
+	  <permission value="read"/>
+	  <permission value="write"/>
+	  <permission value="associate"/>
+	  <permission value="unix_read"/>
+	  <permission value="unix_write"/>
+	</rule>
+      </rules>
+    </section>
+    <section>
+      <description>Unsupported features in SPDL</description>
+      <rules>
+	<rule value="allow">
+	  <domain value="global"/>
+	  <type value="security_t"/>
+	  <secclass value="security"/>
+	  <permission value="compute_member"/>
+	  <permission value="setcheckreqprot"/>
+	  <permission value="setbool"/>
+	</rule>
+      </rules>
+    </section>
+    <section>
+      <description>Unsupported because related to DAC and POSIX capabilities  </description>
+      <rules>
+	<rule value="allow">
+	  <domain value="global"/>
+	  <type value="global"/>
+	  <secclass value="process"/>
+	  <permission value="getcap"/>
+	  <permission value="setcap"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="global"/>
+	  <type value="self"/>
+	  <secclass value="capability"/>
+	  <permission value="setpcap"/>
+	  <permission value="fowner"/>
+	  <permission value="fsetid"/>
+	  <permission value="linux_immutable"/>
+	  <permission value="chown"/>
+	  <permission value="dac_override"/>
+	  <permission value="dac_read_search"/>
+	  <permission value="setgid"/>
+	  <permission value="setuid"/>
+	</rule>
+      </rules>
+    </section>
+    <section>
+      <description>Unsupported because low effect to security</description>
+      <rules>	
+      <rule value="allow">
+	  <domain value="global"/>
+	  <type value="file_type"/>
+	  <type value="global"/>
+	  <secclass value="dir"/><secclass value="file"/><secclass value="lnk_file"/><secclass value="sock_file"/><secclass value="fifo_file"/><secclass value="chr_file"/><secclass value="blk_file"/>
+	  <permission value="getattr"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="global"/>
+	  <type value="global"/>
+	  <secclass value="process"/>
+	  <permission value="getsched"/>
+	  <permission value="getsession"/>
+	  <permission value="getpgid"/>
+	  <permission value="setpgid"/>
+	  <permission value="noatsecure"/>
+	  <permission value="siginh"/>
+	  <permission value="rlimitinh"/>
+	  <permission value="fork"/>
+	  <permission value="share"/>
+	  <permission value="execmem"/>
+	  <permission value="execstack"/>
+	  <permission value="execheap"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="global"/>
+	  <type value="global"/>
+	  <secclass value="system"/>
+	  <permission value="ipc_info"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="global"/>
+	  <type value="self"/>
+	  <secclass value="capability"/>
+	  <permission value="lease"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="file_type"/>
+	  <type value="fs_type"/>
+	  <secclass value="filesystem"/>
+	  <permission value="associate"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="global"/>
+	  <type value="fs_type"/>
+	  <secclass value="filesystem"/>
+	  <permission value="getattr"/>
+	  <permission value="quotaget"/>
+	</rule>
+      </rules>
+    </section>
+    <section>
+      <description> Unsupported because of complete overlap </description>
+      <rules>
+	<rule value="allow">
+	  <domain value="global"/>
+	  <type value="self"/>
+	  <secclass value="capability"/>
+	  <permission value="kill"/>
+	  <permission value="ipc_owner"/>
+	  <permission value="net_bind_service"/>
+	  <permission value="sys_ptrace"/>
+	  <permission value="audit_write"/>
+	</rule>
+      </rules>
+    </section>
+    <section>
+      <description> Unsupported because of Partly overlap</description>
+      <rules>
+	<rule value="allow">
+	  <domain value="global"/>
+	  <type value="global"/>
+	  <secclass value="process"/>
+	  <permission value="setsched"/>
+	  <permission value="setrlimit"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="global"/>
+	  <type value="self"/>
+	  <secclass value="capability"/>
+	  <permission value="audit_control"/>
+	</rule>
+      </rules>
+    </section>
+    <section>
+      <description>Implicit overlap</description>
+      <rules>
+	<rule value="allow">
+	  <domain value="global"/>
+	  <type value="global"/>
+	  <secclass value="fd"/>
+	  <permission value="use"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="global"/>
+	  <type value="global"/>
+	  <secclass value="process"/>
+	  <permission value="setexec"/>
+	</rule>
+  	<rule value="allow">
+	  <domain value="global"/>
+	  <type value="self"/>
+	  <secclass value="tcp_socket"/>
+	  <permission value="bind"/><permission value="listen"/><permission value="accept"/><permission value="connect"/><permission value="create"/><permission value="shutdown"/><permission value="getattr"/><permission value="getopt"/><permission value="setopt"/><permission value="ioctl"/><permission value="lock"/><permission value="setattr"/>
+	  <permission value="read"/>
+	  <permission value="write"/>
+	  <permission value="append"/>
+	  </rule>
+	<rule value="allow">
+	  <domain value="global"/>
+	  <type value="self"/>
+	  <secclass value="udp_socket"/>
+	  <permission value="bind"/><permission value="listen"/><permission value="accept"/><permission value="connect"/><permission value="create"/><permission value="shutdown"/><permission value="getattr"/><permission value="getopt"/><permission value="setopt"/><permission value="ioctl"/><permission value="lock"/><permission value="setattr"/>
+	  <permission value="read"/>
+	  <permission value="write"/>
+	  <permission value="append"/>
+	  </rule>
+      </rules>
+    </section>
+    <section>
+      <description>Pending.. May be changed</description>
+      <rules>
+	<rule value="allow">
+	  <domain value="global"/>
+	  <type value="file_type"/>
+	  <secclass value="file"/>
+	  <permission value="execmod"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="global"/>
+	  <type value="self"/>
+	  <secclass value="packet_socket"/>
+	  <permission value="ioctl"/><permission value="read"/><permission value="write"/><permission value="create"/><permission value="getattr"/><permission value="setattr"/><permission value="lock"/><permission value="relabelfrom"/><permission value="relabelto"/><permission value="append"/><permission value="bind"/><permission value="connect"/><permission value="listen"/><permission value="accept"/><permission value="getopt"/><permission value="setopt"/><permission value="shutdown"/><permission value="recvfrom"/><permission value="sendto"/><permission value="recv_msg"/><permission value="send_msg"/><permission value="name_bind"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="global"/>
+	  <type value="self"/>
+	  <secclass value="key_socket"/>
+	  <permission value="ioctl"/><permission value="read"/><permission value="write"/><permission value="create"/><permission value="getattr"/><permission value="setattr"/><permission value="lock"/><permission value="relabelfrom"/><permission value="relabelto"/><permission value="append"/><permission value="bind"/><permission value="connect"/><permission value="listen"/><permission value="accept"/><permission value="getopt"/><permission value="setopt"/><permission value="shutdown"/><permission value="recvfrom"/><permission value="sendto"/><permission value="recv_msg"/><permission value="send_msg"/><permission value="name_bind"/>
+	</rule>
+      </rules>
+    </section>
+    <section>
+      <description>Does not support user space AVC</description>
+      <rules>
+	<rule value="allow">
+	  <domain value="global"/>
+	  <type value="self"/>
+	  <secclass value="passwd"/>
+	  <permission value="passwd"/>
+	  <permission value="chfn"/>
+	  <permission value="chsh"/>
+	  <permission value="rootok"/>
+	  <permission value="crontab"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="global"/>
+	  <type value="global"/>
+	  <secclass value="dbus"/>
+	  <permission value="acquire_svc"/>
+	  <permission value="send_msg"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="global"/>
+	  <type value="global"/>
+	  <secclass value="nscd"/>
+	  <permission value="getpwd"/>
+	  <permission value="getgrp"/>
+	  <permission value="gethost"/>
+	  <permission value="getstat"/>
+	  <permission value="admin"/>
+	  <permission value="shmempwd"/>
+	  <permission value="shmemgrp"/>
+	  <permission value="shmemhost"/>
+	</rule>	
+	<rule value="allow">
+	  <domain value="global"/>
+	  <type value="unlabeled_t"/>
+	  <secclass value="association"/>
+	  <permission value="*"/>
+	</rule>
+      </rules>
+      
+
+    </section>
+  </unsupported>
+
+  <integrate value="allowpriv">
+    <description>Integrated permissions in allowpriv rule</description>   
+    <option category="kernel" value="audit_read">	
+      <macro value="allow_admin_audit_read"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="self"/>
+	  <secclass value="netlink_audit_socket"/>
+	  <permission value="nlmsg_read"/>
+	  <permission value="nlmsg_readpriv"/>
+	</rule>
+      </rules>
+    </option>
+    <option category="kernel" value="audit_write">	
+      <macro value="allow_admin_audit_write"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="self"/>
+	  <secclass value="netlink_audit_socket"/> 
+	  <permission value="nlmsg_relay"/>
+	</rule>
+      </rules>
+    </option>
+
+    <option category="kernel" value="audit_adm">	  
+      <macro value="allow_admin_audit_adm"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="self"/>
+	  <secclass value="netlink_audit_socket"/>
+	  <permission value="nlmsg_write"/>
+	</rule>
+      </rules>
+    </option>
+    
+    <option category="kernel" value="klog_read">
+      <macro value="allow_admin_klog_read"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="kernel_t"/>
+	  <secclass value="system"/>
+	  <permission value="syslog_read"/>
+	</rule>
+      </rules>
+    </option>
+    
+    <option category="kernel" value="klog_adm">	  
+      <macro value="allow_admin_klog_adm"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="kernel_t"/>
+	  <secclass value="system"/>
+	  <permission value="syslog_mod"/>
+	  <permission value="syslog_console"/>
+	</rule>
+      </rules>
+    </option>
+    
+     <option category="kernel" value="sys_pacct">	  
+      <macro value="allow_admin_sys_pacct"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="self"/>
+	  <secclass value="capability"/>
+	  <permission value="sys_pacct"/>
+	</rule>
+      </rules>
+    </option>
+
+    <option category="kernel" value="cap_sys_module">	 
+      <macro value="allow_admin_cap_sys_module"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="self"/>
+	  <secclass value="capability"/>
+	  <permission value="sys_module"/>
+	</rule>
+      </rules>
+    </option>
+    
+    <option category="kernel" value="netlink">
+      <macro value="allow_admin_netlink"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="self"/>
+	  <secclass value="netlink_socket"/>
+	  <permission value="ioctl"/><permission value="read"/><permission value="write"/><permission value="create"/><permission value="getattr"/><permission value="setattr"/><permission value="lock"/><permission value="relabelfrom"/><permission value="relabelto"/><permission value="append"/><permission value="bind"/><permission value="connect"/><permission value="listen"/><permission value="accept"/><permission value="getopt"/><permission value="setopt"/><permission value="shutdown"/><permission value="recvfrom"/><permission value="sendto"/><permission value="recv_msg"/><permission value="send_msg"/><permission value="name_bind"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="self"/>
+	  <secclass value="netlink_route_socket"/>
+	  <permission value="ioctl"/><permission value="read"/><permission value="write"/><permission value="create"/><permission value="getattr"/><permission value="setattr"/><permission value="lock"/><permission value="relabelfrom"/><permission value="relabelto"/><permission value="append"/><permission value="bind"/><permission value="connect"/><permission value="listen"/><permission value="accept"/><permission value="getopt"/><permission value="setopt"/><permission value="shutdown"/><permission value="recvfrom"/><permission value="sendto"/><permission value="recv_msg"/><permission value="send_msg"/><permission value="name_bind"/>
+	  <permission value="nlmsg_read"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="self"/>
+	  <secclass value="netlink_firewall_socket"/>
+	  <permission value="ioctl"/><permission value="read"/><permission value="write"/><permission value="create"/><permission value="getattr"/><permission value="setattr"/><permission value="lock"/><permission value="relabelfrom"/><permission value="relabelto"/><permission value="append"/><permission value="bind"/><permission value="connect"/><permission value="listen"/><permission value="accept"/><permission value="getopt"/><permission value="setopt"/><permission value="shutdown"/><permission value="recvfrom"/><permission value="sendto"/><permission value="recv_msg"/><permission value="send_msg"/><permission value="name_bind"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="self"/>
+	  <secclass value="netlink_firewall_socket"/>
+	  <permission value="nlmsg_write"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="self"/>
+	  <secclass value="netlink_tcpdiag_socket"/>
+	  <permission value="ioctl"/><permission value="read"/><permission value="write"/><permission value="create"/><permission value="getattr"/><permission value="setattr"/><permission value="lock"/><permission value="relabelfrom"/><permission value="relabelto"/><permission value="append"/><permission value="bind"/><permission value="connect"/><permission value="listen"/><permission value="accept"/><permission value="getopt"/><permission value="setopt"/><permission value="shutdown"/><permission value="recvfrom"/><permission value="sendto"/><permission value="recv_msg"/><permission value="send_msg"/><permission value="name_bind"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="self"/>
+	  <secclass value="netlink_tcpdiag_socket"/>
+	  <permission value="nlmsg_read"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="self"/>
+	  <secclass value="netlink_nflog_socket"/>
+	  <permission value="ioctl"/><permission value="read"/><permission value="write"/><permission value="create"/><permission value="getattr"/><permission value="setattr"/><permission value="lock"/><permission value="relabelfrom"/><permission value="relabelto"/><permission value="append"/><permission value="bind"/><permission value="connect"/><permission value="listen"/><permission value="accept"/><permission value="getopt"/><permission value="setopt"/><permission value="shutdown"/><permission value="recvfrom"/><permission value="sendto"/><permission value="recv_msg"/><permission value="send_msg"/><permission value="name_bind"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="self"/>
+	  <secclass value="netlink_xfrm_socket"/>
+	  <permission value="ioctl"/><permission value="read"/><permission value="write"/><permission value="create"/><permission value="getattr"/><permission value="setattr"/><permission value="lock"/><permission value="relabelfrom"/><permission value="relabelto"/><permission value="append"/><permission value="bind"/><permission value="connect"/><permission value="listen"/><permission value="accept"/><permission value="getopt"/><permission value="setopt"/><permission value="shutdown"/><permission value="recvfrom"/><permission value="sendto"/><permission value="recv_msg"/><permission value="send_msg"/><permission value="name_bind"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="self"/>
+	  <secclass value="netlink_xfrm_socket"/>
+	  <permission value="nlmsg_read"/>
+	  <permission value="nlmsg_write"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="self"/>
+	  <secclass value="netlink_selinux_socket"/>
+	  <permission value="ioctl"/><permission value="read"/><permission value="write"/><permission value="create"/><permission value="getattr"/><permission value="setattr"/><permission value="lock"/><permission value="relabelfrom"/><permission value="relabelto"/><permission value="append"/><permission value="bind"/><permission value="connect"/><permission value="listen"/><permission value="accept"/><permission value="getopt"/><permission value="setopt"/><permission value="shutdown"/><permission value="recvfrom"/><permission value="sendto"/><permission value="recv_msg"/><permission value="send_msg"/><permission value="name_bind"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="self"/>
+	  <secclass value="netlink_audit_socket"/>
+	  <permission value="ioctl"/><permission value="read"/><permission value="write"/><permission value="create"/><permission value="getattr"/><permission value="setattr"/><permission value="lock"/><permission value="relabelfrom"/><permission value="relabelto"/><permission value="append"/><permission value="bind"/><permission value="connect"/><permission value="listen"/><permission value="accept"/><permission value="getopt"/><permission value="setopt"/><permission value="shutdown"/><permission value="recvfrom"/><permission value="sendto"/><permission value="recv_msg"/><permission value="send_msg"/><permission value="name_bind"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="self"/>
+	  <secclass value="netlink_dnrt_socket"/>
+	  <permission value="ioctl"/><permission value="read"/><permission value="write"/><permission value="create"/><permission value="getattr"/><permission value="setattr"/><permission value="lock"/><permission value="relabelfrom"/><permission value="relabelto"/><permission value="append"/><permission value="bind"/><permission value="connect"/><permission value="listen"/><permission value="accept"/><permission value="getopt"/><permission value="setopt"/><permission value="shutdown"/><permission value="recvfrom"/><permission value="sendto"/><permission value="recv_msg"/><permission value="send_msg"/><permission value="name_bind"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="self"/>
+	  <secclass value="netlink_kobject_uevent_socket"/>
+	  <permission value="ioctl"/><permission value="read"/><permission value="write"/><permission value="create"/><permission value="getattr"/><permission value="setattr"/><permission value="lock"/><permission value="relabelfrom"/><permission value="relabelto"/><permission value="append"/><permission value="bind"/><permission value="connect"/><permission value="listen"/><permission value="accept"/><permission value="getopt"/><permission value="setopt"/><permission value="shutdown"/><permission value="recvfrom"/><permission value="sendto"/><permission value="recv_msg"/><permission value="send_msg"/><permission value="name_bind"/>
+	</rule>
+      </rules>
+    </option>
+    <option category="seop" value="relabel">	
+      <macro value="allow_admin_relabel"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="file_type"/>
+	  <type value="fs_type"/>
+	  <secclass value="dir"/><secclass value="file"/><secclass value="lnk_file"/><secclass value="sock_file"/><secclass value="fifo_file"/><secclass value="chr_file"/><secclass value="blk_file"/> 
+	  <permission value="setattr"/>
+	  <permission value="relabelfrom"/>
+	  <permission value="relabelto"/>
+	</rule>
+      </rules>
+    </option>
+    <option category="seop" value="part_relabel">	
+      <macro value="allow_admin_part_relabel">allow_file_relabel is used in file write </macro>      
+      <rules>
+	<rule disabled="yes" value="allow">
+	  <domain value="domain"/>
+	  <type value="writable_type"/>
+	  <secclass value="dir"/><secclass value="file"/><secclass value="lnk_file"/><secclass value="sock_file"/><secclass value="fifo_file"/><secclass value="chr_file"/><secclass value="blk_file"/>
+	  <permission value="relabelfrom"/>
+	  <permission value="relabelto"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="self"/>
+	  <secclass value="process"/>
+	  <permission value="setfscreate"/>
+	</rule>
+      </rules>
+    </option>
+
+    
+    <option category="seop" value="getsecurity">	
+      <macro value="allow_admin_getsecurity"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="security_t"/>
+	  <secclass value="dir"/> 
+	  <permission value="read"/>
+	  <permission value="search"/>
+	  <permission value="getattr"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="security_t"/>
+	  <secclass value="file"/>
+	  <permission value="getattr"/>
+	  <permission value="read"/>
+	  <permission value="write"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="security_t"/>
+	  <secclass value="security"/>
+	  <permission value="check_context"/>
+	  <permission value="compute_av"/>
+	  <permission value="compute_create"/>
+	  <permission value="compute_relabel"/>
+	  <permission value="compute_user"/>
+	</rule>
+      </rules>
+    </option>
+    <option category="seop" value="setenforce">	
+      <macro value="allow_admin_setenforce"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="security_t"/>
+	  <secclass value="security"/>
+	  <permission value="setenforce"/>
+	</rule>
+      </rules>
+    </option>
+
+    <option category="seop" value="load_policy">	
+      <macro value="allow_admin_load_policy"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="security_t"/>
+	  <secclass value="security"/>
+	  <permission value="load_policy"/>
+	</rule>
+      </rules>
+    </option>
+
+   <option category="seop" value="getsecattr">	
+      <macro value="allow_admin_getsecattr"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="global"/>
+	  <secclass value="process"/>
+	  <permission value="getattr"/>
+	</rule>
+      </rules>
+    </option>
+
+
+    <option category="seop" value="setsecparam">	
+      <macro value="allow_admin_setsecparam"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="security_t"/>
+	  <secclass value="security"/>
+	  <permission value="setsecparam"/>
+	</rule>
+      </rules>
+    </option>
+     
+    <option category="priv" value="devcreate">
+      <comment>In addition, allow_file_devcrete is used in file write</comment>
+      <macro value="allow_admin_devcreate"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="self"/>
+	  <secclass value="capability"/>
+	  <permission value="mknod"/>
+	</rule>
+	<rule disabled="yes" value="allow">
+	  <domain value="domain"/>
+	  <type value="writable_type"/>
+	  <secclass value="chr_file"/><secclass value="blk_file"/>
+	  <permission value="create"/>
+	  <permission value="unlink"/>
+	  <permission value="link"/>
+	  <permission value="rename"/>
+	</rule>
+      </rules>
+    </option>
+
+    <option category="priv" value="search">
+      <macro value="allow_admin_search"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="file_type"/>
+	  <secclass value="dir"/>
+	  <permission value="getattr"/>
+	  <permission value="read"/>
+	  <permission value="search"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="file_type"/>
+	  <secclass value="dir"/><secclass value="file"/><secclass value="lnk_file"/><secclass value="sock_file"/><secclass value="fifo_file"/><secclass value="chr_file"/><secclass value="blk_file"/>
+	  <permission value="getattr"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="file_type"/>
+	  <secclass value="lnk_file"/>
+	  <permission value="read"/>
+	</rule>
+      </rules>
+    </option>
+    <option category="priv" value="read">
+      <macro value="allow_admin_read"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="file_type"/>
+	  <secclass value="dir"/><secclass value="file"/><secclass value="lnk_file"/><secclass value="sock_file"/><secclass value="fifo_file"/><secclass value="chr_file"/><secclass value="blk_file"/>
+	  <permission value="read"/>
+	  <permission value="getattr"/>
+	  <permission value="ioctl"/>
+	  <permission value="lock"/>
+	</rule>
+      </rules>
+    </option>
+    <option category="priv" value="write">
+      <macro value="allow_admin_write"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="file_type"/>
+	  <secclass value="dir"/><secclass value="file"/><secclass value="lnk_file"/><secclass value="sock_file"/><secclass value="fifo_file"/><secclass value="chr_file"/><secclass value="blk_file"/>
+	  <permission value="write"/>
+	  <permission value="setattr"/>
+	  <permission value="append"/>
+	  <permission value="create"/>
+	  <permission value="unlink"/>
+	  <permission value="link"/>
+	  <permission value="rename"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="file_type"/>
+	  <secclass value="dir"/>
+	  <permission value="add_name"/>
+	  <permission value="remove_name"/>
+	  <permission value="reparent"/>
+	  <permission value="rmdir"/>
+	</rule>
+      </rules>
+    </option>
+    <option category="priv" value="cap_net_admin">
+      <macro value="allow_admin_cap_net_admin"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="self"/>
+	  <secclass value="capability"/>
+	  <permission value="net_admin"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="self"/>
+	  <secclass value="netlink_route_socket"/>
+	  <permission value="nlmsg_write"/>
+	</rule>
+      </rules>
+    </option>
+    <option category="priv" value="cap_sys_boot">
+      <macro value="allow_admin_cap_sys_boot"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="self"/>
+	  <secclass value="capability"/>
+	  <permission value="sys_boot"/>
+	</rule>
+      </rules>
+    </option>
+    <option category="priv" value="quotaon">
+      <macro value="allow_admin_quotaon"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="file_type"/>
+	  <secclass value="file"/>
+	  <permission value="quotaon"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="fs_type"/>
+	  <secclass value="filesystem"/>
+	  <permission value="quotamod"/>
+	</rule>
+      </rules>
+    </option>
+    <option category="priv" value="mount">
+      <macro value="allow_admin_mount"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="file_type"/>
+	  <secclass value="dir"/>
+	  <permission value="mounton"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="fs_type"/>
+	  <secclass value="filesystem"/>
+	  <permission value="mount"/>
+	  <permission value="remount"/>
+	  <permission value="unmount"/>
+	</rule>
+      </rules>
+    </option>
+    <option category="priv" value="cap_sys_rawio">
+      <macro value="allow_admin_cap_sys_rawio"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="self"/>
+	  <secclass value="capability"/>
+	  <permission value="sys_rawio"/>
+	</rule>
+      </rules>
+    </option>
+    <option category="seop" value="cap_sys_chroot">
+      <macro value="allow_admin_cap_sys_chroot"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="self"/>
+	  <secclass value="capability"/>
+	  <permission value="sys_chroot"/>
+	</rule>
+      </rules>
+    </option>
+    <option category="priv" value="unlabel">
+      <macro value="allow_admin_unlabel"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="unlabeled_t"/>
+	  <type value="file_t"/>
+	  <secclass value="dir"/>
+	  <permission value="read"/>
+	  <permission value="getattr"/>
+	  <permission value="lock"/>
+	  <permission value="search"/>
+	  <permission value="ioctl"/>
+	  <permission value="add_name"/>
+	  <permission value="remove_name"/>
+	  <permission value="reparent"/>
+	  <permission value="rmdir"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="unlabeled_t"/>
+	  <type value="file_t"/>
+	  <secclass value="dir"/><secclass value="file"/><secclass value="lnk_file"/><secclass value="sock_file"/><secclass value="fifo_file"/><secclass value="chr_file"/><secclass value="blk_file"/>
+	  <permission value="ioctl"/>
+	  <permission value="read"/>
+	  <permission value="getattr"/>
+	  <permission value="lock"/>
+	  <permission value="write"/>
+	  <permission value="append"/>
+	  <permission value="unlink"/>
+	  <permission value="rename"/>
+	  <permission value="setattr"/>
+	  <permission value="create"/>
+	  <permission value="link"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="unlabeled_t"/>
+	  <type value="file_t"/>
+	  <secclass value="file"/>
+	  <permission value="execute"/>
+	  <permission value="execute_no_trans"/>
+	</rule>
+      </rules>
+    </option>
+    <option category="priv" value="cap_ipc_lock">
+      <macro value="allow_admin_cap_ipc_lock"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="self"/>
+	  <secclass value="capability"/>
+	  <permission value="ipc_lock"/>
+	</rule>
+      </rules>
+    </option>
+    <option category="priv" value="cap_sys_nice">
+      <macro value="allow_admin_cap_sys_nice"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="self"/>
+	  <secclass value="capability"/>
+	  <permission value="sys_nice"/>
+	</rule>
+      </rules>
+    </option>
+    <option category="priv" value="cap_sys_resource">
+      <macro value="allow_admin_cap_sys_resource"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="self"/>
+	  <secclass value="capability"/>
+	  <permission value="sys_resource"/>
+	</rule>
+      </rules>
+    </option>
+    <option category="priv" value="cap_sys_time">
+      <macro value="allow_admin_cap_sys_time"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="self"/>
+	  <secclass value="capability"/>
+	  <permission value="sys_time"/>
+	</rule>
+      </rules>
+    </option>
+    <option category="priv" value="cap_sys_admin">
+      <macro value="allow_admin_cap_sys_admin"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="self"/>
+	  <secclass value="capability"/>
+	  <permission value="sys_admin"/>
+	</rule>
+      </rules>
+    </option>
+   <option category="priv" value="cap_sys_tty_config">
+      <macro value="allow_admin_cap_sys_tty_config"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="self"/>
+	  <secclass value="capability"/>
+	  <permission value="sys_tty_config"/>
+	</rule>
+      </rules>
+    </option>
+   <option category="priv" value="ptrace">
+      <macro value="allow_admin_ptrace"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="global"/>
+	  <secclass value="process"/>
+	  <permission value="ptrace"/>
+	</rule>
+      </rules>
+    </option>
+
+    
+
+  </integrate>
+
+
+  <integrate value="allowfile">
+    <description>Integrated permissions for file allow</description>
+    <option value="s">
+      <macro value="allow_file_s"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="dir"/>
+	  <permission value="read"/>
+	  <permission value="search"/>
+	</rule>
+      </rules>
+    </option>
+   
+    <option value="r">
+      <macro value="allow_file_r"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="file"/><secclass value="lnk_file"/><secclass value="sock_file"/><secclass value="fifo_file"/>
+	  <permission value="read"/>
+	  <permission value="lock"/>
+	  <permission value="ioctl"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="dir"/>
+	  <permission value="lock"/>
+	  <permission value="ioctl"/>
+	</rule>
+      </rules>
+    </option>
+   
+
+    <option value="x">
+      <macro value="allow_file_x"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="dir"/><secclass value="file"/><secclass value="lnk_file"/><secclass value="sock_file"/><secclass value="fifo_file"/>
+	  <permission value="execute"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="file"/>
+	  <permission value="execute_no_trans"/>
+	</rule>
+      </rules>
+    </option>
+
+
+
+    <option value="w">
+      <macro value="allow_file_w"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="dir"/><secclass value="file"/><secclass value="lnk_file"/><secclass value="sock_file"/><secclass value="fifo_file"/>
+	  <permission value="write"/>
+	  <permission value="setattr"/>
+	  <permission value="append"/>
+	  <permission value="create"/>
+	  <permission value="unlink"/>
+	  <permission value="link"/>
+	  <permission value="rename"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="dir"/>
+	  <permission value="add_name"/>
+	  <permission value="remove_name"/>
+	  <permission value="reparent"/>
+	  <permission value="rmdir"/>
+	</rule>
+      </rules>
+    </option>
+
+   
+    <option value="o">
+      <macro value="allow_file_o"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="file"/><secclass value="lnk_file"/><secclass value="sock_file"/><secclass value="fifo_file"/>
+	  <permission value="write"/>
+	</rule>
+      </rules>
+    </option>
+
+    
+
+
+    <option value="a">
+      <macro value="allow_file_a"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="file"/><secclass value="lnk_file"/><secclass value="sock_file"/><secclass value="fifo_file"/>
+	  <permission value="append"/>
+	</rule>
+      </rules>
+    </option>
+
+
+
+    <option value="e">
+      <macro value="allow_file_e"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="dir"/>
+	  <permission value="unlink"/>
+	  <permission value="rename"/>
+	  <permission value="reparent"/>
+	  <permission value="rmdir"/>
+	  <permission value="remove_name"/>
+	  <permission value="write"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="file"/><secclass value="lnk_file"/><secclass value="sock_file"/><secclass value="fifo_file"/>
+	  <permission value="unlink"/>
+	  <permission value="rename"/>
+	</rule>
+      </rules>
+    </option>
+
+
+
+
+    <option value="c">
+      <macro value="allow_file_c"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="dir"/>
+	  <permission value="append"/>
+	  <permission value="create"/>
+	  <permission value="add_name"/>
+	  <permission value="write"/>
+	  <permission value="link"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="file"/><secclass value="lnk_file"/><secclass value="sock_file"/><secclass value="fifo_file"/>
+	  <permission value="create"/>
+	  <permission value="link"/>
+	</rule>
+      </rules>
+    </option>
+    
+ 
+    
+    <option value="t">
+      <macro value="allow_file_t"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="dir"/><secclass value="file"/><secclass value="lnk_file"/><secclass value="sock_file"/><secclass value="fifo_file"/>
+	  <permission value="setattr"/>
+	</rule>
+      </rules>
+    </option>
+   
+   
+ 
+    <option internal="yes" value="relabel">
+      <comment>This is used intenally in allowpriv part_relabel</comment>
+      <macro value="allow_file_relabel"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="dir"/><secclass value="file"/><secclass value="lnk_file"/><secclass value="sock_file"/><secclass value="fifo_file"/><secclass value="chr_file"/><secclass value="blk_file"/>
+	  <permission value="relabelfrom"/>
+	  <permission value="relabelto"/>
+	</rule>
+      </rules>
+    </option>
+
+    <option internal="yes" value="devcreate">
+      <comment>This is used internally in allowpriv devcreate</comment>
+      <macro value="allow_file_devcreate"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="chr_file"/><secclass value="blk_file"/>
+	  <permission value="create"/>
+	  <permission value="unlink"/>
+	  <permission value="link"/>
+	  <permission value="rename"/>
+	</rule>
+      </rules>
+    </option>
+
+    <option internal="yes" value="setattr">
+      <comment>This is used internally in allowpriv setattr</comment>
+      <macro value="allow_file_setattr"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="dir"/><secclass value="file"/><secclass value="lnk_file"/><secclass value="sock_file"/><secclass value="fifo_file"/><secclass value="chr_file"/><secclass value="blk_file"/>
+	  <permission value="setattr"/>
+	</rule>
+      </rules>
+    </option>
+
+  </integrate>
+
+  <integrate value="allowdev">
+    <description>Integrated permissions for allowdev</description>
+    <moredescription>In directory pointed by allowdev -root, following are additionally allowed for allowfile rules. By default, directory under /dev.</moredescription>
+    <option value="s">
+      <macro value="allow_file_dev_s"/>
+      <rules>
+	<rule value="allow" disabled="yes">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="chr_file"/><secclass value="blk_file"/>
+	  <permission value="getattr"/>
+	</rule>
+      </rules>
+    </option>
+
+    <option value="r">
+      <macro value="allow_file_dev_r"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="chr_file"/><secclass value="blk_file"/>
+	  <permission value="ioctl"/>
+	  <permission value="read"/>
+	  <permission value="lock"/>
+	</rule>
+      </rules>
+    </option>
+    <option value="x">
+      <macro value="allow_file_dev_x"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="chr_file"/><secclass value="blk_file"/>
+	  <permission value="execute"/>
+	</rule>
+      </rules>
+    </option>
+
+     <option value="w">
+      <macro value="allow_file_dev_w"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="chr_file"/><secclass value="blk_file"/>
+	  <permission value="write"/>
+	  <permission value="setattr"/>
+	  <permission value="append"/>
+	</rule>
+      </rules>
+    </option>
+
+
+    <option value="o">
+      <macro value="allow_file_dev_o"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="chr_file"/><secclass value="blk_file"/>
+	  <permission value="write"/>
+	</rule>
+      </rules>
+    </option>
+    
+    <option value="a">
+      <macro value="allow_file_dev_a"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="chr_file"/><secclass value="blk_file"/>
+	  <permission value="append"/>
+	</rule>
+      </rules>
+    </option>    
+    <option value="e">
+      <macro value="allow_file_dev_e"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="chr_file"/><secclass value="blk_file"/>
+	  <permission value="unlink"/>
+	  <permission value="rename"/>
+	</rule>
+      </rules>
+    </option>
+
+    <option value="c">
+      <macro value="allow_file_dev_c"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="chr_file"/><secclass value="blk_file"/>
+	  <permission value="create"/>
+	  <permission value="link"/>
+	</rule>
+      </rules>
+    </option>
+    
+    <option value="t">
+      <macro value="allow_file_dev_t"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="chr_file"/><secclass value="blk_file"/>
+	  <permission value="setattr"/>
+	</rule>
+      </rules>
+    </option>
+
+
+
+    
+  </integrate>
+  
+  <integrate value="allownet">
+    <description>Integrated permissions for allownet rules</description>
+    <option suboption="use" value="tcp">
+      <macro value="allow_network_tcp_use">This is used only when allownet -netif,-node is described.</macro>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="tcp_socket"/>
+	  <permission value="bind"/><permission value="listen"/><permission value="accept"/><permission value="connect"/><permission value="create"/><permission value="shutdown"/><permission value="getattr"/><permission value="getopt"/><permission value="setopt"/><permission value="ioctl"/><permission value="lock"/><permission value="setattr"/>
+	  <permission value="read"/>
+	  <permission value="write"/>
+	  <permission value="append"/>
+	  </rule>
+      </rules>
+    </option>
+
+    
+
+    <option suboption="use" value="udp">
+      <macro value="allow_network_udp_use"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="udp_socket"/>
+	  <permission value="bind"/><permission value="listen"/><permission value="accept"/><permission value="connect"/><permission value="create"/><permission value="shutdown"/><permission value="getattr"/><permission value="getopt"/><permission value="setopt"/><permission value="ioctl"/><permission value="lock"/><permission value="setattr"/>
+	  <permission value="read"/>
+	  <permission value="write"/>
+	  <permission value="append"/>
+	  </rule>
+      </rules>
+    </option>
+
+    <option suboption="use" value="raw">
+      <macro value="allow_network_raw_use"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	    <type value="type"/>
+	    <secclass value="rawip_socket"/>
+	  <permission value="bind"/><permission value="listen"/><permission value="accept"/><permission value="connect"/><permission value="create"/><permission value="shutdown"/><permission value="getattr"/><permission value="getopt"/><permission value="setopt"/><permission value="ioctl"/><permission value="lock"/><permission value="setattr"/>
+	</rule>
+	 <rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="rawip_socket"/>
+	  <permission value="read"/>
+	  <permission value="write"/>
+	  <permission value="append"/>
+	  </rule>
+	  </rules>  
+    </option>
+    
+    
+    <option suboption="server" value="tcp">
+      <macro value="allow_network_tcp_server"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="tcp_socket"/>
+	  <permission value="name_bind"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="port_type"/>
+	  <secclass value="tcp_socket"/>
+	  <permission nomatch="yes" value="recv_msg"/>	  
+	  <permission nomatch="yes" value="send_msg"/>	  
+	</rule>
+      </rules>
+    </option>
+
+    <option suboption="client" value="tcp">
+      <macro value="allow_network_tcp_client"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="tcp_socket"/>
+	  <permission value="name_connect"/>
+	  <permission nomatch="yes" value="recv_msg"/>
+	  <permission nomatch="yes" value="send_msg"/>
+	</rule>
+      </rules>
+    </option>
+
+    <option suboption="server" value="udp">
+      <macro value="allow_network_udp_server"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="udp_socket"/>
+	  <permission value="name_bind"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="unpriv_port_type"/>
+	  <secclass value="udp_socket"/>
+	  <permission nomatch="yes" value="recv_msg"/>
+          <permission nomatch="yes" value="send_msg"/>        
+	</rule>
+      </rules>
+    </option>
+    
+    <option suboption="client" value="udp">
+      <macro value="allow_network_udp_client"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="udp_socket"/>
+	  <permission value="send_msg"/>
+		  <permission value="recv_msg"/>
+	</rule>
+      </rules>
+    </option>
+    
+    <option  suboption="tcp_send" value="node">
+      <macro value="allow_network_node_tcp_send"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="node"/>
+	  <permission value="tcp_send"/>
+	</rule>
+      </rules>
+    </option>
+    <option suboption="udp_send" value="node">
+      <macro value="allow_network_node_udp_send"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="node"/>
+	  <permission value="udp_send"/>
+	</rule>
+      </rules>
+    </option>
+    <option  suboption="rawip_send" value="node">
+      <macro value="allow_network_node_rawip_send"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="node"/>
+	  <permission value="rawip_send"/>
+	</rule>
+      </rules>
+    </option>
+
+    <option  suboption="tcp_recv" value="node">
+      <macro value="allow_network_node_tcp_recv"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="node"/>
+	  <permission value="tcp_recv"/>
+	</rule>
+      </rules>
+    </option>
+    <option  suboption="udp_recv" value="node">
+      <macro value="allow_network_node_udp_recv"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="node"/>
+	  <permission value="udp_recv"/>
+	</rule>
+      </rules>
+    </option>
+    <option suboption="rawip_recv" value="node">
+      <macro value="allow_network_node_rawip_recv"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="node"/>
+	  <permission value="rawip_recv"/>
+	</rule>
+      </rules>
+    </option>
+
+   <option  suboption="tcp_bind" value="node">
+      <macro value="allow_network_node_tcp_bind"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="tcp_socket"/>
+	  <permission value="node_bind"/>
+	</rule>
+      </rules>
+    </option>
+    <option suboption="udp_bind" value="node">
+      <macro value="allow_network_node_udp_bind"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="udp_socket"/>
+	  <permission value="node_bind"/>
+	</rule>
+      </rules>
+    </option>
+    <option  suboption="rawip_bind" value="node">
+      <macro value="allow_network_node_rawip_bind"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="rawip_socket"/>
+	  <permission value="node_bind"/>
+	</rule>
+      </rules>
+    </option>
+
+    <option  suboption="tcp_send" value="netif">
+      <macro value="allow_network_netif_tcp_send"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="netif"/>
+	  <permission value="tcp_send"/>
+	</rule>
+      </rules>
+    </option>
+    <option  suboption="udp_send" value="netif">
+      <macro value="allow_network_netif_udp_send"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="netif"/>
+	  <permission value="udp_send"/>
+	</rule>
+      </rules>
+    </option>
+    <option suboption="rawip_send" value="netif">
+      <macro value="allow_network_netif_rawip_send"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="netif"/>
+	  <permission value="rawip_send"/>
+	</rule>
+      </rules>
+    </option>
+
+    <option suboption="tcp_recv" value="netif">
+      <macro value="allow_network_netif_tcp_recv"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="netif"/>
+	  <permission value="tcp_recv"/>
+	</rule>
+      </rules>
+    </option>
+    <option suboption="udp_recv" value="netif">
+      <macro value="allow_network_netif_udp_recv"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="netif"/>
+	  <permission value="udp_recv"/>
+	</rule>
+      </rules>
+    </option>
+    <option  suboption="rawip_recv" value="netif">
+      <macro value="allow_network_netif_rawip_recv"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="netif"/>
+	  <permission value="rawip_recv"/>
+	</rule>
+      </rules>
+    </option>
+
+  </integrate>
+
+
+  
+  
+  <integrate value="allowcom">
+    <description>Integrated permissions for allowcom rules</description>
+    <option value="unix">
+      <macro value="allow_ipc_unix"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="unix_dgram_socket"/>
+	  <permission value="ioctl"/><permission value="read"/><permission value="write"/><permission value="create"/><permission value="getattr"/><permission value="setattr"/><permission value="lock"/><permission value="relabelfrom"/><permission value="relabelto"/><permission value="append"/><permission value="bind"/><permission value="connect"/><permission value="listen"/><permission value="accept"/><permission value="getopt"/><permission value="setopt"/><permission value="shutdown"/><permission value="recvfrom"/><permission value="sendto"/><permission value="recv_msg"/><permission value="send_msg"/><permission value="name_bind"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="unix_stream_socket"/>
+	  <permission value="ioctl"/><permission value="read"/><permission value="write"/><permission value="create"/><permission value="getattr"/><permission value="setattr"/><permission value="lock"/><permission value="relabelfrom"/><permission value="relabelto"/><permission value="append"/><permission value="bind"/><permission value="connect"/><permission value="listen"/><permission value="accept"/><permission value="getopt"/><permission value="setopt"/><permission value="shutdown"/><permission value="recvfrom"/><permission value="sendto"/><permission value="recv_msg"/><permission value="send_msg"/><permission value="name_bind"/>
+	  <permission value="connectto"/>
+	</rule>
+      </rules>
+    </option>
+
+  <option internal="yes" suboption="common" value="unix">
+      <macro value="allow_ipc_unix_common">Commonly used permission in UNIX domain socket</macro>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="unix_dgram_socket"/>
+    <permission value="ioctl"/>
+    <permission value="getattr"/>
+    <permission value="setattr"/>
+    <permission value="lock"/>
+    <permission value="relabelfrom"/>
+    <permission value="relabelto"/>
+    <permission value="read"/>
+    <permission value="write"/>
+    <permission value="create"/>
+    <permission value="shutdown"/>
+    <permission value="getopt"/>
+    <permission value="setopt"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="unix_stream_socket"/>
+    <permission value="ioctl"/>
+    <permission value="getattr"/>
+    <permission value="setattr"/>
+    <permission value="lock"/>
+    <permission value="relabelfrom"/>
+    <permission value="relabelto"/>
+    <permission value="read"/>
+    <permission value="write"/>
+    <permission value="create"/>
+    <permission value="shutdown"/>
+    <permission value="getopt"/>
+    <permission value="setopt"/>
+	</rule>
+      </rules>
+    </option>
+
+    <option suboption="r" value="unix">
+      <macro value="allow_ipc_unix_r"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="unix_dgram_socket"/>
+	    <permission value="accept"/>
+   <permission value="listen"/>
+   <permission value="recvfrom"/>
+   <permission value="recv_msg"/> 
+   <permission value="name_bind"/>
+   <permission value="bind"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="unix_stream_socket"/>
+  <permission value="accept"/>
+   <permission value="listen"/>
+   <permission value="recvfrom"/>
+   <permission value="recv_msg"/> 
+   <permission value="name_bind"/>
+   <permission value="bind"/>
+	</rule>
+      </rules>
+    </option>
+
+    <option suboption="w" value="unix">
+      <macro value="allow_ipc_unix_w"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="unix_dgram_socket"/>
+   <permission value="append"/>
+    <permission value="connect"/>
+    <permission value="sendto"/>
+    <permission value="send_msg"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="unix_stream_socket"/>
+    <permission value="append"/>
+    <permission value="connect"/>
+    <permission value="sendto"/>
+    <permission value="send_msg"/>
+	  <permission value="connectto"/>
+	</rule>
+      </rules>
+    </option>
+
+    <option suboption="r" value="sem">
+      <macro value="allow_ipc_sem_r"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="sem"/>
+	  <permission value="associate"/>
+	  <permission value="getattr"/>
+	  <permission value="read"/>
+	  <permission value="unix_read"/>
+	</rule>
+      </rules>
+    </option>
+    <option suboption="w" value="sem">
+      <macro value="allow_ipc_sem_w"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="sem"/>
+	  <permission value="setattr"/>
+	  <permission value="create"/>
+	  <permission value="destroy"/>
+	  <permission value="write"/>
+	  <permission value="unix_write"/>
+	</rule>
+      </rules>
+    </option>
+    <option suboption="r" value="msg">
+      <macro value="allow_ipc_msg_r"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="msg"/>
+	  <permission value="send"/>
+	</rule>
+      </rules>
+    </option>
+    <option suboption="w" value="msg">
+      <macro value="allow_ipc_msg_w"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="msg"/>
+	  <permission value="receive"/>
+	</rule>
+      </rules>
+    </option>
+    <option suboption="r" value="msgq">
+      <macro value="allow_ipc_msgq_r"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="msgq"/>
+	  <permission value="associate"/>
+	  <permission value="getattr"/>
+	  <permission value="read"/>
+	  <permission value="unix_read"/>
+	</rule>
+      </rules>
+    </option>
+    
+       <option suboption="w" value="msgq">
+      <macro value="allow_ipc_msgq_w"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="msgq"/>
+	  <permission value="setattr"/>
+	  <permission value="create"/>
+	  <permission value="destroy"/>
+	  <permission value="write"/>
+	  <permission value="unix_write"/>
+	  <permission value="enqueue"/>
+	</rule>
+      </rules>
+    </option>
+    <option suboption="r" value="shm">
+      <macro value="allow_ipc_shm_r"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="shm"/>
+	  <permission value="associate"/>
+	  <permission value="getattr"/>
+	  <permission value="read"/>
+	  <permission value="unix_read"/>
+	</rule>
+      </rules>
+    </option>
+    
+    <option suboption="w" value="shm">
+      <macro value="allow_ipc_shm_w"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="shm"/>
+	  <permission value="setattr"/>
+	  <permission value="create"/>
+	  <permission value="destroy"/>
+	  <permission value="write"/>
+	  <permission value="unix_write"/>
+	  <permission value="lock"/>
+	</rule>
+      </rules>
+    </option>
+
+    <option suboption="r" value="pipe">
+      <macro value="allow_ipc_pipe_r"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="fifo_file"/>
+	  <permission value="read"/>
+	  <permission value="getattr"/>
+	  <permission value="lock"/>
+	  <permission value="ioctl"/>
+	</rule>
+      </rules>
+    </option>
+
+    <option suboption="w" value="pipe">
+      <macro value="allow_ipc_pipe_w"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="fifo_file"/>
+	  <permission value="write"/>
+	  <permission value="create"/>
+	  <permission value="setattr"/>
+	  <permission value="lock"/>
+	  <permission value="relabelfrom"/>
+	  <permission value="relabelto"/>
+	  <permission value="append"/>
+	  <permission value="unlink"/>
+	  <permission value="link"/>
+	  <permission value="rename"/>
+	  <permission value="execute"/>	
+	  <permission value="quotaon"/>
+	  <permission value="mounton"/>
+	</rule>
+      </rules>
+    </option>
+    
+    <option suboption="c" value="sig">
+      <macro value="allow_signal_sigchld"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="process"/>
+	  <permission value="sigchld"/>
+	</rule>
+      </rules>
+    </option>
+    <option suboption="k" value="sig">
+      <macro value="allow_signal_sigkill"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="process"/>
+	  <permission value="sigkill"/>
+	</rule>
+      </rules>
+    </option>
+    <option suboption="s" value="sig">
+      <macro value="allow_signal_sigstop"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="process"/>
+	  <permission value="sigstop"/>
+	</rule>
+      </rules>
+    </option>
+    <option suboption="n" value="sig">
+      <macro value="allow_signal_signull"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="process"/>
+	  <permission value="signull"/>
+	</rule>
+      </rules>
+    </option>
+    <option suboption="o" value="sig">
+      <macro value="allow_signal_sigother"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="process"/>
+	  <permission value="signal"/>
+	</rule>
+      </rules>
+    </option>
+  </integrate>
+  
+  <integrate value="allowtty">
+    <description>Permissions integrated in allowdev -tty rules</description>
+    <option value="r">
+      <macro value="allow_tty_r"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="chr_file"/>
+	  <secclass value="lnk_file"/>
+	  <permission value="read"/>
+	  <permission value="getattr"/>
+	  <permission value="lock"/>
+	  <permission value="ioctl"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="dir"/>
+	  <permission value="read"/>
+	  <permission value="getattr"/>
+	  <permission value="search"/>
+	  <permission value="ioctl"/>
+	  <permission value="lock"/>
+	</rule>
+      </rules>
+    </option>
+    <option value="w">
+      <macro value="allow_tty_w"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="chr_file"/>
+	  <secclass value="lnk_file"/>
+	  <permission value="write"/>
+	  <permission value="setattr"/>
+	  <permission value="append"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="dir"/>
+	  <permission value="write"/>
+	  <permission value="setattr"/>
+	  <permission value="add_name"/>
+	  <permission value="remove_name"/>
+	</rule>
+      </rules>
+    </option>
+
+    <option value="admin">
+      <macro value="allow_tty_change"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="chr_file"/>
+	  <secclass value="lnk_file"/>
+	  <permission value="relabelfrom"/>
+	  <permission value="relabelto"/>
+	  <permission value="create"/>
+	  <permission value="unlink"/>
+	  <permission value="rename"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="dir"/>
+	  <permission value="create"/>
+	  <permission value="link"/>
+	  <permission value="unlink"/>
+	  <permission value="reparent"/>
+	  <permission value="rmdir"/>
+	</rule>
+      </rules>
+    </option>
+
+  </integrate>
+  
+  <integrate value="allowpts">
+    <description>Permissions integrated in allowdev -pts rules</description>
+    <option value="r">
+      <macro value="allow_pts_r"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="chr_file"/>
+	  <secclass value="lnk_file"/>
+	  <permission value="read"/>
+	  <permission value="getattr"/>
+	  <permission value="lock"/>
+	  <permission value="ioctl"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="dir"/>
+	  <permission value="read"/>
+	  <permission value="getattr"/>
+	  <permission value="search"/>
+	  <permission value="ioctl"/>
+	  <permission value="lock"/>
+	</rule>
+      </rules>
+    </option>
+    <option value="w">
+      <macro value="allow_pts_w"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="chr_file"/>
+	  <secclass value="lnk_file"/>
+	  <permission value="write"/>
+	  <permission value="setattr"/>
+	  <permission value="append"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="dir"/>
+	  <permission value="write"/>
+	  <permission value="setattr"/>
+	  <permission value="add_name"/>
+	  <permission value="remove_name"/>
+	</rule>
+      </rules>
+    </option>
+
+    <option value="admin">
+      <macro value="allow_pts_change"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="chr_file"/>
+	  <secclass value="lnk_file"/>
+	  <permission value="relabelfrom"/>
+	  <permission value="relabelto"/>
+	  <permission value="create"/>
+	  <permission value="unlink"/>
+	  <permission value="rename"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="dir"/>
+	  <permission value="create"/>
+	  <permission value="link"/>
+	  <permission value="unlink"/>
+	  <permission value="reparent"/>
+	  <permission value="rmdir"/>
+	</rule>
+      </rules>
+    </option>   
+  </integrate>
+      
+  <integrate value="transition">
+    <description>Rules integrated in transition rule</description>
+    <option value="Normal domain transition">
+      <comment>This is allowed in domain_trans rule</comment>
+      <macro value="domain_trans_allow">allow statements used in domain_trans</macro>
+      <rules>
+	<rule value="allow">
+	  <domain value="from"/>
+	  <type value="to"/>
+	  <secclass value="process"/>
+	  <permission value="transition"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="to"/>
+	  <type value="entry"/>
+	  <secclass value="file"/>
+	  <permission value="entrypoint"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="to"/>
+	  <type value="from"/>
+	  <secclass value="process"/>
+	  <permission value="sigchld"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="to"/>
+	  <type value="from"/>
+	  <secclass value="fifo_file"/>
+	  <permission value="ioctl"/>
+	  <permission value="read"/>
+	  <permission value="getattr"/>
+	  <permission value="lock"/>
+	  <permission value="write"/>
+	  <permission value="append"/>
+	</rule>
+      </rules>
+    </option>
+
+    <option value="Dynamic domain transition">
+      <comment>This is allowed in domain_trans rule when entry point is not specified.</comment>
+      <macro value="domain_dyn_trans_allow">allow statements used in domain_dyn_trans</macro>
+      <rules>
+	<rule value="allow">
+	  <domain value="from"/>
+	  <type value="to"/>
+	  <secclass value="process"/>
+	  <permission value="dyntransition"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="from"/>
+	  <type value="self"/>
+	  <secclass value="process"/>
+	  <permission value="setcurrent"/>
+	</rule>
+      </rules>
+    </option>
+
+    <option value="File type transition">
+      <comment>This is allowed in allow exclusive rule</comment>
+      <macro value="file_type_trans_allow">allow statements used in file_type_auto_trans macro</macro>
+      <rules>
+	<rule value="allow">
+	  <domain value="from"/>
+	  <type value="entry"/>
+	  <secclass value="dir"/>
+	  <permission value="read"/>
+	  <permission value="getattr"/>
+	  <permission value="lock"/>
+	  <permission value="search"/>
+	  <permission value="ioctl"/>
+	  <permission value="add_name"/>
+	  <permission value="remove_name"/>
+	  <permission value="write"/>
+	</rule>	
+      </rules>
+    </option>
+
+  </integrate>
+  <group value="all_file_class">
+    <element value="dir"/>
+    <element value="file"/>
+    <element value="lnk_file"/>
+    <element value="sock_file"/>
+    <element value="fifo_file"/>
+    <element value="chr_file"/>
+    <element value="blk_file"/>
+  </group>
+  <group value="notdevfile_class">
+    <element value="dir"/>
+    <element value="file"/>
+    <element value="lnk_file"/>
+    <element value="sock_file"/>
+    <element value="fifo_file"/>
+  </group>
+  <group value="devfile_class">
+    <element value="chr_file"/>
+    <element value="blk_file"/>
+  </group>
+  <group value="notdevdir_class">
+    <element value="file"/>
+    <element value="lnk_file"/>
+    <element value="sock_file"/>
+    <element value="fifo_file"/>
+  </group>
+  <group value="notdir_class">
+    <element value="file"/>
+    <element value="lnk_file"/>
+    <element value="sock_file"/>
+    <element value="fifo_file"/>
+    <element value="chr_file"/>
+    <element value="blk_file"/>
+  </group>
+  <group value="socket_common_base_perms">
+    <element value="bind"/>
+    <element value="listen"/>
+    <element value="accept"/>    
+    <element value="connect"/>    
+    <element value="create"/>
+    <element value="shutdown"/>
+    <element value="getattr"/>
+    <element value="getopt"/>
+    <element value="setopt"/>
+    <element value="ioctl"/>
+    <element value="lock"/>
+    <element value="setattr"/>
+  </group>
+
+  <group value="socket_common_all_perms">
+    <element value="ioctl"/>
+    <element value="read"/>
+    <element value="write"/>
+    <element value="create"/>
+    <element value="getattr"/>
+    <element value="setattr"/>
+    <element value="lock"/>
+    <element value="relabelfrom"/>
+    <element value="relabelto"/>
+    <element value="append"/>
+    <element value="bind"/>
+    <element value="connect"/>
+    <element value="listen"/>
+    <element value="accept"/>
+    <element value="getopt"/>
+    <element value="setopt"/>
+    <element value="shutdown"/>
+    <element value="recvfrom"/>
+    <element value="sendto"/>
+    <element value="recv_msg"/>
+    <element value="send_msg"/>
+    <element value="name_bind"/>
+  </group>
+  <group value="tcp_socket_all_perms">
+    <element value="ioctl"/>
+    <element value="read"/>
+    <element value="write"/>
+    <element value="create"/>
+    <element value="getattr"/>
+    <element value="setattr"/>
+    <element value="lock"/>
+    <element value="relabelfrom"/>
+    <element value="relabelto"/>
+    <element value="append"/>
+    <element value="bind"/>
+    <element value="connect"/>
+    <element value="listen"/>
+    <element value="accept"/>
+    <element value="getopt"/>
+    <element value="setopt"/>
+    <element value="shutdown"/>
+    <element value="recvfrom"/>
+    <element value="sendto"/>
+    <element value="recv_msg"/>
+    <element value="send_msg"/>
+    <element value="name_bind"/>
+    <element value="connectto"/>
+    <element value="newconn"/>
+    <element value="acceptfrom"/>
+    <element value="node_bind"/>
+    <element value="name_connect"/>
+  </group>
+  <group value="tcp_socket_except_connect">
+    <element value="ioctl"/>
+    <element value="read"/>
+    <element value="write"/>
+    <element value="create"/>
+    <element value="getattr"/>
+    <element value="setattr"/>
+    <element value="lock"/>
+    <element value="relabelfrom"/>
+    <element value="relabelto"/>
+    <element value="append"/>
+    <element value="bind"/>
+    <element value="listen"/>
+    <element value="accept"/>
+    <element value="getopt"/>
+    <element value="setopt"/>
+    <element value="shutdown"/>
+    <element value="recvfrom"/>
+    <element value="sendto"/>
+    <element value="recv_msg"/>
+    <element value="send_msg"/>
+    <element value="name_bind"/>
+    <element value="connectto"/>
+    <element value="newconn"/>
+    <element value="acceptfrom"/>
+    <element value="node_bind"/>
+  </group>
+  <group value="udp_socket_all_perms">
+    <element value="ioctl"/>
+    <element value="read"/>
+    <element value="write"/>
+    <element value="create"/>
+    <element value="getattr"/>
+    <element value="setattr"/>
+    <element value="lock"/>
+    <element value="relabelfrom"/>
+    <element value="relabelto"/>
+    <element value="append"/>
+    <element value="bind"/>
+    <element value="connect"/>
+    <element value="listen"/>
+    <element value="accept"/>
+    <element value="getopt"/>
+    <element value="setopt"/>
+    <element value="shutdown"/>
+    <element value="recvfrom"/>
+    <element value="sendto"/>
+    <element value="recv_msg"/>
+    <element value="send_msg"/>
+    <element value="name_bind"/>
+    <element value="node_bind"/>
+  </group>
+  <group value="udp_socket_except_connect">
+    <element value="ioctl"/>
+    <element value="read"/>
+    <element value="write"/>
+    <element value="create"/>
+    <element value="getattr"/>
+    <element value="setattr"/>
+    <element value="lock"/>
+    <element value="relabelfrom"/>
+    <element value="relabelto"/>
+    <element value="append"/>
+    <element value="bind"/>
+    <element value="listen"/>
+    <element value="accept"/>
+    <element value="getopt"/>
+    <element value="setopt"/>
+    <element value="shutdown"/>
+    <element value="recvfrom"/>
+    <element value="sendto"/>
+    <element value="recv_msg"/>
+    <element value="send_msg"/>
+    <element value="name_bind"/>
+    <element value="node_bind"/>
+  </group>
+</spdl>

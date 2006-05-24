@@ -1,0 +1,15 @@
+#####Following are allowed in simplifed policy by default
+
+# domain can do everything to unsupported file systems
+# To see what is unsupported, see genfs_contexts
+allow_file_r(domain, unsupported_fs_t)
+allow_file_s(domain, unsupported_fs_t)
+allow_file_w(domain, unsupported_fs_t)
+allow_file_x(domain, unsupported_fs_t)
+
+# dummy boolean value, not used 
+bool dummy_boolean false;
+
+#watch load_policy and setenforce
+auditallow domain security_t:security { load_policy setenforce };
+

@@ -1,0 +1,32 @@
+## minimum types used in converter
+type security_t,file_type,fs_type;
+#unlabeled_t is for unlabeled object
+type unlabeled_t,file_type,fs_type;
+#in some condition, unlabeled files are labeled as file_t
+type file_t, file_type,fs_type;
+type fs_t,fs_type;
+type default_t,file_type,fs_type;
+type port_t,port_type;
+type netif_t,netif_type;
+type node_t,node_type;
+
+#labels for terminals
+type tty_device_t,file_type,fs_type;
+type devtty_t,fs_type, file_type;
+type devpts_t,fs_type, file_type;
+type ptmx_t,file_type, fs_type;
+type vcs_device_t,file_type;
+
+#dummy label
+type dummy_label_t;
+
+#labels for unsupported file system
+#To see what is unsupported, see genfs_contexts
+type unsupported_fs_t,fs_type,file_type;
+
+##Labels for Well-Known ports
+type wellknown_tcp_port_t,port_type;
+type wellknown_udp_port_t,port_type;
+##labels for unreserved 1024 over ports
+type unpriv_tcp_port_t,port_type;
+type unpriv_udp_port_t,port_type;

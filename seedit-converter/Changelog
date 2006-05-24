@@ -1,0 +1,70 @@
+*2006/04/10 1.4.0 Yuichi Nakamura
+Many mofifications
+- SPDL Syntax simplification
+	- Introduced AppArmor-like syntax
+		- "include" support(removed "global" domain instead)
+		- Changed syntax of file allow(removed allowonly,denyonly)
+		- add allowtmp, removed allow -exclusive
+		- removed allowproc, merged to allowfs
+-  Re-designed allownet  
+- "file name, line no" when compile error
+
+
+*2006/02/23 1.3.3 Yuichi Nakamura
+Add denypriv 
+Add allowdev -root/-tty/-pts/-allterm, removed allowtty/pts
+Add dir:search support. dir:search is implicitly allowed. For examle, allow /foo/bar/a, then dir:search is allowed to /,/foo,/foo/bar
+
+*2006/02/01 1.3.2 Yuichi Nakamura
+XML support, see README_XML
+*2006/1/17 1.3.1 Yuichi Nakamura
+New util audit2spdl
+*2006/1/12 1.3.0 Yuichi Nakamura(ynakam@gwu.edu)
+Support for detailed permissions for file
+*2005/08/30 1.2.0 Yuichi Nakamura(ynakam@gwu.edu)
+Bug fix
+*2005/08/17  1.1.2 Yuichi Nakamura(ynakam@gwu.edu)
+Changes from 1.0.0
+- "allowfs" support to control access to arbitary filesystems that does not support xattr.
+- changed allowproc
+only allowproc -self|-other
+- "allow <dir> exclusive -all <permissions>" support.
+- Improved flexibility of generated policy.
+ All most all generated policy now uses macros in macros/*.te.
+ Wrote macros/*.te from scratch.
+- Improved flexibility of converter
+ By base_policy/converter.conf.
+- Changed name of converter exectable file
+ Now the name is "seedit-converter"
+- Dynamic domain transition support.
+ By "domain_trans <domain name> ".
+- allowkernel/allowpriv/allowseop Support
+- allowadm is not used
+ Use allowpriv/allowseop/allowkernel instead.
+- allownet -netlink is not used
+ Use allowkernel netlink instead.
+- Add more sample poilcy
+- deleted allowtmpfs rule. Use allowfs instead.
+
+* 2005/07/27 1.1.1 Yuichi Nakamura(ynakam@gwu.edu)
+Rewrote to use macros in macros/seedit_macros.te.
+
+* 2005/07/20 1.1 Yuichi Nakamura(ynakam@gwu.edu)
+Support for crond. Force to label /etc/crontab,/var/spool/cron, /etc/cron.d as system_cron_spool_t.
+
+* 2005/07/13 1.0.0
+- Many fixes by Yuichi Nakamura(ynakam@gwu.edu)
+	- Now works on Fedora Core 4,3
+	- Separated GUI and simplified poilcy
+	- Removed distribution dependent code 
+
+* 2005/02/15
+Demo version works on Fedora Core2.
+Mostly by Takefumi Onabuta(onabuta@selinux.gr.jp), 
+partly by Yuichi Nakamura(ynakam@hitachisoft.jp)
+
+* 2003/05/20
+Beta release by Hitachi Software(http://www.selinux.hitachi-sk.co.jp)
+
+* 2003/1/31
+Initial Release by Hitachi Software(http://www.selinux.hitachi-sk.co.jp)

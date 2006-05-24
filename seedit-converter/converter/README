@@ -1,0 +1,12 @@
+This is a compiler for Simplified Policy
+For detail, see documents on http://seedit.sourceforge.net/
+
+Installing from source, just do 
+#make install
+/usr/bin/seedit-converter
+is installed.
+
+Next install seedit-policy.
+
+This software is distributed under GPL, see COPYING
+About authors, see changelog

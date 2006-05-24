@@ -1,0 +1,13 @@
+#!/bin/sh
+SETFILES=/usr/sbin/setfiles
+
+while read LINE
+do
+    if [ ! -e $LINE ]
+    then
+	echo "$LINE does not exist, skipped"
+	continue 
+    fi
+	$SETFILES ./sepolicy/file_contexts $LINE -v
+done
+

@@ -1,0 +1,14 @@
+/boot/Kerntypes	system_u:object_r:boot_runtime_t
+/boot/System.map	system_u:object_r:boot_runtime_t
+/etc/mtab	system_u:object_r:etc_runtime_t
+/tmp/.X0-lock	system_u:object_r:xserver_tmp_t
+/tmp/.X11-unix(|/.*)	system_u:object_r:xserver_tmp_t
+/tmp/.gdm_socket	system_u:object_r:gdm_tmp_t
+/tmp/exc_label.tmp	system_u:object_r:mail_tmp_t
+/tmp/root(|/.*)	system_u:object_r:sysadm_tmp_t
+/var/run/crond.pid	system_u:object_r:crond_var_run_t
+/var/run/dhcpcd-eth0.pid	system_u:object_r:dhcpcd_var_run_t
+/var/run/klogd.pid	system_u:object_r:klogd_var_run_t
+/var/run/sshd.pid	system_u:object_r:sshd_var_run_t
+/var/run/syslogd.pid	system_u:object_r:syslogd_var_run_t
+/var/run/xinetd.pid	system_u:object_r:xinetd_var_run_t

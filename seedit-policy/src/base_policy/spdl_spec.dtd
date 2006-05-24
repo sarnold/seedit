@@ -1,0 +1,41 @@
+<!ELEMENT spdl (unsupported, integrate+, group+)>
+<!ELEMENT unsupported (description, section+)>
+<!ELEMENT section  (description, moredescription?, rules)>
+<!ELEMENT description (#PCDATA)>
+<!ELEMENT moredescription (#PCDATA)>
+<!ELEMENT rules (rule*)>
+<!ELEMENT rule (domain+,type+, secclass+,permission+)>
+<!ATTLIST rule value CDATA #REQUIRED
+           disabled (yes|no) "no"
+>
+<!ELEMENT domain EMPTY>
+<!ATTLIST domain value CDATA #REQUIRED>
+<!ELEMENT type EMPTY>
+<!ATTLIST type value CDATA #REQUIRED>
+<!ELEMENT secclass EMPTY>
+<!ATTLIST secclass value CDATA #REQUIRED>
+
+<!ELEMENT permission EMPTY>
+<!ATTLIST permission value CDATA #REQUIRED
+          nomatch (yes|no) "no"
+>
+
+
+<!ELEMENT integrate (description, moredescription?,option+)>
+<!ATTLIST integrate value CDATA #REQUIRED>
+
+<!ELEMENT option (comment?,macro,rules)>
+<!ELEMENT comment (#PCDATA)>
+<!ELEMENT macro (#PCDATA)>
+<!ATTLIST macro value CDATA #REQUIRED>
+<!ATTLIST option value CDATA #REQUIRED
+          suboption CDATA #IMPLIED
+          internal (yes|no) "no"
+          category CDATA #IMPLIED
+>
+
+<!ELEMENT group (element+)>
+<!ATTLIST group value CDATA #REQUIRED>
+<!ELEMENT element EMPTY>
+<!ATTLIST element value CDATA #REQUIRED>
+

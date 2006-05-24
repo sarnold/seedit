@@ -1,0 +1,5093 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE policy SYSTEM "simplified_policy.dtd">
+<policy>
+  <section id="global" type="domain">
+    <comment>#Author: Yuichi Nakamura &lt;ynakam@gwu.edu&gt;
+#Defines default protection
+</comment>
+    <allowdev type="allow">
+      <comment>#root to device dir
+</comment>
+      <option>root</option>
+      <path>/dev</path>
+    </allowdev>
+    <allowfile type="allow" only="yes">
+      <comment>#read-only to system files
+</comment>
+      <path>/</path>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/mnt</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment>#can use commands and libs
+</comment>
+      <path>/lib</path>
+      <permission>r</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/usr</path>
+      <permission>r</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/bin</path>
+      <permission>r</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/sbin</path>
+      <permission>r</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc</path>
+      <permission>r</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment>##can read tmp
+</comment>
+      <path>/tmp</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment>#device protected
+</comment>
+      <path>/dev</path>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment>#can use some devices 
+</comment>
+      <path>/dev/console</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/dev/null</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/dev/zero</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/dev/random</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/dev/urandom</path>
+      <permission>r</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="deny">
+      <comment>###Default deny  files
+#some critical device
+</comment>
+      <path>/dev/kmem</path>
+    </allowfile>
+    <allowfile type="deny">
+      <comment/>
+      <path>/dev/mem</path>
+    </allowfile>
+    <allowfile type="deny">
+      <comment/>
+      <path>/dev/port</path>
+    </allowfile>
+    <allowfile type="deny">
+      <comment>#protect SELinux config
+</comment>
+      <path>/etc/selinux/seedit</path>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc/selinux/seedit-devel</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="deny">
+      <comment>#password files
+</comment>
+      <path>/etc/shadow-</path>
+    </allowfile>
+    <allowfile type="deny">
+      <comment/>
+      <path>/etc/shadow</path>
+    </allowfile>
+    <allowfile type="deny">
+      <comment>#admin's root dir
+</comment>
+      <path>/root</path>
+    </allowfile>
+    <allowfile type="deny">
+      <comment>#Cannot access to shell
+</comment>
+      <path>/bin/sh</path>
+    </allowfile>
+    <allowfile type="deny">
+      <comment/>
+      <path>/bin/bash</path>
+    </allowfile>
+    <allowfile type="deny">
+      <comment/>
+      <path>/bin/tcsh</path>
+    </allowfile>
+    <allowfile type="allow">
+      <comment>## logs
+</comment>
+      <path>/var/log</path>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="deny">
+      <comment>#SELinux logs
+</comment>
+      <path>/var/log/audit</path>
+    </allowfile>
+    <allowfile type="deny">
+      <comment>#Apache lgos
+</comment>
+      <path>/var/log/httpd</path>
+    </allowfile>
+    <allowfile type="deny">
+      <comment># protect homepages
+</comment>
+      <path>/var/www</path>
+    </allowfile>
+    <allowfile type="deny">
+      <comment>##protect cron related files
+</comment>
+      <path>/etc/crontab</path>
+    </allowfile>
+    <allowfile type="deny">
+      <comment/>
+      <path>/etc/cron.d</path>
+    </allowfile>
+    <allowfile type="deny">
+      <comment/>
+      <path>/etc/cron.weekly</path>
+    </allowfile>
+    <allowfile type="deny">
+      <comment/>
+      <path>/var/spool/cron</path>
+    </allowfile>
+    <allowfile type="deny">
+      <comment/>
+      <path>/var/spool/anacron</path>
+    </allowfile>
+    <allowfile type="deny">
+      <comment/>
+      <path>/etc/cron.hourly</path>
+    </allowfile>
+    <allowfile type="deny">
+      <comment/>
+      <path>/etc/cron.daily</path>
+    </allowfile>
+    <allowfile type="deny">
+      <comment/>
+      <path>/etc/cron.monthly</path>
+    </allowfile>
+    <allowcom type="allow">
+      <comment>###
+# allow communication within domain
+</comment>
+      <option>msg</option>
+      <domain>self</domain>
+      <permission>r</permission>
+      <permission>w</permission>
+    </allowcom>
+    <allowcom type="allow">
+      <comment/>
+      <option>msgq</option>
+      <domain>self</domain>
+      <permission>r</permission>
+      <permission>w</permission>
+    </allowcom>
+    <allowcom type="allow">
+      <comment/>
+      <option>pipe</option>
+      <domain>self</domain>
+      <permission>r</permission>
+      <permission>w</permission>
+    </allowcom>
+    <allowcom type="allow">
+      <comment/>
+      <option>sem</option>
+      <domain>self</domain>
+      <permission>r</permission>
+      <permission>w</permission>
+    </allowcom>
+    <allowcom type="allow">
+      <comment/>
+      <option>shm</option>
+      <domain>self</domain>
+      <permission>r</permission>
+      <permission>w</permission>
+    </allowcom>
+    <allowcom type="allow">
+      <comment/>
+      <option>sig</option>
+      <domain>init_t</domain>
+      <permission>c</permission>
+    </allowcom>
+    <allowcom type="allow">
+      <comment/>
+      <option>sig</option>
+      <domain>self</domain>
+      <permission>c</permission>
+      <permission>k</permission>
+      <permission>s</permission>
+      <permission>n</permission>
+      <permission>o</permission>
+    </allowcom>
+    <allowcom type="allow">
+      <comment/>
+      <option>tcp</option>
+      <domain>self</domain>
+    </allowcom>
+    <allowcom type="allow">
+      <comment/>
+      <option>udp</option>
+      <domain>self</domain>
+    </allowcom>
+    <allowcom type="allow">
+      <comment/>
+      <option>unix</option>
+      <domain>self</domain>
+    </allowcom>
+    <allowproc type="allow">
+      <comment>#/proc/&lt;self pid&gt;
+</comment>
+      <option>self</option>
+      <permission>r</permission>
+    </allowproc>
+    <allowfs type="allow">
+      <comment># read only access to some misc file systems
+</comment>
+      <fs>proc</fs>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfs>
+    <allowfs type="allow">
+      <comment/>
+      <fs>usbfs</fs>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfs>
+    <allowfs type="allow">
+      <comment/>
+      <fs>sysfs</fs>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfs>
+    <allowfs type="allow">
+      <comment/>
+      <fs>tmpfs</fs>
+      <permission>s</permission>
+    </allowfs>
+    <allowfs type="allow">
+      <comment/>
+      <fs>xattrfs</fs>
+      <permission>s</permission>
+    </allowfs>
+    <allowfs type="allow">
+      <comment>#Everyone can use tmpfs
+</comment>
+      <fs>tmpfs</fs>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfs>
+    <allowfile type="deny">
+      <comment>#about samba
+</comment>
+      <path>/etc/samba</path>
+    </allowfile>
+    <allowfile type="deny">
+      <comment/>
+      <path>/var/log/samba</path>
+    </allowfile>
+    <allowfile type="deny">
+      <comment>#for named
+</comment>
+      <path>/var/named</path>
+    </allowfile>
+    <allowfile type="deny">
+      <comment/>
+      <path>/etc/named.conf</path>
+    </allowfile>
+    <allowfile type="deny">
+      <comment/>
+      <path>/etc/named.boot</path>
+    </allowfile>
+    <allowfile type="deny">
+      <comment>#for mysqld
+</comment>
+      <path>/var/lib/mysql</path>
+    </allowfile>
+    <allowfile type="deny">
+      <comment>#for postfix and sendmail
+</comment>
+      <path>/var/spool/postfix</path>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var/spool/mail</path>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="deny">
+      <comment/>
+      <path>/etc/postfix</path>
+    </allowfile>
+    <allowdev type="allow">
+      <comment>###
+# everyone can read/write tty/pts, but can not create
+</comment>
+      <option>allterm</option>
+      <role>general</role>
+      <permission>r</permission>
+      <permission>w</permission>
+    </allowdev>
+    <allowdev type="allow">
+      <comment/>
+      <option>allterm</option>
+      <role>global</role>
+      <permission>r</permission>
+      <permission>w</permission>
+    </allowdev>
+    <allowpriv type="allow">
+      <comment>#for testing..
+</comment>
+      <option>sys_admin</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment/>
+      <option>tty_config</option>
+    </allowpriv>
+  </section>
+  <section id="acpid_t" type="domain">
+    <comment>#Author: Yuichi Nakamura &lt;ynakam@gwu.edu&gt;
+## common access rights for daemon
+</comment>
+    <domaintrans>
+      <comment/>
+      <parentdomain>initrc_t</parentdomain>
+      <parentdomain>sysadm_r</parentdomain>
+      <entrypoint>/usr/sbin/acpid</entrypoint>
+    </domaintrans>
+    <allowfile type="allow">
+      <comment># to communicate syslogd
+</comment>
+      <path>dev_log_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowcom type="allow">
+      <comment/>
+      <option>unix</option>
+      <domain>syslogd_t</domain>
+    </allowcom>
+    <allowfile type="exclusive">
+      <comment># create /var/run securely
+</comment>
+      <path>/var/run</path>
+      <label>acpid_var_run_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>acpid_var_run_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="exclusive">
+      <comment># create tmp file securely
+</comment>
+      <path>/tmp</path>
+      <label>acpid_tmp_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>acpid_tmp_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfs type="exclusive">
+      <comment/>
+      <fs>tmpfs</fs>
+      <label>acpid_tmpfs_t</label>
+    </allowfs>
+    <allowfile type="allow">
+      <comment/>
+      <path>acpid_tmpfs_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow" only="yes">
+      <comment>## end of common access rights for daemon
+</comment>
+      <path>/var/log</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+  </section>
+  <section id="auditd_t" type="domain">
+    <comment>#Author: Yuichi Nakamura &lt;ynakam@gwu.edu&gt;
+## common access rights for daemon
+</comment>
+    <domaintrans>
+      <comment/>
+      <parentdomain>initrc_t</parentdomain>
+      <parentdomain>sysadm_r</parentdomain>
+      <entrypoint>/sbin/auditd</entrypoint>
+    </domaintrans>
+    <allowfile type="allow">
+      <comment># to communicate syslogd
+</comment>
+      <path>dev_log_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowcom type="allow">
+      <comment/>
+      <option>unix</option>
+      <domain>syslogd_t</domain>
+    </allowcom>
+    <allowfile type="exclusive">
+      <comment># create /var/run securely
+</comment>
+      <path>/var/run</path>
+      <label>auditd_var_run_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>auditd_var_run_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="exclusive">
+      <comment># create tmp file securely
+</comment>
+      <path>/tmp</path>
+      <label>auditd_tmp_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>auditd_tmp_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfs type="exclusive">
+      <comment/>
+      <fs>tmpfs</fs>
+      <label>auditd_tmpfs_t</label>
+    </allowfs>
+    <allowfile type="allow">
+      <comment/>
+      <path>auditd_tmpfs_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment>## end of common access rights for daemon
+</comment>
+      <path>/var/log</path>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var/log/audit</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowproc type="allow">
+      <comment/>
+      <option>self</option>
+      <permission>w</permission>
+    </allowproc>
+    <allowpriv type="allow">
+      <comment/>
+      <option>netlink</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment/>
+      <option>klog_write</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment/>
+      <option>nice</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment/>
+      <option>resource</option>
+    </allowpriv>
+  </section>
+  <section id="automount_t" type="domain">
+    <comment>#Author: Yuichi Nakamura &lt;ynakam@gwu.edu&gt;
+## common access rights for daemon
+</comment>
+    <domaintrans>
+      <comment/>
+      <parentdomain>initrc_t</parentdomain>
+      <parentdomain>sysadm_r</parentdomain>
+      <entrypoint>/usr/sbin/automount</entrypoint>
+    </domaintrans>
+    <allowfile type="allow">
+      <comment># to communicate syslogd
+</comment>
+      <path>dev_log_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowcom type="allow">
+      <comment/>
+      <option>unix</option>
+      <domain>syslogd_t</domain>
+    </allowcom>
+    <allowfile type="exclusive">
+      <comment># create /var/run securely
+</comment>
+      <path>/var/run</path>
+      <label>automount_var_run_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>automount_var_run_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="exclusive">
+      <comment># create tmp file securely
+</comment>
+      <path>/tmp</path>
+      <label>automount_tmp_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>automount_tmp_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfs type="exclusive">
+      <comment/>
+      <fs>tmpfs</fs>
+      <label>automount_tmpfs_t</label>
+    </allowfs>
+    <allowfile type="allow">
+      <comment/>
+      <path>automount_tmpfs_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment>## end of common access rights for daemon
+</comment>
+      <path>etc_runtime_t</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow" only="yes">
+      <comment/>
+      <path>/var/lock</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfs type="allow">
+      <comment/>
+      <fs>autofs</fs>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfs>
+    <allowpriv type="allow">
+      <comment/>
+      <option>nice</option>
+    </allowpriv>
+    <allowfile type="allow">
+      <comment/>
+      <path>/net</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+  </section>
+  <section id="cannaserver_t" type="domain">
+    <comment>#Author: Yuichi Nakamura
+## common access rights for daemon
+</comment>
+    <domaintrans>
+      <comment/>
+      <parentdomain>initrc_t</parentdomain>
+      <parentdomain>sysadm_r</parentdomain>
+      <entrypoint>/usr/sbin/cannaserver</entrypoint>
+    </domaintrans>
+    <allowfile type="allow">
+      <comment># to communicate syslogd
+</comment>
+      <path>dev_log_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowcom type="allow">
+      <comment/>
+      <option>unix</option>
+      <domain>syslogd_t</domain>
+    </allowcom>
+    <allowfile type="exclusive">
+      <comment># create /var/run securely
+</comment>
+      <path>/var/run</path>
+      <label>cannaserver_var_run_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>cannaserver_var_run_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="exclusive">
+      <comment># create tmp file securely
+</comment>
+      <path>/tmp</path>
+      <label>cannaserver_tmp_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>cannaserver_tmp_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfs type="exclusive">
+      <comment/>
+      <fs>tmpfs</fs>
+      <label>cannaserver_tmpfs_t</label>
+    </allowfs>
+    <allowfile type="allow">
+      <comment/>
+      <path>cannaserver_tmpfs_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment>## end of common access rights for daemon
+</comment>
+      <path>/var/run/.iroha_unix</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var/log/canna</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var/lib/canna</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+  </section>
+  <section id="crond_t" type="domain">
+    <comment>#Author: Yuichi Nakamura &lt;ynakam@gwu.edu&gt;
+#domain for cron related services
+# cron scripts will run separete domain see system_crond_script_t.a
+## common access rights for daemon
+</comment>
+    <domaintrans>
+      <comment/>
+      <parentdomain>initrc_t</parentdomain>
+      <parentdomain>sysadm_r</parentdomain>
+      <entrypoint>/usr/sbin/crond</entrypoint>
+      <entrypoint>/usr/sbin/atd</entrypoint>
+    </domaintrans>
+    <allowfile type="allow">
+      <comment># to communicate syslogd
+</comment>
+      <path>dev_log_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowcom type="allow">
+      <comment/>
+      <option>unix</option>
+      <domain>syslogd_t</domain>
+    </allowcom>
+    <allowfile type="exclusive">
+      <comment># create /var/run securely
+</comment>
+      <path>/var/run</path>
+      <label>crond_var_run_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>crond_var_run_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="exclusive">
+      <comment># create tmp file securely
+</comment>
+      <path>/tmp</path>
+      <label>crond_tmp_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>crond_tmp_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfs type="exclusive">
+      <comment/>
+      <fs>tmpfs</fs>
+      <label>crond_tmpfs_t</label>
+    </allowfs>
+    <allowfile type="allow">
+      <comment/>
+      <path>crond_tmpfs_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment>## end of common access rights for daemon
+#access cron related files
+</comment>
+      <path>/etc/crontab</path>
+      <permission>r</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc/cron.daily</path>
+      <permission>r</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc/cron.hourly</path>
+      <permission>r</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc/cron.weekly</path>
+      <permission>r</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc/cron.monthly</path>
+      <permission>r</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var/spool/cron</path>
+      <permission>r</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var/spool/anacron</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc/cron.d</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow" only="yes">
+      <comment/>
+      <path>/var/log</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/bin/sh</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment>#system file
+</comment>
+      <path>/etc/shadow</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment>#to get selinux security information
+</comment>
+      <path>/etc/selinux/seedit</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowpriv type="allow">
+      <comment/>
+      <option>getsecurity</option>
+    </allowpriv>
+    <allowproc type="allow">
+      <comment/>
+      <option>self</option>
+      <permission>r</permission>
+      <permission>w</permission>
+    </allowproc>
+    <allowpriv type="allow">
+      <comment/>
+      <option>netlink</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment/>
+      <option>klog_write</option>
+    </allowpriv>
+  </section>
+  <section id="dbus_t" type="domain">
+    <comment>#Author: Yuichi Nakamura
+## common access rights for daemon
+</comment>
+    <domaintrans>
+      <comment/>
+      <parentdomain>initrc_t</parentdomain>
+      <parentdomain>sysadm_r</parentdomain>
+      <entrypoint>/usr/bin/dbus-daemon-1</entrypoint>
+      <entrypoint>/usr/bin/dbus-daemon</entrypoint>
+    </domaintrans>
+    <allowfile type="allow">
+      <comment># to communicate syslogd
+</comment>
+      <path>dev_log_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowcom type="allow">
+      <comment/>
+      <option>unix</option>
+      <domain>syslogd_t</domain>
+    </allowcom>
+    <allowfile type="exclusive">
+      <comment># create /var/run securely
+</comment>
+      <path>/var/run</path>
+      <label>dbus_var_run_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>dbus_var_run_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="exclusive">
+      <comment># create tmp file securely
+</comment>
+      <path>/tmp</path>
+      <label>dbus_tmp_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>dbus_tmp_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfs type="exclusive">
+      <comment/>
+      <fs>tmpfs</fs>
+      <label>dbus_tmpfs_t</label>
+    </allowfs>
+    <allowfile type="allow">
+      <comment/>
+      <path>dbus_tmpfs_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment>## end of common access rights for daemon
+</comment>
+      <path>/var/run/dbus</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc/selinux/seedit</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowcom type="allow">
+      <comment/>
+      <option>pipe</option>
+      <domain>gdm_t</domain>
+      <permission>r</permission>
+      <permission>w</permission>
+    </allowcom>
+    <allowpriv type="allow">
+      <comment/>
+      <option>netlink</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment/>
+      <option>getsecurity</option>
+    </allowpriv>
+    <allowfile type="allow">
+      <comment/>
+      <path>/home</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+  </section>
+  <section id="dhclient_t" type="domain">
+    <comment>#Author:Yuichi Nakamura
+## common access rights for daemon
+</comment>
+    <domaintrans>
+      <comment/>
+      <parentdomain>initrc_t</parentdomain>
+      <parentdomain>sysadm_r</parentdomain>
+      <entrypoint>/sbin/dhclient</entrypoint>
+    </domaintrans>
+    <domaintrans>
+      <comment/>
+      <parentdomain>kernel_t</parentdomain>
+      <parentdomain>udev_t</parentdomain>
+      <entrypoint>/sbin/dhclient</entrypoint>
+    </domaintrans>
+    <allowfile type="allow">
+      <comment># to communicate syslogd
+</comment>
+      <path>dev_log_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowcom type="allow">
+      <comment/>
+      <option>unix</option>
+      <domain>syslogd_t</domain>
+    </allowcom>
+    <allowfile type="exclusive">
+      <comment># create /var/run securely
+</comment>
+      <path>/var/run</path>
+      <label>dhclient_var_run_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>dhclient_var_run_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="exclusive">
+      <comment># create tmp file securely
+</comment>
+      <path>/tmp</path>
+      <label>dhclient_tmp_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>dhclient_tmp_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfs type="exclusive">
+      <comment/>
+      <fs>tmpfs</fs>
+      <label>dhclient_tmpfs_t</label>
+    </allowfs>
+    <allowfile type="allow">
+      <comment/>
+      <path>dhclient_tmpfs_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment>## end of common access rights for daemon
+</comment>
+      <path>/bin/bash</path>
+      <permission>r</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/bin/sh</path>
+      <permission>r</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="exclusive">
+      <comment/>
+      <path>/etc</path>
+      <label>etc_runtime_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>etc_runtime_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc/resolv.conf</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var/lib/dhcp</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allownet type="allow">
+      <comment/>
+      <option>net</option>
+    </allownet>
+    <allownet type="allow">
+      <comment/>
+      <option>raw</option>
+    </allownet>
+    <allownet type="allow">
+      <comment/>
+      <option>udp</option>
+      <port>68</port>
+    </allownet>
+    <allowpriv type="allow">
+      <comment/>
+      <option>net</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment/>
+      <option>netlink</option>
+    </allowpriv>
+  </section>
+  <section id="dovecot_t" type="domain">
+    <comment>## common access rights for daemon
+</comment>
+    <domaintrans>
+      <comment/>
+      <parentdomain>initrc_t</parentdomain>
+      <parentdomain>sysadm_r</parentdomain>
+      <entrypoint>/usr/sbin/dovecot</entrypoint>
+    </domaintrans>
+    <allowfile type="allow">
+      <comment># to communicate syslogd
+</comment>
+      <path>dev_log_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowcom type="allow">
+      <comment/>
+      <option>unix</option>
+      <domain>syslogd_t</domain>
+    </allowcom>
+    <allowfile type="exclusive">
+      <comment># create /var/run securely
+</comment>
+      <path>/var/run</path>
+      <label>dovecot_var_run_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>dovecot_var_run_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="exclusive">
+      <comment># create tmp file securely
+</comment>
+      <path>/tmp</path>
+      <label>dovecot_tmp_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>dovecot_tmp_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfs type="exclusive">
+      <comment/>
+      <fs>tmpfs</fs>
+      <label>dovecot_tmpfs_t</label>
+    </allowfs>
+    <allowfile type="allow">
+      <comment/>
+      <path>dovecot_tmpfs_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment>## end of common access rights for daemon
+</comment>
+      <path>/var/run/dovecot</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var/run/dovecot-login</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allownet type="allow">
+      <comment/>
+      <option>net</option>
+    </allownet>
+    <allownet type="allow">
+      <comment/>
+      <option>tcp</option>
+      <port>143</port>
+    </allownet>
+    <allownet type="allow">
+      <comment/>
+      <option>tcp</option>
+      <port>110</port>
+    </allownet>
+    <allownet type="allow">
+      <comment/>
+      <option>tcp</option>
+      <port>993</port>
+    </allownet>
+    <allownet type="allow">
+      <comment/>
+      <option>tcp</option>
+      <port>995</port>
+    </allownet>
+    <allowpriv type="allow">
+      <comment/>
+      <option>chroot</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment>#dovecot requires search access to current dir to start from command line
+</comment>
+      <option>search</option>
+    </allowpriv>
+  </section>
+  <section id="gdm_t" type="domain">
+    <comment>#Author: Yuichi Nakamura &lt;ynakam@gwu.edu&gt;
+</comment>
+    <domaintrans>
+      <comment/>
+      <parentdomain>init_t</parentdomain>
+      <entrypoint>/usr/bin/gdm-binary</entrypoint>
+    </domaintrans>
+    <domaintrans>
+      <comment/>
+      <parentdomain>init_t</parentdomain>
+      <entrypoint>/usr/bin/gdmgreeter</entrypoint>
+    </domaintrans>
+    <allowfile type="allow">
+      <comment/>
+      <path>/bin/bash</path>
+      <permission>r</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/bin/sh</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc/kde</path>
+      <permission>r</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>etc_runtime_t</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc/alsa</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow" only="yes">
+      <comment/>
+      <path>/var/run</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var/run/console</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var/gdm</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var/log</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow" only="yes">
+      <comment/>
+      <path>/</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="exclusive">
+      <comment/>
+      <path>/tmp</path>
+      <label>gdm_tmp_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>gdm_tmp_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>xserver_tmp_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/home</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowpriv type="allow">
+      <comment/>
+      <option>netlink</option>
+    </allowpriv>
+    <allowfile type="allow">
+      <comment/>
+      <path>dev_log_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>devdri_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc/shadow</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/root</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc/selinux/seedit</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowpriv type="allow">
+      <comment/>
+      <option>setattr</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment/>
+      <option>klog_write</option>
+    </allowpriv>
+    <allowfile type="allow">
+      <comment>#can reboot
+</comment>
+      <path>/dev/initctl</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowpriv type="allow">
+      <comment/>
+      <option>getsecurity</option>
+    </allowpriv>
+    <allowcom type="allow">
+      <comment/>
+      <option>unix</option>
+      <domain>syslogd_t</domain>
+    </allowcom>
+    <allowproc type="allow">
+      <comment/>
+      <option>self</option>
+      <permission>w</permission>
+    </allowproc>
+    <allowcom type="allow">
+      <comment/>
+      <option>sig</option>
+      <domain>xserver_t</domain>
+      <permission>k</permission>
+      <permission>o</permission>
+    </allowcom>
+    <allowcom type="allow">
+      <comment/>
+      <option>unix</option>
+      <domain>xserver_t</domain>
+    </allowcom>
+    <allowfs type="allow">
+      <comment/>
+      <fs>sysfs</fs>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfs>
+    <allowcom type="allow">
+      <comment/>
+      <option>sig</option>
+      <domain>global</domain>
+      <permission>o</permission>
+    </allowcom>
+  </section>
+  <section id="getty_t" type="domain">
+    <comment>#Author:Yuichi Nakamura &lt;ynakam@gwu.edu&gt;
+</comment>
+    <domaintrans>
+      <comment/>
+      <parentdomain>init_t</parentdomain>
+      <entrypoint>/sbin/mingetty</entrypoint>
+    </domaintrans>
+    <allowfile type="allow" only="yes">
+      <comment/>
+      <path>/var/run</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var/log</path>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var/log/wtmp</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfs type="allow">
+      <comment/>
+      <fs>sysfs</fs>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfs>
+    <allowfile type="allow">
+      <comment/>
+      <path>etc_runtime_t</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowcom type="allow">
+      <comment/>
+      <option>unix</option>
+      <domain>syslogd_t</domain>
+    </allowcom>
+    <allowfile type="allow">
+      <comment/>
+      <path>dev_log_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+  </section>
+  <section id="hald_t" type="domain">
+    <comment>## common access rights for daemon
+</comment>
+    <domaintrans>
+      <comment/>
+      <parentdomain>initrc_t</parentdomain>
+      <parentdomain>sysadm_r</parentdomain>
+      <entrypoint>/usr/sbin/hald</entrypoint>
+    </domaintrans>
+    <allowfile type="allow">
+      <comment># to communicate syslogd
+</comment>
+      <path>dev_log_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowcom type="allow">
+      <comment/>
+      <option>unix</option>
+      <domain>syslogd_t</domain>
+    </allowcom>
+    <allowfile type="exclusive">
+      <comment># create /var/run securely
+</comment>
+      <path>/var/run</path>
+      <label>hald_var_run_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>hald_var_run_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="exclusive">
+      <comment># create tmp file securely
+</comment>
+      <path>/tmp</path>
+      <label>hald_tmp_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>hald_tmp_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfs type="exclusive">
+      <comment/>
+      <fs>tmpfs</fs>
+      <label>hald_tmpfs_t</label>
+    </allowfs>
+    <allowfile type="allow">
+      <comment/>
+      <path>hald_tmpfs_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment>## end of common access rights for daemon
+</comment>
+      <path>/dev/fd0</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="exclusive">
+      <comment/>
+      <path>/etc</path>
+      <label>etc_runtime_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>etc_runtime_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/media</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowcom type="allow">
+      <comment>#communicate with dbus
+</comment>
+      <option>unix</option>
+      <domain>dbus_t</domain>
+    </allowcom>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var/run/dbus</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowcom type="allow">
+      <comment/>
+      <option>unix</option>
+      <domain>acpid_t</domain>
+    </allowcom>
+    <allowfile type="allow">
+      <comment/>
+      <path>acpid_var_run_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowpriv type="allow">
+      <comment/>
+      <option>netlink</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment/>
+      <option>net</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment/>
+      <option>rawio</option>
+    </allowpriv>
+  </section>
+  <section id="httpd_t" type="domain">
+    <comment>#Author Yuichi Nakamura &lt;ynakam@gwu.edu&gt;
+## common access rights for daemon
+</comment>
+    <domaintrans>
+      <comment/>
+      <parentdomain>initrc_t</parentdomain>
+      <parentdomain>sysadm_r</parentdomain>
+      <entrypoint>/usr/sbin/httpd</entrypoint>
+    </domaintrans>
+    <allowfile type="allow">
+      <comment># to communicate syslogd
+</comment>
+      <path>dev_log_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowcom type="allow">
+      <comment/>
+      <option>unix</option>
+      <domain>syslogd_t</domain>
+    </allowcom>
+    <allowfile type="exclusive">
+      <comment># create /var/run securely
+</comment>
+      <path>/var/run</path>
+      <label>httpd_var_run_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>httpd_var_run_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="exclusive">
+      <comment># create tmp file securely
+</comment>
+      <path>/tmp</path>
+      <label>httpd_tmp_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>httpd_tmp_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfs type="exclusive">
+      <comment/>
+      <fs>tmpfs</fs>
+      <label>httpd_tmpfs_t</label>
+    </allowfs>
+    <allowfile type="allow">
+      <comment/>
+      <path>httpd_tmpfs_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment>## end of common access rights for daemon
+</comment>
+      <path>/etc/krb5.conf</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc/passwd</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/home</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var/log/httpd</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var/www</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var/www/cgi-bin</path>
+      <permission>r</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>etc_runtime_t</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allownet type="allow">
+      <comment/>
+      <option>net</option>
+    </allownet>
+    <allowcom type="allow">
+      <comment/>
+      <option>sig</option>
+      <domain>getty_t</domain>
+      <permission>c</permission>
+    </allowcom>
+    <allownet type="allow">
+      <comment/>
+      <option>tcp</option>
+      <port>443</port>
+    </allownet>
+    <allownet type="allow">
+      <comment/>
+      <option>tcp</option>
+      <port>80</port>
+    </allownet>
+    <allownet type="allow">
+      <comment/>
+      <option>udp</option>
+      <port>443</port>
+    </allownet>
+    <allownet type="allow">
+      <comment/>
+      <option>udp</option>
+      <port>80</port>
+    </allownet>
+  </section>
+  <section id="iiimd_t" type="domain">
+    <comment>#Author:Yuichi Nakamura &lt;ynakam@gwu.edu&gt;
+## common access rights for daemon
+</comment>
+    <domaintrans>
+      <comment/>
+      <parentdomain>initrc_t</parentdomain>
+      <parentdomain>sysadm_r</parentdomain>
+      <entrypoint>/usr/bin/iiimd</entrypoint>
+    </domaintrans>
+    <allowfile type="allow">
+      <comment># to communicate syslogd
+</comment>
+      <path>dev_log_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowcom type="allow">
+      <comment/>
+      <option>unix</option>
+      <domain>syslogd_t</domain>
+    </allowcom>
+    <allowfile type="exclusive">
+      <comment># create /var/run securely
+</comment>
+      <path>/var/run</path>
+      <label>iiimd_var_run_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>iiimd_var_run_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="exclusive">
+      <comment># create tmp file securely
+</comment>
+      <path>/tmp</path>
+      <label>iiimd_tmp_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>iiimd_tmp_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfs type="exclusive">
+      <comment/>
+      <fs>tmpfs</fs>
+      <label>iiimd_tmpfs_t</label>
+    </allowfs>
+    <allowfile type="allow">
+      <comment/>
+      <path>iiimd_tmpfs_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment>## end of common access rights for daemon
+</comment>
+      <path>/var/log/iiim</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var/run/iiim</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment>#communicate with canna
+</comment>
+      <path>/var/run/.iroha_unix</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowcom type="allow">
+      <comment/>
+      <option>unix</option>
+      <domain>cannaserver_t</domain>
+    </allowcom>
+  </section>
+  <section id="init_t" type="domain">
+    <comment>#Author: Yuichi Nakamura &lt;ynakam@gwu.edu&gt;
+#comment:Domain for init program
+</comment>
+    <domaintrans>
+      <comment/>
+      <parentdomain>kernel_t</parentdomain>
+      <entrypoint>/sbin/init</entrypoint>
+    </domaintrans>
+    <allowdev type="allow">
+      <comment/>
+      <option>root</option>
+      <path>tmpfs</path>
+    </allowdev>
+    <allowfile type="allow" only="yes">
+      <comment/>
+      <path>/</path>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/bin/sh</path>
+      <permission>r</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/bin/bash</path>
+      <permission>r</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc</path>
+      <permission>r</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/dev</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="exclusive">
+      <comment/>
+      <path>/etc</path>
+      <label>etc_runtime_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/tmp</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var/log</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var/run</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>dev_log_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>etc_runtime_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowpriv type="allow">
+      <comment/>
+      <option>boot</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment/>
+      <option>unlabel</option>
+    </allowpriv>
+    <allowcom type="allow">
+      <comment/>
+      <option>sig</option>
+      <domain>global</domain>
+      <permission>c</permission>
+      <permission>k</permission>
+      <permission>s</permission>
+      <permission>o</permission>
+    </allowcom>
+    <allowcom type="allow">
+      <comment/>
+      <option>unix</option>
+      <domain>syslogd_t</domain>
+    </allowcom>
+    <allowcom type="allow">
+      <comment/>
+      <option>unix</option>
+      <domain>initrc_t</domain>
+    </allowcom>
+    <allownet type="allow">
+      <comment/>
+      <option>net</option>
+    </allownet>
+    <allowfs type="allow">
+      <comment/>
+      <fs>sysfs</fs>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfs>
+    <allowfs type="allow">
+      <comment/>
+      <fs>ramfs</fs>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfs>
+    <allowfs type="allow">
+      <comment/>
+      <fs>tmpfs</fs>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfs>
+  </section>
+  <section id="initrc_t" type="domain">
+    <comment>#Author Yuichi Nakamura &lt;ynakam@gwu.edu&gt;
+#comment:Domain for init scripts
+</comment>
+    <domaintrans>
+      <comment/>
+      <parentdomain>init_t</parentdomain>
+      <entrypoint>/etc/init.d</entrypoint>
+      <entrypoint>/etc/rc.d/rc</entrypoint>
+      <entrypoint>/etc/rc.d/rc.sysinit</entrypoint>
+      <entrypoint>/etc/rc.d/rc.local</entrypoint>
+    </domaintrans>
+    <domaintrans>
+      <comment/>
+      <parentdomain>run_init_t</parentdomain>
+      <parentdomain>sysadm_r</parentdomain>
+      <entrypoint>/etc/rc.d/init.d</entrypoint>
+      <entrypoint>/etc/init.d</entrypoint>
+    </domaintrans>
+    <allowfile type="allow">
+      <comment>##File related acl
+#can exec shell
+</comment>
+      <path>/bin/bash</path>
+      <permission>r</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/bin/sh</path>
+      <permission>r</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/bin/tcsh</path>
+      <permission>r</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment>#can write devfiles
+</comment>
+      <path>/dev</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/dev/urandom</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="exclusive">
+      <comment>#files under /etc
+</comment>
+      <path>/etc</path>
+      <label>etc_runtime_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>etc_runtime_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc/adjtime</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc/selinux/seedit</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow" exclusive="yes">
+      <comment>#can admin /var/run
+</comment>
+      <path>/var/run</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var/run</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment>#homedir
+</comment>
+      <path>/home</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/root</path>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment>#can admin /tmp
+</comment>
+      <path>/tmp</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow" exclusive="yes">
+      <comment/>
+      <path>/tmp</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment>#admin some system files
+</comment>
+      <path>/var/lib</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var/lock</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var/log</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment>#other system files
+</comment>
+      <path>/media</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var/gdm</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment>#for X
+</comment>
+      <path>/usr/share/fonts</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/usr/X11R6/lib/X11/fonts</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow" only="yes">
+      <comment>#can adm files in /
+</comment>
+      <path>/</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allownet type="allow">
+      <comment>#network
+</comment>
+      <option>net</option>
+    </allownet>
+    <allownet type="allow">
+      <comment/>
+      <option>raw</option>
+    </allownet>
+    <allownet type="allow">
+      <comment/>
+      <option>connect</option>
+    </allownet>
+    <allowcom type="allow">
+      <comment>##IPC
+#can communicate syslog
+</comment>
+      <option>unix</option>
+      <domain>syslogd_t</domain>
+    </allowcom>
+    <allowfile type="allow">
+      <comment/>
+      <path>dev_log_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowcom type="allow">
+      <comment/>
+      <option>sig</option>
+      <domain>global</domain>
+      <permission>c</permission>
+      <permission>k</permission>
+      <permission>s</permission>
+      <permission>o</permission>
+    </allowcom>
+    <allowproc type="allow">
+      <comment/>
+      <option>other</option>
+      <permission>r</permission>
+    </allowproc>
+    <allowfs type="allow">
+      <comment/>
+      <fs>proc</fs>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfs>
+    <allowfs type="allow">
+      <comment/>
+      <fs>sysfs</fs>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfs>
+    <allowfs type="allow">
+      <comment/>
+      <fs>ramfs</fs>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfs>
+    <allowfs type="allow">
+      <comment/>
+      <fs>usbfs</fs>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfs>
+    <allowfs type="allow">
+      <comment/>
+      <fs>xattrfs</fs>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfs>
+    <allowpriv type="allow">
+      <comment>#priviledges
+</comment>
+      <option>netlink</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment/>
+      <option>klog_read</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment/>
+      <option>klog_write</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment/>
+      <option>klog_adm</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment/>
+      <option>nice</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment/>
+      <option>boot</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment/>
+      <option>mount</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment/>
+      <option>net</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment/>
+      <option>rawio</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment/>
+      <option>swapon</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment/>
+      <option>devcreate</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment/>
+      <option>time</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment/>
+      <option>getsecurity</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment/>
+      <option>unlabel</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment/>
+      <option>search</option>
+    </allowpriv>
+    <allowfile type="allow">
+      <comment>### application specific configrations
+#for named
+</comment>
+      <path>/var/named/chroot/etc</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var/named</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowpriv type="allow">
+      <comment/>
+      <option>chroot</option>
+    </allowpriv>
+    <allowfile type="allow">
+      <comment>#for mysql
+</comment>
+      <path>/var/lib/mysql</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowcom type="allow">
+      <comment/>
+      <option>unix</option>
+      <domain>mysqld_t</domain>
+    </allowcom>
+    <allowcom type="allow">
+      <comment/>
+      <option>sig</option>
+      <domain>mysqld_t</domain>
+      <permission>n</permission>
+    </allowcom>
+    <allowfile type="allow">
+      <comment>#for postfix
+</comment>
+      <path>/etc/postfix</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var/spool/postfix</path>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment>#for cron
+</comment>
+      <path>/var/spool/anacron</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc/crontab</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment>#for samba
+</comment>
+      <path>/etc/samba</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowcom type="allow">
+      <comment>#for canna server
+</comment>
+      <option>unix</option>
+      <domain>cannaserver_t</domain>
+    </allowcom>
+    <allowproc type="allow">
+      <comment>#kudzu related config
+</comment>
+      <option>self</option>
+      <permission>w</permission>
+    </allowproc>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc/sysconfig/hwconf</path>
+      <permission>r</permission>
+      <permission>w</permission>
+    </allowfile>
+    <allowdev type="allow">
+      <comment>###Distribution specific configuration
+# initscripts uses tmpfs as device directory
+</comment>
+      <option>root</option>
+      <path>tmpfs</path>
+    </allowdev>
+    <allowfs type="allow">
+      <comment/>
+      <fs>tmpfs</fs>
+      <permission>x</permission>
+    </allowfs>
+  </section>
+  <section id="kernel_t" type="domain">
+    <comment>#Author: Yuichi Nakamura &lt;ynakam@gwu.edu&gt;
+</comment>
+    <allowdev type="allow">
+      <comment/>
+      <option>root</option>
+      <path>tmpfs</path>
+    </allowdev>
+    <allowfs type="allow">
+      <comment/>
+      <fs>tmpfs</fs>
+      <permission>x</permission>
+    </allowfs>
+    <allowfile type="allow">
+      <comment/>
+      <path>/bin/bash</path>
+      <permission>r</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/bin/sh</path>
+      <permission>r</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/dev</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc/hotplug</path>
+      <permission>r</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc/hotplug.d</path>
+      <permission>r</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var/log</path>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>etc_runtime_t</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowpriv type="allow">
+      <comment/>
+      <option>mount</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment/>
+      <option>net</option>
+    </allowpriv>
+    <allownet type="allow">
+      <comment/>
+      <option>raw</option>
+    </allownet>
+    <allowfs type="allow">
+      <comment/>
+      <fs>sysfs</fs>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfs>
+    <allowpriv type="allow">
+      <comment/>
+      <option>netlink</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment/>
+      <option>unlabel</option>
+    </allowpriv>
+    <allowcom type="allow">
+      <comment/>
+      <option>unix</option>
+      <domain>hald_t</domain>
+    </allowcom>
+  </section>
+  <section id="klogd_t" type="domain">
+    <comment>## common access rights for daemon
+</comment>
+    <domaintrans>
+      <comment/>
+      <parentdomain>initrc_t</parentdomain>
+      <parentdomain>sysadm_r</parentdomain>
+      <entrypoint>/sbin/klogd</entrypoint>
+    </domaintrans>
+    <domaintrans>
+      <comment/>
+      <parentdomain>kernel_t</parentdomain>
+      <entrypoint>/sbin/klogd</entrypoint>
+    </domaintrans>
+    <allowfile type="allow">
+      <comment># to communicate syslogd
+</comment>
+      <path>dev_log_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowcom type="allow">
+      <comment/>
+      <option>unix</option>
+      <domain>syslogd_t</domain>
+    </allowcom>
+    <allowfile type="exclusive">
+      <comment># create /var/run securely
+</comment>
+      <path>/var/run</path>
+      <label>klogd_var_run_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>klogd_var_run_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="exclusive">
+      <comment># create tmp file securely
+</comment>
+      <path>/tmp</path>
+      <label>klogd_tmp_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>klogd_tmp_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfs type="exclusive">
+      <comment/>
+      <fs>tmpfs</fs>
+      <label>klogd_tmpfs_t</label>
+    </allowfs>
+    <allowfile type="allow">
+      <comment/>
+      <path>klogd_tmpfs_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowpriv type="allow">
+      <comment>## end of common access rights for daemon
+</comment>
+      <option>rawio</option>
+    </allowpriv>
+    <allowfile type="allow">
+      <comment/>
+      <path>/dev/mem</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/dev/kmem</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/dev/console</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfs type="allow">
+      <comment/>
+      <fs>proc_kmsg</fs>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfs>
+    <allowpriv type="allow">
+      <comment/>
+      <option>klog_adm</option>
+    </allowpriv>
+  </section>
+  <section id="login_t" type="domain">
+    <comment/>
+    <domaintrans>
+      <comment/>
+      <parentdomain>getty_t</parentdomain>
+      <entrypoint>/bin/login</entrypoint>
+    </domaintrans>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc/selinux/seedit</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/dev/apm_bios</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/dev/console</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc/shadow</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/home</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/root</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var/lock</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>etc_runtime_t</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc/alsa/pcm</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var/log</path>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var/log</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow" only="yes">
+      <comment/>
+      <path>/var/run</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var/run/console</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var/spool/mail</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>dev_log_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowpriv type="allow">
+      <comment/>
+      <option>getsecurity</option>
+    </allowpriv>
+    <allowcom type="allow">
+      <comment/>
+      <option>unix</option>
+      <domain>syslogd_t</domain>
+    </allowcom>
+    <allowcom type="allow">
+      <comment/>
+      <option>sig</option>
+      <domain>global</domain>
+      <permission>o</permission>
+    </allowcom>
+    <allowproc type="allow">
+      <comment/>
+      <option>self</option>
+      <permission>w</permission>
+    </allowproc>
+    <allowpriv type="allow">
+      <comment/>
+      <option>netlink</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment/>
+      <option>klog_write</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment/>
+      <option>setattr</option>
+    </allowpriv>
+    <allowdev type="allow">
+      <comment/>
+      <option>tty</option>
+      <role>global</role>
+      <permission>admin</permission>
+    </allowdev>
+    <allowdev type="allow">
+      <comment/>
+      <option>tty</option>
+      <role>general</role>
+      <permission>admin</permission>
+    </allowdev>
+  </section>
+  <section id="lvm_t" type="domain">
+    <comment>#Author Yuichi Nakamura &lt;ynakam@gwu.edu&gt;
+</comment>
+    <domaintrans>
+      <comment/>
+      <parentdomain>initrc_t</parentdomain>
+      <entrypoint>/sbin/lvm.static</entrypoint>
+    </domaintrans>
+    <allowpriv type="allow">
+      <comment/>
+      <option>part_relabel</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment/>
+      <option>getsecurity</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment/>
+      <option>setsecparam</option>
+    </allowpriv>
+    <allowfile type="allow">
+      <comment/>
+      <path>/dev</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowdev type="allow">
+      <comment/>
+      <option>tty</option>
+      <role>vcs</role>
+      <permission>r</permission>
+    </allowdev>
+    <allowfile type="allow">
+      <comment/>
+      <path>/dev/port</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/dev/mem</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>dev_log_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc/selinux/seedit</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc/lvm</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>etc_runtime_t</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var/lock/lvm</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfs type="allow">
+      <comment/>
+      <fs>sysfs</fs>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfs>
+    <allowfs type="allow">
+      <comment/>
+      <fs>proc_kcore</fs>
+      <permission>s</permission>
+    </allowfs>
+  </section>
+  <section id="mail_t" type="domain">
+    <comment/>
+    <domaintrans>
+      <comment/>
+      <parentdomain>staff_r</parentdomain>
+      <entrypoint>/bin/mail</entrypoint>
+    </domaintrans>
+    <domaintrans>
+      <comment/>
+      <parentdomain>user_r</parentdomain>
+      <entrypoint>/bin/mail</entrypoint>
+    </domaintrans>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var/spool/mail</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="exclusive">
+      <comment/>
+      <path>/tmp</path>
+      <label>mail_tmp_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>mail_tmp_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+  </section>
+  <section id="modutils_t" type="domain">
+    <comment/>
+    <domaintrans>
+      <comment/>
+      <parentdomain>initrc_t</parentdomain>
+      <parentdomain>kernel_t</parentdomain>
+      <parentdomain>xserver_t</parentdomain>
+      <entrypoint>/sbin/insmod</entrypoint>
+      <entrypoint>/sbin/modprobe</entrypoint>
+      <entrypoint>/sbin/depmod</entrypoint>
+      <entrypoint>/sbin/rmmod</entrypoint>
+    </domaintrans>
+    <allowcom type="allow">
+      <comment/>
+      <option>unix</option>
+      <domain>syslogd_t</domain>
+    </allowcom>
+    <allowcom type="allow">
+      <comment/>
+      <option>sig</option>
+      <domain>global</domain>
+      <permission>o</permission>
+    </allowcom>
+    <allowfile type="allow" only="yes">
+      <comment/>
+      <path>/var/log</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var/log/gdm</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/lib/modules</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/bin/bash</path>
+      <permission>r</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/bin/sh</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/dev/agpgart</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/dev/apm_bios</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="exclusive">
+      <comment/>
+      <path>/etc</path>
+      <label>etc_runtime_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>etc_runtime_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>dev_log_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfs type="allow">
+      <comment/>
+      <fs>proc</fs>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfs>
+    <allowfs type="allow">
+      <comment/>
+      <fs>sysfs</fs>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfs>
+    <allowcom type="allow">
+      <comment/>
+      <option>unix</option>
+      <domain>xserver_t</domain>
+    </allowcom>
+    <allowpriv type="allow">
+      <comment/>
+      <option>insmod</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment/>
+      <option>mount</option>
+    </allowpriv>
+    <allownet type="allow">
+      <comment/>
+      <option>net</option>
+    </allownet>
+    <allownet type="allow">
+      <comment/>
+      <option>raw</option>
+    </allownet>
+    <allowfs type="allow">
+      <comment/>
+      <fs>usbfs</fs>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfs>
+  </section>
+  <section id="mount_t" type="domain">
+    <comment>#comment:
+</comment>
+    <domaintrans>
+      <comment/>
+      <parentdomain>initrc_t</parentdomain>
+      <entrypoint>/bin/mount</entrypoint>
+    </domaintrans>
+    <domaintrans>
+      <comment/>
+      <parentdomain>initrc_t</parentdomain>
+      <entrypoint>/bin/umount</entrypoint>
+    </domaintrans>
+    <domaintrans>
+      <comment/>
+      <parentdomain>automount_t</parentdomain>
+      <entrypoint>/bin/mount</entrypoint>
+    </domaintrans>
+    <domaintrans>
+      <comment/>
+      <parentdomain>automount_t</parentdomain>
+      <entrypoint>/bin/umount</entrypoint>
+    </domaintrans>
+    <allowdev type="allow">
+      <comment/>
+      <option>root</option>
+      <path>tmpfs</path>
+    </allowdev>
+    <allowpriv type="allow">
+      <comment/>
+      <option>mount</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment/>
+      <option>rawio</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment/>
+      <option>search</option>
+    </allowpriv>
+    <allowfile type="allow">
+      <comment/>
+      <path>/dev</path>
+      <permission>r</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/dev/fd0</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/dev/cdrom</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/dev/console</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="exclusive">
+      <comment/>
+      <path>/etc</path>
+      <label>etc_runtime_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>etc_runtime_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+  </section>
+  <section id="mysqld_t" type="domain">
+    <comment>## common access rights for daemon
+</comment>
+    <domaintrans>
+      <comment/>
+      <parentdomain>initrc_t</parentdomain>
+      <parentdomain>sysadm_r</parentdomain>
+      <entrypoint>/usr/libexec/mysqld</entrypoint>
+    </domaintrans>
+    <allowfile type="allow">
+      <comment># to communicate syslogd
+</comment>
+      <path>dev_log_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowcom type="allow">
+      <comment/>
+      <option>unix</option>
+      <domain>syslogd_t</domain>
+    </allowcom>
+    <allowfile type="exclusive">
+      <comment># create /var/run securely
+</comment>
+      <path>/var/run</path>
+      <label>mysqld_var_run_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>mysqld_var_run_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="exclusive">
+      <comment># create tmp file securely
+</comment>
+      <path>/tmp</path>
+      <label>mysqld_tmp_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>mysqld_tmp_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfs type="exclusive">
+      <comment/>
+      <fs>tmpfs</fs>
+      <label>mysqld_tmpfs_t</label>
+    </allowfs>
+    <allowfile type="allow">
+      <comment/>
+      <path>mysqld_tmpfs_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment>## end of common access rights for daemon
+</comment>
+      <path>/var/run/mysqld</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var/lib/mysql</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow" only="yes">
+      <comment/>
+      <path>/var/log</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>etc_runtime_t</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allownet type="allow">
+      <comment/>
+      <option>net</option>
+    </allownet>
+  </section>
+  <section id="named_t" type="domain">
+    <comment>## common access rights for daemon
+</comment>
+    <domaintrans>
+      <comment/>
+      <parentdomain>initrc_t</parentdomain>
+      <parentdomain>sysadm_r</parentdomain>
+      <entrypoint>/usr/sbin/named</entrypoint>
+    </domaintrans>
+    <allowfile type="allow">
+      <comment># to communicate syslogd
+</comment>
+      <path>dev_log_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowcom type="allow">
+      <comment/>
+      <option>unix</option>
+      <domain>syslogd_t</domain>
+    </allowcom>
+    <allowfile type="exclusive">
+      <comment># create /var/run securely
+</comment>
+      <path>/var/run</path>
+      <label>named_var_run_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>named_var_run_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="exclusive">
+      <comment># create tmp file securely
+</comment>
+      <path>/tmp</path>
+      <label>named_tmp_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>named_tmp_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfs type="exclusive">
+      <comment/>
+      <fs>tmpfs</fs>
+      <label>named_tmpfs_t</label>
+    </allowfs>
+    <allowfile type="allow">
+      <comment/>
+      <path>named_tmpfs_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment>## end of common access rights for daemon
+</comment>
+      <path>/var/named</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment>#for chroot environment
+</comment>
+      <path>/var/named/chroot/var/run/named</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var/named/chroot/var/named/data</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var/named/chroot/var/named/slaves</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var/named/chroot/var/tmp</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment>#for not chroot
+</comment>
+      <path>/var/run/named</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc/named.conf</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc/named.boot</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>etc_runtime_t</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allownet type="allow">
+      <comment/>
+      <option>net</option>
+    </allownet>
+    <allownet type="allow">
+      <comment/>
+      <option>udp</option>
+      <port>53</port>
+    </allownet>
+    <allownet type="allow">
+      <comment/>
+      <option>tcp</option>
+      <port>53</port>
+    </allownet>
+    <allownet type="allow">
+      <comment/>
+      <option>tcp</option>
+      <port>953</port>
+    </allownet>
+    <allowpriv type="allow">
+      <comment/>
+      <option>chroot</option>
+    </allowpriv>
+  </section>
+  <section id="newrole_t" type="domain">
+    <comment>#comment:Domain for newrole program(this domain has big privilege)
+</comment>
+    <domaintrans>
+      <comment/>
+      <parentdomain>sysadm_r</parentdomain>
+      <parentdomain>user_r</parentdomain>
+      <parentdomain>staff_r</parentdomain>
+      <entrypoint>/usr/bin/newrole</entrypoint>
+    </domaintrans>
+    <allowpriv type="allow">
+      <comment/>
+      <option>getsecurity</option>
+    </allowpriv>
+    <allowdev type="allow">
+      <comment/>
+      <option>allterm</option>
+      <role>global</role>
+      <permission>admin</permission>
+    </allowdev>
+    <allowcom type="allow">
+      <comment/>
+      <option>unix</option>
+      <domain>syslogd_t</domain>
+    </allowcom>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var/log</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc/selinux/seedit</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc/shadow</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/dev/console</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>dev_log_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowproc type="allow">
+      <comment/>
+      <option>self</option>
+      <permission>w</permission>
+    </allowproc>
+    <allowpriv type="allow">
+      <comment/>
+      <option>netlink</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment/>
+      <option>klog_write</option>
+    </allowpriv>
+  </section>
+  <section id="postfix_t" type="domain">
+    <comment/>
+    <domaintrans>
+      <comment/>
+      <parentdomain>initrc_t</parentdomain>
+      <entrypoint>/usr/sbin/postfix</entrypoint>
+    </domaintrans>
+    <domaintrans>
+      <comment/>
+      <parentdomain>initrc_t</parentdomain>
+      <entrypoint>/usr/sbin/postalias</entrypoint>
+    </domaintrans>
+    <allownet type="allow">
+      <comment/>
+      <option>net</option>
+    </allownet>
+    <allownet type="allow">
+      <comment/>
+      <option>tcp</option>
+      <port>25</port>
+    </allownet>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var/spool/postfix</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var/spool/mail</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc/postfix</path>
+      <permission>r</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc/aliases</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc/aliases.db</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>etc_runtime_t</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/bin/sh</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/bin/bash</path>
+      <permission>r</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowcom type="allow">
+      <comment/>
+      <option>unix</option>
+      <domain>syslogd_t</domain>
+    </allowcom>
+    <allowfile type="allow">
+      <comment/>
+      <path>dev_log_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+  </section>
+  <section id="restorecon_t" type="domain">
+    <comment>#Author Yuichi Nakamura
+#comment:Domain for restorecon command
+</comment>
+    <domaintrans>
+      <comment/>
+      <parentdomain>initrc_t</parentdomain>
+      <entrypoint>/sbin/restorecon</entrypoint>
+    </domaintrans>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc/selinux/seedit</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowdev type="allow">
+      <comment/>
+      <option>root</option>
+      <path>tmpfs</path>
+    </allowdev>
+    <allowpriv type="allow">
+      <comment/>
+      <option>relabel</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment/>
+      <option>getsecurity</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment/>
+      <option>search</option>
+    </allowpriv>
+  </section>
+  <section id="rpm_script_t" type="domain">
+    <comment>#comment: This domain is domain for scripts that run from rpm. rpm enforces to give script different domain, so this domain is necessary.
+</comment>
+    <domaintrans>
+      <comment/>
+      <parentdomain>rpm_t</parentdomain>
+      <entrypoint>/bin/bash</entrypoint>
+    </domaintrans>
+    <allowpriv type="allow">
+      <comment/>
+      <option>all</option>
+    </allowpriv>
+  </section>
+  <section id="rpm_t" type="domain">
+    <comment>#comment: domain for rpm. Do not use this domain from other than sysadm_r.
+</comment>
+    <domaintrans>
+      <comment/>
+      <parentdomain>sysadm_r</parentdomain>
+      <entrypoint>/bin/rpm</entrypoint>
+    </domaintrans>
+    <allowpriv type="allow">
+      <comment/>
+      <option>all</option>
+    </allowpriv>
+  </section>
+  <section id="run_init_t" type="domain">
+    <comment>#comment:Domain for /usr/sbin/run_init command
+</comment>
+    <domaintrans>
+      <comment/>
+      <parentdomain>sysadm_r</parentdomain>
+      <entrypoint>/usr/sbin/run_init</entrypoint>
+    </domaintrans>
+    <allowfile type="allow">
+      <comment>#allow /bin/sh r,x,s;
+#allow /etc/rc.d/init.d r,x,s;
+</comment>
+      <path>/etc/passwd</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc/shadow</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/bin</path>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/bin/bash</path>
+      <permission>r</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowproc type="allow">
+      <comment/>
+      <option>self</option>
+      <permission>w</permission>
+    </allowproc>
+  </section>
+  <section id="sendmail_t" type="domain">
+    <comment>## common access rights for daemon
+</comment>
+    <domaintrans>
+      <comment/>
+      <parentdomain>initrc_t</parentdomain>
+      <parentdomain>sysadm_r</parentdomain>
+      <entrypoint>/usr/sbin/sendmail.sendmail</entrypoint>
+    </domaintrans>
+    <allowfile type="allow">
+      <comment># to communicate syslogd
+</comment>
+      <path>dev_log_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowcom type="allow">
+      <comment/>
+      <option>unix</option>
+      <domain>syslogd_t</domain>
+    </allowcom>
+    <allowfile type="exclusive">
+      <comment># create /var/run securely
+</comment>
+      <path>/var/run</path>
+      <label>sendmail_var_run_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>sendmail_var_run_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="exclusive">
+      <comment># create tmp file securely
+</comment>
+      <path>/tmp</path>
+      <label>sendmail_tmp_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>sendmail_tmp_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfs type="exclusive">
+      <comment/>
+      <fs>tmpfs</fs>
+      <label>sendmail_tmpfs_t</label>
+    </allowfs>
+    <allowfile type="allow">
+      <comment/>
+      <path>sendmail_tmpfs_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allownet type="allow">
+      <comment>## end of common access rights for daemon
+</comment>
+      <option>net</option>
+    </allownet>
+    <allownet type="allow">
+      <comment/>
+      <option>tcp</option>
+      <port>25</port>
+    </allownet>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc/aliases</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc/aliases.db</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>etc_runtime_t</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow" only="yes">
+      <comment/>
+      <path>/var/run</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+  </section>
+  <section id="smbd_t" type="domain">
+    <comment>#Author : Yuichi Nakamura &lt;ynakam@gwu.edu&gt;
+## common access rights for daemon
+</comment>
+    <domaintrans>
+      <comment/>
+      <parentdomain>initrc_t</parentdomain>
+      <parentdomain>sysadm_r</parentdomain>
+      <entrypoint>/usr/sbin/smbd</entrypoint>
+      <entrypoint>/usr/sbin/nmbd</entrypoint>
+    </domaintrans>
+    <allowfile type="allow">
+      <comment># to communicate syslogd
+</comment>
+      <path>dev_log_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowcom type="allow">
+      <comment/>
+      <option>unix</option>
+      <domain>syslogd_t</domain>
+    </allowcom>
+    <allowfile type="exclusive">
+      <comment># create /var/run securely
+</comment>
+      <path>/var/run</path>
+      <label>smbd_var_run_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>smbd_var_run_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="exclusive">
+      <comment># create tmp file securely
+</comment>
+      <path>/tmp</path>
+      <label>smbd_tmp_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>smbd_tmp_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfs type="exclusive">
+      <comment/>
+      <fs>tmpfs</fs>
+      <label>smbd_tmpfs_t</label>
+    </allowfs>
+    <allowfile type="allow">
+      <comment/>
+      <path>smbd_tmpfs_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment>## end of common access rights for daemon
+</comment>
+      <path>/etc/samba</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var/log/samba</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var/cache/samba</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allownet type="allow">
+      <comment>## Add samba share directory here
+# allow /var/samba/share r,w,s;
+# allow /home r,w,s;
+##
+</comment>
+      <option>net</option>
+    </allownet>
+    <allownet type="allow">
+      <comment/>
+      <option>tcp</option>
+      <port>445</port>
+    </allownet>
+    <allownet type="allow">
+      <comment/>
+      <option>udp</option>
+      <port>137</port>
+    </allownet>
+    <allownet type="allow">
+      <comment/>
+      <option>tcp</option>
+      <port>139</port>
+    </allownet>
+    <allownet type="allow">
+      <comment/>
+      <option>udp</option>
+      <port>138</port>
+    </allownet>
+    <allowpriv type="allow">
+      <comment/>
+      <option>resource</option>
+    </allowpriv>
+  </section>
+  <section id="sshd_t" type="domain">
+    <comment>#comment:
+## common access rights for daemon
+</comment>
+    <domaintrans>
+      <comment/>
+      <parentdomain>initrc_t</parentdomain>
+      <parentdomain>sysadm_r</parentdomain>
+      <entrypoint>/usr/sbin/sshd</entrypoint>
+    </domaintrans>
+    <allowfile type="allow">
+      <comment># to communicate syslogd
+</comment>
+      <path>dev_log_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowcom type="allow">
+      <comment/>
+      <option>unix</option>
+      <domain>syslogd_t</domain>
+    </allowcom>
+    <allowfile type="exclusive">
+      <comment># create /var/run securely
+</comment>
+      <path>/var/run</path>
+      <label>sshd_var_run_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>sshd_var_run_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="exclusive">
+      <comment># create tmp file securely
+</comment>
+      <path>/tmp</path>
+      <label>sshd_tmp_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>sshd_tmp_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfs type="exclusive">
+      <comment/>
+      <fs>tmpfs</fs>
+      <label>sshd_tmpfs_t</label>
+    </allowfs>
+    <allowfile type="allow">
+      <comment/>
+      <path>sshd_tmpfs_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allownet type="allow">
+      <comment>## end of common access rights for daemon
+</comment>
+      <option>net</option>
+    </allownet>
+    <allownet type="allow">
+      <comment/>
+      <option>tcp</option>
+      <port>22</port>
+    </allownet>
+    <allowdev type="allow">
+      <comment/>
+      <option>pts</option>
+      <role>global</role>
+      <permission>r</permission>
+      <permission>w</permission>
+    </allowdev>
+    <allowdev type="allow">
+      <comment/>
+      <option>pts</option>
+      <role>global</role>
+      <permission>admin</permission>
+    </allowdev>
+    <allowdev type="allow">
+      <comment/>
+      <option>pts</option>
+      <role>general</role>
+      <permission>admin</permission>
+    </allowdev>
+    <allowdev type="allow">
+      <comment/>
+      <option>pts</option>
+      <permission>open</permission>
+    </allowdev>
+    <allowpriv type="allow">
+      <comment/>
+      <option>chroot</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment/>
+      <option>getsecurity</option>
+    </allowpriv>
+    <allowfile type="allow">
+      <comment/>
+      <path>/root</path>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc/selinux/seedit</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc/shadow</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>etc_runtime_t</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var/log</path>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var/log</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow" only="yes">
+      <comment/>
+      <path>/var/run</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/dev/console</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowproc type="allow">
+      <comment/>
+      <option>self</option>
+      <permission>w</permission>
+    </allowproc>
+    <allowpriv type="allow">
+      <comment/>
+      <option>netlink</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment/>
+      <option>klog_write</option>
+    </allowpriv>
+  </section>
+  <section id="staff_r" type="role">
+    <comment>#staff_r should be attached to users who can use "su" command and become root:sysadm_r
+</comment>
+    <user>
+      <comment/>
+      <uname>root</uname>
+    </user>
+    <domaintrans>
+      <comment>#user ynakam;
+## common access rights for users
+</comment>
+      <parentdomain>sshd_t</parentdomain>
+      <parentdomain>newrole_t</parentdomain>
+      <parentdomain>login_t</parentdomain>
+      <parentdomain>su_t</parentdomain>
+      <entrypoint>/bin/bash</entrypoint>
+      <entrypoint>/bin/sh</entrypoint>
+    </domaintrans>
+    <domaintrans>
+      <comment/>
+      <parentdomain>gdm_t</parentdomain>
+      <entrypoint>/etc/X11/xdm/Xsession</entrypoint>
+    </domaintrans>
+    <allowdev type="allow">
+      <comment/>
+      <option>tty</option>
+      <permission>open</permission>
+    </allowdev>
+    <allowdev type="allow">
+      <comment/>
+      <option>pts</option>
+      <permission>open</permission>
+    </allowdev>
+    <allowfile type="allow">
+      <comment/>
+      <path>/home</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc/passwd</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/bin/bash</path>
+      <permission>r</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/bin/sh</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>etc_runtime_t</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allownet type="allow">
+      <comment/>
+      <option>connect</option>
+    </allownet>
+    <allownet type="allow">
+      <comment/>
+      <option>net</option>
+    </allownet>
+    <allowcom type="allow">
+      <comment>#for sftp
+</comment>
+      <option>unix</option>
+      <domain>sshd_t</domain>
+    </allowcom>
+    <allowfile type="exclusive">
+      <comment>#create tmp files securely
+</comment>
+      <path>/tmp</path>
+      <label>staff_tmp_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>staff_tmp_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment>## end of common access rights for users
+</comment>
+      <path>/root</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+  </section>
+  <section id="su_t" type="domain">
+    <comment>#Author Yuichi Nakamura&lt;ynakam@gwu.edu&gt;
+</comment>
+    <domaintrans>
+      <comment/>
+      <parentdomain>staff_r</parentdomain>
+      <parentdomain>sysadm_r</parentdomain>
+      <entrypoint>/bin/su</entrypoint>
+    </domaintrans>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc/shadow</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/root</path>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc/selinux/seedit</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowpriv type="allow">
+      <comment/>
+      <option>getsecurity</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment/>
+      <option>netlink</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment/>
+      <option>klog_write</option>
+    </allowpriv>
+    <allowdev type="allow">
+      <comment/>
+      <option>allterm</option>
+      <role>global</role>
+      <permission>admin</permission>
+    </allowdev>
+    <allowproc type="allow">
+      <comment/>
+      <option>self</option>
+      <permission>r</permission>
+      <permission>w</permission>
+    </allowproc>
+    <allowfile type="allow">
+      <comment/>
+      <path>dev_log_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowcom type="allow">
+      <comment/>
+      <option>unix</option>
+      <domain>syslogd_t</domain>
+    </allowcom>
+    <allowcom type="allow">
+      <comment/>
+      <option>sig</option>
+      <domain>user_r</domain>
+      <permission>c</permission>
+    </allowcom>
+    <allowcom type="allow">
+      <comment/>
+      <option>sig</option>
+      <domain>staff_r</domain>
+      <permission>c</permission>
+    </allowcom>
+    <allowcom type="allow">
+      <comment/>
+      <option>sig</option>
+      <domain>sysadm_r</domain>
+      <permission>c</permission>
+    </allowcom>
+  </section>
+  <section id="sysadm_r" type="role">
+    <comment/>
+    <user>
+      <comment/>
+      <uname>root</uname>
+    </user>
+    <domaintrans>
+      <comment>#comment:system administrator
+</comment>
+      <parentdomain>su_t</parentdomain>
+      <parentdomain>newrole_t</parentdomain>
+      <parentdomain>login_t</parentdomain>
+      <entrypoint>/bin/bash</entrypoint>
+      <entrypoint>/bin/sh</entrypoint>
+    </domaintrans>
+    <domaintrans>
+      <comment/>
+      <parentdomain>gdm_t</parentdomain>
+      <entrypoint>/etc/X11/xdm/Xsession</entrypoint>
+    </domaintrans>
+    <allowdev type="allow">
+      <comment/>
+      <option>allterm</option>
+      <permission>open</permission>
+    </allowdev>
+    <allowfile type="exclusive">
+      <comment/>
+      <path>/tmp</path>
+      <label>sysadm_tmp_t</label>
+    </allowfile>
+    <allowpriv type="allow">
+      <comment/>
+      <option>all</option>
+    </allowpriv>
+  </section>
+  <section id="syslogd_t" type="domain">
+    <comment>## common access rights for daemon
+</comment>
+    <domaintrans>
+      <comment/>
+      <parentdomain>initrc_t</parentdomain>
+      <parentdomain>sysadm_r</parentdomain>
+      <entrypoint>/sbin/syslogd</entrypoint>
+      <entrypoint>/sbin/minilogd</entrypoint>
+    </domaintrans>
+    <allowfile type="allow">
+      <comment># to communicate syslogd
+</comment>
+      <path>dev_log_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowcom type="allow">
+      <comment/>
+      <option>unix</option>
+      <domain>syslogd_t</domain>
+    </allowcom>
+    <allowfile type="exclusive">
+      <comment># create /var/run securely
+</comment>
+      <path>/var/run</path>
+      <label>syslogd_var_run_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>syslogd_var_run_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="exclusive">
+      <comment># create tmp file securely
+</comment>
+      <path>/tmp</path>
+      <label>syslogd_tmp_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>syslogd_tmp_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfs type="exclusive">
+      <comment/>
+      <fs>tmpfs</fs>
+      <label>syslogd_tmpfs_t</label>
+    </allowfs>
+    <allowfile type="allow">
+      <comment/>
+      <path>syslogd_tmpfs_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowcom type="allow">
+      <comment>## end of common access rights for daemon
+</comment>
+      <option>unix</option>
+      <domain>login_t</domain>
+    </allowcom>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var/log</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="exclusive">
+      <comment/>
+      <path>/dev</path>
+      <label>dev_log_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>dev_log_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+  </section>
+  <section id="system_crond_t" type="domain">
+    <comment># domain for cron scripts
+</comment>
+    <domaintrans>
+      <comment/>
+      <parentdomain>crond_t</parentdomain>
+      <entrypoint>/bin/bash</entrypoint>
+    </domaintrans>
+    <domaintrans>
+      <comment/>
+      <parentdomain>crond_t</parentdomain>
+      <entrypoint>/etc/crontab</entrypoint>
+    </domaintrans>
+    <domaintrans>
+      <comment/>
+      <parentdomain>crond_t</parentdomain>
+      <entrypoint>/etc/cron.d</entrypoint>
+    </domaintrans>
+    <domaintrans>
+      <comment/>
+      <parentdomain>crond_t</parentdomain>
+      <entrypoint>/var/spool/cron</entrypoint>
+    </domaintrans>
+    <domaintrans>
+      <comment/>
+      <parentdomain>initrc_t</parentdomain>
+      <entrypoint>/usr/sbin/anacron</entrypoint>
+    </domaintrans>
+    <allowpriv type="allow">
+      <comment># Cron scripts can do everything!!!
+</comment>
+      <option>all</option>
+    </allowpriv>
+  </section>
+  <section id="udev_t" type="domain">
+    <comment>#Author: Yuichi Nakamura &lt;ynakam@gwu.edu&gt;
+#comment:Domain for udev
+</comment>
+    <domaintrans>
+      <comment/>
+      <parentdomain>kernel_t</parentdomain>
+      <entrypoint>/sbin/udevsend</entrypoint>
+    </domaintrans>
+    <domaintrans>
+      <comment/>
+      <parentdomain>kernel_t</parentdomain>
+      <entrypoint>/sbin/udevd</entrypoint>
+    </domaintrans>
+    <domaintrans>
+      <comment/>
+      <parentdomain>kernel_t</parentdomain>
+      <entrypoint>/sbin/start_udev</entrypoint>
+    </domaintrans>
+    <domaintrans>
+      <comment/>
+      <parentdomain>kernel_t</parentdomain>
+      <entrypoint>/sbin/udevstart</entrypoint>
+    </domaintrans>
+    <domaintrans>
+      <comment/>
+      <parentdomain>kernel_t</parentdomain>
+      <entrypoint>/usr/bin/udevinfo</entrypoint>
+    </domaintrans>
+    <domaintrans>
+      <comment/>
+      <parentdomain>initrc_t</parentdomain>
+      <entrypoint>/sbin/udevsend</entrypoint>
+    </domaintrans>
+    <domaintrans>
+      <comment/>
+      <parentdomain>initrc_t</parentdomain>
+      <entrypoint>/sbin/udevd</entrypoint>
+    </domaintrans>
+    <domaintrans>
+      <comment/>
+      <parentdomain>initrc_t</parentdomain>
+      <entrypoint>/sbin/start_udev</entrypoint>
+    </domaintrans>
+    <domaintrans>
+      <comment/>
+      <parentdomain>initrc_t</parentdomain>
+      <entrypoint>/sbin/udevstart</entrypoint>
+    </domaintrans>
+    <domaintrans>
+      <comment/>
+      <parentdomain>initrc_t</parentdomain>
+      <entrypoint>/usr/bin/udevinfo</entrypoint>
+    </domaintrans>
+    <allowproc type="allow">
+      <comment/>
+      <option>other</option>
+      <permission>r</permission>
+    </allowproc>
+    <allowfile type="allow">
+      <comment/>
+      <path>/dev</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/dev/urandom</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowdev type="allow">
+      <comment/>
+      <option>tty</option>
+      <role>vcs</role>
+      <permission>admin</permission>
+    </allowdev>
+    <allowdev type="allow">
+      <comment/>
+      <option>tty</option>
+      <role>vcs</role>
+      <permission>r</permission>
+      <permission>w</permission>
+    </allowdev>
+    <allowfile type="allow">
+      <comment/>
+      <path>/dev/mem</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/dev/kmem</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/dev/port</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>devdri_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc/dev.d</path>
+      <permission>r</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc/hotplug</path>
+      <permission>r</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc/hotplug.d</path>
+      <permission>r</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc/passwd</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc/shadow</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc/selinux/seedit</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>etc_runtime_t</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/lib/modules</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc/rc.d/init.d</path>
+      <permission>r</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc/udev/scripts</path>
+      <permission>r</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var/log</path>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/sbin</path>
+      <permission>r</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/bin</path>
+      <permission>r</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowproc type="allow">
+      <comment/>
+      <option>self</option>
+      <permission>w</permission>
+    </allowproc>
+    <allowfile type="allow">
+      <comment/>
+      <path>/usr/sbin</path>
+      <permission>r</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/usr/bin</path>
+      <permission>r</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/bin/bash</path>
+      <permission>r</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/bin/sh</path>
+      <permission>r</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/root</path>
+      <permission>s</permission>
+    </allowfile>
+    <allowfs type="allow">
+      <comment/>
+      <fs>sysfs</fs>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfs>
+    <allowdev type="allow">
+      <comment/>
+      <option>allterm</option>
+      <role>general</role>
+      <permission>admin</permission>
+    </allowdev>
+    <allowpriv type="allow">
+      <comment/>
+      <option>netlink</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment/>
+      <option>part_relabel</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment/>
+      <option>getsecurity</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment/>
+      <option>insmod</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment/>
+      <option>devcreate</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment/>
+      <option>nice</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment/>
+      <option>unlabel</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment/>
+      <option>net</option>
+    </allowpriv>
+    <allowfile type="allow">
+      <comment/>
+      <path>dev_log_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowcom type="allow">
+      <comment/>
+      <option>unix</option>
+      <domain>syslogd_t</domain>
+    </allowcom>
+    <allowfile type="allow">
+      <comment/>
+      <path>/lib/modules</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowcom type="allow">
+      <comment/>
+      <option>unix</option>
+      <domain>hald_t</domain>
+    </allowcom>
+  </section>
+  <section id="user_r" type="role">
+    <comment>#user_r is default role to user. can not use su command
+</comment>
+    <user>
+      <comment/>
+      <uname>user_u</uname>
+    </user>
+    <domaintrans>
+      <comment>#comment:Normal User 
+## common access rights for users
+</comment>
+      <parentdomain>sshd_t</parentdomain>
+      <parentdomain>newrole_t</parentdomain>
+      <parentdomain>login_t</parentdomain>
+      <parentdomain>su_t</parentdomain>
+      <entrypoint>/bin/bash</entrypoint>
+      <entrypoint>/bin/sh</entrypoint>
+    </domaintrans>
+    <domaintrans>
+      <comment/>
+      <parentdomain>gdm_t</parentdomain>
+      <entrypoint>/etc/X11/xdm/Xsession</entrypoint>
+    </domaintrans>
+    <allowdev type="allow">
+      <comment/>
+      <option>tty</option>
+      <permission>open</permission>
+    </allowdev>
+    <allowdev type="allow">
+      <comment/>
+      <option>pts</option>
+      <permission>open</permission>
+    </allowdev>
+    <allowfile type="allow">
+      <comment/>
+      <path>/home</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/etc/passwd</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/bin/bash</path>
+      <permission>r</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/bin/sh</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>etc_runtime_t</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allownet type="allow">
+      <comment/>
+      <option>connect</option>
+    </allownet>
+    <allownet type="allow">
+      <comment/>
+      <option>net</option>
+    </allownet>
+    <allowcom type="allow">
+      <comment>#for sftp
+</comment>
+      <option>unix</option>
+      <domain>sshd_t</domain>
+    </allowcom>
+    <allowfile type="exclusive">
+      <comment>#create tmp files securely
+</comment>
+      <path>/tmp</path>
+      <label>user_tmp_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>user_tmp_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="deny">
+      <comment>## end of common access rights for users
+</comment>
+      <path>/bin/su</path>
+    </allowfile>
+  </section>
+  <section id="xfs_t" type="domain">
+    <comment>## common access rights for daemon
+</comment>
+    <domaintrans>
+      <comment/>
+      <parentdomain>initrc_t</parentdomain>
+      <parentdomain>sysadm_r</parentdomain>
+      <entrypoint>/usr/X11R6/bin/xfs</entrypoint>
+    </domaintrans>
+    <allowfile type="allow">
+      <comment># to communicate syslogd
+</comment>
+      <path>dev_log_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowcom type="allow">
+      <comment/>
+      <option>unix</option>
+      <domain>syslogd_t</domain>
+    </allowcom>
+    <allowfile type="exclusive">
+      <comment># create /var/run securely
+</comment>
+      <path>/var/run</path>
+      <label>xfs_var_run_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>xfs_var_run_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="exclusive">
+      <comment># create tmp file securely
+</comment>
+      <path>/tmp</path>
+      <label>xfs_tmp_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>xfs_tmp_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfs type="exclusive">
+      <comment/>
+      <fs>tmpfs</fs>
+      <label>xfs_tmpfs_t</label>
+    </allowfs>
+    <allowfile type="allow">
+      <comment/>
+      <path>xfs_tmpfs_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment>## end of common access rights for daemon
+</comment>
+      <path>/tmp/.font-unix</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>etc_runtime_t</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+  </section>
+  <section id="xinetd_t" type="domain">
+    <comment>## common access rights for daemon
+</comment>
+    <domaintrans>
+      <comment/>
+      <parentdomain>initrc_t</parentdomain>
+      <parentdomain>sysadm_r</parentdomain>
+      <entrypoint>/usr/sbin/xinetd</entrypoint>
+    </domaintrans>
+    <allowfile type="allow">
+      <comment># to communicate syslogd
+</comment>
+      <path>dev_log_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowcom type="allow">
+      <comment/>
+      <option>unix</option>
+      <domain>syslogd_t</domain>
+    </allowcom>
+    <allowfile type="exclusive">
+      <comment># create /var/run securely
+</comment>
+      <path>/var/run</path>
+      <label>xinetd_var_run_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>xinetd_var_run_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="exclusive">
+      <comment># create tmp file securely
+</comment>
+      <path>/tmp</path>
+      <label>xinetd_tmp_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>xinetd_tmp_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfs type="exclusive">
+      <comment/>
+      <fs>tmpfs</fs>
+      <label>xinetd_tmpfs_t</label>
+    </allowfs>
+    <allowfile type="allow">
+      <comment/>
+      <path>xinetd_tmpfs_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+  </section>
+  <section id="xserver_t" type="domain">
+    <comment>## end of common access rights for daemon
+#Author Yuichi Nakamura&lt;ynakam@gwu.edu&gt;
+</comment>
+    <domaintrans>
+      <comment/>
+      <parentdomain>init_t</parentdomain>
+      <entrypoint>/usr/X11R6/bin/Xorg</entrypoint>
+    </domaintrans>
+    <domaintrans>
+      <comment/>
+      <parentdomain>initrc_t</parentdomain>
+      <entrypoint>/usr/X11R6/bin/Xorg</entrypoint>
+    </domaintrans>
+    <domaintrans>
+      <comment/>
+      <parentdomain>gdm_t</parentdomain>
+      <entrypoint>/usr/X11R6/bin/Xorg</entrypoint>
+    </domaintrans>
+    <allowfile type="allow" only="yes">
+      <comment/>
+      <path>/</path>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/bin/bash</path>
+      <permission>r</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/bin/sh</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/dev/mem</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/dev/agpgart</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="exclusive">
+      <comment/>
+      <path>/tmp</path>
+      <label>xserver_tmp_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>xserver_tmp_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>gdm_tmp_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/tmp/.font-unix</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var/log</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/var/lib/xkb</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>etc_runtime_t</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/root</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/dev/input</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="exclusive">
+      <comment/>
+      <path>/dev</path>
+      <label>devdri_t</label>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/dev/apm_bios</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>/home</path>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfile type="allow">
+      <comment/>
+      <path>devdri_t</path>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>x</permission>
+      <permission>s</permission>
+    </allowfile>
+    <allowfs type="allow">
+      <comment/>
+      <fs>sysfs</fs>
+      <permission>r</permission>
+      <permission>s</permission>
+    </allowfs>
+    <allowfs type="allow">
+      <comment/>
+      <fs>proc</fs>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfs>
+    <allownet type="allow">
+      <comment/>
+      <option>net</option>
+    </allownet>
+    <allowcom type="allow">
+      <comment/>
+      <option>shm</option>
+      <domain>sysadm_r</domain>
+      <permission>r</permission>
+      <permission>w</permission>
+    </allowcom>
+    <allowcom type="allow">
+      <comment/>
+      <option>shm</option>
+      <domain>user_r</domain>
+      <permission>r</permission>
+      <permission>w</permission>
+    </allowcom>
+    <allowcom type="allow">
+      <comment/>
+      <option>shm</option>
+      <domain>staff_r</domain>
+      <permission>r</permission>
+      <permission>w</permission>
+    </allowcom>
+    <allowcom type="allow">
+      <comment/>
+      <option>sig</option>
+      <domain>init_t</domain>
+      <permission>o</permission>
+    </allowcom>
+    <allowcom type="allow">
+      <comment/>
+      <option>sig</option>
+      <domain>gdm_t</domain>
+      <permission>o</permission>
+    </allowcom>
+    <allowcom type="allow">
+      <comment/>
+      <option>unix</option>
+      <domain>xfs_t</domain>
+    </allowcom>
+    <allowcom type="allow">
+      <comment/>
+      <option>shm</option>
+      <domain>gdm_t</domain>
+      <permission>r</permission>
+      <permission>w</permission>
+    </allowcom>
+    <allowcom type="allow">
+      <comment/>
+      <option>shm</option>
+      <domain>initrc_t</domain>
+      <permission>r</permission>
+      <permission>w</permission>
+    </allowcom>
+    <allowpriv type="allow">
+      <comment/>
+      <option>rawio</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment/>
+      <option>unlabel</option>
+    </allowpriv>
+    <allowpriv type="allow">
+      <comment/>
+      <option>devcreate</option>
+    </allowpriv>
+    <allowfs type="allow">
+      <comment/>
+      <fs>ramfs</fs>
+      <permission>r</permission>
+      <permission>w</permission>
+      <permission>s</permission>
+    </allowfs>
+  </section>
+</policy>

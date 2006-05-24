@@ -1,0 +1,14 @@
+###declare attributes
+attribute domain;
+#to mark domain where "allowpriv -all" described
+attribute unconfined_domain;
+attribute file_type;
+attribute fs_type;
+attribute netif_type;
+attribute netmsg_type;
+attribute node_type;
+attribute ttyfile;
+attribute port_type;
+attribute unpriv_port_type;
+attribute ptyfile;
+

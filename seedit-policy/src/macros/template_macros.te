@@ -1,0 +1,73 @@
+dnl Macros used for template 
+dnl Author: Yuichi Nakamura <ynakam@gwu.edu>
+dnl These macros are used only in developper's install option(DEVEL=1)
+define(`daemon_template', `
+## common access rights for daemon
+domain $1_t;
+ifdef(`norbac',`
+domain_trans initrc_t,unconfined_t $2;
+',`
+domain_trans initrc_t,sysadm_r $2;
+')
+ifelse(`$3',`',`',`
+domain_trans $3 $2;
+')
+# to communicate syslogd
+allow dev_log_t r,w,s;
+allowcom -unix syslogd_t;
+
+# create /var/run securely
+allow /var/run exclusive $1_var_run_t;
+allow $1_var_run_t r,w,s;
+
+# create tmp file securely
+
+ifdef(`no_tmp_protect', `',
+`
+allow /tmp exclusive $1_tmp_t;
+allow $1_tmp_t r,w,s;
+allowfs tmpfs exclusive $1_tmpfs_t;
+allow $1_tmpfs_t r,w,s;
+')dnl no_tmp_protect
+
+## end of common access rights for daemon
+')
+
+define(`user_template', `
+
+## common access rights for users
+domain_trans sshd_t,newrole_t,login_t,su_t /bin/bash,/bin/sh;
+domain_trans gdm_t /etc/X11/xdm/Xsession;
+allowdev -tty open;
+allowdev -pts open;
+allow /home r,w,x,s;
+allow /etc/passwd r,s;
+allow /bin/bash r,x,s;
+allow /bin/sh r,s;
+allow etc_runtime_t r,s;
+allownet -protocol tcp,udp -port * client ;
+allownet -protocol tcp,udp use;
+ifdef(`tl10s',`
+allowproc -other r;
+',`')
+
+#for sftp
+allowcom -unix sshd_t;
+
+ifdef(`no_tmp_protect', `',
+`
+#create tmp files securely
+allow /tmp exclusive $1_tmp_t;
+allow $1_tmp_t s,r,w;
+')dnl no_tmp_protect
+
+## end of common access rights for users
+
+')
+
+define(`tmp_domain', `
+
+allow /tmp exclusive $1_tmp_t;
+allow 
+
+')

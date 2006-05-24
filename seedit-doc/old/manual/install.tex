@@ -1,0 +1,78 @@
+%#!platex manual.tex
+\section{INSTALL}
+
+
+\subsection{Required environment}
+\begin{itemize}
+\item Distribution 
+We tested it work only on Fedora Core4 and Fedora Core3.
+Fedora Core 4 is prefered.
+\item gcc and libselinux-devel
+You need gcc and libselinux-devel.
+If you do not have them install by yum, like below.\\
+\# yum install gcc\\
+\# yum install libselinux-devel\\
+\end{itemize}
+
+\subsection{Downloading files}
+xxxxxxxxxxxx
+\begin{enumerate}
+ \item converter
+ \item sample policy\\
+      
+ \item GUI
+\end{enumerate}
+
+
+\subsection{Let's install}
+\begin{enumerate}
+ \item  Modify run level\\
+Example simplified policy does not support X Windows system.
+So you have to run system on run level 3.
+Modify /etc/inittab like below\\
+- Before\\
+id:5:initdefault:\\
+- After\\
+id:3:initdefault:
+ \item  install converter\\
+\# cd seedit-converter\\
+\# make install
+
+ \item install sample policy\\
+\# cd seedit-policy
+If you are using Fedora Core3, 
+edit Make file like below\\
+- before: POLICYTYPE=fc4-easy\\
+- after: POLICYTYPE=fc3-easy\\
+\# make install
+ \item reboot\\
+At startup, all files are relabeled. It takes some minutes.
+After relabel, login as root and reboot again.
+\item Switch to enforcing mode\\
+Now system is running on permissive mode. You must go to enforcing
+	mode. \\
+\# setenforce 1\\
+And modify /etc/selinux/config\\
+- Before\\
+SELINUX=permissive\\
+- After\\
+SELinux=enforcing\\
+ \item Enjoy!\\
+Minimum system run without configuration. Fore more information, see section
+		\ref{sec:spec}.
+\end{enumerate}
+
+\subsection{Installing GUI(optional)}
+xxxxxx
+
+\subsection{Uninstalling}
+Uninstall is quite easy.
+\begin{enumerate}
+ \item 
+\# rm -rf /etc/selinux/seedit-fc4-easy\\
+\# rm  /usr/local/bin/converter\\
+\# touch /.autorelabel
+\item  Modify /etc/selinux/config like below.\\
+SELINUX=enforcing\\
+SELINUXTYPE=targeted
+\end{enumerate}

@@ -1,0 +1,197 @@
+%#!platex manual.tex
+\section{Example}
+\subsection{Adding policy to existing policy}
+You can generate simplified policy like audit2allow by audit2spdl utility.
+Typical usage is following.\\
+\begin{verbatim}
+$ su - (select sysadm_r)
+# audit2spdl -a -l -v
+\end{verbatim}
+Then, policy is outputted to console. 
+Make sure whether everything is correct.
+Then, when you want to add policy to file,
+\begin{verbatim}
+# cd  /etc/selinux/seedit/src/policy/
+# audit2spdl -a -l -o ./simplified_policy
+# make diffrelabel
+\end{verbatim}
+When you are not running auditd, use -d option instead of -a option.
+However, file path for {\it allow} rule is sometimes incorrect in -d
+option. So it is recommended to enable auditd. \\
+Notice: audit2spdl is still in progress. For some log, audit2spdl can
+not output configuration. Please tell me if you find problem.
+
+\subsection{Configuring vsftpd}
+As an example of configuration of daemon for that policy is not
+prepared,  let's configure vsftpd using
+simplified policy. In this example, configure Anonymous ftp access.\\
+By default, the domain of vsftpd is {\it initrc\_t }.
+{\it initrc\_t } is a domain for scripts under /etc/rc.d . vsftpd
+is executed by /etc/rc.d/init.d/vsftpd(the domain is initrc\_t) and
+inherits the domain.\\ 
+However, this is not secure. Because initrc\_t has a lots of access
+rights(see /etc/selinux/seedit/src/policy/simplified\_policy/initrc\_t.a
+).\\
+In following current directory is {\it
+/etc/selinux/seedit/src/policy}, and permissive mode\\
+\begin{verbatim}
+login: root
+....
+# newrole -r sysadm_r
+# id -Z
+root:sysadm_r:sysadm_t
+# cd  /etc/selinux/seedit/src/policy
+# setenforce 0
+\end{verbatim}
+And for detail of syntax, see \ref{sec:spec} .
+
+\subsubsection{Create domain for vsftpd}
+Let's give vftpd {\it vsftpd\_t} domain.
+\begin{enumerate}
+ \item Create configuration file\\
+Create {\it simplified\_policy/vsftpd\_t.a }. 
+ \item Configure domain transition\\
+ In {\it simplified\_policy/vsftpd\_t.a} write following.
+\begin{verbatim}
+# simplified_policy/vsftpd_t.a
+{
+domain vsftpd_t;
+domain_trans initrc_t /usr/sbin/vsftpd;
+}
+\end{verbatim}
+
+In line 2, you've defined domain vsftpd\_t.  In line 3, you've configured
+       domain transition, parent domain is initrc\_t, entry point is /usr/sbin/vsftpd.
+
+\end{enumerate}
+
+\subsubsection{Test domain transition}
+When you edit configuration, you must use make command to indicate
+kernel change of configuration(See \ref{sec:loadpolicy}). In this case, type as below.\\
+\begin{verbatim}
+# make diffrelabel
+\end{verbatim}
+Usually {\it make diffrelabel } is enough.\\
+Restart vsftpd and check the domain of vsftpd.
+\begin{verbatim}
+# /etc/init.d/vsftpd restart
+# ps -eZ
+...
+root:system_r:vsftpd_t          13621 pts/1    00:00:00 vsftpd
+...
+\end{verbatim}
+You can see that the domain of vsftpd is {\it vsftpd\_t}. Domain transition
+is successful.
+
+\subsubsection{Protect files related to vsftpd}
+ Protect files related to vsftpd\\
+       If you want to protect files related to domain, the best way is {\it
+       deny } in global. In this case, let's protect /etc/vsftpd and
+       /var/ftp.  Add following in simplified\_policy global. Note you
+       have to add between \{ and \}.
+       \begin{verbatim}
+# In simplifed_policy/global
+deny /etc/vsftpd;
+deny /var/ftp;
+       \end{verbatim}
+       And 
+\begin{verbatim}
+# make diffrelabel	
+\end{verbatim}
+       As a result, if some domain want to access /etc/vsftpd and
+       /var/ftp, it must be allowed explicitly. e.g: If httpd\_t want to read
+       /etc/vsftpd, {\it allow /etc/vsftpd r;} must be described in
+       httpd\_t, if {\it allow /etc r;} is described, access to
+       /etc/vsftpd is not allowed. deny is useful to mark important
+       files.
+
+\subsubsection{Give access rights to vsftpd\_t}
+The default access right for vsftpd\_t is inherited from
+simplified\_policy/global. It is not enough, you have to add
+configuration.  The best way to know what
+       is necessary is to test vsftpd on permissive mode and see SELinux
+       log. Then use {\it audit2spdl -a -l} command(Detail is skipped in
+       this document)
+Below is a policy for vsftpd\_t. 
+\begin{verbatim}
+# simplifed_policy/vsftpd_t.a
+     1  {
+     2  domain vsftpd_t;
+     3  domain_trans initrc_t /usr/sbin/vsftpd;
+     4  # access to files related to vsftpd
+     5  allow /etc/vsftpd r,s;
+     6  allow /var/ftp r,s;
+     7  allowonly /var/log r,w,s;
+     8  # allow to communicate with syslog
+     9  allow dev_log_t r,w,s;
+    10  allowcom -unix syslogd_t;
+    11  # allow to use tcp 20 and 21
+    12  allownet;
+    13  allownet -connect;
+    14  allownet -tcp -port 20;
+    15  allownet -tcp -port 21;
+    16  #
+    17  allowadm chroot;
+    18  }
+\end{verbatim}
+After writing this, 
+\begin{verbatim}
+# make diffrelabel
+\end{verbatim}
+Let's review the file.
+\begin{itemize}
+ \item Line 5 to 7\\
+       These are configuration to access files related to vsftpd. In line 5 and
+       6, giving access rights to read vsftpd configuration files and
+       ftp public directory. \\
+       Pay attention to line 7.
+       \begin{verbatim}
+allowonly /var/log r,w,s;
+       \end{verbatim}
+       In this, we want to allow to write /var/log/xferlog. If we could
+       configure,
+\begin{verbatim}
+allow /var/log/xferlog r,w,s;
+\end{verbatim}
+       this would be the best. However, /var/log/xferlog may be
+       deleted by administrater, and when re-created the SELinux label
+       information is lost. So we can not control access to
+       /var/log/xferlog. 
+       So we used {\it allowonly /var/log r,w,s}. In this vsftpd\_t can write
+       all files on /var/log/, but can not write files on child
+       directories. This is better than {\it allow /var/log r,w,s;}(This
+       allows write access to all files under /var/log including child directories).
+       Similally, for /tmp, /var/run, you can not controll access
+       per-file, in those directories, files are deleted and re-created,
+       SElinux label information may be lost.\\
+       If you have a enough knowledge of SELinux, you can use {\it allow
+       file exclusive label;} This configures SELinux's file type
+       transition. You can configure access control to files that are
+       deleted and re-created. For detail see \ref{section:allow}.\\
+
+ \item Line 9,10\\
+       Those are to communicate syslogd. If you want to communicate with
+       syslogd, always include these two lines.
+       
+ \item Line 12-15\\
+       These are to communicate via tcp 20 and 21.
+\end{itemize}
+
+\subsubsection{Give access rigths to initrc\_t}
+initrc\_t is a type for start up script(/etc/init.d/vsftpd). 
+This requires read access to /etc/vsftpd. But access to this file is
+denied in global, so you have to allow explicitly.
+\begin{verbatim}
+#add to simplified_policy/initrc_t.a
+allow /etc/vsftpd r,s;
+\end{verbatim}
+Then, 
+\begin{verbatim}
+# make diffrelabel
+\end{verbatim}
+
+\subsubsection{Test again}
+Test in permissive mode and see access log. 
+If no deny is outputted, then test in enforcing mode.
+
+

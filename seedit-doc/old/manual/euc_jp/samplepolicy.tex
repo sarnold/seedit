@@ -1,0 +1,134 @@
+%#!platex manual.tex
+\section{単純化ポリシのサンプル}
+この章では単純化ポリシのサンプルについての説明をしていきます。お急ぎでしたら\ref{sec:default}、\ref{sec:middlepolicy}そして\ref{sec:loadpolicy}をお読み下さい。
+\subsection{単純化ポリシのデフォルト設定}\label{sec:default}
+\begin{itemize}
+ \item バージョン1.0.0においてサポートされているサービス\\
+       サンプルポリシにおいてサポートされているサービスは「auditd、
+       syslogd、httpd、webmin、iptables、 network」です。これらは{\it サー
+       ビス名}\_tドメインとして動作します。
+ \item RBAC設定\\ 
+       sysadm\_r, staff\_r, user\_r. の３つのロールが用意されています。\\
+       \begin{itemize}
+	\item sysadm\_r\\
+	      全てが許可されたロールです。デフォルトではrootしか使えませ
+	      ん。
+	\item staff\_r\\
+	      限定された権限を持ちますが，suコマンドを利用してsysadm\_rに
+	      なれます。また/rootへ読み込みアクセス可能です。rootしか使
+	      えません。
+	\item user\_r\\
+	      限定された権限を持ちます。suコマンドを使えないので気をつけ
+	      ます。
+       \end{itemize}
+\end{itemize}
+
+\subsection{単純化ポリシ用ディレクトリのコンテンツ}\label{sec:contents}
+ 単純化ポリシのサンプルは、「/etc/selinux/seedit/src/policy/」にあります。 
+いくつかのディレクトリとファイルが配置されています。
+\subsubsection{simplified\_policy}\label{sec:middlepolicy}
+  これは最も重要な機能です。単純化ポリシのサンプルは、このディレクトリに
+  記録されています。単純化ポリシのシンタックスの詳細については、\ref{sec:spec}を御覧下さい。\\
+  単純化ポリシのサンプルは、{\it global}と{\it ドメイン名}.teにおいて記述されています。 
+  \begin{itemize}
+  \item global\\
+    すべてのドメインに共通して使われる設定です。ただし、いくつかのアクセス権限はSELinuxを簡単なものにするためにデフォルトで許可されていることに注意して下さい。(例えば、tmpfsの使用やttyデバイスアクセスです。)
+  \item {\it ドメイン名}.a\\
+    ドメインの設定について説明します。例えば、{\it httpd\_t.a}ファイルにおいては、{\it httpd\_t}ドメインのための設定が記述されています。
+   \item all\\
+    globalと全ての.aファイルが連結されたものです。単純化ポリシコンパイラはこのファイルを読みます。このファイルは自動的に生成されるものであり、編集してはいけません。
+  \end{itemize}
+ 
+\subsubsection{Makefile}
+ Makefileは単純化ポリシをコンパイルし、カーネルにポリシをロードします。\ref{sec:loadpolicy}を御覧下さい。
+\subsubsection{base\_policy}\label{sec:basepolicy}
+このディレクトリにあるファイルはSELinuxのポリシを生成するために単純化ポリシコンパイラによって使用されます。
+  \begin{itemize}
+  \item default.te \\ 
+    このファイルは有用です。なぜなら、単純化ポリシコンパイラによって生成されるポリシに、このファイルの記述が含まれているからです。ファイルには、単純化ポリシにおいてデフォルトで許可されているallow文が記述されています。従って、このファイルを見れば、どのアクセスベクターやオブジェクトクラスが単純化ポリシにサポートされていないのかがわかります。\\
+例を以下に示します。
+\begin{verbatim}
+allow global self:capability ~{ net_raw net_bind_service 
+net_admin sys_boot sys_module sys_rawio sys_ptrace sys_chroot };
+\end{verbatim}
+生成されたSELinuxポリシにおいて、global属性が使われています。global属性
+	はすべてのドメインに属しています。よって、すべてのドメインは
+	net\_raw net\_bind\_service net\_admin sys\_bootなど、以上に示さ
+	れた8つ以外に関してはケイパビリティを使用することを許されていま
+	す。つまり、以上のアクセスベクターは単純化ポリシでサポートされていないことを意味します。
+
+ さらに、このファイルにオリジナルのSELinuxのルールを記述できます。
+	auditallowルールを書くのは良いアイディアだと思います。ただ、
+	allowルールはこのファイルに書いてはいけません。なぜなら生成されたポリシのセキュリティを侵害しうるからです。
+  \item attribute.te \\  
+ このファイルには、属性が記述されています。属性は単純化ポリシコンパイラによって生成されるポリシにおいて使用されています。このファイルは編集してはいけません。
+  \item types.te\\
+ このファイルは、タイプが記述されています。タイプは単純化ポリシコンパイラによって生成されるポリシにおいて使用されています。\\
+ 以下のファイルはオリジナルバージョンのSELinuxのポリシと同じ内容です。これらのファイルは編集してはいけません。
+ \begin{itemize}
+ \item genfs\_contexts\\
+   unlabeled\_tというタイプが付与されているファイルシステムはサポートしていません。
+ \item security\_classes
+ \item access\_vectors  
+ \item initial\_sid\_contexts
+ \item fs\_use 
+ \item initial\_sids
+ \end{itemize}
+  \end{itemize}
+  
+\subsubsection{macros}
+ SELinuxのポリシを生成するマクロがおかれています。単純化ポリシコンパイラ
+ はマクロを含んだポリシを生成します。makeコマンドを実行すると、マクロを
+ 含んだポリシが生成された後，m4コマンドによって処理され、policy.confが生
+ 成されます。このpolicy.confはcheckpolicyコマンドによってコンパイル可能
+ なものです。 
+
+\subsubsection{sepolicy}
+ 生成されたSELinuxのポリシは、このディレクトリに書き込まれます。 
+\begin{itemize}
+ \item test.conf\\
+ マクロを含んだポリシーです。
+ \item policy.conf
+ マクロを展開した後のポリシーです。checkpolicyでコンパイル可能です。  
+ \item file\_contexts\\
+ file\_contextsファイルです。
+\end{itemize}
+
+\subsection{To load policy}\label{sec:loadpolicy}
+ simplified\_policyにあるポリシに手を加えるなら、変更したポリシをカーネルにロードしなければなりません。Makefileにはいくつかのターゲットがあります。\\
+まず最初に、/etc/selinux/seedit/src/policyに移動して下さい。
+\begin{itemize}
+
+\item make reload\\
+ このコマンドはsimplified\_policyディレクトリにある単純化ポリシをSELinuxのポリシに変更します。\\
+(1) policy.confとfile\_contextsがsepolicyディレクトリに生成されます。\\
+(2) バイナリポリシは生成されたpolicy.confからcheckpolicyによって作成されます。\\
+(3) バイナリポリシは/etc/seedit/policyにインストールされ、file\_contextsは/etc/seedit/contexts/policyにインストールされます。そしてbase\_policy/contextsの内容は/etc/seedit/contextsにインストールされます。\\
+(4) バイナリポリシはload\_policyによってロードされます。
+\item make relabel\\
+ {\it make reload}コマンドが実行された後、{\it fixfiles restore}コマンドが実行されます。
+
+\item make diffrelabel\\
+ このコマンドは非常に有用です。{\it make relabel}コマンドはすべてのファ
+      イルを再度ラベル付けします。そのため長い時間を要します。それに対し
+      て、{\it make diffrelabel}コマンドはラベルが変更されたファイルのみ
+      を再度ラベル付けします。ポリシをロードする時には{\it make
+      diffrelabel}コマンドを使用することを推奨します。
+\end{itemize}
+
+\section{単純化ポリシコンパイラのオプション}
+単純化ポリシコンパイラ(converterコマンド)はmakeコマンドにより実行されます。です
+ので、converterコマンドを直接使う必要はありません。
+以下、参考のために示します。\\
+Usage : converter -i {\it infile} -b {\it base policy dir} -o
+{\it policyfile} -f {\it file\_context}\\
+\begin{itemize}
+ \item {\it infile}\\
+       単純化ポリシファイルです。makeコマンド使用時に読み込まれるのはallです。allについては\ref{sec:contents}を御覧下さい。
+ \item {\it base policy dir}\\
+       base\_policyのディレクトリです。
+ \item {\it policyfile}\\
+       生成されたポリシファイルの名前です。
+ \item {\it file\_contexts}\\
+       生成されたfile\_contextsファイルの名前です。
+\end{itemize}

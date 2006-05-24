@@ -1,0 +1,887 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <title>INSTALL</title>
+</head>
+
+
+<body>
+
+
+
+
+
+
+
+
+
+<big><big><big>How to install SELinux Policy Editor(Ver1.2)</big></big></big><br>
+
+
+
+
+
+
+
+
+
+2005. 09.02<br>
+
+
+
+
+
+
+
+By Yuichi Nakamura &lt;ynakam@gwu.edu&gt;<br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+This is intall document for SELinux Policy Editor and simplified policy.<br>
+
+
+
+Installing from RPM are described, how to install from source, see README in source code.<br>
+
+
+
+
+
+
+
+<br>
+
+
+
+<big style="text-decoration: underline;"><big>1. Before INSTALL<br>
+
+
+
+
+
+
+
+
+
+</big></big><span style="text-decoration: underline;">(1) What should you install ?</span><br>
+
+
+
+
+
+
+
+
+
+SELinux Policy Editor is composed of simplified policy and GUI.<br>
+
+
+
+
+
+
+
+
+
+Must component is simplified poilcy. <br>
+
+
+
+
+
+
+
+
+
+GUI is optional. Without GUI, you can use simplified policy. <br>
+
+
+
+
+
+
+
+
+
+But with GUI, SELinux becomes much easier.<br>
+
+
+
+
+
+
+
+
+
+To use GUI, you need webmin(www.webmin.com).<br>
+
+
+
+<span style="text-decoration: underline;"><br>
+
+
+
+
+
+
+
+
+
+(2) Supported environment </span><br>
+
+
+
+Fedora Core4, TurboLinux10 Server, Asianux 2<br>
+
+
+
+Fedora Core 4 is prefered(Version 1.3.x supports only Fedora Core4). <br>
+
+
+
+
+
+
+
+
+Note that our tool is&nbsp;experimental, may contain serious bugs.<br>
+
+
+
+
+
+
+
+
+
+We have no responsibility for the damage that is caused by our tool.<br>
+
+
+
+
+
+
+
+<span style="text-decoration: underline;"></span>Policy is under construction, now limited serveces are supported.<br>
+
+
+
+
+
+
+
+<span style="text-decoration: underline;"></span><br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+- !Notice : If you want to install in&nbsp; <span style="text-decoration: underline;">TurboLinux10 Server</span><br>
+You have to add "selinux=1" as boot parameter in /boot/grub/grub.conf .<br>
+<br>
+
+
+
+
+
+
+
+
+
+<big style="text-decoration: underline;"><big>2. Install</big></big><br>
+<span style="text-decoration: underline;">2.1 . Download files<br>
+
+
+
+</span>Download following files from &nbsp; <span style="text-decoration: underline;"></span><a href="http://sourceforge.net/projects/seedit/">http://sourceforge.net/projects/seedit/.</a><br>
+
+
+
+(1) Simplified Policy Compiler(Must)<br>
+
+
+
+
+
+
+
+
+-&nbsp;<a href="http://prdownloads.sourceforge.net/seedit/seedit-converter-1.2.0-1.i386.rpm?download">seedit-converter-1.2.0-1.i386.rpm</a><br>
+
+
+
+
+
+
+
+
+(2) Sample policy (Must)<br>
+
+
+
+Download file for your Linux distribution.<br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+- <a href="http://prdownloads.sourceforge.net/seedit/seedit-policy-1.2.0-FC4.noarch.rpm?download">seedit-policy-1.2.0-FC4.noarch.rpm</a> (For Fedora Core4&#65289;<br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+- <a href="http://prdownloads.sourceforge.net/seedit/seedit-policy-1.2.0-AX2.noarch.rpm?download">seedit-policy-1.2.0-AX2.noarch.rpm</a> (For Asianux2.0&#65289;<br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+- <a href="http://prdownloads.sourceforge.net/seedit/seedit-policy-1.2.0-TL10S.noarch.rpm?download">seedit-policy-1.2.0-TL10S.noarch.rpm</a> (For TurboLinux10 Server&#65289;<br>
+<br>
+(3) GUI (optional)<br>
+
+
+
+If you want to use GUI, download.<br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+- <a href="http://prdownloads.sourceforge.net/seedit/seedit-gui-1.2.0-1.noarch.rpm?download">seedit-gui-1.2.0-1.noarch.rpm</a><br>
+<br>
+(4)Documents(optional)<br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+- <a href="http://prdownloads.sourceforge.net/seedit/seedit-doc-1.2.0-1.noarch.rpm?download">seedit-doc-1.2.0-1.noarch.rpm</a><br>
+
+
+
+
+
+
+
+
+<br>
+
+
+
+<span style="text-decoration: underline;">2.2 Installing simplified policy</span><br>
+
+
+
+# rpm -ivh seedit-converter seedit-policy <br>
+
+
+
+
+
+
+
+
+# rpm -ivh seedit-doc<br>
+
+
+
+
+
+
+
+
+<br>
+
+
+
+<span style="text-decoration: underline;">2.3 Installing GUI(Optional)</span><br style="text-decoration: underline;">
+
+
+
+If you want GUI, install here.<br>
+
+
+
+If you do not use GUI, go to 2.4.<br>
+
+
+
+<br>
+
+
+
+(1) Install perl-Net-SSLeay(For Fedora Core4)<br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# yum install perl-Net-SSLeay<br>
+
+
+
+(2) Install Webmin<br>
+
+
+
+Dowload webmin RPM package from &nbsp;<a href="http://www.webmin.com/">http://www.webmin.com/</a> .<br>
+
+
+
+(3) Install GUI<br>
+
+
+
+
+
+
+
+
+# rpm -ivh seedit-gui*.rpm webmin*.rpm<br>
+
+
+
+
+
+
+
+
+<br>
+
+
+
+<span style="text-decoration: underline;">2.4 After installing RPM</span><br style="text-decoration: underline;">
+
+
+
+(1) Reboot.<br>
+
+
+
+# reboot<br>
+
+
+
+After &nbsp;reboot, all files are relabeled, it takes time.<br>
+( Note for Turbo Linux 10 Server: <br>
+&nbsp;Relabel is not done, you have to do manually. &nbsp;After login ,type "fixfiles restore" )<br>
+
+
+
+<br>
+
+
+
+(2) Reboot again.<br>
+
+
+
+# reboot<br>
+
+
+
+Because domain and type label is incorrect..<br>
+
+
+
+<br>
+
+
+
+
+
+
+
+
+
+
+(3) Relabel some files<br>
+
+
+
+# restorecon -R /etc /tmp /dev&nbsp;<br>
+
+
+
+
+
+
+# cd /etc/selinux/seedit/src/policy<br>
+
+
+
+
+
+
+
+
+
+
+# make diffrelabel<br>
+
+
+
+
+
+
+(<span style="text-decoration: underline;">! When using turbolinux 10 server</span><br>
+
+
+
+
+
+
+# cd  /etc/selinux/seedit/src/policy<br>
+
+
+
+
+
+
+# ./restorecon -R /etc /tmp /dev<br>
+# make diffrelabel<br>
+
+
+
+
+
+
+)<br>
+There will be some warning, and error messages, you can neglect them.<br>
+
+
+
+<br>
+
+
+
+(4) Reboot again <br>
+
+
+
+# reboot<br>
+
+
+
+Install has been finished!<br>
+
+
+
+Note that SELinux is "permissive mode" here. <br>
+
+
+
+<br>
+
+
+
+<big style="text-decoration: underline;"><big>3. Make sure whether install is sucessful<br>
+
+
+
+</big></big>(1) sestatus<br>
+
+
+
+# sestatus <br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+SELinux status: enabled<br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+...<br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Policy from config file: seedit<br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+...<br>
+
+
+
+
+<br>
+
+
+
+
+
+
+
+
+(3) Test GUI<br>
+
+
+
+Start webmin<br>
+
+
+
+# /etc/init.d/webmin stop<br>
+
+
+
+
+
+
+
+
+# /etc/init.d/webmin start<br>
+
+
+
+Access webmin by &nbsp; https://&lt;your hostname&gt;:10000/<br>
+
+
+
+login webmin, &nbsp;username "root" password "&lt;your root password&gt;"<br>
+
+
+
+SELinux menu is in "system" menu.<br>
+
+
+
+<br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+(4) switch to enforcing mode <br>
+
+
+
+# setenforce 1<br>
+
+
+
+And test applications.<br>
+
+
+<br>
+
+
+(5) Edit policy<br>
+
+
+If &nbsp;application does not run in enforcing mode, (and it runs on permissive mode )<br>
+
+
+
+
+
+
+
+
+you might have to add policy.<br>
+
+
+And daemon programs which runs as initrc_t domain, you have to create domain.<br>
+
+
+When you edit simplified policy, see <a href="http://seedit.sourceforge.net/doc/simplified_policy_manual.pdf">Configuring SELinux by Simplified Policy</a>.<br>
+
+
+If you want to use GUI, see <a href="http://seedit.sourceforge.net/doc/manual/English/index.html">manual</a>.<br>
+
+
+<br>
+
+
+When policy is enough, switch to enforcing mode from boot.<br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Edit &nbsp;/etc/selinux/config like below.&nbsp;<br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+SELINUX=enforcing<br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+SELINUXTYPE=seedit<br>
+
+
+<big style="text-decoration: underline;"><big></big></big><br>
+
+
+
+<big style="text-decoration: underline;"><big>4. Uninstall </big></big><br>
+
+
+<br>
+
+
+#rpm -e&nbsp;e seedit-converter seedit-policy seedit-gui seedit-doc<br>
+
+
+and reboot.<br>
+
+
+At next time , system boots permissive mode in targeted policy.<br>
+
+
+This means, <br>
+
+
+the contents of /etc/selinux/config is <br>
+
+
+SELINUX=permissive<br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+SELINUXTYPE=seedit<br>
+
+
+<br>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+
+
+</body>
+</html>

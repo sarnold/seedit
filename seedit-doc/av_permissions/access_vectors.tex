@@ -1,0 +1,1045 @@
+\documentclass{article}
+\title{Meaning of permissions in SELinux(Ver 1)}
+\author{Yuichi Nakamura \thanks{The George Washington University,
+ynakam@gwu.edu}}
+\begin{document}
+\def\labelenumi{(\theenumi)}
+\maketitle
+\tableofcontents
+\newpage
+
+\section{Introduction}
+\subsection{About this document}
+Meaning of SELinux's permissions(operations that are restricted by permissions) are
+analyzed and shown in this document.
+For feedback, please send e-mail to ynakam@gwu.edu.
+
+\subsection{Terminology and notation}
+\begin{itemize}
+ \item Notation\\
+       read(2) means, you should refer to Linux man pages. This
+example means {\it man 2 read}.
+ \item Access vector permission\\
+       The term {\it Access vector permission} means, permission defined
+       in SELinux(such as read,write,send\_msg). {\it Access vector
+       permission } is often called simply {\it permission } in this
+       document. The usage of the term is from \cite{configpolicy}.
+\end{itemize} 
+
+\subsection{Motivation}
+The design SELinux Policy Editor\cite{seedit} is based on non-LSM based SELinux released at the time of Jan 2003. After that SELinux is re-implemented
+using LSM. As a result, meaning of access vector permissions had been changed, and many
+permissions are added. Before re-designing SELinux Policy Editor, we have to understand the meaning of permissions.  However, the meaning of them
+is not well documented. \cite{selinuximplementation} is a good
+documentation of implementing SELinux, but the meaning of access
+vectors are not fully covered. \cite{tresysav} is a quick reference of
+permissions, but the description is short.  Therefore, I decided
+to analyze the meaning of all permissions.
+
+\section{Analysis method}
+The version of SELinux used is that in Linux kernel 2.6.13. Analysis of permissions are based on source code analysis
+of Linux 2.6.13.  The process is following.
+\begin{enumerate}
+ \item  Find value corresponding to the permission from
+	security/selinux/include/ av\_permissions.h\\
+	In av\_permissions.h, permission is defined as a constant
+	value. For example, when we want to analyze permission {\it
+	read} for object class {\it file}. 
+	We can find following in av\_permissions.h.
+	\begin{verbatim}
+	#define FILE__READ     0x00000002UL		
+	\end{verbatim}
+ \item  Analyze how the constant is used.\\
+	In the example above, we analyze how FILE\_\_READ is used in
+	source code. And find out how the permission is checked. 
+	lxr \cite{lxr} is useful. 
+\end{enumerate}
+In some cases above process is not enough. 
+\begin{itemize}
+ \item Object class capability\\
+       For permissions in object class capability, constants
+       CAPABILITY\_\_* are defined in av\_permissions.h. However, we can
+       not find such constants in source code. We tend to think those
+       are not checked, but they are
+       actually checked. They are checked in {\it capable} Linux
+       function. Let's see permission {\it cap\_sys\_admin} as an
+       example. The permission is checked in the statement {\it
+       capable(CAP\_SYS\_ADMIN)}, then {\it selinux\_capable} and
+       {\it task\_has\_capability} are called, and permission 
+       {\it cap\_sys\_admin} is checked. In the check, values defined in
+       av\_permissions.h do not appear explicitly.
+ \item Object classes related to files and sockets\\
+       In these object classes, some permissions are inherited from
+       object class {\it file}. 
+       We have to pay attention to analyze them. Such permissions
+       use value FILE\_\_*.  
+       For example, when we analyze permission {\it read} in object
+       class {\it tcp\_socket}, {\it read } permission is inherited
+       from {\it file}. We can find TCP\_SOCKET\_\_READ in
+       av\_permissions.h. However, we have to also analyze the behavior
+       of FILE\_\_READ. 
+\end{itemize}
+
+\section{Meaning of permissions}
+\subsection{permissions related to files}
+In the following subsection, operations restricted by permissions are
+described.
+\subsubsection{Object classes}
+Object classes related to file are summarized in Table \ref{tab:obfile}.
+\begin{table}[h]
+\caption{Object classes related to file}\label{tab:obfile}
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+Object class & For what kind of file?\\
+\hline
+ file & Normal file\\
+\hline
+ blk\_file &  Block device file\\
+\hline
+ chr\_file & Character device file\\
+\hline
+fifo\_file & Special file for FIFO\\
+\hline
+lnk\_file & Symbolic link\\
+\hline
+sock\_file & Special file for Unix domain socket\\
+\hline
+dir & Directory\\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+\subsubsection{permissions common to object classes related to file}
+\begin{itemize}
+ \item ioctl\\
+       Control attribute of device. It is checked in ioctl(2).
+ \item read\\
+       Read file. It is checked in read(2).
+ \item  write\\
+       Write to file. It is checked in write(2).
+ \item create \\
+       Open and create new file, directory and symbolic link.        
+ \item  getattr\\
+       Get file attribute (such as last modified). It is checked in stat(2).
+ \item setattr\\
+       Modify file attribute.  It is checked in kernel functions that
+       changes file attribute.
+ \item  lock\\
+       Lock file. It is checked in flock(2) and fcntl(2)
+ \item  relabelfrom, relabelto\\
+       Relabel file. When domain A relabel file whose type is B to type
+       C. A must have relabelfrom to B and relabelto to C.
+ \item append\\
+       Append to file. It is checked when opening file as append mode.
+ \item  unlink\\
+       Delete file. It is checked in  unlink(2).
+ \item  link\\
+       Create hard link. When domain A want to create hard link for file
+       whose type is B, A must have link permission to B.
+ \item rename\\
+       Rename file. It is checked in rename(2). rename(2) is used in
+       such as mv command.
+ \item execute\\
+       Execute file with domain transition. Link shared library.
+ \item  swapon\\ 
+       It is not used. It is defined in SELinux source as
+       FILE\_\_SWAPON but not used. Originally, it controlled swapon system
+       call, but this was dropped when merged into mainline Linux
+       kernel. For domain A to do swapon system call successfully, A need {\it getattr
+       read and write } permissions. So without {\it swapon} permission, swapon system call can be restricted.
+% 使われてない？？
+%       mkswapコマンド, swaponにより，swapは、普通のファイルに作成することができ
+%       た。で，swaponすると，カーネルからスワップが発生したとき、ファイ
+       %ルが破壊。特にアクセスベクタはちぇっくされず。
+%       -> seeditでは、blk_fileのみ。
+% swaponはcap_adminでも制御される
+% mkswap 時点で，read,writeのチェックがされる。swapon時もread writeチェッ
+       %クされる。getattrがないとswaponできない。
+       
+ \item quotaon\\
+       Enable quota to disk device file. It is checked in quotactl(2)(Q\_QUOTAON flag).
+ \item mounton\\
+       %  xxxx may be important!!xxxx\\
+       Use directory as a mount point. It is checked in mount(2).       
+\end{itemize}
+      
+\subsubsection{permissions specfic to object class {\it file,
+   blk\_file}}
+   \begin{itemize}
+    \item execute\_no\_trans\\
+	     Execute file without domain transition.
+    \item entrypoint\\
+	     Use file as a entry point for domain transition.
+    \item  execmod\\
+	  Attempt to load executable in specific condition. The condition
+	  is quoted from \cite{selinuximplementation} below. {\it It first checks whether the caller is attempting to make executable a file mapping that has had some
+	  copy-on-write done, indicating that it may include modified content. If so, then the hook function
+	  performs a file execmod permission check.}
+   \end{itemize}
+    
+\subsubsection{permissions specific to dir}
+\begin{itemize}
+ \item  add\_name\\
+	Add entry to directory. It is checked in rename(2) and link(2).
+ \item  remove\_name\\
+	Remove entry from directory. It is checked in unlink(2).
+ \item  reparent\\
+	Change parent directory. It is checked in rename(2).
+ \item search\\
+	When opening file and directory or changing directory, {\it search }
+	permission is checked.  {\it search } is checked to all ancestor
+       directories. For example, when {\it cd /etc/selinux/seedit/}
+       command(suppose the domain is foo\_t) is run, {\it search } is
+       checked to /, /etc, /etc/selinux and /etc/selinux/seedit.
+ \item rmdir\\
+	Remove directory. It is checked in rmdir(2).
+\end{itemize}
+
+\subsection{permissions related to sockets}
+\subsubsection{Object Classes}
+In SELinux,object classes are related to sockets. SELinux categorizes
+sockets by protocol family and type. protocol family is {\it domain} and
+type is {\it type } in socket system call \footnote{See man socket(2)}.
+Table \ref{tab:objsock} shows relationship between object class,
+protocol family and type. 
+{\tiny
+\begin{table}[h]
+\caption{Object classes related to socket, partly quoted from \cite{selinuximplementation}}\label{tab:objsock}
+\begin{center}
+\begin{tabular}{|l|l|l|}
+%\begin{tabular}{|p{10em}|p{6em}|p{6em}|p{10em}|}
+\hline
+Object class & Protocol Family & Type \\
+\hline
+tcp\_socket & PF\_INET, PF\_INET6 &SOCK\_STREAM  \\
+\hline
+udp\_socket & PF\_INET, PF\_INET6 &SOCK\_DGRAM \\
+\hline
+rawip\_socket &  PF\_INET, PF\_INET6&SOCK\_RAW\\
+\hline
+ unix\_stream\_socket&PF\_UNIX & SOCK\_STREAM\\
+\hline
+ unix\_dgram\_socket&PF\_UNIX & SOCK\_DGRAM\\
+\hline
+ packet\_socket&PF\_PACKET & all \\
+\hline
+key\_socket & PF\_KEY & all  \\
+\hline
+netlink\_route\_socket & PF\_NETLINK & NETLINK\_ROUTE \\
+\cline{1-1}\cline{3-3}
+ netlink\_firewall\_socket&  &NETLINK\_FIREWALL  \\
+\cline{1-1}\cline{3-3}
+netlink\_tcpdiag\_socket & & NETLINK\_TCPDIAG \\
+\cline{1-1}\cline{3-3}
+netlink\_nflog\_socket& & NETLINK\_NFLOG  \\
+\cline{1-1}\cline{3-3}
+netlink\_xfrm\_socket& &  NETLINK\_XFRM  \\
+\cline{1-1}\cline{3-3}
+netlink\_selinux\_socket& & NETLINK\_SELINUX  \\
+\cline{1-1}\cline{3-3}
+netlink\_audit\_socket& & NETLINK\_AUDIT  \\
+\cline{1-1}\cline{3-3}
+netlink\_ip6fw\_socket& &  NETLINK\_IP6\_FW  \\
+\cline{1-1}\cline{3-3}
+netlink\_dnrt\_socket & & NETLINK\_DNRTMSG  \\
+\cline{1-1}\cline{3-3}
+netlink\_kobject\_uevent \_socket& & NETLINK\_KOBJECT\_UEVENT \\
+\cline{1-1}\cline{3-3}
+netlink\_socket& &ALL other types  \\
+\hline
+socket & \multicolumn{2}{|l|}{all sockets unmatched above}\\ 
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+}
+
+The short description of each sockets are below.
+\begin{itemize}
+ \item tcp\_socket, udp\_socket\\
+      These are trivial, TCP and UDP socket. 
+ \item rawip\_socket, packet\_socket\\
+       These are related to socket to send raw packets. These can be used
+       by attacker to create fake packet. 
+ \item  unix\_stream\_socket\& unix\_dgram\_socket\\
+       These are unix domain socket, socket to communicate with
+       processes in the same machine.
+ \item netlink*socket\\
+       These are related to netlink socket. Netlink socket is a socket
+       to communicate with kernel.
+ \item key\_socket\\
+       This is a socket used for IPSEC.
+ \item socket\\
+       Sockets that does not match all of above. From socket(2), 
+       unmatched sockets will be those whose protocol family are PF\_IPX(IPX-Novell protocols), PF\_X25(ITU-T X.25
+       /ISO-8208 protocol), PF\_AX25(Amateur radio AX.25 protocol),
+       PF\_ATMPVC(Access to raw ATM PVCs) and PF\_APPLETAL(Appletalk).   
+\end{itemize}
+
+\subsubsection{permissions common to sockets}\label{sec:commonsock}
+\begin{itemize}
+ \item relabelfrom, relabelto\\
+       These permission is defined, bot not used.
+       %将来復活の可能性がある
+
+ \item Target type is domain who created socket \\
+       For following , target type is domain who created socket. 
+ \begin{itemize}
+  \item   read\\
+	  Read data from socket. This is checked in system call
+	  recvmsg. In other system calls related to socket read(such as recvfrom), recvmsg
+	  call are internally used.
+  \item  write\\
+	  Write data to socket. This is checked in system call
+	  sendmsg. sendmsg is internally used in other system calls
+	  related to socket write.
+  \item  create\\
+	  Create socket. This is checked when socket is created.
+  \item  getattr\\
+	  Get name of socket by  getsockname and getpeername system call.
+	  
+  \item  bind\\
+	  Usage of bind system call. bind system call is to give name to
+	  socket.
+  \item  connect\\
+	  Usage of connect system call. connect system call is used to
+	  initiate network connection
+  \item  listen, accept\\
+	  Usage of listen and accept system call. These calls are used to
+	  wait network connection.
+  \item  getopt\\
+	  Get socket option by getsockopt system call.
+  \item  setopt\\
+	  Set socket option by setsockopt system call.
+  \item  shutdown\\
+	  Terminate connection by shutdown system call.
+  \item ioctl\\
+	  Set and get attribute of socket by ioctl system call.
+  \item append\\
+	  open socket with O\_APPEND option,but it does not make sense
+	  for socket.
+  \item lock\\
+	  Lock file descriptor for socket by flock and fcntl system call.
+  \item setattr\\
+	  Set inode attribute of socket.
+ \end{itemize}
+
+       As an example, let's see when a\_t domain communicate b\_t
+       domain by TCP. 
+       For convenience of explanation, we see
+       only create and write permissions. 
+       \begin{enumerate}
+	\item a\_t domain process open TCP socket, and establish connection with
+	      process whose domain is b\_t\\
+	      TCP socket is created, and {\it create} permission is
+	      checked. The created socket has type a\_t.
+	      {\it allow a\_t a\_t:tcp\_socket create;} is necessary to
+	      allow it.
+	\item a\_t domain write data to socket.\\
+	      {\it write } permission is checked.
+	      {\it allow a\_t a\_t:tcp\_socket write;} is necessary to
+	      allow this operation. Note that target type is {\it not}
+	      b\_t, because type of socket which a\_t is writing is {\it
+	      a\_t}.	      
+       \end{enumerate}
+       
+ \item Target type is domain of peer socket\\
+       \begin{itemize}
+	\item sendto\\
+	      Connect by connect call and send data by sendmsg
+	      call. Note that this permission is checked only in unix
+	      data gram socket.
+	      % unix_dgram_connect,  unix_dgram_sendmsgのチェックがされ
+	      %てた
+       \end{itemize}
+       The target type of above permission is domain of peer socket. 
+       For example, when domain a\_t want to send data to domain b\_t,
+       permission check is done using {\it domain:a\_t, type:b\_t,
+       objectclass:unix\_dgram\_socket, permission:sendto }. This
+       means communication between domains are checked. To allow this       
+	\begin{verbatim}
+       allow a_t b_t:unix_dgram_socket sendto;			
+	\end{verbatim}
+       must be described in policy.         
+ \item Target type is port\\
+       In following permissions, type of port is used as target
+       type. In SELinux, port numbers are labeled.
+
+       \begin{itemize}
+	\item  name\_bind\\
+	       Open port.
+	\item recv\_msg\\
+	       Receive data from port. This is checked in kernel
+	       function processing incomming data. Target type is type of source port.
+	\item send\_msg\\
+	       Send data to port. Target type is type of destination port.
+       \end{itemize}       
+       For example,
+       When a\_t domain want to receive data from peer whose port is tcp 80(assuming type is http\_port\_t),
+       \begin{verbatim}
+		allow a_t httpd_port_t:tcp_socket recv_msg;
+       \end{verbatim}
+       must be specified.
+\end{itemize}
+
+
+%% これは，ターゲットがポートだったりする。後で調査。      
+%%これも。ターゲットがポートかも 
+
+%%以下のアクセスベクタのtargetタイプは全部「self（ドメインと同じ）」にな
+%       る。targetはソケットのinodeのタイプになるが，ソケットのinodeのタ
+%        イプはドメインと同じになる。{\it If the labeling behavior is to inherit the inode SID directly from the allocating task, then the function
+%copies the task SID from the inode security structure into its own SID field. This behavior is used for
+%private objects such as socket and pipes. (p34, 14.1.3)}
+%ソケットにもsidを付与できたが，いまはUNIXドメインにしか付与できない
+      
+%%共通だが、実はunix dgram特有
+%%socket_unix_may_send(struct socket *sock,
+%%                                        struct socket *other)
+%%これは，ソース、ターゲットがちゃんと制御可 Unix dgramソケットでチェッ
+
+
+\subsubsection{Object class netlink\_socket, packet\_socket, key\_socket
+,unix\_dgram\_socket }
+For these object classes, all permissions are the same as those
+specified in section \ref{sec:commonsock}.
+
+
+\subsubsection{Object class  unix\_stream\_socket }
+In addition to permissions in \ref{sec:commonsock}, following are
+defined. These permissions are checked between subject domain and
+domain of peer. 
+\begin{itemize}
+ \item  connectto\\
+	Connect to peer by connect system call
+ \item  newconn\\
+	This is not used. Defined as UNIX\_STREAM\_SOCKET\_\_NEWCONN,
+	but not actually used.
+ \item acceptfrom\\
+	This is not used. Defined as UNIX\_STREAM\_SOCKET\_\_ACCEPTFROMN,
+	but not actually used.
+\end{itemize}
+    
+
+\subsubsection{Object class  tcp\_socket }
+In addition to permissions in \ref{sec:commonsock}, following are
+defined. 
+\begin{itemize}
+ \item    connectto  \\
+	  Defined as TCP\_SOCKET\_\_CONNECTTO, but not used.
+ \item  newconn\\
+	  Defined as TCP\_SOCKET\_\_NEWCONN but not used.
+ \item  acceptfrom\\
+	  Defined as TCP\_SOCKET\_\_ACCEPTFROM but not used.
+	  
+ \item  node\_bind \\ 
+	  Name socket by bind system call. Target type is type of node(Network address).
+	  %err = avc_has_perm(isec->sid, sid, isec->sclass(Nodeのクラス), node_perm, &ad);
+
+ \item  name\_connect
+	  Begin network connetion by connect system call. Target type is
+	  port number.
+   % err = avc_has_perm(isec->sid, sid(Port), isec->sclass, TCP_SOCKET__NAME_CONNECT, &ad);
+\end{itemize}
+
+\subsubsection{Object class udp\_socket, rawip\_socket }
+In addition to permissions in \ref{sec:commonsock}, node\_bind is  defined.
+The meaning of node\_bind is the same as that of tcp\_socket.
+
+\subsubsection{Object class netlink\_nflog\_socket, netlink\_selinux\_socket and netlink\_dnrt\_socket}
+permissions are the same as \ref{sec:commonsock}.
+
+\subsubsection{Object class netlink\_audit\_socket}
+In addition to permissions in \ref{sec:commonsock}, following permissions are defined. These permissions are checked when sending
+message to CAPP(Controlled Access Protection Profile)\cite{capp} audit system.
+\begin{itemize}
+ \item  nlmsg\_read\\
+	Send message  to query the status of LauS.
+ \item  nlmsg\_write\\
+	Send message to change configuration of LauS.
+ \item  nlmsg\_relay\\
+        Send user space log  message to LauS. 
+ \item nlmsg\_readpriv\\
+	Send message to obtain configuration of LauS.
+\end{itemize}
+
+
+%%%%結局どんな情報流が制御できるかをまとめる必要がある。
+%%%xxxxxxxxxnetlink まだ
+\subsubsection{netlink\_route\_socket}
+netlink\_route\_socket is used to restrict access to netlink socket that
+is used to configure kernel routing table. In addition to permissions in \ref{sec:commonsock}, following permissions are defined.
+%man rtnetlink
+\begin{itemize}
+ \item nlmsg\_read\\
+       Send messsage to request to read kernel routing table.
+ \item nlmsg\_write\\
+       Send message to request to write kernel routing table.
+\end{itemize}
+
+\subsubsection{Object class netlink\_firewall\_socket }
+
+This object class is to control access to IPv4 firewall. 
+%netlink(7) NETLINK_FIREWALL
+ In addition to permissions in \ref{sec:commonsock}, following permissions are defined. 
+\begin{itemize}
+ \item         nlmsg\_read \\ 
+	       This is defined but not used.
+ \item         nlmsg\_write\\
+	       Send message whose mode is IPQM\_VERDICT or IPQM\_MODE
+	       defined in ip\_queue.h. 
+\end{itemize} 
+
+\subsubsection{Object class netlink\_tcpdiag\_socket}
+netlink\_tcpdiag\_socket is used to restrict usage of  netlink socket
+for network monitoring kernel module enabled by CONFIG\_IP\_TCPDIAG
+kernel compile option.
+
+% 11 #define NETLINK_INET_DIAG       4       /* INET socket monitoring                       */
+% http://www.linux-m32r.org/lxr/http/source/net/ipv4/inet_diag.c
+
+
+In addition to permissions in \ref{sec:commonsock}, following permissions are defined. 
+\begin{itemize}
+ \item    nlmsg\_read\\
+	  Send message requesting to get infomation about TCP and
+	  DCCP protocol. 
+	  %TCPDIAG_GETSOCK DCCPDIAG_GETSOCK
+ \item nlmsg\_write\\
+ This is defined but not used.
+\end{itemize}
+
+\subsubsection{netlink\_xfrm\_socket} % IPSEC
+netlink\_tcpdiag\_socket is used to restrict usage of
+netlink\_xfrm\_socket to configure IPSEC.In addition to permissions
+in \ref{sec:commonsock}, following permissions are defined. 
+\begin{itemize}
+ \item    nlmsg\_read\\
+	  Send message to request to read  IPSEC parameter.
+ \item nlmsg\_write\\
+	  Send message to request to set IPSEC parameter.
+\end{itemize}
+
+
+\subsubsection {Object class netlink\_ip6fw\_socket}
+This object class is defined, but not used.
+
+           
+\subsection{permissions related to other network elements}
+\subsubsection{Object class netif}
+Following permissions are defined. In these, target type is network
+interface\footnote{SELinux labels network interface.}.
+\begin{itemize}
+ \item  tcp\_recv\\
+	This is checked when tcp socket receives data from network
+	interface.\\   
+ \item   tcp\_send\\
+	This is checked when tcp socket sends data to network
+	interface.\\   
+ \item udp\_recv\\
+	This is checked when udp socket receives data from network
+	interface.\\  
+ \item udp\_send\\
+	This is checked when udp socket sends data from network
+	interface.\\  
+ \item rawip\_recv\\
+	This is checked when raw socket(RAW socket and packet socket) receives data from network
+	interface.\\  
+ \item rawip\_send\\
+	This is checked when raw socket sends data from network
+	interface.\\  
+\end{itemize}
+
+
+\subsubsection{Object class node}
+Following permissions are defined. In these, target type is network
+node(IP address).
+\begin{itemize}
+ \item     tcp\_recv,        tcp\_send, udp\_recv,udp\_send,
+	   rawip\_recv,        rawip\_send\\
+	   The same as those in class netif except target type is type
+	   of node.
+ \item enforce\_dest\\
+	   Defined as NODE\_\_ENFORCE\_DEST but not used.
+\end{itemize}
+   
+
+\subsection{permissions related to IPC}
+\subsubsection{Object classes}
+\begin{itemize}
+ \item ipc \\
+       Defined SECCLASS\_IPC,but not used. 
+ \item msgq\\
+       IPC message queue. SELinux labels  msgq. The type is the
+       same as doamin of creating process.
+ \item sem\\
+       IPC semaphore.SELinux labels semaphore msgq. The type is the
+       same as doamin of creating process.
+ \item shm\\
+       IPC shared memory. SELinux labels shared memory. The type is the
+       same as domain of creating process.
+ \item msg\\
+       Message used in message queue. SELinux labels message. The type
+       is the same as message queue to which a process is going to send
+       to msgq.
+\end{itemize}
+
+\subsubsection{permissions common to all ipc object classes}
+\begin{itemize}
+ \item create\\
+       Create IPC object.
+ \item destroy\\
+       Destroy IPC object by shmctl(option IPC\_RMID ).
+ \item getattr\\
+       Get information about IPC by shmctl, msgctl and semctl (option IPC\_STAT) 
+ \item setattr\\
+       Change attributie of IPC object by shmctl,msgctl and
+       semctl(option IPC\_SET)
+ \item read\\
+       Meaning of this is different depending on object class.
+       \begin{itemize}
+	\item shm\\
+	      Attach shared memory to process by using shmat SHM\_RDONLY option.
+	\item msgq\\
+	      Read message from message queue.
+	\item sem\\
+	      Get value of semaphore by semctl(GETALL option) and semop.
+       \end{itemize}
+       
+ \item write\\
+       Meaning of this is different depending on object class.
+       \begin{itemize}
+	\item shm\\
+	      Attach shared memory to process by shmat not SHM\_RDONLY option.
+	\item msgq\\
+	      Send message to message queue.
+	\item sem\\
+	      Change value of semaphore by semctl(SETALL option) and semop.
+       \end{itemize}
+       
+ \item associate\\
+       \begin{itemize}
+	\item sem\\
+	      In addition to operations restricted by getattr, get id by
+	      semget.
+	\item shm\\
+	      In addition to operations restricted by getattr, get id by shmget
+	\item msgq\\
+	      Get id by msgget
+       \end{itemize}
+
+ \item unix\_read\\
+       Operations that read ipc object. This is checked when ipcperms
+       kernel function(with S\_IRUGO flag) is called. ipcperms function
+       with S\_IRUGO flag is called when ipc object is read.       
+ \item unix\_write\\
+       Operations that write or modify ipc object. This is checked when
+       ipcperms kernel function(with S\_IWUGO flag) is called. ipcperms function
+       with S\_IWUGO flag is called when ipc object is written or modified.       
+\end{itemize}
+
+\subsubsection{Object class msgq}
+In addition to permissions common to IPC, enqueue is defined.
+\begin{itemize}
+ \item         enqueue\\
+	       This is the same as write.
+\end{itemize}
+
+\subsubsection{Object class msg}
+There are only two permissions in msg. Object classes common to IPC
+    are not used.
+\begin{itemize}
+ \item    send\\
+	  This is the same as write of msgq, except that target type is
+	  type of message.
+ \item    receive\\
+	  This is the same as read of msgq, except that target type is
+	  type of message.
+\end{itemize}
+As a target type type of message is used above. However, by default,
+type of message is the same as type of msgq. So, above permissions
+are same as write and read for msgq.
+
+\subsubsection{Object class sem}
+permissions are the same as those common to IPC.
+
+\subsubsection{Object class shm}
+In addition to permissions common to IPC, lock is defined.
+\begin{itemize}
+ \item         lock\\
+	       Lock shared memory by shmctl with SHM\_LOCK or
+	       SHM\_UNLOCK option.	       
+\end{itemize}
+
+
+\subsection{Object class capability}
+ \begin{itemize}
+ \item    chown\\
+	  Change owner of file by chown. 
+ \item dac\_override\\
+	  Skip ordinary Linux's permission check(DAC). 
+
+ \item  dac\_read\_search\\
+	  Skip ordinary Linux's permission check about read and
+	  directory search. 
+ \item   fowner
+	  \begin{itemize}
+	   \item  Skip permission check in chmod and utime\\
+	   \item Change acl(Posix ACL)\\
+		  %これらは,setattrと重なる
+	  \end{itemize}
+  \item       fsetid\\
+	  Some operations related to setuid.Quoted from capabilities(7):	  
+	  {\it Don't  clear  set-user-ID  and  set-group-ID bits when a file is
+              modified; permit setting of the  set-group-ID  bit  for  a  file
+              whose  GID  does not match the file system or any of the supple-
+              mentary GIDs of the calling process.}
+
+	  
+  \item  kill\\
+	  Skip permission check about kill. The same as CAP\_KILL
+	  
+  \item setgid\\
+	  Change GID for process and socket. Quoted from
+	  capabilities(7):{\it 
+     Allow  arbitrary manipulations of process GIDs and supplementary
+              GID list; allow forged GID when passing socket  credentials  via
+              Unix domain sockets.}
+
+  \item setuid\\
+	  Change UID for process and socket. The same as CAP\_SETUID.
+	  Quoted from capabilities(7):{\it Allow arbitrary manipulations of process UIDs (setuid(2), etc.);
+	  allow forged UID when passing socket credentials via Unix domain
+	  sockets.}
+  \item  setpcap\\ 
+	  Change capability. The same as CAP\_SETPCAP. Quoted from capabilities(7):{\it
+	  Grant  or  remove any capability in the caller's permitted capa-
+	  bility set to or from any other process.}
+  \item linux\_immutable \\ 
+	  Set immulable flag on files that support immutable flag.  The
+	  same as CAP\_LINUX\_IMMUTABLE.
+	  
+  \item net\_bind\_service\\
+	  Bind well known port.    The same as CAP\_NET\_BIND\_SERVICE.
+
+  \item net\_broadcast\\
+	  Not used.
+	  
+  \item net\_admin\\
+	  The same as  CAP\_NET\_ADMIN. Quoted from capabilities(7):{\it
+	  Allow various network-related operations (e.g.,  setting  privi-
+	  leged  socket options, enabling multicasting, interface configu-
+	  ration, modifying routing tables). }
+	  
+  \item net\_raw\\
+	  Use raw and packet sockets. 
+  \item ipc\_lock\\
+	  Memory lock using mlock, mlockall, shmctl. The same as
+	  CAP\_IPC\_LOCK.
+	  
+  \item ipc\_owner\\
+	 Skip permision check about IPC. The same as  CAP\_IPC\_OWNER.
+	  
+  \item sys\_module\\	  
+	  Load and unload kernel module. The same as CAP\_SYS\_MODULE.
+  \item sys\_rawio\\
+	  Manipulate I/O port by iopl and ioperm. Access /proc/kcore.
+	  The same as CAP\_SYS\_RAWIO.
+  \item         sys\_chroot\\
+	  Use chroot system call.
+  \item         sys\_ptrace\\
+	  Use ptrace to all processes.
+  \item         sys\_pacct\\
+	  Obtain log of process by acct(2).
+	  % allowprocに統合できる？
+  \item  sys\_admin\\
+	  It grants many operations. 
+	  \begin{itemize}
+	   \item Usage of following system call: quotactl, mount,
+		 umount, swapon, swapoff, sethostname, setdomainname
+		 % だいたい制御？
+	   \item Set attribute to all IPC objects(IPC\_SET) 
+		 %IPCで代用？
+	   \item Delete all IPC objects(IPC\_RMID)
+		 % IPC OWNERで制御? 
+	   \item Set extended security attibute for file system.
+		 % setattrとrelabelで制御
+	   \item Use fake UID as socket credential.
+		 % SETUID,GIDで代用
+	   \item Can open more file than limits in
+		 /proc/sys/fs/file-max.
+		 % RESOURCEで代用？
+	   \item Allocate memory using space reserved for priviledged process.\\
+		 It is checked in security\_vm\_enough\_memory LSM hook
+		 function. security\_vm\_enough\_memory LSM hook is
+		 called in case such as when process is created. The
+		 operation is not audited in SELinux.
+	   \item Get/set xattr trusted attribute\\
+		  Xattr trusted attribute is not used for current SELinux.
+	   \item Some ioctl operations\\
+		 Developpers of drivers check this capability in some
+		 option of ioctl. The check is inserted by developper of
+		 driver in place where he thinks important.
+	  \end{itemize}
+  \item sys\_boot\\
+	  Reboot by reboot(2). However, it does not restrict
+	  reboot by writing /dev/initctl.
+  \item sys\_nice\\
+	  Increase nice and change nice for other processes.
+	  %かさなる
+	  
+  \item sys\_resource\\
+	  \begin{itemize}
+	   \item Ignore hardlimit for resource usage in rlimit
+	   \item Increase hardlimit for resoure usage in rlimit.
+	   \item Use reserved space in ext2 file system
+	   \item Modify journal data flag for ext3 by ioctl
+	   \item Ignore limit related to message queue in
+	  /proc/sys/kernel/msgmnb 	  
+	  \end{itemize}
+  \item sys\_time\\
+	  Modify system clock.
+  \item sys\_tty\_config\\
+	  Close control terminal by vhangup(2). Change configuration of
+	  terminal(such as keycode) by ioctl(such as KDSKBENT, KDSKBSENT option). 
+	  % ioctlはhooks.cで使われてる
+  \item mknod\\
+	  Create device file by mknod.
+	  %重なる
+  \item lease\\
+	  Set lease by fcntl system call. Lease is a kind of lock.When a
+	  process sets lease to file, not only file is locked but also
+	  signal is sent when other process accesses the file.
+	  To use lease, file:lock should also be allowed.
+
+  \item audit\_write\\
+	  Send user space AVC message to kernel. User space AVC
+	  message is not used in currently SELinux.
+  \item audit\_control\\
+	  Change configuration of Linux Auditing
+	  subsystem(LauS)\cite{laus}
+	  %(xxxxhttp://www.uniforum.chi.il.us/slides/HardeningLinux/LAuS-Design.pdf)
+	  To change /proc/self/loginuid.
+ \end{itemize}
+      %%%% POSIX Capabilityしらべなきゃな。。
+      
+\subsection{Object class fd}
+\begin{itemize}
+ \item use\\
+       \begin{itemize}
+	\item Inherit file descriptor when process is executed and
+	      domain has been changed.
+	\item Receive fd from another  process by Unix domain socket\footnote{When creating unix domain
+	      socket, by setting SCM\_RIGHTS flag, file descriptor can be sent,
+	      see man unix(7).}.
+       % selinux_file_receiveでチェック
+	\item Get and set attribute of file descriptor,such as owner and flag
+	      by fntl and ioctl.
+       \end{itemize}       
+\end{itemize}
+%(3) Unixドメインソケットで，他プロセスのファイルディスクリプタを受信し
+%	      たとき。man 7 unixによると，SCM_RIGHTSをセットすることで，
+%	      ファイル識別子をUNIXドメインソケットで受信できる。
+
+\subsection{Object class filesystem}
+SELinux labels superblock of filesystem. permissions in object class
+filesystem is used for access control to superblock. 
+\begin{itemize}
+ \item mount\\
+       Mount filesystem.
+ \item remount\\
+       Remount existing mount by MS\_REMOUNT option of mount(2).
+ \item unmount\\
+       Unmount filesystem.
+ \item getattr\\
+       Obtain statistics
+       about filesystem, such as free block by statfs(2).
+ \item associate\\
+       Use type as label for files. A type can not be labeled to file unless the type is not
+       associated to file. For example, when we want to use homepage\_t to
+       /var/www, and ext3 filesystem is labeled as fs\_t,  then, {\it allow homepage\_t fs\_t filesystem:
+       associate; } must be described in policy. 
+ \item quotaget\\
+       Get quota information .
+ \item 	quotamod\\
+       Modify quota by quotactl(2).
+ \item relabelfrom,relabelto,transition \\
+       These are defined in source but are not used.
+\end{itemize}
+
+\subsection{Object class process}
+permissions in object class are prepared to restrict operations
+between process. Unless specified, target type is domain of peer process.
+\begin{itemize}
+ \item fork\\
+       Create new process by fork(2). Target type is the domain itself.
+ \item transition\\
+       Do domain transition.
+ \item sigchld, sigkill, sigstop, signull, signal\\
+       Send signal. {\it sigchld} is for SIGCHLD, {\it sigkill} is for SIGKILL,
+      {\it  sigstop} is for SIGSTOP and  {\it signull} is for signal number
+       zero. {\it signal } is for other signals.
+ \item ptrace\\
+       Trace process by ptrace(2).
+
+ \item getsched\\
+       Read scheduling information of process(such as nice
+       value). Session ID is used for job control by shell.
+ \item setsched\\
+       Modify scheduling information of process.
+ \item getsession\\
+       Get session ID of process.
+       % プロセスの「セッションID, プロセスグループID」を得る。これらは，
+%       http://japan.linux.com/kernel/internal24/node19.shtml，
+ %      http://www.freebsd.org/doc/ja_JP.eucJP/books/design-44bsd/overview-process-management.html　あたりが参考になる。
+
+ \item getpgid\\
+       Get process group ID. Process group ID is used for job control by shell.
+ \item	 setpgid\\
+       Modify process group ID.
+ \item getcap\\
+       Get capability information of process by capget(2).
+ \item setcap\\
+       Modify capability information of process by capset(2).
+ \item share\\
+       %xxx some pend
+       Execute process with domain transition after clone system call. 
+ \item getattr\\
+       Read process security information of other processes(such as what domain is given) in /proc/pid/attr.
+ \item setexec\\
+       Set security context of executed process by writing
+       /proc/self/attr/exec or by setexecon system call.
+ \item setfscreate\\
+       Set security context of created file by writing
+       /proc/self/attr/fscreate or setfscreatecon system call.
+ \item noatsecure\\
+       This permission is used for glibc's extended mode(secure mode). When this
+       permission is denied, glibc secure mode is enabled(if secure
+       mode exists).
+ \item siginh\\
+       Inherit signal state(such as signal handler) from parent process. This is checked when
+       domain has been changed. The default behavior of Linux is to
+       inherit signal state(signal handler is not inherited in exec), but by denying this permission, we can
+       restrict inheriting signal state. If this is denied, signal state
+       is cleared.    
+
+ \item setrlimit\\
+       Change rlimit information(resource usage limit) by setrlimit(2).
+       
+ \item rlimitinh\\
+       Inherit rlimit information(resource usage limit information) from
+       parent process.This is checked when domain has been changed.  The default behavior of Linux is to
+       rlimit information, but by denying this permission, we can
+       restrict inheriting rlimit information. If this is denied, rlimit       is cleared.   
+ 
+ \item dyntransition       \\
+       Do dynamic domain transition.
+       %http://www.nsa.gov/selinux/list-archive/0411/thread_body10.cfm
+ \item setcurrent\\
+       Set target domain of dynamic domain transition by writing
+       /proc/self/current.
+ \item execmem, execstack, execheap\\
+       These are useful in combination with
+       Exec Shield\cite{ExecShield}. These restrict Exec Shield to be
+       disabled. For more, see Stephen Smalley's post to SELinux Mailing
+       List\footnote{http://marc.theaimsgroup.com/?l=selinux\&m=113440812327410\&w=2}. 
+\end{itemize}
+
+	
+\subsection{Object class security}
+Object class security is operations related to query security
+server \footnote {Security Server a component of SELinux which makes
+access control decision based on policy },
+changing SELinux internal parameters and managing SELinux. The meaning
+are found by analyzing selinuxfs.c.
+
+\begin{itemize}
+ \item  compute\_av\\
+	Query security server about access is denied or granted, by writing /selinux/access.
+ \item  compute\_create\\
+	Query security server about label transision rule, by writing /selinux/create. 
+ \item  compute\_member\\
+	Query security server about polyinstantiation\cite{polyinstantation} membership decision, by writing /selinux/member.
+	
+ \item  check\_context\\
+	Query security server about whether security context is valid,
+	by writing /selinux/context.
+ \item  load\_policy\\
+	Load policy file to kernel.
+ \item compute\_relabel\\
+	Query security server about relabel based on type\_change
+	TE rule. {\it type\_change} is a rule to help application to relabel
+	object such as tty device.
+ \item	compute\_user\\
+	Query security server about users that a context can
+	reach, by writing /selinux/user. Changing user identity is
+	restricted in policy by constraints. 
+	This is used programs who change SELinux user identity
+	such as login and ssh.
+ \item setenforce\\    
+	Switch enforcing/permissive mode.
+ \item  setbool\\
+	Change boolean parameter of policy.
+ \item  setsecparam\\
+	Configure avc parameter by writing /selinux/avc.
+ \item  setcheckreqprot\\
+	Configure behavior of permission {\it execmem, execmod and
+	execheap} via /selinux/checkreqprot \footnote{By writing 0 or 1
+	/selinux/checkreqprot, behavior of execmem, execmod and
+       execheap can be configured.}
+\end{itemize}
+
+\subsection{Object class system}
+In object class system, misc permissions related to system are
+defined.
+
+\begin{itemize}
+ \item  ipc\_info\\
+	Get information about IPC object. This is to get system-wide
+	IPC parameter, not information specific to a IPC object. An
+	example of system-wide IPC information is segment size of
+	shared-memory. More precisely, this controls usage of option
+	IPC\_INFO, SHM\_INFO, SEM\_INFO, MSG\_INFO in
+	shmctl,semctl,msgctl system call.
+ \item 	syslog\_read\\	
+	Read kernel message by
+	syslog(2)(option 3). 
+ \item syslog\_console \\
+	Control output of kernel message to console by syslog(2)(option 6,7,8). 
+ \item syslog\_mod \\
+	Clear kernel message buffer by syslog(2)(option 0,1,2,4,5).
+\end{itemize}
+
+\section*{Acknoledgements}
+Discussion on NSA's SELinux list, especially Stephen Smalley's
+comment was helpful to analyze what access vectors are unused.
+
+
+\begin{thebibliography}{99}
+  \bibitem{seedit} SELinux Policy Editor,
+	 URL=http://seedit.sourceforge.net/
+
+ 
+ 
+ \bibitem{selinuximplementation} Stephen Smalley, Implementing SELinux
+	 as a Linux Secuity Module,
+	 URL=http://www.nsa.gov/selinux/papers
+ \bibitem{tresysav} An Overview of Object Classes and Permissions,
+	 Tresys Technology,
+	 URL=http://tresys.com/selinux/obj\_perms\_help.shtml
+ \bibitem{lxr} Linux Cross-Reference, URL=http://lxr.linux.no/
+ \bibitem{configpolicy} Stephen Smalley, Configuring the SELinux Policy,
+	 URL=http://www.nsa.gov/selinux/info/docs.cfm
+ \bibitem{ExecShield} Arjan van de Ven, New Security Enhancements in
+	 Redhat Enterprize Linux,
+	  URL=http://www.redhat.com/f/pdf/rhel/WHP0006US\_Execshield.pdf
+ \bibitem{laus} Linux manpage auditd, auditctl, ausearch 
+ \bibitem{capp} Controlled Access Protection Profile URL=http://niap.nist.gov/cc-scheme/pp/PP\_CAPP\_V1.d.pdf
+ \bibitem{polyinstantation} SELinux Mailing List archive,
+	 URL=http://www.nsa.gov/selinux/list-archive/0505/11351.cfm
+
+\end{thebibliography}
+
+\end{document}

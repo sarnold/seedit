@@ -1,0 +1,607 @@
+%#!platex manual.tex
+
+\section{単純化ポリシー記述言語の仕様}\label{sec:spec}
+単純化ポリシーは，単純化ポリシー記述言語によって記述されています。
+ここでは，単純化ポリシー記述言語の仕様を示します。
+\subsection{用語}
+\subsubsection{Domain(ドメイン)/Role(ロール)/Global domain(globalドメイン)}
+\begin{itemize}
+\item Domain(ドメイン)\\
+ ドメインはSELinuxにおけるドメインと同じものです。ドメイン遷移によってプ
+      ロセスに付与されています。
+\item Role(ロール)\\
+ 単純化ポリシー記述言語におけるロールは単純化されています。ロールはユー
+      ザシェル用ドメインと同一視されています。単純化ポリシー記述言語において、ロール用アクセス権限を記述します。事実、ロールのユーザシェルに対するアクセス権限を与えています。例えば、{\it sysadm\_r}にアクセス権限を与える時、アクセス権限は{\it sysadm\_t}に対して与えられます({\it sysadm\_r}のユーザシェル用ドメイン)。\\
+ 生成されたSELinuxのポリシでは、すべてのロールがすべてのタイプを使うことが
+      できるようになっています。単純化ポリシー記述言語に{\it role:x:types:y}に対応するシンタックスはありません。
+
+\item {\it global} domain(globalドメイン)\\
+ {\it global}という名前のドメインは特別なドメインです。globalドメインに記述された設定は、すべてのドメインによって継承されます。例えば、globalドメインにおいて/etcに読み込み権限を与えると、httpd\_t、sendmail\_tなどすべてのドメインが/etcを読み込めるようになります。 
+
+\end{itemize}                  
+
+\subsection{デフォルト拒否の原則}
+デフォルトでは，設定を記述しない限り，ドメインとロールはすべてのパーミッションを拒否されています。
+
+\subsection{単純化ポリシー記述言語による設定構造}
+設定はセクションによって構成されています。各々のセクションにおいて、ドメインとロール用のアクセス制御が記述されています。セクションは$\{$に始まり、$\}$に終わります。 
+
+\subsection{セクションのシンタックス}
+
+$\{$ (セクションの始まり)\\
+$domain/role$  (ドメインもしくはロールを宣言します。1つのセクションにつき、ドメインもしくはロールを1つ宣言できます。) \\
+$users$  (ロールによって使用されます。)\\
+$domain\_trans$ (ドメイン遷移を設定します。)\\
+$allow/deny$  (ファイルのアクセス制御を記述します。)\\
+$allowxxx$   (ファイル以外のリソースのアクセス制御を記述します。)\\
+$\}$\\
+
+\subsection{ドメインとロールの宣言}
+\subsubsection{ドメインの宣言}
+\begin{enumerate}
+ \item シンタックス \\
+      domain {\it domainname} ;
+ \item 意味\\
+   ドメインを宣言します。セクションの中では，この文によって宣言されたド
+       メインに対して、設定がなされます。{\it domainname}が{\it global}であった場合は、そのセクションにおける設定は、他のすべてのドメインによって継承されます。
+ \item 制約\\
+   ドメインの名前は必ず{\it \_t}で終わらなければなりません(globalは除きます)。\\
+   この文は1つのセクションにつき1度しか使用できません。 
+       
+\end{enumerate}
+
+\subsubsection{ロールの宣言}
+\begin{enumerate}
+ \item シンタックス\\
+    role {\it  rolename } ;
+ \item 意味\\
+    ロールを宣言します。{\it  rolename}は以下で示す{\it user}文を使用す
+       ることによってuserに関連付けられます。
+ \item 制約\\
+    {\it rolename}は{\it \_r}で終わらなければなりません。
+\end{enumerate}
+
+\subsection{RBACの設定}
+\subsubsection{user(ユーザ)}
+\begin{enumerate}
+ \item シンタックス\\
+       user {\it user name};
+ \item 意味\\
+       ユーザがどのロールを使用できるか宣言します。 
+ \item 例\\
+       \{\\
+       role user\_r;\\
+       user root;\\
+       user ynakam;\\
+       ....\\
+       以上の文は、rootとynakamがuser\_tを使用できるということを意味しています。
+\item 制約\\
+  これはロールが宣言されているセクションでのみ使用されます。 
+
+\end{enumerate}
+
+\subsection{ドメイン遷移の設定}
+\subsubsection{domain\_trans}
+\begin{enumerate}
+\item シンタックス\\
+  domain\_trans {\it parentdomain} {\it filename-of-entrypoint};
+\item 意味\\
+  これはドメインがどのようにプロセスと関連するかを宣言します。 
+\item 例\\
+  \{\\
+  domain httpd\_t;\\
+  domain\_trans initrc\_t /sbin/httpd;\\
+  ....\\
+  以上の文は、プロセス(ドメイン: initrc\_t)が/sbin/httpを実行したとき、/sbin/httpdがhttpd\_tドメインで走行することを意味しています。
+\end{enumerate}
+
+\subsection{通常ファイルのアクセス制御設定}
+
+\subsubsection{allow}\label{section:allow}
+ \begin{enumerate}
+  \item シンタックス
+    \begin{enumerate}
+    \item allow {\it filename} $\mid$ {\it label} [r],[w],[x],[s];
+    \item  allow {\it directoryname} exclusive {\it label};
+     \item  allow {\it directoryname} exclusive -all [r],[w],[x],[s];
+    \end{enumerate}
+  \item 意味\\
+	\begin{enumerate}
+	 \item  ファイルへのアクセス権限を設定する 
+	 \item  これはSELinuxのファイルタイプ遷移({\it
+		file\_type\_auto\_trans})相当の機能です。{\it
+		directoryname}以下に作成されるファイルは{\it label}とい
+		うラベルが付与されます。そのようなファイルにアクセスを許
+		可するには、allow {\it label} [r],[w],[x],[s]を使います。
+		消去、再生成されるファイル(例：/etc/mtab)を保護したいの
+		ならば、この機能を使用します。{\it label}はSELinuxのタイ
+		プと同じです。\\
+単純化ポリシコンパイラが{\it label}と名付けられたタイプを有するファイル
+		(ファイル名はAと仮定)を見付けた時、以下の文が，生成され
+		るfile\_contextsに含まれます。
+\begin{verbatim}
+  A   system_u:object_r:label	
+\end{verbatim}
+ファイルが設定時に存在せず、消去、再生成されるファイルを保護したい場合，有用な方法です。例えば、/var/run、/tmp、/var/log以下のファイルが考えられます。
+	 \item これは， {\it directoryname}以下の，ファイルタイプ遷移で
+		作成されたファイル全てのアクセス権限を設定します。 
+\end{enumerate}
+	
+  \item パーミッションの意味 \footnote{\cite{CNIS2003}において問題が指摘
+	されており、パーミッション種別については再検討する予定です。}
+  \begin{itemize}
+   \item r: 読み込みと属性の閲覧
+   \item w: 書き込み 
+   \item x: 実行
+   \item s: ディレクトリの場合、ディレクトリの内容を参照\\
+            ファイルの場合、属性の閲覧 
+  \end{itemize}
+  \item 例\\
+	\{\\
+	domain httpd\_t;\\
+	...\\
+	allow /var/www r,s;\\
+	....\\
+	httpd\_tは/var/www以下の全てのファイルとディレクトリの読み込み権限を持つ。
+
+ \end{enumerate}
+
+\subsubsection{deny}
+\begin{enumerate}
+ \item シンタックス\\
+ deny {\it filename};
+ \item 意味\\
+ 通常のドメインでは、これはallowをキャンセルするために使われます。globalドメインでは、明示的にアクセスを拒否するために使います。以下の例を御覧下さい。
+ \item 例
+\begin{enumerate}
+ \item 例1\\
+   \{\\
+   domain httpd\_t;\\
+   ...\\
+   allow /var r,s;\\
+   deny  /var/named;
+   ....\\
+   httpd\_tは/varの読み込み権限があるが、/var/namedを読み込む権限は拒否されている。
+ \item 例2\\
+   \{\\
+   domain global;\\
+   deny /etc/shadow\\
+   ...\\\
+   \{\\
+   domain httpd\_t;\\
+   ...\\
+   allow /etc r,s;\\
+   ...\\
+   httpd\_tは/etc以下を読み込む権限あるが、/etc/shadowを読み込む権限は拒
+       否されている。/etc/shadowへのアクセスは、globalにおいて拒否されて
+       いるからである。重要なファイルがあれば、globalにおいてdeny文を記述すると良いです。
+\end{enumerate}
+\end{enumerate}
+
+\subsubsection{allowonly}
+\begin{enumerate}
+ \item シンタックス\\
+  allowonly {\it directory name} [r],[w],[x],[s];
+ \item 意味\\
+  {\it allow}においてアクセス権限はすべてのサブディレクトリに継承されま
+       す。それに対して、allowonlyでは、ディレクトリ直下のファイルへのア
+       クセスは許可されているが、サブディレクトリに対しては許可されていません。
+ \item 例\\
+   \{\\
+   domain httpd\_t;\\
+   ...\\
+   allowonly /etc r,s;\\
+   ....\\
+httpd\_tは/etc以下の読み込み権限を持っているが、/etc/httpdのようなサブディレクトリへのアクセス権限はない。.
+\end{enumerate}
+
+\subsubsection{denyonly}
+\begin{enumerate}
+ \item シンタックス\\
+ denyonly {\it directory name};
+ \item 意味\\
+  denyアクセスがディレクトリ直下のファイルに設定されているが、サブディレ
+       クトリには設定されていない。
+\end{enumerate}
+
+\subsubsection{allow, allowonly, deny, denyonlyの優先度}
+\begin{enumerate}
+\item 同じディレクトリに対して設定された場合，globalドメインにおいて{\it allow(deny),allowonly(denyonly)}は、通常ドメインにおける{\it allow(deny),allowonly(denyonly)}によって上書きされる。
+  \begin{itemize}
+  \item 例1)\\
+    global:allow /usr/ r;\\
+    a\_t:domain:allowonly /usr/ w;\\
+    a\_tは/usr以下に書き込み権限を持つ。
+  \end{itemize}
+ \item 子ディレクトリにallowもしくはdenyが存在した場合、親ディレクトリのallowを上書きする。
+   \begin{itemize}
+   \item 例)\\
+     a\_tの中:\\
+     allow /usr r;\\
+     allow /usr/local w;\\
+     a\_tは can read under サブディレクトリを含めて/usr以下を読み込む権限を持っている。しかし、/usr/local以下については書き込み権限を持っている(読み込み権限は持っていない)。
+   \end{itemize}
+ \item 同じドメインかつ同じディレクトリにおけるallowもしくはdeny\\
+   OR演算が取られます。 
+   \begin{itemize}
+   \item 例1)\\
+       \{\\
+       domain httpd\_t;\\
+       allow /var/www r;\\
+       allow /var/www w;\\
+       httpd\_tは/var/www以下に読み込み(r)権限と書き込み(w)権限を持つ。
+     \item 例2)\\
+       \{\\
+       domain httpd\_t;\\
+       allow /var/www r;\\
+       deny  /var/www;\\
+       httpd\_tは/var/wwwにはアクセスできない。
+\end{itemize}
+   
+ \item globalドメインに関する補足\\
+   globalドメインにおいてallow/denyをキャンセルするためには、明示的にallow/denyを記さなければなりません。
+   \begin{itemize}
+   \item 例1)\\
+     In global: deny /etc/shadow;\\
+     a\_tドメインに/etc/shadowを読ませたいなら、{\it allow a\_t /etc/shadow r;}を記さなければなりません。
+   \item 例2)\\
+     In global:allow /usr/local r;\\
+     In a\_t: allow /usr w;\\
+     a\_tは/usr/local以下に書き込むことができません。/usr/localに書き込
+	 みたいなら、a\_tドメインの中で{\it allow  /usr/local w;}を記さなければなりません。
+   \item 例3)\\
+     global: allowonly /usr/local r;\\
+     a\_t: allow /usr w;\\
+     a\_tはallowonlyにより/usr/localを読み込みます。
+   \end{itemize}
+ \item ドメインがどのファイルにアクセスできるのか知るにはGUIが有用です。
+\end{enumerate}
+
+\subsubsection{特殊ファイル}
+以下のファイルへのアクセスは特殊になっています。
+\begin{enumerate}
+\item  /dev/tty* /dev/pts /dev/ptmx\\
+  これらのファイルにallow文を書いても何も起こりません。
+allowttyやallowptsによってアクセス制御がかけられているからです。 
+ \item  /proc, /sys, /selinux, /dev/tmpfs\\
+       これらのファイルをallowしても何も起こりません。なぜなら、
+       xattr(Extend attributes:拡張属性)をサポー
+       トしていないファイルシステムによって、これらのファイルはマウント
+       されているからです。/procと/sys,/dev/tmpfsについてはallowfsを参照して下さ
+       い。/selinuxについてはallowseopを参照して下さい。
+\end{enumerate}
+
+
+\subsection{ネットワークのアクセス制御設定}
+\subsubsection{allownet}
+
+\begin{enumerate}
+\item シンタックス
+  \begin{enumerate}
+  \item allownet;
+  \item allownet -connect;
+  \item allownet -raw;
+  \item allownet (-tcp$\mid$-udp) -port {\it port number};
+  \item allownet (-tcp$\mid$-udp) -allport;
+  \end{enumerate}
+\item 意味\\
+  これらはネットワークの取り扱いに関連しています。
+  \begin{enumerate}
+  \item tcp/ipネットワークの使用を許可します。これはtcp、udpソケット、1024番以上のポートの使用を含んでいます。ネットワーク接続を開始することは許可されていないことに注意して下さい。ネットワーク接続を許可するには、allownet -connectを使用して下さい。ウェルノウンポートの使用は許可されていません。
+  \item ネットワーク接続を許可します。SELinuxにおける{\it name\_connect}
+	と{\it connect}パーミッションを使用することを意味します。 
+  \item rawソケットの使用を許可します。ICMPを使う場合、rawソケットの使用が必
+	要になります。
+  \item ウェルノウンポートを使用したい場合、これによってポート番号を予約します。 
+    \begin{itemize}
+    \item 例)\\
+      \{\\
+      domain httpd\_t;\\
+      allownet -tcp 80;\\
+      ...\\
+      httpd\_tはtcp80番ポートを予約し、使用できるようにしています。\\
+      
+    \end{itemize}
+  \item 予約されていないウェルノウンポートの使用を許可します。
+  \end{enumerate}
+\item 制約\\
+  これらは一度宣言されると取り消すことができません。globalドメインで設定
+      する場合は、慎重に設定して下さい。globalドメインでこれらを使用する場合、すべてのドメインにアクセス権限が明記され、各々のドメインでdenyできなくなります。 
+\end{enumerate}
+
+\subsection{プロセス間通信のアクセス制御設定}
+\subsubsection{allowcom (ネットワークソケット)}
+\begin{enumerate}
+\item シンタックス\\
+  allowcom -tcp$\mid$-udp$\mid$-unix {\it todomain};
+\item 意味\\
+  プロセス間通信においてソケットの使用を制御します。{\it todomain}が{\it global}の場合、ドメインはすべてのドメインと通信できます。
+\item 例\\
+  \{\\
+  domain httpd\_t;\\
+  allowcom -unix syslogd\_t;\\
+  ...\\
+  httpd\_tはunixドメインソケットによって、syslogd\_tを持つプロセスと通信できることを意味します。\\ 
+  
+\item 制約\\
+  -tcpと-udpはカーネル2.6ベースのSELinuxにおいて使用できません。明記しても何も起こりません。
+\end{enumerate}
+
+\subsubsection{allowcom (IPC)}
+\begin{enumerate}
+\item シンタックス\\
+  allowcom -sem$\mid$-msg$\mid$-msgq$\mid$-shm$\mid$-pipe {\it to
+    domain} [r],[w];
+\item 意味\\
+  指定されたIPCにより、{\it  to domain}を用いての通信を許可する。\\
+  {\it to domain}が{\it self}(自分自身)の場合は、そのドメイン内のIPCを意味します。また、{\it  to domain}が{\it global}の場合は、すべてのドメインに対してIPCの設定ができます。
+\end{enumerate}
+
+\subsubsection{allowcom(シグナル)}
+\begin{enumerate}
+\item シンタックス\\
+  allowcom -sig {\it to domain} [c],[k],[s],[n],[o];
+ \item 意味\\
+   {\it to domain}へのシグナル送信を許可します。[c]はsigchld、[k]は
+      sigkill、[s]はsigstop、[n]はsignull, [o]は他のシグナルを表しています。ただし、signullについてはサポートがなされていません。すなわち、signullについてはすべてのドメインにおいて使用が許可されていることを意味してます。
+\end{enumerate}
+
+\subsection{tty/ptsデバイスのアクセス制御設定}
+\subsubsection{allowtty}
+allowttyはttyデバイスファイル(/dev/tty*)のアクセス制御を行うために使用さ
+れます。SELinux環境において、ttyデバイスファイルはログインしたユーザのロー
+ルによって異なったラベルが与えられてます。そのため、ttyデバイスファイルは単純化
+ポリシ記述言語において異なった取り扱いがなされます。
+\begin{enumerate}
+\item シンタックス
+  \begin{enumerate}
+  \item allowtty -create;
+  \item allowtty {\it role} [r],[w];
+  \item allowtty -change {\it role};
+  \end{enumerate}
+\item 意味
+  \begin{enumerate}
+  \item これは通常ロールセクションにおいて使用されます。ロールに自身のttyデバイスを持たせることを許可します。ログイン時に、ログインプログラムによって、そのロールのttyデバイスファイルのタイプ{\it {\it role prefix}}\_tty\_device\_tが与えられます。 
+  \item ロールのttyデバイスに読み書き権限を与えます。 
+  \item ttyデバイスのラベルの変更、名前の変更、消去を許可します。
+  \end{enumerate}
+\item 特殊ロール\\
+  {\it {\it role}}が{\it general}であった場合、ラベル付け前のttyデバイス
+      (タイプはdevtty\_tとtty\_device\_t)へのアクセスを許可します。{\it {\it role}}が{\it global}であった場合は、すべてのttyデバイスを意味します。
+\end{enumerate}
+
+
+\subsubsection{allowpts}
+allowptsは擬似ttyデバイスファイル(/dev/pts)のアクセス制御に使用されます。/dev/pts以下のデバイスはリモートログインやgdmからのログイン用の端末です。
+
+\begin{enumerate}
+ \item シンタックス
+   \begin{enumerate}
+   \item allowpts -create;
+   \item allowpts {\it role} [r],[w];
+   \item allowpts -change {\it role};
+   \end{enumerate}
+ \item 意味\\
+   意味はターゲットが擬似ttyデバイスであること以外はallowttyと同様の使い方です。
+\end{enumerate}
+
+\subsection{/procファイルシステムのアクセス制御設定}
+
+\subsubsection{allowproc}
+allowprocによってprocfsとsysfsのアクセス制御を記述できます。
+\begin{enumerate}
+ \item シンタックス\\
+   allowproc -self$\mid$-other [r],[w];
+ \item 意味\\
+   \begin{enumerate}
+   \item -self\\
+     /proc/$pid$のアクセス制御です。自ドメインに関連した/proc/$pid$への
+	 アクセスを許可します。 
+   \item -other\\
+     他のドメインプロセス用の/proc/$pid$を意味します。
+   \end{enumerate}   
+\end{enumerate}
+
+\subsection{Configuring access control to files on misc file systems}
+ SELinuxは，拡張属性をサポートしたファイルシステム(ext2,ext3,xfsなど)については，一つ一つの
+ ファイル単位に細かいアクセス制御が可能です。これらのファイルシステム上
+ のファイルについてはallow文を使って設定を行えばよいです。しかし、これら
+ 以外のファイルシステムにあるファイルについては，以下の{\it allowfs}文を
+ 使って設定する必要があります。ファイル単位の設定はできず、「このファイ
+ ルシステムにあるファイル全てに読み書き可能」のような大雑把な設定になり
+ ます。
+\subsection{allowfs文}
+\begin{itemize}
+ \item 書式
+       \begin{enumerate}
+	\item  allowfs {\it name\_of\_filesystem} [s],[r],[x],[w];\\
+	       For {\it name\_of\_filesystem} {\it tmpfs sysfs autofs usbfs cdfs romfs
+	       ramfs dosfs smbfs nfs proc proc\_kmsg proc\_kcore xattrfs} can be
+	       used.
+	\item allowfs  {\it name\_of\_filesystem} exclusive {\it label};
+	\item allowfs  {\it name\_of\_filesystem} {\it label} [s],[r],[x],[w];
+	\item allowfs  {\it name\_of\_filesystem} -all [s],[r],[x],[w];
+       \end{enumerate}      
+ \item 意味\\
+       \begin{enumerate}
+
+	\item 指定されたファイルシステム上のファイルに対するアクセス制御
+	      を設定します。例えば, {\it
+	      allowfs proc s,r;} という記述は，procファイルシステム上に
+	      あるファイルに対して「s,r」というパーミッションを許可しま
+	      す。アクセス拒否ログに{\it ファイルシステム名}\_tというログ
+	      を発見したなら，allowfs文を使う必要があるでしょう。
+	\item 以下は，より進んだ設定オプションです。これは，SELinuxのファイルタイプ遷移({\it
+	      file\_type\_auto\_trans}).設定です。 {\it
+	      name\_of\_filesystem}に作成されたファイルには， {\it
+	      label}というタイプが付与されます。 
+	      なお {\it name\_of\_filesystem}にはtmpfsのみ指定可能です。
+	      現バージョンのSELinuxでは，ファイルタイプ遷移がtmpfsでしかサポートされていないからで
+	      す。
+	\item 
+	      ファイルタイプ遷移によってラベルが付与されたファイル全てのア
+	      クセス制御を行います。 {\it name\_of\_filesystem}にはtmpfsのみ指定可能です。	 
+       \end{enumerate}
+       
+ \item 注意 \\
+       allowfs  {\it name\_of\_filesystem} exclusive {\it label};では，
+       {\it label } の名称は {\it domain prefix}\_{\it
+       name\_of\_filesystem}\_t. である必要があります。例えば，httpd\_t
+       ドメインでの設定の場合， {\it allowfs
+       tmpfs exclusive httpd\_tmpfs\_t}.とします。 
+ \item  {\it name\_of\_filesystem}に関する注意
+       \begin{itemize}
+	\item proc ファイルシステム\\
+	      procファイルシステム(/proc以下にマウントされたファイル)に
+	      対するアクセス制御はより細かく行われています。 
+	      proc\_kmsg は, /proc/kmsg, proc\_kcore
+	      は /proc/kcoreに対するアクセス制御を意味します。そして，
+	      procはその他のprocファイルシステム上のファイルを意味します。
+	\item xattrfs\\
+	      これは拡張属性をサポートしているが，SELinuxのラベルを使う
+	      ように設定されていないファイルシステムを意味します。
+	      例えば，USBメモリを非SELinuxマシンでext3ファイルシステムで
+	      フォーマットしたとします。次に，USBメモリをSELinuxマシンに
+	      マウントします。すると，xattrfs上のファイルとして認識され
+	      ます。 {\it allowfs xattrfs
+	      <パーミッション>;} を使う必要があります。
+	\item cdfs\\
+	      Iso9660 and UDFファイルシステムを意味します。
+	\item dosfs\\
+	      Windows上のファイルシステム(fat, vfat, ntfs)を意味します。
+	\item smbfs\\
+	      cifs,smbfsを意味します。
+       \end{itemize}
+\end{itemize}
+
+
+\subsection{その他システム管理に関するアクセス制御}
+
+\subsection{allowkernel}
+ カーネルとの通信，カーネルの管理に関するアクセス制御を設定します。
+\begin{itemize}
+ \item 書式\\
+       allowkernel netlink$\mid$klog\_read$\mid$klog\_write$\mid$klog\_adm$\mid$insmod;
+ \item 意味\\
+     
+       \begin{enumerate}
+	\item netlink\\
+	      Netlinkソケットを使ってカーネルと通信することを許可します。
+	      
+	\item klog\_read\\
+	      syslog(2)システムコールを使ってカーネルメッセージを読み込
+	      むことを許可します。通常はdmesgコマンドを使いたい場合に許
+	      可します。
+	\item klog\_write\\
+	      カーネル上のAudit subsystem(カーネルでログを取るしくみ)に
+	      ログメッセージを送信する場合に許可します。ケーパビリティ
+	      audit\_writeと同じです。
+	\item klog\_adm\\
+	      カーネルのログ取り設定変更を許可します。ケーパビリティ
+	      audit\_control,sys\_pacctと同じです。
+	\item insmod\\
+	      カーネルモジュールのインストールを許可します。
+       \end{enumerate}
+\end{itemize}
+\subsection{allowseop}
+\begin{itemize}
+ \item 書式\\
+       allowseop load\_policy$\mid$setenforce$\mid$relabel$\mid$part\_relabel$\mid$getsecurity;
+ \item Meaning\\
+       SELinuxを管理する特権を与えます。
+       \begin{enumerate}
+	\item relabel\\
+	      すべてのファイルをrelabelすることを許可する。この時、
+	      allowseop getsecurityとallowpriv searchもする必要があります。
+	\item part\_relabel\\
+	      そのドメインが書き込みできるファイルについてrelabelすることを許可する。この時、getsecurityをallowしなければなりません。
+	\item getsecurity\\
+	      /selinuxにアクセスすることによって、SELinuxのアクセス制御情報を得ることを許可する。
+	\item setenforce\\        
+	      enforcingモードもしくはpermissiveモードの切り替えを許可します。
+	\item load\_policy\\                    
+	      カーネルに対してポリシのロードを許可します。
+       \end{enumerate}
+\end{itemize}
+
+\subsection{allowpriv}
+\begin{itemize}
+ \item 書式\\
+       allowpriv  net$\mid$boot$\mid$quotaon$\mid$
+       swapon$\mid$mount
+       $\mid$rawio$\mid$ptrace$mid$chroot$\mid$unlabel
+       $\mid$memlock$\mid$nice$\mid$resource$\mid$
+       time$\mid$devcreate$\mid$setattr$\mid$search$\mid$read
+       $\mid$write$\mid$all
+ \item 意味\\
+       他の特権を与えます。
+       \begin{enumerate}
+	\item net\\
+	      {\it CAP\_NET\_ADMIN}(例：NIC管理、ルーティングテーブル管理)ケイパビリティを許可します。 
+	\item boot\\
+	      {\it CAP\_SYS\_BOOT}ケイパビリティを許可します。システムコール
+	      rebootの使用を許可することを意味します。ただし、このケイパ
+	      ビリティを持っていなくとも、rebootコマンドは使えてしまいま
+	      す。rebootコマンドによるリブートを制限する場合は、/dev/initctlへのアクセスを制御します。
+	\item insmod\\
+	      {\it CAP\_SYS\_MODULE}ケイパビリティを許可します。カーネルモジュールのインストールを許可することを意味します。
+	\item quotaon\\         
+	      quotaonを許可します。
+	\item swapon\\
+	      swaponを許可します。
+	\item mount\\         
+	      デバイスのマウントを許可します。
+	\item rawio\\        
+	      {\it CAP\_SYS\_RAWIO}ケイパビリティを許可します。ioperm、ioplシステムコールの使用と/dev/memへのアクセスを許可することを意味します。
+	\item ptrace\\ 
+	      ptraceの使用を許可します。
+	\item chroot\\
+	      chrootの使用を許可します。
+	\item unlabel\\
+ 	      ラベル付けが設定されていないもしくはラベル付けが壊れたファ
+	      イル(labeled unlabeled\_tタイプが付与されたファイル)にフル
+	      アクセス権限を与えます。
+	\item memlock\\ 
+	      ケーパビリティ{\it CAP\_IPC\_LOCK}と同じです。メモリをロッ
+	      クし，スワップされないようにする権限です。
+	\item nice\\
+	      ケーパビリティ {\it CAP\_SYS\_NICE}と同じです。プロセスの
+	      nice値を変更する権限です。
+	\item resource\\
+	      ケーパビリティ {\it CAP\_SYS\_RESOURCE}と同じです。
+	      rlimitを利用してリソース上限を変更するなどの権限を与えます。
+	\item time\\
+	      ケーパビリティ {\it CAP\_SYS\_TIME}と同じです。システムク
+	      ロックの変更を許可します。
+	\item devcreate\\
+	      書き込み可能なディレクトリにデバイスファイルを作成する権限
+	      を与えます。これを忘れるとたとえ書き込み可能に設定されたディ
+	      レクトリであってもデバイスファイルを作成することができませ
+	      ん。
+	\item setattr\\
+	      通常setattr(所有者、更新時間などファイルの属性を変更)は，w
+	      パーミッションの中で許可されていますが，これを使うとs パー
+	      ミッションが許可されたファイルに対して「setattr」を許可し
+	      ます。 書き込みはしないが、setattrアクセスだけを要求する場
+	      合に使います。通常はlogin\_t,gdm\_tドメインにのみ使います。
+	\item search\\
+	      sパーミッションをすべてのファイルに許可します。
+	\item read\\
+	      rパーミッションをすべてのファイルに許可します。
+	\item write\\
+	  wパーミッションをすべてのファイルに許可します。
+	\item all\\
+	      何もかもすべてを許可します!!
+       \end{enumerate}     
+\end{itemize}
+
+
+
+\subsubsection{出力されるSELinuxの設定}
+allowkernel,allowseop,allowprivによって許可されるSELinuxのポリシを知るに
+は，macros/seedit\_macros.teにあるallow\_admin\_xxxx マクロを見るとよい
+でしょう。例えば， {\it allowkernel klog\_adm} を記述することで許可され
+る設定を知るには，allow\_admin\_klog\_admを見ます。
+\subsection{globalとドメインにおける矛盾}
+ファイルに対するallowを除くとallowは一度宣言されると撤回することはできません。globalドメインにおいての使用は慎重に行って下さい。globalドメインにおいてallowを使用すると、すべてのドメインにアクセス権限を与えてしまい、各々のドメインでdenyできなくなります。
+ 

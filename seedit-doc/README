@@ -1,0 +1,19 @@
+README for Documents for SELinux Policy Editor
+
+* install  
+Install manual in HTML format(English and Japanese)
+English and Japanese are available.
+
+* simplified_policy_manual
+Manual for simplified policy in HTML(English).
+
+* simplified_policy_manual.pdf
+Manual for simplified policy in PDF(English).
+
+* manual   
+Manual for GUI(English and Japanese).
+
+* tutorial
+Tutorial for GUI(English and Japanese).
+Be careful that tutorial in English is not up to date.
+

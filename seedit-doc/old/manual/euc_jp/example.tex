@@ -1,0 +1,163 @@
+%#!platex manual.tex
+\section{例}
+\subsection{vsftpdの設定}
+デーモンの設定例として、単純化ポリシを用いてvsftpdを設定してみましょう。
+ここでは、Anonymous ftpアクセスができるまでのポリシーを設定することを目
+標にします。\\
+デフォルトでは、vsftpdドメインは{\it initrc\_t}です。
+{\it initrc\_t}はetc/rc.d以下の起動スクリプト用ドメインです。vsftpdは、/etc/rc.d/init.d/vsftpd(ドメインはinitrc\_t)によって実行され、ドメインを継承します。\\ 
+しかし、以上の動作は安全ではありません。なぜなら、initrc\_tは多くのアクセス権限を持っているからです。(/etc/selinux/seedit/src/policy/simplified\_policy/initrc\_t.aを御覧下さい)。\\
+以下，カレントディレクトリは{\it /etc/selinux/seedit/src/policy}であ
+り、permissiveモードに切替えていることを前提とします。\\
+\begin{verbatim}
+login: root
+....
+# newrole -r sysadm_r
+# id -Z
+root:sysadm_r:sysadm_t
+# cd  /etc/selinux/seedit/src/policy
+# setenforce 0
+\end{verbatim}
+また，シンタックスの詳細については、\ref{sec:spec}を御覧下さい。
+
+\subsubsection{vsftpd用ドメインの作成}
+それではvsftpdに{\it vsftpd\_t}ドメインを与えてみましょう。
+\begin{enumerate}
+ \item 設定ファイルの作成\\
+ {\it simplified\_policy/vsftpd\_t.a}を作成します。 
+ \item ドメイン遷移の設定\\
+ {\it simplified\_policy/vsftpd\_t.a}に以下に示す内容を記述して下さい。
+\begin{verbatim}
+# simplified_policy/vsftpd_t.a
+{
+domain vsftpd_t;
+domain_trans initrc_t /usr/sbin/vsftpd;
+}
+\end{verbatim}
+
+2行目でvsftpd\_tドメインを定義しています。3行目でドメイン遷移を設定しています。ここで、親ドメインはinitrc\_tであり、エントリポイントは/usr/sbin/vsftpdです。
+
+\end{enumerate}
+
+\subsubsection{ドメイン遷移テスト}
+設定を編集したら、makeコマンドを実行しなければなりません。これは設定の変
+更をカーネルに伝えるためです(\ref{sec:loadpolicy}を参照して下さい)。この
+場合、以下の様にタイプします。\\
+\begin{verbatim}
+# make diffrelabel
+\end{verbatim}
+多くの場合、{\it make diffrelabel}で十分です。\\
+そして、vsftpdを再起動させてvsftpdのドメインをチェックします。
+\begin{verbatim}
+# /etc/init.d/vsftpd restart
+# ps -eZ
+...
+root:system_r:vsftpd_t          13621 pts/1    00:00:00 vsftpd
+...
+\end{verbatim}
+以上のようにするとvsftpdドメインが{\it vsftpd\_t}になったことを確認でき
+ます。ドメイン遷移の設定がうまくいったことが分かりました。
+
+\subsubsection{vsftpdに関連したファイルの保護}
+vsftpdに関連したファイルの保護を行います。\\
+vsftpdドメインに関連したファイルを保護したいなら、globalにおいて{\it deny}するのが一番良い方法です。この方法を用いて/etc/vsftpdと/var/ftpを保護してみましょう。simplified\_policy/globalに以下に示す文を加えて下さい。\{と \}の間に書き加えなければならないことに注意して下さい。
+\begin{verbatim}
+# In simplifed_policy/global
+deny /etc/vsftpd;
+deny /var/ftp;
+\end{verbatim}
+そして以下のコマンドを実行して下さい。 
+\begin{verbatim}
+# make diffrelabel	
+\end{verbatim}
+その結果、他のドメインが/etc/vsftpdや/var/ftpにアクセスしようとするなら、
+明示的にアクセスを許可しなければなりません。\\
+例：httpd\_tが/etc/vsftpdを読みたい場合、{\it allow /etc/vsftpd r;}という文がhttpd\_tに記述されていなければなりません。{\it allow /etc r;}では、/etc/vsftpdはアクセス許可されてません。重要なファイルを区別するにはdenyは有用です。
+
+\subsubsection{vsftpd\_tへのアクセス権限の付与}
+vsftpd\_t用のデフォルトのアクセス権限は、simplified\_policy/globalから継
+承されています。ただ、それだけでは十分でなく、設定を追加しなければならな
+りません。最も良い方法は、permissiveモードでvsftpdをテストしてSELinuxの
+ログを参照し、どのようなアクセス権限が必要であるのかを見極めることです。
+(この文章では過程については割愛しています。)
+以下、vsftpd\_t用ポリシです。 
+\begin{verbatim}
+# simplifed_policy/vsftpd_t.a
+     1  {
+     2  domain vsftpd_t;
+     3  domain_trans initrc_t /usr/sbin/vsftpd;
+     4  # access to files related to vsftpd
+     5  allow /etc/vsftpd r,s;
+     6  allow /var/ftp r,s;
+     7  allowonly /var/log r,w,s;
+     8  # allow to communicate with syslog
+     9  allow dev_log_t r,w,s;
+    10  allowcom -unix syslogd_t;
+    11  # allow to use tcp 20 and 21
+    12  allownet;
+    13  allownet -connect;
+    14  allownet -tcp -port 20;
+    15  allownet -tcp -port 21;
+    16  #
+    17  allowadm chroot;
+    18  }
+\end{verbatim}
+以上を記述した後に、以下のコマンドを実行して下さい。 
+\begin{verbatim}
+# make diffrelabel
+\end{verbatim}
+上の設定ファイルの中身を見てみましょう。
+\begin{itemize}
+ \item 5行目から7行目\\
+ これらはvsftpdに関連するファイルにアクセスするための設定です。5行目と6行目で、vsftpd設定ファイルとftpのpublicディレクトリを読むアクセス権限を与えています。\\
+7行目に注目して下さい。
+\begin{verbatim}
+allowonly /var/log r,w,s;
+\end{verbatim}
+ここで、/var/log/xferlogに書き込み権限を与えたい場合、本来は以下の様にす
+       るのが最適です。
+\begin{verbatim}
+allow /var/log/xferlog r,w,s;
+\end{verbatim}
+しかし、/var/log/xferlogは管理者によって消去されるかもしれません。ファイ
+ルが再度生成された場合ラベル情報が失われてしまいます。
+\footnote{これはSELinuxの実装
+       上の問題です。ファイル単位でアクセス制御する場合，ファイルのiノー
+       ド番号が変わると親ディレクトリと同じアクセス制御設定になってしま
+       います。この場合にファイル単位でアクセス制御するにはファイルタイ
+       プ遷移を使う必要があります。}
+よって、/var/log/xferlogのアクセスを制御できません。そのため、{\it
+       allowonly /var/log r,w,s}としているのです。vsftpd\_tは/var/log以
+       下にあるすべてのファイルに書き込み権限を与えています。しかし、子
+       ディレクトリにあるファイルには書き込み権限を与えていません。これ
+       は、{\it allow /var/log r,w,s;}よりは良いです。(この文は子ディレ
+       クトリも含めて/var/log以下の全てのファイルに書き込みアクセス権限
+       を与えることを意味しています)。/tmp、/var/runも同様にファイル単位
+       でのアクセス制御ができません。これらのディレクトリではファイルが
+       消去、再生成されるため、SELinuxのラベル情報が失われる可能性があるか
+       らです。\\
+SELinuxについて十分な知識があるなら{\it allow file exclusive label;}が使えます。これはSELinuxのファイルのタイプ遷移を設定します。消去、再生成されるファイルのアクセス制御設定ができます。詳細については\ref{section:allow}を御覧下さい。\\
+
+\item 9、10行目\\
+syslogdで通信するためにあります。syslogdを用いて通信する場合は、この2行を必ず入れて下さい。
+       
+\item 12行目から15行目\\
+tcp20番ポートと21番ポートを使って通信します。
+\end{itemize}
+
+\subsubsection{initrc\_tへのアクセス権限の付与}
+initrc\_tは起動スクリプト(/etc/init.d/vsftpd)用のタイプです。initrc\_tは
+/etc/vsftpdへ読み込み権限を必要とします。しかし、このファイルへのアクセスはglobalにおいて拒否されています。よって、明示的にallowしなければなりません。
+\begin{verbatim}
+#add to simplified_policy/initrc_t.a
+allow /etc/vsftpd r,s;
+\end{verbatim}
+以上を書き加えたら、以下のコマンドを実行して下さい。 
+\begin{verbatim}
+# make diffrelabel
+\end{verbatim}
+
+\subsubsection{再テスト}
+permissiveモードにおいてテストをして、アクセスログを参照して下さい。denyが出力されていなければ、次にenforcingモードでも正常に動作するか確かめて下さい。
+
+

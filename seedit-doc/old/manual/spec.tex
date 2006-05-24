@@ -1,0 +1,895 @@
+%#!platex manual.tex
+
+\section{Specification of Simplified Policy Description Language(SPDL))}\label{sec:spec}
+This section describes syntax and meaning of SPDL configuration
+elements.
+For detail of what kind of permissions are allowed, see {\it
+Integrated/unsupported permissions in Simplified Policy } in
+http://seedit.sourceforge.net/doc/permission\_integrate/.
+
+\subsection{Terms}
+\subsubsection{Domain/Role}
+\begin{itemize}
+\item Domain \\
+ Domain is the same as domain in SELinux. It is attached to process by domain transition.
+\item Role\\
+ Role in simplified policy language is simplified. Role is identified
+      with a domain for user shell. In simplified language, we describe access
+      rights for role. In fact, it is giving access rights for user
+      shell of the role. For example, when you give access right for
+      {\it sysadm\_r}, access right is given to 
+{\it sysadm\_t}(Domain for user shell of {\it sysadm\_r}).\\
+ Note that in generated SELinux policy, all roles can type every types.
+      There is no syntax corresponding to {\it role:x:types:y} in simplified language.
+\end{itemize}                  
+
+
+
+\subsection{Default deny rule}
+Domain and roles are denied all permissions unless allowed by SPDL.
+
+\subsection{Structure of configuration by simplified language}
+Configuration is composed of sections. In each section, access control for domains/roles are described. Section begins with $\{$ and ends with $\}$. 
+
+\subsection{Syntax of section}
+
+$\{$  (begin of section)\\
+$domain/role$  (declare domain or role, one domain or role can be declared in one section) \\
+$users$  (This can be used only for role)\\
+$domain\_trans$|$program$ (Configure domain transition)\\
+$allow/deny$  (Describe access control for files)\\
+$allowxxx$   (Describe access control for resources other than file)\\
+$\}$\\
+
+\subsection{Including configuration from other file:include}
+you can include configuration from other file by {\it include}
+statement.
+Syntax is following.\\
+include {\it filename};
+The include path can be specified by -I option of converter.
+
+
+\subsection{Declaring domain and role}
+\subsubsection{declare domain:domain}
+\begin{enumerate}
+ \item Syntax \\
+      domain {\it domainname} ;
+ \item Meaning\\
+       Declare domain. All configuration in a section is done for
+       the domain declared by this statement. 
+ \item Constraints\\
+Domain name must end with {\it \_t}. This statement can not be used twice in one section. 
+\end{enumerate}
+
+\subsubsection{declare role:role}
+\begin{enumerate}
+ \item Syntax\\
+    role {\it  rolename } ;
+ \item Meaning\\
+     Declare role.  {\it  rolename } is associated to user by using
+       {\it user} statement as shown below.
+ \item Constraints\\
+       {\it rolename} must end with {\it \_r}.
+\end{enumerate}
+
+\subsection{Configuring RBAC:user}
+\begin{enumerate}
+ \item Syntax\\
+       user {\it user name};
+ \item Meaning\\
+       Define users who can use the role. 
+ \item Example\\
+       \{\\
+       role user\_r;\\
+       user root;\\
+       user ynakam;\\
+       ....\\
+Above means user root and ynakam can use user\_r.
+\item Constraints\\
+       It can be used only section where role is declared. 
+
+\end{enumerate}
+
+\subsection{Configuring domain transition:domain\_trans}
+\subsubsection{Domain transition:domain\_trans}
+\begin{enumerate}
+ \item Syntax\\
+    domain\_trans {\it parentdomain} {\it filename-of-entrypoint};
+ \item Meaning\\
+    This defines how domain is attached to process. 
+ \item Example\\
+   \{\\
+   domain httpd\_t;\\
+   domain\_trans initrc\_t /sbin/httpd;\\
+   ....\\
+   Above means that when process(domain: initrc\_t) executes
+       /sbin/httpd, /sbin/httpd runs as httpd\_t domain.
+ \item Note\\
+       Dynamic domain transition can be configured by omitting entry
+       point. For example,  
+       \{\\
+       domain httpd\_t;\\
+       domain\_trans  initrc\_t;\\
+       
+       means, dynamic domain transition from initrc\_t to httpd\_t is allowed.
+
+\end{enumerate}
+
+\subsubsection{Simplified domain transition:program}\label{sec:program}
+\begin{enumerate}
+ \item Syntax\\
+    program {\it path-to-program};
+ \item Meaning\\
+    {\it path-to-program} is attached domain in normal case.   By this, {\it path-to-program} is attached domain launched from
+       command line, and /etc/init.d scripts.That is to
+       say, allow domain transition from unconfined domain. unconfined
+       domain means, the domain that is configured {\it allowpriv all;}.
+    However, domain transtion from authentication program domain(such as
+       domains for su,login,sshd) is not configured. Which domains are
+       regarded as authentication\_domain is configured in
+       authentication\_domain field in converter.conf.\\
+ \item Example\\
+1)
+\begin{verbatim}
+{
+domain httpd_t;
+program /usr/sbin/httpd;
+}
+/usr/sbin/httpd is attached httpd_t domain when launched from command
+		line and /etc/init.d script.
+\end{verbatim}
+ \item Note\\
+    This element is intended to be used in relaxed policy. This does not
+       mean nothing in strict policy, because {\it
+       allowpriv all;} is not used.
+\end{enumerate}
+
+
+\subsection{Configuring access control to normal files:allow/deny}
+\subsubsection{allow}\label{section:allow}
+ \begin{enumerate}
+  \item Syntax
+	\begin{enumerate}
+	 \item allow {\it filename} $\mid$ {\it label} [r],[w],[x],[s];
+	\end{enumerate}
+  \item Meaning\\
+	\begin{enumerate}
+	 \item  Allow operation to file specified by permissions. 
+	\end{enumerate}
+  \item Specifying filename\\
+	For {\it filename} {\it directory}/* and {\it directory}** can
+	be used.  For example, /var/* means, all files in /var
+	directory. /var/** means, all files under /var and its
+	child,child's child... 	directories. 
+	and filename that begins ~/ represents user home
+	directories(except root user). 
+  \item Meaning of permissions.
+  \begin{itemize}
+   \item r(Read)\\
+	 Allows to read file
+   \item w(Write)\\
+	 Allows to write,create,delete file. Note that creation of
+	 device is not allowed unless {\it allowpriv devcreate} is described.
+   \item x(eXecute)\\
+	 Allows to execute file.
+   \item s(Stat)\\ 
+	 For directory, get contents of directory. For file get
+	 attribute(such as last modified) of file. 
+  \end{itemize}
+  \item Example\\
+	\{\\
+	domain httpd\_t;\\
+	...\\
+	allow /var/www/** r,s;\\
+	....\\
+	httpd\_t is allowed to read all files and directories under
+	/var/www and its childrens.
+\begin{verbatim}
+	domain httpd_t;
+	allow ~/public_html/** r,s;
+\end{verbatim}
+     httpd\_t can read public\_html under user home directories.
+  \item Detailed configuration support\\
+	In addition to a s,r,x,w permissions, new permissions o,t,a,c,e
+	can be used. Permission {\it w} is devided into those
+	permissions.\\
+	\begin{itemize}
+	 \item o: Overwrite\\
+	       Allows only writing file, not allow create,delete.
+	 \item t: seTattr\\
+	       Allow modify attribute of file.
+	 \item a: Append\\
+	       Allow append to file.
+	 \item c: Create\\
+	       Allow to create file.
+	 \item e: Erase\\
+	       Allow to delete file  
+	\end{itemize}
+  \item Domain execute permission\\
+	{\it dx} permission means Domain Execute. If domain is defined
+	for the program, program is executed in new domain.
+	\begin{verbatim}
+Example:
+        {
+          program /usr/sbin/httpd;
+          allow /var/www/cgi-bin/test.cgi r,s,dx;
+        }
+        {
+          program /var/www/cgi-bin/test.cgi;
+          allow ............
+        }
+	\end{verbatim}
+	In this case, /usr/sbin/httpd have dx permission to
+	test.cgi. Domain is defined below. So, test.cgi runs as
+	different domain.           
+ \end{enumerate}
+
+\subsubsection{deny}
+\begin{enumerate}
+ \item Syntax\\
+ deny {\it filename};
+ \item Meaning\\
+This is used to describe constraints for allow and, also used to cancel allow.
+ \item Example
+\begin{enumerate}
+ \item Example 1: Describe constraints\\
+   \begin{verbatim}
+*In file constraints
+deny /etc/shadow;
+
+*In httpd_t.a
+{
+domain httpd_t;
+include constraints;
+allow /etc/* r,s; 
+}
+   \end{verbatim}
+By {\it include constraints;} configuration in file constrains is
+       included .
+So, the above configuration is the same as following.
+       \begin{verbatim}
+{
+domain httpd_t;
+include constraints;
+deny   /etc/shadow;
+allow /etc/* r,s;
+}
+       \end{verbatim}
+This means, httpd\_t have r,s permission to files in /etc. But can not
+       access /etc/shadow.
+To allow access to /etc/shadow, 
+{\it allow /etc/shadow r,s;} should be described explicitly.
+Deny is useful to prevent misconfiguration.
+
+ \item Example 2: Cancel allow\\
+\begin{verbatim}
+{
+domain httpd_t;
+allow /etc/* r,s;
+deny /etc;
+\end{verbatim}
+{\it allow /etc/* r,s;} is cancelled by deny /etc;
+
+\end{enumerate}
+\end{enumerate}
+
+\subsubsection{Priority of allow, deny when conflict happens}
+ \begin{enumerate}
+  \item OR operation(When allow confilicts) \\
+	When allow rule conflicts, 
+	OR operation is applied.\\
+	\begin{itemize}
+	 \item Example
+	       \begin{verbatim}
+domain foo_t;
+allow /var/** r;
+allow /var/** s;
+	       \end{verbatim}
+foo\_t have r,s permission to under /var.
+	       \begin{verbatim}
+domain foo_t;
+allow /var/run/* r;
+allow /var/run/** w;
+	       \end{verbatim}
+foo\_t have r permission to in /var.
+But for subdirectory(/var/run/xxx etc), it has w permission.
+
+  \item Conflict between child and parent
+	       \begin{verbatim}
+domain foo_t;
+allow /var/** r;
+allow /var/run/** w;
+	       \end{verbatim}
+
+foo\_t have r permission to under /var(including subdir).
+For /var/run , it has only w permission.
+	\end{itemize}
+
+  \item Cancel previous configulation(When allow/deny conflicts)\\
+	When allow and deny conflicts, 
+configuration that appears later survives.
+       \begin{itemize}
+	  \item Example
+		\begin{verbatim}
+domain foo_t;
+allow /foo/* r,s;
+deny  /foo/* ;
+		\end{verbatim}
+		{\it allow /foo/* r,s} is cancelled.
+		\begin{verbatim}
+domain foo_t;
+deny  /foo/* ;
+allow /foo/* r,s;
+		\end{verbatim}
+		{\it deny /foo/* } is cancelled.
+
+		\begin{verbatim}
+domain foo_t;
+allow  /foo/bar/** r,s;
+deny   /foo/** ;
+		\end{verbatim}
+		{\it allow /foo/bar/** r,s} is cancelled.
+
+	\item Exception\\
+		However,		
+		\begin{verbatim}
+domain foo_t;
+deny  /foo/bar/**;
+allow /foo/** r,s;
+		\end{verbatim}
+		{\it deny /foo/bar/**}  is {\it not} cancelled. To
+		cancel deny, you have to describe allow for denied
+		directory(in this case, {\it allow /foo/bar some\_permission;})
+       \end{itemize}
+ \end{enumerate}
+
+\subsubsection{Special files}
+Access to following files are special.
+\begin{enumerate}
+ \item  /dev/tty* /dev/pts /dev/ptmx, /dev/vcs*,/dev/vcsa*\\
+	If you write allow for those file, this does nothing.
+	Access control to these files must be done by allowdev. 
+ \item  /proc, /sysfs, /selinux, /dev/tmpfs\\
+	Allow to these files do nothing, because these files are mounted
+	on filesystems that do not support xattr. See allowfs. For
+	/selinux see allowpriv getsecurity.
+\end{enumerate}
+
+\subsection{Configuring access control to devices:allowdev}
+\subsubsection{allowdev(1)}
+ Device files must be handled carefully. Because device files are
+interface to kernel. When device file is linked to driver that handles
+critical information, read/write to such device will lead to leak of
+confidentical informaion or break of system. Following allowdev
+statements restricts access to device files.
+\begin{enumerate}
+ \item syntax
+      \begin{enumerate}
+       \item allowdev -root {\it directory};
+      \end{enumerate}
+ \item meaning\\
+	By default, when {\it allow} statement is described to file,
+	access to device files are not allowed. The directory that
+	contains devices must be described in advance, by allowdev
+	-root.
+
+ \item Example\\
+       \begin{verbatim}
+	{ 
+	domain httpd_t;
+	allow /dev/* r,w;
+       \end{verbatim}
+       In above, httpd\_t can acesss normal files under /dev, but can
+       not access device files.
+       \begin{verbatim}
+	{ 
+	domain httpd_t;
+	allowdev -root /dev;
+	allow /dev/* r,w;
+       \end{verbatim}
+       In above, httpd\_t can access both normal files and devices under
+       /dev.
+       However, in permission {\it w}, creation and remove devices are not granted unless {\it allowpriv devcreate } is described. 
+\end{enumerate}
+
+\subsubsection{allowdev(2)}
+tty devices are device files /dev/tty*, pts devices are devices under
+/dev/pts. tty devices represents local login terminal, and pts devices
+represents terminal in X and ssh terminal. These devices are linked to
+terminal when user logs in, or open X/ssh terminal. If you can write
+other users terminal device files, you can write message to his
+terminal. 
+In SELinux environment, tty/pts device files are given label according to
+login user's role. 
+So tty/pts device files should be treated differently in SPDL.
+
+\begin{enumerate}
+ \item syntax
+      \begin{enumerate}
+       \item allowdev -pts|-tty|-allterm open;
+       \item allowdev -pts|-tty|-allterm {\it role} [r],[w];  
+       \item allowdev -pts|-tty|-allterm {\it role} admin;
+      \end{enumerate}
+ \item meaning\\
+       -tty means, tty devices. -pts means, pts devices. -allterms means
+       both tty and pts devices.
+       \begin{enumerate}
+	\item This is usually used in role section. Allow role to have
+	      its own tty/pts device. At the time of login, by login
+	      program, role's tty device file is given type {\it {\it role prefix}}\_tty\_device\_t. 
+	\item  Allow to read/write {\it {\it role}}'s tty
+	      device. 
+	\item Allow to change label of tty device, and rename, unlink.
+       \end{enumerate}
+       \item Special role\\
+       \begin{itemize}
+	\item general\\
+	      this means tty/pts before labeled(The type is devtty\_t
+	      and tty\_device\_t, devpts\_t, ptmx\_t). Usually, access
+	      to these are harmless except {\it admin } permission.
+	\item all\\
+	      All other roles tty/pts
+	\item vcs\\
+	      This can be used only in allowdev -tty. Means vcs file(/dev/vcs*, /dev/vcsa*), these provide access to screenshot of tty terminal. 
+       \end{itemize}
+
+\end{enumerate}
+
+\subsection{Configuring access control to files on misc file systems:allowfs}
+ SELinux can do fine-grained access control to files on filesystems that
+ suport extended-attributes, such as ext3, ext2 and xfs. For such files,
+ you configure access control using {\it allow} statement. In other
+ filesystems, you should configure {\it allowfs} described in this
+ section.
+
+\begin{itemize}
+ \item Syntax
+       \begin{enumerate}
+	\item  allowfs {\it name\_of\_filesystem} [s],[r],[x],[w];\\
+	       For {\it name\_of\_filesystem} {\it tmpfs sysfs autofs usbfs cdfs romfs
+	       ramfs dosfs smbfs nfs proc proc\_kmsg proc\_kcore xattrfs} can be
+	       used.
+       \end{enumerate}      
+ \item Meaning\\
+       \begin{enumerate}
+
+	\item Allow access to files in specified system. For example, {\it
+	      allowfs proc s,r;} means to grant s,r access to files on proc
+	      filesystem(/proc). When you see logs whose types are {\it
+	      filesystem\_t }, you may have to use allowfs. This means, if you
+	      find log about {\it read access to sysfs\_t is denied}, you may
+	      add {\it allowfs sysfs s,r;}.
+		
+       \end{enumerate}
+       
+
+ \item Notice about {\it name\_of\_filesystem}
+       \begin{itemize}
+	\item proc filesystem\\
+	      Access control to proc file system is a little
+	      fine-grained. proc\_kmsg means, /proc/kmsg, proc\_kcore
+	      means /proc/kcore. proc\_pid\_self means process information of
+	      own process in /proc/pid/. proc\_pid\_other means proccess information for all
+	      others. proc means other files on /proc. 
+	\item xattrfs\\
+	      This means filesystem that supports extended-attribute,
+	      but not configured to use SELinux's label. For example, if
+	      you format USB memory as ext3 on non-SELinux machine. Next
+	      you mount the USB memory in SELinux machine, 
+	      the files on it are recognized
+	      as xattrfs. You have to use {\it allowfs xattrfs
+	      permissions} in such case.
+	\item cdfs\\
+	      This corresponds to iso9660 and udf filesystem.
+	\item dosfs\\
+	      This corresponds to fat, vfat, ntfs.
+	\item smbfs\\
+	      This corresponds to cifs and smbfs.
+       \end{itemize}
+\end{itemize}
+
+\subsection{Configuring access control to temporaly file:allowtmp}
+\subsubsection{Why allowtmp is necessary?}
+{\it allowtmp} is prepared to configure access control to temporaly
+files.
+Before going detail, let's see why such configuration element is necessary.
+SELinux identifies files based on inode, not file name. File name based
+configuration does not work correctly when inode number changes or inode
+does not exist at the time of configuration(typically such files are
+temporaly files).
+Such files exist under  /var/run, /tmp, /var/tmp.
+For example, assume following configuration exists.\\
+\begin{verbatim}
+domain httpd_t
+allow /var/run r,s;
+allow /var/run/httpd.pid r,w,s;
+\end{verbatim}
+At first, httpd\_t have r,w,s permission to /var/run/httpd.pid.
+However, when httpd is restarted /var/run/httpd.pid is removed and
+created again. In this process, inode number is changed. When inode
+number changes, it inherits parent directory's permission. i.e:
+ httpd\_t have r,s permission to /var/run/httpd.pid(the permission of
+ /var/run). So to grant r,w,s permission to /var/run/httpd.pid, r,w,s
+ permission should be given to parent directory(/var/run).
+However, in this configuration, httpd\_t can r,w,s other daemons pid
+files under /var/run. 
+\\
+In second example, when program creates files randomly under /tmp it is
+a problem. Assume program  A(domain is a\_t) and program B(domain is
+b\_t) creates files whose names are random under /tmp. In such
+case,following configuration will be described.
+\begin{verbatim}
+{
+domain a_t;
+allow /tmp r,w;
+}
+{
+domain b_t;
+allow /tmp r,w;
+}
+\end{verbatim}
+This means, program A can access program B's temporaly files, and
+program B can access program A's temporaly files. \\
+In above example, access control configuration can not be described for
+individual files, but for directory what such files belongs.
+If you think it is enough, folloing will not necessary :-).\\
+
+\subsubsection{What is allowtmp?}
+To resolve this problem, SELinux has a feature called file type
+transition. {\it allowtmp } is a feature to configure file type
+transition.
+In file type transition, when domain creates files under some directory,
+created file is given a label. The label can be named by policy.
+Following is example  usage of {\it allowtmp}.
+\begin{verbatim}
+domain httpd_t;
+allow /var/run r,s;
+allowtmp -dir /var/run -name httpd_var_run_t; -(a)
+allow httpd_var_run_t r,w,s; -(b)
+\end{verbatim}
+In (a), when httpd\_t create file under /var/run, it is labeled as {\it
+httpd\_var\_run\_t}. And in (b), httpd\_t can r,w,s access to the
+created file. To identify file using label name(httpd\_var\_run\_t).
+
+\subsubsection{Syntax and meaning}
+\begin{enumerate}
+ \item Syntax
+       \begin{enumerate}
+	\item allowtmp -dir {\it directory} -name {\it label} {\it
+	      permission};
+	\item  allowtmp -fs {\it file system name} -name {\it label} {\it
+	      permission};
+	      {\it permission} is the same as file permission and can be omitted.
+       \end{enumerate}
+ \item Meaning\\
+       \begin{enumerate}
+	\item When domain create file under {\it directory} it is
+	      labeled as {\it label} and have permission to the created
+	      file specified by {\it permission}. {\it permission} can
+	      be omitted. When omitted, permission can be given by {\it allow}.
+	\item This is used to configure allowtmp under files that do not
+	      support extended attribute, currently, this can be used
+	      only for tmpfs.
+	\item About label
+	      \begin{itemize}
+	       \item When {\it label} is {\it auto }, label is named
+		     automatically based on domain and directory. For example,
+		     domain is hoge\_t, and {\it directory} is /var/, label
+		     name is hoge\_var\_t.
+	       \item When {\it label} is {\it all} or *, it means all
+		     files under {\it directory} created using allowtmp.
+	      \end{itemize}           
+       \end{enumerate}       
+ \item Example\\
+       \begin{verbatim}
+domain httpd_t	;
+allowtmp -dir /var/run -name auto r,w,s;
+       \end{verbatim}
+Files created under /var/run by httpd\_t is labeled as
+       httpd\_var\_run\_t and httpd\_t can r,w,s access to such files.
+
+\begin{verbatim}
+domain httpd_t
+allowtmp -dir /var/run -name auto r,w,s;
+domain named_t
+allowtmp -dir /var/run -name auto r,w,s;
+domain initrc_t;
+allowtmp -dir /var/run -name all r,w,s;
+\end{verbatim}
+Files created under /var/run by httpd\_t is labeled as
+       httpd\_var\_run\_t and httpd\_t can r,w,s access to such
+       files(named\_t can not access).
+Files created under /var/run by named\_t is labeled as
+       named\_var\_run\_t and named\_t can r,w,s access to such
+       files(httpd\_t can not access)
+initrc\_t can r,w,s access to above files because {\it -name all} is
+       specified. {\it -name all} is used to administate files created
+       by allowtmp.
+
+\end{enumerate}
+
+
+
+\subsection{Configuring access control to network:allownet}
+{\it allownet} statements is prepared to configure network access control.
+It can configure access control to socket, port , netif(Network
+Interface) and node(IP address).
+By default, control of netif and node is optional, these are disabled.
+Only when configured explicitly, access control to netif and node is enabled.
+
+\subsubsection{Socket usage}\label{sec:socket}
+Following syntax allows using socket.
+\begin{enumerate}
+ \item  Syntax 
+	\begin{enumerate}
+	 \item allownet -protocol {\it protocol}  use;
+	 \item allownet -protocol {\it protocol}  -domain {\it domain} use;
+	       {\it protocol}, tcp,udp,raw can be specified, splitted by camma.
+	\end{enumerate}
+
+ \item Meaning\\
+	\begin{enumerate}
+	 \item Allows using TCP,UDP and RAW sockets. Usage of port, is
+	       not allowed.  In this, domain is also allowed to
+	       inherit socket from other domain. 
+	 \item This enables to restrict inheriting socket from other
+	       domain. This configures from where the domain can
+	       inherit socket. When {\it domain} is {\it self}, the domain can
+	       use socket which is created by its own domain. 
+	\end{enumerate}
+\item Example
+\begin{verbatim}
+domain foo_t;
+# foo_t can use TCP socket but can not inherit
+# from other domain
+allownet -protocol tcp -domain self;  
+# foo_t can use inherit UDP socket from bar_t
+allownet -protocol udp -domain bar_t; 
+# foo_t can use and inherit RAW socket 
+allownet -protocol raw use; 
+\end{verbatim}
+\end{enumerate}
+
+\subsubsection{Port usage}
+\begin{enumerate}
+ \item Syntax\\
+ allownet -protocol {\it protocol} -port {\it port number} {\it permission};\\
+ {\it protocol}: tcp,udp can be specified, splitted by camma.\\
+ {\it port number}: number and {\it -1023} and {\it 1024-} , and * can
+       be described, splitted by camma.\\
+ {\it permission}: {\it client} or {\it server} splitted by camma can be
+       described
+ \item Meaning\\
+       Allow permissions to be TCP/UDP server/client using port. Port number {\it
+       -1023} means, all unused ports under 1023. {\it 1024-} means all
+       unused ports after 1024. * means all ports. 
+ \item Example
+\begin{verbatim}
+domain httpd_t;
+# httpd_t can be server using port 80 and 443.
+allownet -protocol tcp -port 80,443 server;
+# httpd_t can use TCP/UDP 3306 service(MySQL) as client.
+allownet -protocol tcp,udp 3306 client;
+#Socket usage must be allowd to use port
+allownet -protocol tcp,udp use;
+\end{verbatim}
+\end{enumerate}
+
+\subsubsection{Usage of RAW socket}
+Usage of RAW socket must be restricted, because RAW socket can be used
+for IP spoofing and easedropping.
+\begin{enumerate}
+ \item Syntax\\
+       allownet -protocol raw {\it permission};\\
+        {\it permission}: {\it client} or {\it server} or * splitted by camma can be
+       described.
+ \item Meaning\\
+      {\it client} permission allows to send packet using RAW socket,
+       {\it server} permission allows to receive packet using RAW
+       socket. * permission allows all permissions to use RAW socket.
+\end{enumerate}
+
+\subsubsection{Usage of Network Interface(netif) and IP address(node)}
+By default, when usage of socket is allowed, usage of all netif/node is
+allowed. But, by describing following statement, usage of netif/node can be restricted.
+\begin{enumerate}
+ \item Syntax\\
+       \begin{enumerate}
+	\item allownet -protocol {\it protocol} -netif {\it name of NIC} {\it
+	      permission};\\
+	      {\it protocol}: tcp,udp,raw and * can be specified, splitted by camma.\\
+	      {\it name of NIC}: NIC name(such as lo,eth0,eth1) splitted by camma.\\
+	      {\it permission}: {\it send} or {\it recv} splitted by camma can
+	      be described.       
+	\item allownet -protocol {\it protocol} -node {\it address} {\it
+	      permission};\\
+	      {\it protocol}: tcp,udp,raw and * can be specified, splitted by camma.\\
+	      {\it address}: {\it ipv4address}/{\it netmask} or * splitted by
+	      camma. Example: 192.168.0.1/255.255.255.0 . And * means all address.\\
+	      {\it permission}: {\it send} or {\it recv} splitted by camma can
+	      be described. 
+       \end{enumerate}
+ \item Meaning\\
+       \begin{enumerate}
+	\item    Allows to send or receive packet to/from NIC. 
+	\item  Allows to send or receive packet to/from IP address. 
+       \end{enumerate}
+ \item Example\\
+
+\begin{verbatim}
+{
+domain httpd_t;
+allownet -protocol tcp  use;
+allownet -protocol tcp -port 80 server;
+allownet -netif eth0 send,recv;
+}
+--> httpd_t can use tcp socket and be server using TCP 80 port.
+And can send/recv packet to/from eth0.
+But can not send/recv to/from other NIC.
+{
+domain sendmail_t;
+allownet -protocol tcp  use;
+allownet -protocol tcp -port 25 server;
+}
+--> sendmail_t can use tcp socket and be server using TCP25 port.
+And can send/recv packet to all NIC, 
+because allownet -netif is not described. 
+Access control to NIC is disabled by default.
+\end{verbatim}
+\end{enumerate}
+
+\subsection{Configuring access control to process communication:allowcom}
+\subsubsection{allowcom (IPC)}
+\begin{enumerate}
+ \item Syntax\\
+       allowcom -unix$\mid$-sem$\mid$-msg$\mid$-msgq$\mid$-shm$\mid$-pipe {\it to
+       domain} [r],[w];
+ \item Meaning\\
+       Allow to communicate with {\it  to domain } by specified IPC.\\
+       If {\it to domain } is {\it self}, this means IPC within
+       domain. If {\it  to domain } is {\it *} the domain can IPC
+       to every domain.
+       -unix is unix domain socket, -sem is semaphore, -msg is message,
+       -msgq is message queue, -shm is shared memory, -pipe is pipe.
+\end{enumerate}
+
+\subsubsection{allowcom(Signal)}
+\begin{enumerate}
+ \item Syntax\\
+       allowcom -sig {\it to domain} [c],[k],[s],[n],[o];
+ \item Meaning\\
+       Allow to send signal to {\it to domain}. [c] is sigchld, [k] is
+       sigkill, [s] is sigstop, [n] is signull, [o] is other signals. signull is not
+       supported, this means all domains are allowed to use signull.
+\end{enumerate}
+
+
+
+\subsection{Configuring access control other administrative access
+  rights:allowpriv}
+allowpriv {\it string};\\
+configures other priveleges.
+
+\subsubsection{allowpriv: related to kernel}
+Configures priviledges to communicate and administrate kernel. For detail of what is granted see allow\_admin\_xxxx in
+       macros/seedit\_macros.te. For example, to analyze what is allowed
+       in {\it allowpriv klog\_adm} see allow\_admin\_klog\_adm macro.
+\begin{itemize}
+ \item Syntax\\
+       allowkernel netlink$\mid$klog\_read$\mid$klog\_write$\mid$klog\_adm$\mid$insmod;
+ \item Meaning\\
+     
+       \begin{enumerate}
+	\item netlink\\
+	      Allows to communicate with kernel by netlink socket. 
+	\item klog\_read\\
+	      Allows to read kernel messages by syslog(2) call. Usually
+	      it is required to use dmesg command.
+	\item klog\_write\\
+	      Allows to send log message to audit subsystem in
+	      kernel.This is the same as capability audit\_write.
+	\item klog\_adm\\
+	      Allows to change configuration of audit in kernel. The
+	      same as capability audit\_control,sys\_pacct.
+	\item insmod\\
+	      Allows to install kernel module.
+       \end{enumerate}
+\end{itemize}
+\subsubsection{allowpriv: related to SELinux operations}
+\begin{itemize}
+ \item Syntax\\
+       allowpriv load\_policy$\mid$setenforce$\mid$relabel$\mid$part\_relabel$\mid$getsecurity$\mid$getsecattr;
+ \item Meaning\\
+       Allow priviledges to administrate SELinux.
+       \begin{enumerate}
+	\item relabel\\
+	      Allow to relabel all files. You must also allow
+	      getsecurity and allowpriv search.
+	\item part\_relabel\\
+	      Allow to relabel files that the domain can write. You must
+	      also allow getsecurity. setfscreate operation is also allowed.
+	\item getsecurity\\
+	      Allow to get security policy decisions, by accessing /selinux.
+	\item setenforce\\        
+	      Allow to toggle enforcing/permissive mode.
+	\item load\_policy\\                    
+	      Allow to load policy to kernel.
+	\item setsecparam\\
+	      Change performance parameter of SELinux via /selinux/avc
+	\item getsecattr\\
+	      Get security information(such as domain, stored in /proc/pid/attr) of other processes.
+       \end{enumerate}
+\end{itemize}
+
+\subsubsection{allowpriv: other privileges}
+\begin{itemize}
+ \item Syntax\\
+       allowpriv  net$\mid$boot$\mid$quotaon$\mid$mount
+       $\mid$rawio$\mid$ptrace$mid$chroot$\mid$unlabel
+       $\mid$memlock$\mid$nice$\mid$resource$\mid$
+       time$\mid$devcreate$\mid$setattr$\mid$search$\mid$read
+       $\mid$write$\mid$all
+ \item Meaning\\
+       Allow other priviledges.
+       \begin{enumerate}
+	\item net\\
+	      Allow capability {\it CAP\_NET\_ADMIN}(Such as 
+	      administrate NIC, route table). 
+	\item boot\\
+	      Allow capability{\it CAP\_SYS\_BOOT}. This means allow the
+	      usage of reboot system call.
+	\item insmod\\
+	      Allow capability{\it CAP\_SYS\_MODULE}. This means allow to
+	      install kernel module.
+	\item quotaon\\         
+	      Allow to quotaon.
+	\item mount\\         
+	      Allow to mount device.
+	\item rawio\\        
+	      Allow capability {\it CAP\_SYS\_RAWIO}.This means usage of
+	      ioperm, iopl system call and access to /dev/mem.
+	\item ptrace\\ 
+	      Allow to use ptrace.
+	\item chroot\\
+	      Allow to use chroot.
+	\item unlabel\\
+	      Allow full access to unlabeled files(Files labeled as
+	      unlabeled\_t).
+	\item memlock\\ 
+	      Allow capability {\it CAP\_IPC\_LOCK}. This means to lock
+	      memory.
+	\item nice\\
+	      Allow capability {\it CAP\_SYS\_NICE}. This means process scheduling.
+	\item resource\\
+	      Allow capability {\it CAP\_SYS\_RESOURCE}. This means usage
+	      of rlimit etc.
+	\item time\\
+	      Allow capability {\it CAP\_SYS\_TIME}. Thie means modify
+	      system clock.
+	\item sys\_admin\\
+	      The same as POSIX capability {\it CAP\_SYS\_ADMIN}. This
+	      permissions overlaps other permissions, so if you allow
+	      this, not so serious problem. By denying this,
+	      it can restrict sethostname and some ioctl operations.
+	\item tty\_config\\
+	      The same as capability {\it CAP\_TTY\_CONFIG}. Change
+	      keyboard configuration, and usage of vhangup call. 
+	\item devcreate\\
+	      Allow to create device files in directory that the domain can write.
+	      Without this, a process can not create device
+	      file on a directory even it is configured writable.
+	\item setattr\\
+	      Allow to setattr to files that the domain can s
+	      access. Without this setattr permission is granted in w permission.	\item search\\
+	      Allow s permission to all files.
+	\item read\\
+	      Allow r permission to all files.
+	\item write\\
+	      Allow w permission to all files.
+	\item all\\
+       \end{enumerate}     
+\end{itemize}
+\subsubsection{denypriv}
+This can be used to cancel allowpriv configuration.
+
+

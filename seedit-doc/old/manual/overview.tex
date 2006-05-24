@@ -1,0 +1,50 @@
+%#!platex manual.tex
+\section{About this document}
+ This document is a reference manual for simplified policy(version 1.4.0). About install, see How
+to install.  Note that this document is under construction, the contents
+will change.
+
+\section{Overview}
+  SELinux\cite{selinux} implements fine-grained Mandatory Access Control
+  on Linux. However, the access control is too fine-grained and its
+  policy tends to be too complicated. So it is very difficult to understand and configure policy.
+  "Simplified policy" is a policy written in Simplified Policy Description
+  Language(SPDL). SPDL reduces the number of policy
+  description by hiding type label from users and integrating object
+  classes and access vectors. User can use SELinux system easily by
+  using this. For example, if httpd\_t domain want to read /var/www and
+  use tcp port 80, the configuration is like below.\\
+\{\\
+domain httpd\_t;\\
+allow /var/www r,s;\\
+allownet -tcp -port 80;\\
+\\
+  Simplified policy was originally developed as a part of SELinux Policy
+  Editor\cite{selpepaper}\cite{selpetalk} by Hitachi
+  Software\cite{hitachisoft}. Now it is maintained in SELinux Policy
+  Editor Project\cite{selpehomepage}. Fedora Core4 and 3 are supported.  Simplified Policy does not affect existing SELinux, you can go back default SELinux easily. Feel free to try! 
+
+\section{Components of Simplified policy}
+Simplified Policy is composed of two {\it must} components,
+Converter and sample policy. In addition, there is an optional component, GUI(SELinux Policy Editor).
+
+\begin{enumerate}
+\item converter \\
+ A compiler for SPDL. This reads simplified
+      policy(written in SPDL) and generates SELinux policy understandable by m4 and checkpolicy.
+\item sample policy\\
+ A sample simplified policy. 
+
+\item GUI(SELinux Policy Editor)(optional, not exist for 1.4.0)\\
+ A Web-based GUI to edit simplified policy. 
+        By using GUI, SELinux becomes much easier. Simplified policy with
+      GUI is called {\it SELinux Policy Editor}.
+\end{enumerate}
+
+\section{Notice}
+ \begin{itemize}
+  \item Syntax will change in next version. We are reviewing the
+	security  of simplified policy. As a result, syntax may change.
+ \end{itemize}
+
+ 

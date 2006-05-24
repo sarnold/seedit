@@ -988,7 +988,7 @@ allownet -protocol tcp -port 1024- server;
 改めて紹介します。
 
 \section{その他の注意点}
-\begin{itemize}       
+\begin{enumerate}
  \item ファイルの移動\\
        ファイルAを別のディレクトリBに移動した場合，ディレクトリBにアクセスできるドメ
        インが、移動後のAにアクセスできなくなることがあります。
@@ -1094,26 +1094,33 @@ allow /foo/var/** r,s,{\it w}.
        \end{verbatim} 
 のように書きます。
        ちなみに、allowtmpでは、SELinuxのファイルタイプ遷移が使われてます。\\
-       デフォルトで用意されているポリシーでは、
-       In default policy,allowtmp is used to control access to /etc/mtab and temporaly
-       files under /tmp, /var/tmp.
+       デフォルトで用意されているポリシーでは、allowtmpは、/etc/mtabのア
+       クセス制御や、/tmp,/var/tmp以下の一時ファイルのアクセス制御に使わ
+       れています。
 \end{enumerate}
- \item Device files other than /dev\\
-       Devices have critical impact to security, so it is treated specially.
-       In default policy, device is assumed to exist under /dev.
-       If you write allow statement for devices other than /dev
-       directry, you can not access it.
-       If you want to access devices other than /dev, you have to write
-       allowdev statement.
-       If you want to read access devices in /var/chroot/dev/null, 
-       you have to write following, before describing allow /var/chroot/dev/null.
+ \item /devディレクトリ以外のデバイスを使う\\
+       デバイスファイルは、システムに対して致命的な影響を及ぼすため、
+       SPDLでも特に注意深く取り扱われています。
+       デフォルトで用意されているポリシでは、デバイスは、/devディレクト
+       リに存在すると設定されています。つまり、/devディレクトリ以外のデ
+       バイスに対して、allowでアクセス許可を設定しても、無視されてしまい
+       ます。\\
+       /devディレクトリ以外のデバイスを使いたい場合は、allowdev文を使う
+       必要があります。例えば、/var/chroot/dev/nullにアクセスしたい場合
+       は、/var/chroot/dev/nullにアクセスする設定を記述する前に、
        \begin{verbatim}
 	allowdev -root /var/chroot/dev;	
        \end{verbatim}
-
- \item hardlink, symbolic link\\
+       のように、デバイスの格納されるディレクトリを指定しておhく必要があ
+       ります。
+ \item シンボリックリンクを含むファイル名\\
+       シンボリックリンクを含むファイル名は無視されます。
+例えば、\\
+      allow /etc/init.d/httpd r;\\
+は無視されます。init.d は、 rc.d/init.dのシンボリックリンクだからです。
+ \item ハードリンク\\
        工事中
-\end{itemize}
+\end{enumerate}
 
 \section{Tips}
 \subsection{Webアプリケーション(CGI)を安全に設定する}

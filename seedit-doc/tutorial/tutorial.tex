@@ -891,7 +891,12 @@ You can configure like following.
        \begin{verbatim}
 	allowdev -root /var/chroot/dev;	
        \end{verbatim}
- \item hardlink, symbolic link\\
+ \item Symbolic link\\
+       Configuration to file that contains symbolic link is ignored.
+       For example, \\
+       allow /etc/init.d/httpd r;\\
+       is ignored(init.d is symbolic link to rc.d/init.d).
+ \item Hardlink\\
        Under construction...
 \end{itemize}
 

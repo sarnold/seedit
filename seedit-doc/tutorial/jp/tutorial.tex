@@ -788,11 +788,7 @@ SELinuxのログにはフルパス情報は含まれてませんが、audit2spdlはフルパスを
        ります。auditdサービスを起動しておくことで、フルパスを得る可能性
        を高めることができます。
 
-\item Dynamically created/deleted files\\
-If you can not resolve problem, please contact author.
-工事中。。
-\item Device files\\
-工事中。。
+
 \end{enumerate}
 
 
@@ -841,7 +837,7 @@ include nameservice.sp;
 \begin{verbatim}
 #seedit-load
 \end{verbatim}
-「-v」をつけると詳細な経過を見ることができます。\\
+なお「-v」をつけると詳細な経過を見ることができます。\\
 また、permissiveモードに切り替える必要があります。
 ftpd\_tにアクセス許可する設定をしていませんので、vsftpdが起動しようとし
 てもenforcingモードではアクセス拒否のため失敗するからです。
@@ -858,28 +854,40 @@ vftpdを起動して、seedit-unconfinedコマンドでvsftpdのドメインを確認します。
 \end{verbatim}
 上のようにvsftpdにftpd\_tドメインが付与されていることと思います。
 
-\subsection{Test run and add policy}
-Let's  run application in permissive mode, and find out what access is
-denied, and allow such access by audit2spdl.
-In this article, we aim to develop policy for vsftpd to work as
-Anonymous FTP server.
-Let's test ftp like following.
+\subsection{テスト動作とポリシーの追加}
+ さて、次はpermissiveモードでアプリケーションをテスト動作させます。
+そして、audit2spdlでどんな権限が足りないのかを洗い出します。
+ここでは、vsftpdがAnonymous FTPサーバとして動作するのに必要な権限を洗い
+出すことにします。\\
+テストのために、以下のようにftpサーバにAnonymousとしてログインします。
 \begin{verbatim}
+
+# touch /var/ftp/pub/test.txt
+↑　テスト用のファイルを作成
 $ ftp localhost
 Name (localhost:ynakam): Anonymous
 Password: <anything is OK>
-...
-and do something..
+#以下、pub/test.txtをダウンロードしている
+ftp> ls
+ftp > cd pub
+ftp > get test.txt
+ftp > quit
 \end{verbatim}
-And see log.
-\begin{verbatim}
-#dmesg	
-\end{verbatim}
-Various accesses are denied.
-Let's audit2spdl.
+
+ログを閲覧します。
+以下、auditdサービスが起動しているという前提で話を進めます。
+auditdサービスが起動していない場合は、audit2spdl -alを-dlに置き換えて読
+んでください。
 
 \begin{verbatim}
-#audit2spdl -dl
+#auserch -m AVC 
+↑/var/log/audit/audit.logのログを閲覧するコマンドです。
+\end{verbatim}
+様々なアクセス拒否が出ていると思います。\\
+audit2spdlを使ってみましょう。
+
+\begin{verbatim}
+#audit2spdl -al
 -------------------------
 #SELinux deny log:
 audit(1146179470.043:86): avc:  denied  { search } for  
@@ -890,34 +898,56 @@ tcontext=system_u:object_r:etc_t tclass=dir
 File ftpd_t.sp:
 allow /etc/vsftpd  s;
 -------------------------
-
 -------------------------
+
 #SELinux deny log:
-audit(1146179477.891:108): avc:  denied  { search } for  
-pid=10911 comm="vsftpd" name="ftp" dev=hda3 ino=163477
- scontext=user_u:system_r:ftpd_t 
-tcontext=system_u:object_r:var_t tclass=dir
+type=AVC msg=audit(1148486747.277:30): avc:  denied  { append } for  pid=11761 comm="vsftpd" name="xferlog" dev=hda3 ino=163412 scontext=user_u:system_r:ftpd_t
+tcontext=system_u:object_r:var_log_t tclass=file
 #Suggested configuration
 File ftpd_t.sp:
-allow /var/ftp  s;
+allow /var/log/xferlog  w,r,s;
 -------------------------
 .....
 \end{verbatim}
-audit2spdl tells us various configuration should be added.
-In my case, following are suggested at first test.
+様々な設定を追加しなければならないことが分かると思います。
+なお、以下のように「\#」から始まる行が提示されることがあります。
+\begin{verbatim}
+-------------------------
+#SELinux deny log:
+type=AVC msg=audit(1148486754.718:36): avc:  denied  { lock } for  
+pid=11763 comm="vsftpd" name="test.txt" dev=hda3 ino=163311 
+scontext=user_u:system_r:ftpd_t tcontext=system_u:object_r:default_t
+ tclass=file
+#Suggested configuration
+File ftpd_t.sp:
+#Failed to generate, because failed to obtain fullpath.
+#allow test.txt  r,s;
+-------------------------
+\end{verbatim}
+これは、audit2spdlがtest.txtのフルパスを発見することに失敗したため、先頭
+に\#がついています。しかし、test.txtのフルパスは、/var/ftp/pub/test.txtで
+あることを読者は知っているので、
+\begin{verbatim}
+allow /var/ftp/pub/test.txt  r,s;	
+\end{verbatim}
+を追加すればいいことが分かります。
+筆者の環境では、以下のような設定が提示されました。
 \begin{verbatim}
 allow /etc/vsftpd  s;
-allow /var/ftp  s;
-allow /root  s;
+allow /var/log/xferlog  w,r,s;
+allow /var/ftp/pub  s;
+allow /var/ftp/pub/test.txt  r,s;
 allownet -protocol tcp -port 21 server;
+allow /etc/vsftpd/vsftpd.conf  r,s;
 allowpriv cap_sys_chroot;
-allow /var/log/xferlog  r,w;
-allow /etc/vsftpd/vsftpd.conf  r;
-allow /etc/vsftpd/vsftpd.conf  s;	
+allow /var/ftp  s;
+allow /var/log/xferlog  r,s;
 \end{verbatim}
-You can add them, but you will notice it is more effective 
-To allow r,s to /var/ftp and /etc/vsftpd.
-So, your ftpd\_t.sp will be following.
+これをそのまま追加してもいいのですが、冗長な設定があります。
+例えば、/var/ftp、/etc/vsftpdはディレクトリ全体を読み込み許可すれば冗長
+な設定を削れます。冗長な設定を削ると、ftpd\_t.spは結局以下のようになりま
+す。
+
 \begin{verbatim}
 {
 domain ftpd_t;
@@ -928,100 +958,114 @@ include nameservice.sp;
 # added by audit2spdl suggestion
 allow /etc/vsftpd/**  r,s;
 allow /var/ftp/**  r,s;
-allow /var/log/xferlog  r,w;
-allow /root  s;
+allow /var/log/xferlog  r,w,s;
 allownet -protocol tcp -port 21 server;
 allowpriv cap_sys_chroot;
 }
 \end{verbatim}
-After seedit-load, test vsftpd again.
-You will find access denial again.
-By audit2spdl you will find like following.
+さて、seedit-loadコマンドで設定を反映し、vsftpdを再起動して、再度動作テ
+ストをしてみましょう。audit2spdl -alすると、
+さらに以下のような設定が提示されるかもしれません。
 \begin{verbatim}
 allownet -protocol tcp -port 6353 server;	
 \end{verbatim}
-This says ftpd is trying to behave server using 6553 tcp.
-But the port number varies time to time.So it seems ftpd requires to use all port over 1024.
-You can add following.
+これは、vsftpdがTCP 6553ポートを使ってサーバーとして振る舞おうとしている
+ことを言っています。が、ポート番号は毎回変わります。なので、以下のように
+1024以上のポートを使えるよう設定します。
 \begin{verbatim}
 allownet -protocol tcp -port 1024- server;	
 \end{verbatim}
-Then, test again and add policy until no access denial is outputted.
-At last, switch to enforcing mode.
+設定を反映し、さらにテスト動作を、アクセス拒否がでなくなるまで繰り返しま
+す。最後にenforcingモードにして、テストをして正しく動作することを確かめ
+ます。
 \begin{verbatim}
 #setenforce 1
 \end{verbatim}
-Test vsftpd again.  \\
 %%%enforcingモードでテスト
 %コンパイルエラーの見方
-\\
-SPDL has advanced feature to configure RBAC and more strict policy, but it is beyond the scope
-of document, it will be introduced later day.
+さて、ここまでの加方法で、概ね設定できるかと思います。
+さらに進んだ機能として、SPDLはRBACもサポートしてますが、これは後日機会を
+改めて紹介します。
 
-\section{Other notices}
-\begin{itemize}
-       
- \item Notice about file move\\
-       When you move file to another directory by mv command, you have to use restorecon
-       command. Like below.
+\section{その他の注意点}
+\begin{itemize}       
+ \item ファイルの移動\\
+       ファイルAを別のディレクトリBに移動した場合，ディレクトリBにアクセスできるドメ
+       インが、移動後のAにアクセスできなくなることがあります。
+       ファイル移動時、「ファイルAに対するアクセス権限」を引き継ぐからで
+       す（詳しくは後述)。このようなトラブルを解決するにはrestoreconコマ
+       ンドを使う必要があります。
 \begin{verbatim}
-* Example: Upload homepage
+* 具体例：ホームページのアップロードの場合
+Apacheが移動したファイルにアクセスできないことがあります
 # pwd
 /root/homepage/index.html
 # mv index.html /var/www/html
-# restorecon -R /var/www/html	
+# restorecon /var/www/html/index.html
 \end{verbatim}
-       If you forget last restorecon command, Apache will not be able to
-       access /var/www/html/index.html, even if allow /var/www/** is
-       described for httpd\_t.sp.
-This is because, access right is inherited from source file in mv command. 
-In this example, httpd\_t domain can not access under /root, but can
-       read under /var/www.     After mv command, access rights to
-       /var/www/html/index.html is the same as
-       /root/homepage/index.html.
-       To fix this situation you have to use restorecon command.
- \item File creation\\
-       Newly created file inherits access rights from directory. See
-       example below.\\
-Assume following configuration exists.
+ここで、最後のrestoreconコマンドを忘れると、Apacheは/var/www以下にアクセ
+       スできるように設定されてたとしても、index.htmlにアクセスできませ
+       ん。
+       なぜなら、httpd\_tは、/root/index.htmlにアクセスできませんが、こ
+       れがファイル移動後も継承されているからです。
+       これを修正するにはrestoreconコマンドをする必要があります。
+       これでも問題が解決できない場合は特殊な場合です。audit2spdlで設定
+       を追加する必要があります。
+ \item ファイルの新規作成\\
+       新規作成されたファイルのアクセス権限は、ディレクトリから引き継が
+       れます。次の例を見てください。以下の設定が存在したとします。
        \begin{verbatim}
 domain foo_t;
 allow /foo/bar/** r,s;
 allow /foo/bar/test.txt r,w,s;
        \end{verbatim}
-foo\_t can read files under /foo/bar, and write /foo/bar/test.txt.
-If /foo/bar/test.txt does not exist at the time of configuration, 
-and after configuration /foo/bar/test.txt is created, foo\_t can {\it
-       read} test.txt, because newly created test.txt inherits allow
-       /foo/bar/**. This is confusiong, but limitation of our
-       implementation.\\
-To fix this, you have to do 
+foo\_t は、/foo/bar以下に読み込み可能で、/foo/bar/test.txtに書き込み可能
+       です。\\
+/foo/bar/test.txtが、設定時に存在しなかったとし、設定後にtest.txtに新規
+       作成されたとします。
+foo\_tは、/foo/bar/test.txtに読み込みアクセスしかできません。/foo/barの
+       アクセス権を引き継ぐからです。
+この状況を直すには、
 \begin{verbatim}
 restorecon -R /foo/bar	
 \end{verbatim}
-Then foo\_t can read/write test.txt.\\
- \item Why restorecon is necessary?\\
-       SELinux internally identifies resources by label called {\it
-       type}.
-       When mv command, label is preserved.When file is newly created,
-       type is inherited from belonging directory.
-       We have to fix relationship between file and type by restorecon command.
+をする必要があります。
+ \item restoreconはなぜ必要?\\
+       SELinuxは、ファイルなどのリソースを「タイプ」を呼ばれるラベルで識
+       別しています。
+       タイプの名前は、ファイル名の「\slash」を「\_」に置換した名前になってい
+       ます。
+       mvコマンドをするときは、ラベルは保存されます。ファイルが新規作成
+       された時は、タイプはディレクトリのものを引き継ぎます。ファイルと
+       タイプの関連付けをrestoreconコマンドを使うことで直す必要があるの
+       です。
 
- \item cron jobs\\
-       Cron jobs are not confined. If you want to protect cron job,
-       edit system\_crond\_t.sp, delete {\it allowpriv all;}. However,
-       configuring cron jobs correctly will be very difficult.
+ \item cron ジョブ\\
+       Cronジョブは、unconfinedなドメインで動きます。cron jobのアクセス
+       制御を行いたい場合は、system\_crond\_t.spを編集し、
+ {\it allowpriv all;}を削る必要があります。ただし、cronジョブを正しくア
+       クセス制御するのは難しいことに注意が必要です。
+ \item Dynamically created/deleted files\\
+       
+
+       If you can not reqsolve problem, please contact author.
+       工事中。。
+ \item Device files\\
+       工事中。。
+ \item hardlink, symbolic link\\
+       工事中
 \end{itemize}
 
-
 \section{Tips}
-\subsection{Confining Web applications}
-By default, CGI will run as httpd\_t domain. httpd\_t domain is a domain
-for Apache Web Server, but domain is inherited to child programs by default.
-If you want to change domain for CGI, you have to use domain\_trans element.
-You can give CGI programs individual domain.
-If you place your CGI in /var/www/cgi-bin, and give it cgi\_t domain,
-create cgi\_t.sp like below.
+\subsection{Webアプリケーション(CGI)を安全に設定する}
+デフォルトでは、CGIは、httpd\_tドメイン(Apache Webサーバのドメイン)で動
+作します。これは、サブプログラムのドメインは、親プログラムのドメインと同
+じになるというSELinuxの仕様によるものです。
+CGIのドメインを変えたい場合は、「domain\_trans」というものを使って設定を記述する必要があります。
+具体例を解説します。\\
+CGIスクリプトが、/var/www/cgi-binにあると仮定し、cgi\_tドメインで走らせ
+たいとします。
+cgi\_t.spを以下のように作ります。
 \begin{verbatim}
 {
 domain cgi_t;
@@ -1029,17 +1073,24 @@ domain_trans  httpd_t /var/www/cgi-bin/**;
 include common-relaxed.sp;
 ##### allowxxx will be here...
 }
-
 \end{verbatim}
 
-For PHP, you {\it can not } change domain from httpd\_t. It is because
-		PHP is internally executed not using exec system
-		call. SELinux can not give domain for such case, unless
-		PHP is extended to use SELinux system call.
+program文は、unconfinedドメインから起動したプログラムにドメインを割り当
+てるものでした。domain\_trans文は任意のドメインから起動されたプログラム
+にドメインを割り当てるものです。
+\begin{verbatim}
+domain cgi_t;
+domain_trans  httpd_t /var/www/cgi-bin/**;	
+\end{verbatim}
+は、httpd\_tドメインで動いているプログラムが、/var/www/cgi-bin以下のプロ
+グラムを実行した場合、cgi\_tドメインを割り当てる、という意味になります。
+\\
+なお、PHPについては、httpd\_tドメイン以外で動作させることはできません。
+PHPは、通常の実行とは異なる方法で処理されているからです。
 
 \subsection{deny}
-You can register important files in black list by {\it deny} element.
-Following is example.
+{\it deny}という設定要素を使うことで、重要なファイルをブラックリストに登
+録し、設定ミスの防止に利用することができます。以下の例を見てみましょう。
 \begin{verbatim}
 {
 domain foo_t;
@@ -1047,9 +1098,9 @@ deny /etc/shadow;
 allow /etc/** r,s;
 }
 \end{verbatim}
-In above, foo\_t is allowed to all files by allow /etc/**, but can not
-access /etc/shadow.
-To access /etc/shadow, you have to write {\it allow /etc/shadow}
-explicitly.
-Some deny elements are written by default in include/common-relaxed.xp
+foo\_tが、/etc以下の全ファイルに読み込みできるように設定されていますが、
+/etc/shadowにアクセスすることができません。
+/etc/shadowにアクセスするには、 {\it allow /etc/shadow}と明示的に記述す
+る必要があります。なお、デフォルトではinclude/common-relaxed.spにいくつ
+かのファイルがdenyが登録されています。
 \end{document}

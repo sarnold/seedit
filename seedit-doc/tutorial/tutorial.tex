@@ -596,11 +596,6 @@ You can use auditd like below.
 The use audit2spdl -al, and try again.
 It is also faster than audit2spdl -dl.
 
-\item Dynamically created/deleted files\\
-
-If you can not resolve problem, please contact author.
-
-\item Device files\\
 
 \end{enumerate}
 
@@ -709,6 +704,26 @@ allow /var/ftp  s;
 .....
 \end{verbatim}
 audit2spdl tells us various configuration should be added.
+You might find following. 
+\begin{verbatim}
+-------------------------
+#SELinux deny log:
+type=AVC msg=audit(1148486754.718:36): avc:  denied  { lock } for  
+pid=11763 comm="vsftpd" name="test.txt" dev=hda3 ino=163311 
+scontext=user_u:system_r:ftpd_t tcontext=system_u:object_r:default_t
+ tclass=file
+#Suggested configuration
+File ftpd_t.sp:
+#Failed to generate, because failed to obtain fullpath.
+#allow test.txt  r,s;
+-------------------------
+\end{verbatim}
+It means failed to suggest configuration because audit2spdl failed to
+guess fullpath for test.txt.
+But you know fullpath of test.txt is /var/ftp/pub/test.txt.
+So, you will add allow /var/ftp/pub/test.txt r,s;
+\\
+
 In my case, following are suggested at first test.
 \begin{verbatim}
 allow /etc/vsftpd  s;
@@ -816,6 +831,12 @@ Then foo\_t can read/write test.txt.\\
        Cron jobs are not confined. If you want to protect cron job,
        edit system\_crond\_t.sp, delete {\it allowpriv all;}. However,
        configuring cron jobs correctly will be very difficult.
+       
+ \item Dynamically created/deleted files\\
+       
+       If you can not resolve problem, please contact author.
+       
+ \item Device files\\
 \end{itemize}
 
 

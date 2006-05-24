@@ -72,9 +72,15 @@ def getInput(opts):
                 errorExit("Input file open error:"+arg+"\n")
         if opt in ("-a","--audit"):
             try:
-                input = os.popen("ausearch -m avc,daemon_start")
+                input = os.popen("/sbin/ausearch -m avc,daemon_start")
             except:
-                errorExit("ausearch command can not be used\n")
+                errorExit("Warning ausearch is not available for your system input is /bin/dmesg")
+                try:
+                    input=os.popen("dmesg", "r")
+                except:
+                    errorExit("/bin/dmesg can not be used\n")
+
+                
     return input
 
 
@@ -182,7 +188,10 @@ def guessPathByAusearch(line):
                     else:                        
                         return ""                    
                 l=result.readline()
-          
+
+                if path==".":
+                    return ""
+                
             return path
             
         except:
@@ -354,7 +363,8 @@ def genFileAllow(rule,line,domdoc):
     return Dict
     ruletype:   type of SPDL element, this case, allowfile
     domain:     domain
-    path:       path 
+    path:       full path
+    name:       only file name not fullpath
     permission: list of permission     
     """
     spRuleList=[]
@@ -371,7 +381,7 @@ def genFileAllow(rule,line,domdoc):
 
     spRule["ruletype"]="allowfile"
     spRule["domain"]=rule["domain"]
-
+    spRule["name"]=rule["name"]
     ##make grab
     if rule["secclass"] == "dir":
         pass    
@@ -815,6 +825,9 @@ def parseLine(line):
             if l!="}" and l!="{":
                 rule["permission"].append(l)
 
+
+    rule["name"] = getName(line)
+
     return rule
 
 
@@ -932,15 +945,16 @@ def allowTtyPtsStr(spRule):
 def allowfileStr(spRule):
     str=""
 
-    str="allow "+spRule["path"]+" "
+    if spRule["path"]=="":
+        str = "allow "+spRule["name"]+" "
+    else:
+        str="allow "+spRule["path"]+" "
     permList=spRule["permission"]
     if "dummy" in permList:
         str = _("#allow:Nothing generated for safety\n")
         return str
     
     str = str+" "+permListToStr(permList)+";"
-
-
     
     path = spRule["path"]
     if path =="":

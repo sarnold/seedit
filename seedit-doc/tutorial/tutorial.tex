@@ -833,10 +833,66 @@ Then foo\_t can read/write test.txt.\\
        configuring cron jobs correctly will be very difficult.
        
  \item Dynamically created/deleted files\\
-       
-       If you can not resolve problem, please contact author.
-       
- \item Device files\\
+       For files that are dynamically created/deleted, access control
+       sometimes do not work well.
+       See example below.
+\begin{verbatim}
+domain foo_t;
+allow /foo/bar/** r,s;
+allow /foo/bar/test.txt r,w,s;
+\end{verbatim}
+In this, if test.txt is deleted, and created, test.txt inherits access
+       right of directory.
+So, foo\_t can read test.txt but can not write test.txt.
+You can fix by restorecon, but when it is re-created, you have to do
+       restorecon again..\\
+Therefore, for files whose access right is different from directory, and they
+       are deleted/created, access control does not work well.
+To resolve this, you have following solutions.
+\begin{enumerate}
+ \item Give up controling access for individual files\\
+       you can write\\
+allow /foo/var/** r,s,{\it w}.
+By configuring above, if test.txt is deleted and created, foo\_t can
+       write test.txt, however foo\_t can write other files under
+       /foo/bar directory.
+ \item Use allowtmp\\
+       To protect such temporally files, SPDL supports allowtmp
+       statement.
+You can configure like following.
+\begin{verbatim}
+       allowtmp /foo/bar -name auto  r,w,s;	
+\end{verbatim}
+       By allowtmp statement, file can be identified by label in SPDL.
+       This allowtmp statement means, files created under /foo/bar is
+       labeled as foo\_foo\_bar\_t(-name auto generates label name based
+       on domain and directory name, foo\_t + /foo/bar = foo\_foo\_bar\_t).
+       And foo\_t can read, write files that have foo\_foo\_bar\_t label.
+       By above, when  test.txt is deleted and created again, test.txt
+       is given label(foo\_foo\_bar\_t) and identifined by label.
+       In allowtmp, file type transition in SELinux is internally used.\\
+       If you want to access test.txt from other domain, you have to
+       specify label not filename, like below.
+\begin{verbatim}
+	allow foo_foo_bar_t r;
+\end{verbatim}
+       In default policy,allowtmp is used to control access to /etc/mtab and temporaly
+       files under /tmp, /var/tmp.
+\end{enumerate}
+ \item Device files other than /dev\\
+       Devices have critical impact to security, so it is treated specially.
+       In default policy, device is assumed to exist under /dev.
+       If you write allow statement for devices other than /dev
+       directry, you can not access it.
+       If you want to access devices other than /dev, you have to write
+       allowdev statement.
+       If you want to read access devices in /var/chroot/dev/null, 
+       you have to write following, before describing allow /var/chroot/dev/null.
+       \begin{verbatim}
+	allowdev -root /var/chroot/dev;	
+       \end{verbatim}
+ \item hardlink, symbolic link\\
+       Under construction...
 \end{itemize}
 
 

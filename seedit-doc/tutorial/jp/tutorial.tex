@@ -1045,13 +1045,72 @@ restorecon -R /foo/bar
        制御を行いたい場合は、system\_crond\_t.spを編集し、
  {\it allowpriv all;}を削る必要があります。ただし、cronジョブを正しくア
        クセス制御するのは難しいことに注意が必要です。
- \item Dynamically created/deleted files\\
-       
 
-       If you can not reqsolve problem, please contact author.
-       工事中。。
- \item Device files\\
-       工事中。。
+ \item 消去、生成が繰り返されるファイル\\
+       消去、生成が繰り返されるファイルについては、アクセス制御が思った
+       ようにいかない場合があります。次の例を見てください。
+\begin{verbatim}
+domain foo_t;
+allow /foo/bar/** r,s;
+allow /foo/bar/test.txt r,w,s;
+\end{verbatim}
+こう設定したとすると、test.txtが消去され、再度test.txtが生成された場合、
+       test.txtのアクセス権限は所属ディレクトリのものを継承しますから、
+foo\_tは、test.txtを読み込みしかできません。
+restoreconコマンドでこれを直すことができるのですが、またtest.txtが消去、
+       生成されると、さらにrestoreconをしなければなりません。\\
+ディレクトリに対するアクセス権限と違うファイル、かつそれが消去、生成が繰
+       り返される場合は、アクセス制御がうまく設定できないことになります。\\
+これを解決するには以下のような方法があります。
+\begin{enumerate}
+ \item ファイル毎のアクセス制御をあきらめ、ディレクトリ単位のアクセス制
+       御をする\\
+つまり、
+allow /foo/var/** r,s,{\it w}.
+のように、/foo/var全体に書き込み権限を与えてやれば問題ありません。
+しかし、書き込み可能な範囲が広がってしまいます。
+ \item allowtmpを利用\\
+      このような、生成消去を繰り返すファイルのアクセス制御をするために、
+       SPDLにはallowtmpという設定要素が用意されています。今回の場合は次
+       のように設定することになります。
+\begin{verbatim}
+       allowtmp /foo/bar -name auto  r,w,s;	
+\end{verbatim}
+       allowtmpを使うことで、ファイルを「ラベル」を使って識別できるよう
+       になります。
+       上の文にて、foo\_tが、/foo/bar以下に作成したファイルは、
+       foo\_foo\_bar\_tという名前のラベル(-name autoで命名がされます。
+       foo\_t + /foo/bar = foo\_foo\_bar\_t という規則です)が付与され、
+       そして、foo\_tは、このラベルに対し、r,w,sアクセス可能、ということ
+       になります。\\
+       このようにすることによって、test.txtが/foo/barディレクトリに消去、
+       生成を繰り返されたとすると、test.txtには、foo\_foo\_bar\_tという
+       ラベルが常に付与されます。そして、このラベルを使ってSPDLから設定
+       することができます。\\
+       例えば、他のドメインから、このラベルが付いたファイルにアクセスし
+       たい場合は、
+       \begin{verbatim}
+	allow foo_foo_bar_t r;
+       \end{verbatim} 
+のように書きます。
+       ちなみに、allowtmpでは、SELinuxのファイルタイプ遷移が使われてます。\\
+       デフォルトで用意されているポリシーでは、
+       In default policy,allowtmp is used to control access to /etc/mtab and temporaly
+       files under /tmp, /var/tmp.
+\end{enumerate}
+ \item Device files other than /dev\\
+       Devices have critical impact to security, so it is treated specially.
+       In default policy, device is assumed to exist under /dev.
+       If you write allow statement for devices other than /dev
+       directry, you can not access it.
+       If you want to access devices other than /dev, you have to write
+       allowdev statement.
+       If you want to read access devices in /var/chroot/dev/null, 
+       you have to write following, before describing allow /var/chroot/dev/null.
+       \begin{verbatim}
+	allowdev -root /var/chroot/dev;	
+       \end{verbatim}
+
  \item hardlink, symbolic link\\
        工事中
 \end{itemize}

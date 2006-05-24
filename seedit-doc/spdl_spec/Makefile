@@ -1,6 +1,6 @@
 INSTALLDIR=doc
 
-all:html
+all:html spdl_spec.pdf
 
 install: spdl_spec.pdf html
 	mkdir -p $(INSTALLDIR)

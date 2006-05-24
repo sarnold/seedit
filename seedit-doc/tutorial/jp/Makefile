@@ -1,8 +1,8 @@
 INSTALLDIR=doc
 
-all: html tutorial.pdf
+all: html tutorial_jp.pdf
 
-install: tutorial.pdf html
+install: tutorial_jp.pdf html
 	mkdir -p $(INSTALLDIR)
 	mv tutorial.pdf $(INSTALLDIR)/tutorial.pdf
 	mv tutorial $(INSTALLDIR)/tutorial
@@ -10,9 +10,10 @@ html: tutorial.dvi
 	latex2html  -show_section_numbers -link 2 -split +0 tutorial.tex
 	mv tutorial tutorial_jp
 
-tutorial.pdf: tutorial.dvi 
+tutorial_jp.pdf: tutorial.dvi 
 	pdvips tutorial.dvi
 	ps2pdf13 tutorial.ps
+	mv tutorial.pdf tutorial_jp.pdf	
 
 tutorial.dvi: *.tex
 	platex tutorial.tex

@@ -1,0 +1,19 @@
+CVS repository of SELinux Policy Editor
+
+**Contents
+- seedit-converter
+  Core component. Converter for simplified policy and its utilities.
+
+- seedit-policy
+  Simplified policy files
+
+- seedit-doc
+  Documents
+
+- seedit-gui
+  GUI for simplified policy
+
+For detail, see README files under above directories.
+
+- build.sh
+  

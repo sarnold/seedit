@@ -171,7 +171,6 @@ int chk_child(security_context_t prev_context, security_context_t new_context){
   }
   dirname = joint_str("/", s);
   free(s);
-  printf("%s\n",dirname);
   if (lstat(dirname, &st)==0){
     if (S_ISDIR(st.st_mode)) {
       free(prev_type_prefix);
@@ -191,6 +190,11 @@ int chk_child(security_context_t prev_context, security_context_t new_context){
   if(strcmp(prev_type, "default_t")==0||strcmp(prev_type,"rootdir_t")==0||strcmp(prev_type,"unlabeled_t")==0)
     return 1;
   
+  if(strstr(new_type, "homedir_")==new_type||strstr(new_type, "dir_homedir_")==new_type){    
+    if(strcmp(prev_type,"dir_homedir_rootdir_t")==0||strcmp(prev_type,"homedir_rootdir_t")==0)
+       return 1;
+  }
+       
   return 0;
 }
 

@@ -465,6 +465,16 @@ int add_filerule_to_domain(char *domain_name, char *filename, int perm, int stat
   return 0;
 }
 
+void register_dummy_home_rule(){
+  char *p_current_domain;
+  p_current_domain = current_domain;
+  current_domain = DUMMY_DOMAIN_NAME;
+  register_file_rule("~/**");
+
+  current_domain = p_current_domain;
+}
+
+
 int register_file_rule(char *path){
   char **dir_list;
   char *filename;

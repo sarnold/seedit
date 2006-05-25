@@ -92,7 +92,7 @@ int main(int argc, char **argv){
   if (yyparse() != 0)
     exit(1);
  
-  
+  register_dummy_home_rule();
   /* convert middle language to SELinux configuration language */
   convert(outdir);
   

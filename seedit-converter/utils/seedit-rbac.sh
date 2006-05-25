@@ -10,7 +10,6 @@ if [ $1 = "on" ]; then
     echo "Going to permissive mode"
     /usr/sbin/setenforce 0
     mv extras/*_r.sp .
-    mv extras/su_t.sp .
     mv extras/newrole_t.sp .
     mv unconfined_t.sp extras
     mv unconfined_su_t.sp extras
@@ -23,7 +22,6 @@ if [ $1 = "off" ]; then
     echo "Going to permissive mode"
     /usr/sbin/setenforce 0
     mv *_r.sp extras
-    mv su_t.sp extras
     mv newrole_t.sp extras
     mv extras/unconfined_t.sp .
     mv extras/unconfined_su_t.sp .

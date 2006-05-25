@@ -983,7 +983,7 @@ def allowcomStr(spRule,security="low"):
         if option!="sig":
             option = "ipc"
     
-    str ="allowcom -"+option+" "+domainToRole(spRule["domain"])
+    str ="allowcom -"+option+" "+domainToRole(spRule["type"])
     suboption=spRule["suboption"]
     if suboption=="" and option!="sig":
         str = _("#allowcom, nothing generated from this log for safety")

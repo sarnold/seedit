@@ -2,9 +2,15 @@
 domain su_t;
 domain_trans staff_r,sysadm_r /bin/su;
 include common-relaxed.sp;
-allow /etc/shadow r,s;
+include authentication.sp;
+include nameservice.sp;
+
 allow /root s;
-allow /etc/selinux/seedit/** r,s;
+allow /etc/** r,s;
+
+allow /bin/bash r,x;
+allow /bin/sh r,s;
+allowpriv all;
 
 allowpriv getsecurity;
 allowpriv netlink;

@@ -4,6 +4,8 @@
 allowdev -root /dev;
 
 allow /* s;
+allow /home s;
+
 allow /dev/console s,r,w;
 allow /dev/null s,r,w;
 allow /dev/zero s,r,w;
@@ -44,6 +46,8 @@ deny /dev/kmem;
 deny /dev/mem;
 deny /dev/port;
 deny /var/log;
+
+allow /usr/share/locale/** r,s;
 
 #skip permission check in NIC and node layer
 allownet -protocol * -netif * send,recv;

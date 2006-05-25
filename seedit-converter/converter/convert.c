@@ -1914,7 +1914,9 @@ out_one_role(void *u)
 	    fprintf(stderr, "Warning: no label found for /etc/rc.d/init.d\n");
 	}else
 	{
-	    fprintf(rbac_out, "role_transition %s %s system_r;\n", rbac->rolename, label->labelname);
+	   // fprintf(rbac_out, "role_transition %s %s system_r;\n", rbac->rolename, label->labelname);
+	  //  fprintf(rbac_out, "role_transition %s bin_su_t system_r;\n", rbac->rolename);
+
 	}
 	
 	/* chop "_r" */

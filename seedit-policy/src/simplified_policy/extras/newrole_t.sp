@@ -13,7 +13,9 @@ allow /bin/bash r,x;
 allow /bin/sh r;
 allow initrc_var_run_t r,o,t;
 allow /var/run/** r,s;
-allow /etc/* r,s;
+allow /etc/** r,s;
+allow /sbin/** r,x,s;
+allow /dev/full r,o,t,s;
 
 allowfs proc_pid_self w;
 allowpriv netlink;

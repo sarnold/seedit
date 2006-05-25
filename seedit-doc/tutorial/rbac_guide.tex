@@ -1,0 +1,43 @@
+\documentclass{article}
+\title{SELinux Policy Editor(seedit) RBAC guide (for Ver 2.0))}
+\author{Yuichi Nakamura \thanks{ynakam@gwu.edu}}
+\begin{document}
+\def\labelenumi{(\theenumi)}
+\maketitle
+\tableofcontents
+\newpage
+
+
+\section{What is RBAC}
+SPDL supports configuration of RBAC(Role Based Access Control).
+In default policy, the domain for login user is unconfined\_t.
+So, the behavior of user is not confined by SELinux.\\
+
+To increase security of user, RBAC is useful.
+
+xxxxx
+
+\section{Enable RBAC}
+To enable RBAC, use following command.
+\begin{verbatim}
+# seedit-rbac on
+(It takes some minutes)
+# reboot
+\end{verbatim}
+By above commands, files necessary to configure RBAC is moved from
+/etc/seedit/policy/extra to /etc/seedit/policy, and seedit-load is
+run.Reboot is necessary because some domains become invalid, to fix this
+you have to reboot.\\
+
+To disable RBAC, use following.
+\begin{verbatim}
+# seedit-rbac off
+# reboot
+\end{verbatim}
+
+\section{Default RBAC Configuration}
+
+
+\section{Creating new role}
+
+\end{document}

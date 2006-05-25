@@ -32,6 +32,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/audit2spdl
 %{_bindir}/seedit-spdl2xml
 %{_bindir}/seedit-xml2spdl
+%{_sbindir}/seedit-rbac
 %{_sbindir}/seedit-load
 %{_sbindir}/seedit-restorecon
 %{_bindir}/seedit-unconfined

@@ -1388,7 +1388,8 @@ int is_role_domain(char *domain){
 
   int num; 
   HASH_NODE **rbac_array;
-
+  if(rbac_hash_table == NULL)
+    return 0;
   role = make_domain_to_role(domain);
   rbac_array = create_hash_array(rbac_hash_table);
   if(rbac_array == NULL)
@@ -1945,9 +1946,11 @@ out_rbac(FILE *outfp)
 	fprintf(rbac_out, "\n#RBAC related configration\n");
 
 
-	if (rbac_hash_table == NULL)
-		return;
-
+	if (rbac_hash_table == NULL){
+	  fprintf(rbac_out, "user system_u roles system_r;\n");
+	  fprintf(rbac_out, "user user_u roles { system_r };\n");
+	  return;
+	}
 	/*print role system_r ..*/
 	//out_system_r_rbac(rbac_hash_table);
 

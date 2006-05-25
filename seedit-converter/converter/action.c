@@ -146,12 +146,24 @@ register_domain(char *dname, int role_flag)
 	char *name = dname;
 	char *tmp = NULL;
 	char *sourcefile;
+	char *rname;
 
 	sourcefile= get_sourcefile();
+
 	if(sourcefile!=NULL){
-	  if(check_sourcefile_name(sourcefile,dname)==-1){
-	    action_error("Source filename error. Source file name must be %s.sp\n",dname);
-	  exit(1);
+	  if(!role_flag){
+
+	    if(check_sourcefile_name(sourcefile,dname)==-1){
+	      action_error("Source filename error. Source file name must be %s.sp\n",dname);
+	      exit(1);
+	    }
+	  }else{
+	    rname = make_domain_to_role(dname);
+	    if(check_sourcefile_name(sourcefile,rname)==-1){
+	      action_error("Source filename error. Source file name must be %s.sp\n",dname);
+	      exit(1);
+	    }
+	    free(rname);
 	  }
 	}
 

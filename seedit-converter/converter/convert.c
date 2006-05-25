@@ -1382,15 +1382,37 @@ out_sysadm_r_types(FILE *rbac_out, char *domain)
 	return 0;
 }
 
+int is_role_domain(char *domain){
+  char *role;
+  int i;
 
+  int num; 
+  HASH_NODE **rbac_array;
+
+  role = make_domain_to_role(domain);
+  rbac_array = create_hash_array(rbac_hash_table);
+  if(rbac_array == NULL)
+    return 0;
+  num = rbac_hash_table->element_num;
+  for (i = 0; i <num; i++){
+    if(strcmp(role, ((RBAC *)rbac_array[i]->data)->rolename)==0)
+      return 1;
+  }
+  free(rbac_array);
+  free(role);
+  return 0;
+}
 
 
 void out_role_types(FILE *fp, char *domain){
   HASH_NODE **rbac_array;
   int num;
   int i;
-
-  fprintf(fp, "role system_r types %s;\n",  domain);
+  if (is_role_domain(domain)){
+    ;
+  }else{
+    fprintf(fp, "role system_r types %s;\n",  domain);
+  }
   if(rbac_hash_table == NULL)
     return;
   rbac_array = create_hash_array(rbac_hash_table);
@@ -1921,8 +1943,7 @@ out_rbac(FILE *outfp)
 	rbac_out = outfp;
 
 	fprintf(rbac_out, "\n#RBAC related configration\n");
-	fprintf(rbac_out, "user system_u roles system_r;\n");
-	fprintf(rbac_out, "user user_u roles { system_r };\n");
+
 
 	if (rbac_hash_table == NULL)
 		return;
@@ -1937,6 +1958,8 @@ out_rbac(FILE *outfp)
 	 handle_all_element(rbac_hash_table, out_role_allow);
 
 	/* print "user" */
+	fprintf(rbac_out, "user system_u roles system_r;\n");
+	fprintf(rbac_out, "user user_u roles { system_r };\n");
 	handle_all_element(user_hash_table, out_one_user_role);
 
 

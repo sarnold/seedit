@@ -405,6 +405,23 @@ char *make_role_to_domain(char *name){
   return domain_name;
 }
 
+char *make_domain_to_role(char *name){
+  int len;
+  char *role_name;
+  
+  len = strlen(name);
+  if ((role_name = (char *)malloc(len+1)) == NULL){
+    perror("malloc");
+    exit(1);
+  }
+  
+  strcpy(role_name,name);
+  role_name[len-1] = 'r';
+  
+  return role_name;
+
+}
+
 
 /**
  *  @name:	strip_slash

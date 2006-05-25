@@ -25,6 +25,8 @@ char **extend_ntarray(char **, char *);
 void free_ntarray(char **array);
 void debug_print(char *, int, char *, ...);
 char *make_role_to_domain(char *name);
+char *make_domain_to_role(char *name);
+
 void strip_slash(char *s);
 char **get_dir_list(char *path);
 int ntarray_check_exist(char **array,char *str);

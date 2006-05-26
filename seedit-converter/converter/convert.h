@@ -5,7 +5,7 @@
 
 #ifndef CONVERT_H
 #define CONVERT_H
-
+void append_homedir_rule();
 void convert(char *);
 void free_all_objects();
 void out_netcontext(FILE *);

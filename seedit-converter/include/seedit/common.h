@@ -15,6 +15,7 @@ int chop_char(char *, char );
 void * my_malloc(size_t);
 void *my_realloc(void *, size_t);
 char *joint_str(char *, char *);
+char *joint_3_str(char *a, char *b, char *c);
 void error_print(char *, int, char *, ...);
 int check_exist_in_list(char *, char **);
 int split_and_set_list(char *buf, char *delm, char **list, int max);

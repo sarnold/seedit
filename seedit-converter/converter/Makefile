@@ -48,3 +48,6 @@ uninstall:
 
 clean:
 	rm -f *.o seedit-converter lex.yy.c y.tab.c a.out 
+
+test: install
+	/usr/sbin/seedit-load -tv

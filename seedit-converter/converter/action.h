@@ -24,6 +24,7 @@ void print_domain_info(DOMAIN);
 void print_domain_trans();
 void free_domain_trans();
 void register_dummy_home_rule();
+int append_file_rule(char *domain_name, char *filename, int perm, int state);
 
 #define CAT_ALLOW 0
 #define CAT_ALLOWFS 1

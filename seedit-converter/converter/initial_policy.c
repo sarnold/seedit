@@ -317,6 +317,20 @@ void parse_authentication_domain(char *buf){
   }  
 }
 
+void parse_homedir_list(char *buf){
+  char delm[]=" \t";  
+  int i;
+  if(split_and_set_list(buf,delm,converter_conf.homedir_list, MAX_HOME) == -1){      
+    fprintf(stderr,"Error: too many homedir_list. Modify MAX_HOME and recompile\n");
+    exit(1);
+  }  
+  for(i=0; converter_conf.homedir_list[i]!=NULL;i++){
+    strip_slash(converter_conf.homedir_list[i]);
+  }
+
+}
+
+
 
 
 void parse_file_type_trans_fs(char *buf){
@@ -389,6 +403,8 @@ void parse_converter_conf(){
       parse_proc_mount_point(buf);	       
     }else if(strcmp(identifier,"authentication_domain")==0){
       parse_authentication_domain(buf);      
+    }else if(strcmp(identifier,"homedir_list")==0){
+      parse_homedir_list(buf);
     }else{
       ;
     }    

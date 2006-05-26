@@ -27,7 +27,7 @@ By Yuichi Nakamura <ynakam@gwu.edu>
 #include <seedit/parse.h>
 #include "security_class.h"
 
-static void convert_acls();
+static void modify_rules();
 static void make_dir_list();
 static void out_allow(FILE *,FILE *);
 static void out_domain_trans(FILE *);
@@ -124,7 +124,7 @@ void convert(char *outdir){
 
 	//	print_file_label_tab();
 
-	convert_acls();
+	modify_rules();
 
 #ifdef DIRSEARCH
 	make_dir_list();
@@ -1523,7 +1523,7 @@ free_all_objects()
 
 
 /*delete admin_rule_array from global and add individual domains*/
-void convert_priv_acl(){
+void modify_priv_rule(){
   DOMAIN *domain;
   HASH_NODE **domain_array;
   int i;
@@ -1554,17 +1554,78 @@ void convert_priv_acl(){
   }
 }
 
+
+
+void append_homedir_rule_to_domain(DOMAIN *domain, FILE_ACL_RULE rule, char **home_prefix_list){
+  FILE_ACL_RULE newrule;
+  char *path;
+  int i;
+  if(home_prefix_list==NULL||rule.path[0]!='~')
+    return;
+  
+  for(i=0; home_prefix_list[i]!=NULL;i++){
+    path = joint_str(home_prefix_list[i],rule.path+1);
+    append_file_rule(domain->name, path, rule.allowed, rule.state);   
+    free(path);
+   }
+  
+}
+
+/*
+if rules that begin from ~/<path>, 
+add /home/username/<path> rules.
+*/
+void append_homedir_rule(){
+  char **homedir_list;
+  char **user_list;
+  char **home_prefix_list = NULL;/*list of str(homedir_list + user_list)*/
+  char *prefix;
+  int i,j;
+  DOMAIN *domain;
+  HASH_NODE **domain_array;
+  FILE_ACL_RULE rule;
+  int rule_num_orig;
+
+  homedir_list = converter_conf.homedir_list;
+  user_list = g_file_user_list;
+  if(homedir_list == NULL || user_list == NULL)
+    return;
+
+  /*make home_prefix_list  */
+  for(i=0 ; homedir_list[i]!=NULL ;i++){
+    for(j=0; user_list[j]!=NULL;j++){
+      prefix = joint_3_str(homedir_list[i],"/", user_list[j]);
+      home_prefix_list = extend_ntarray(home_prefix_list,prefix);
+      free(prefix);
+    }
+  }
+  
+ 
+  domain_array = create_hash_array(domain_hash_table);
+
+  for (i = 0; i < domain_hash_table->element_num; i++){
+    domain = (DOMAIN *)domain_array[i]->data;
+    rule_num_orig = domain->file_rule_array_num;
+    for(j=0; j<rule_num_orig; j++){
+      rule = domain->file_rule_array[j];
+      if(rule.path[0]=='~'){
+	append_homedir_rule_to_domain(domain, rule, home_prefix_list);
+      }
+    }
+  }
+}
+
 /*
 remove rules from global domain and add individual domains
 It is neccesary to resolve "deny" rules
 */
-void convert_acls(){
+void modify_rules(){
   	/**
 	 *  find "access right to some file of global">"access right to some file of domain"
 	 *  and convert such access rights to "access right to some file of global"<"access
 	 *  right to some file of domain"
 	 */
-	convert_priv_acl();
+	modify_priv_rule();
 
 }
 

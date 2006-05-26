@@ -271,13 +271,23 @@ char *joint_str(char *a, char *b){
   return result;
 }
 
-
+char *joint_3_str(char *a, char *b, char *c){
+  char *tmp;
+  char *result;
+  tmp = joint_str(a,b);
+  
+  result = joint_str(tmp, c);
+  free(tmp);
+  return result;
+}
 
 
 /*checks whether name exists in list(NULL terminated).*/
 int check_exist_in_list(char *name, char **list){
   int exist = 0;
   int i = 0;
+  if (list == NULL)
+    return 0;
   while(list[i] != NULL ){
     if(strcmp(name, list[i]) == 0){
       exist = 1;

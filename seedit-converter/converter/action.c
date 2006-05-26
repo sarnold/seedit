@@ -1,8 +1,13 @@
 /*
+Written by Yuichi Nakamura
+based on Hitachi Software's code.
+Some Hitachi Software's codes are used.
+*/
+/* All Rights Reserved (C) 2005-2006, Yuichi Nakmura ynakam@gwu.edu */
+/*
  * All Rights Reserved, Copyright (C) 2003, Hitachi Software Engineering Co., Ltd.
  */
-/* All Rights Reserved (C) 2005, Yuichi Nakmura ynakam@gwu.edu */
-/* $Id: action.c,v 1.20 2006/04/29 02:45:31 ynakam Exp $ */
+
 
 /*the action of yacc*/
 /*build DOMAIN structure(domain_hash_table)*/
@@ -42,6 +47,8 @@ static char *current_domain = NULL;
  *  Dummy domain used to enforce file labeing.
  */
 static DOMAIN dummy_domain;
+
+char **g_file_user_list = NULL;
 
 
 HASH_TABLE * tmp_label_table = NULL;
@@ -432,7 +439,6 @@ int add_filerule_to_domain(char *domain_name, char *filename, int perm, int stat
   work.allowed = perm;
   work.state = state;
 
- 
 
   if(domain->file_rule_array !=NULL){
     overwritten = overwrite_file_rule(domain->file_rule_array, domain->file_rule_array_num, work);
@@ -475,6 +481,84 @@ void register_dummy_home_rule(){
 }
 
 
+/*
+if path is homedir, 
+return homedir name, with slash, 
+return value is malloced, must free.
+For example, assume /home is included in homedir_list,
+path: /home/ynakam/hoge
+->  return /home/
+path: /usr/bin/
+-> return NULL
+path: /home/
+-> return NULL
+*/
+char *match_home_dir(char *path, char **homedir_list){
+  int i;
+  char *home;
+  char *s;
+  for(i =0 ; homedir_list[i]!=NULL ;i++){
+    home = joint_str(homedir_list[i],"/");   
+    if(strcmp(home, path)==0)
+      continue;
+    s = strstr(path, home);
+    if(s == path){
+      return strdup(homedir_list[i]);
+    }else{
+      free(home);
+    }
+  }
+  return NULL;
+}
+
+char *get_user_from_path(char *path, char **homedir_list){
+  char *home;
+  char *user;
+  char *result;
+  char *work;
+  char *s;
+  int l;
+  home = match_home_dir(path, homedir_list); 
+
+  if(home == NULL)
+    return NULL;
+  
+  l = strlen(home);
+  work = strdup(path);
+  user = work + l +1;
+
+  s = strchr(user, '/');
+  if(s!=NULL)
+    *s = '\0';
+  
+  free(home);
+
+  result = strdup(user);
+  free(work);
+  return result;
+}
+
+/*
+  extract user name from homedirectory 
+  and add to g_user_file_list.
+  Example;
+  path : /home/ynakam/himainu
+  -> ynakam is added
+*/
+void add_file_user_list(char *path){
+  char **homedir;
+  char *user;
+  homedir = converter_conf.homedir_list;
+  
+  user = get_user_from_path(path, homedir);
+  if(user !=NULL){
+    if(!check_exist_in_list(user, g_file_user_list))
+      g_file_user_list = extend_ntarray(g_file_user_list,user);
+    free(user);
+  }
+
+}
+
 int register_file_rule(char *path){
   char **dir_list;
   char *filename;
@@ -483,6 +567,7 @@ int register_file_rule(char *path){
 
   state = get_file_state(path); 
   filename = get_filename(path, state);  
+  add_file_user_list(filename);
 
 #ifdef DIRSEARCH
   dir_list = get_dir_list(filename);
@@ -502,6 +587,9 @@ int register_file_rule(char *path){
   return 0;
 
 }
+
+
+
 
 
 /*if tmp_name is already used for other type.
@@ -892,6 +980,7 @@ void register_one_domain_trans(char *from_domain, char *path){
   if(path != NULL){
     state = get_file_state(path);
     filename = get_filename(path, state);  
+    add_file_user_list(filename);
   }
 
 #ifdef DIRSEARCH
@@ -1781,4 +1870,23 @@ int register_fs_acl(char *fs){
 
 void include_rule(char *str){
   return;
+}
+
+/*intended to be used from other file*/
+int append_file_rule(char *domain_name, char *filename, int perm, int state){
+  char **dir_list;
+#ifdef DIRSEARCH
+  dir_list = get_dir_list(filename);
+  if(dir_list!=NULL){
+    /*label all parent directory*/
+    label_parent_dir(dir_list);
+  }  
+#endif
+  
+  add_filerule_to_domain(domain_name, filename, perm, state);
+  
+  if (state == FILE_DIRECT_CHILD){
+    /* when allow <dir>* is described, add dummy permission to dummy domain. */
+    label_child_dir(filename);
+  }
 }

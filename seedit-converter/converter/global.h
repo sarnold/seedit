@@ -347,6 +347,8 @@ extern char used_udp_ports[1024+1];		/* body is in action.c				*/
 #define MAX_ATTR 1024
 extern char *attribute_list[MAX_ATTR];
 
+/* NULL terminated arraylist to store users that appeared in filename */
+extern char **g_file_user_list;
 
 /*struct and global value to store elements configurable in converter.conf*/
 #define MAX_FORCE 1024
@@ -354,6 +356,7 @@ extern char *attribute_list[MAX_ATTR];
 #define MAX_CLASS 1024
 #define MAX_NETIF 16
 #define MAX_PROC_MOUNT 16
+#define MAX_HOME 16
 typedef struct converter_conf_t{
   /*list to store files that are labeled in configuration in conveter.conf*/
   /*End of list is NULL*/
@@ -364,6 +367,7 @@ typedef struct converter_conf_t{
   char *netif_name_list[MAX_NETIF];
   char *proc_mount_point_list[MAX_PROC_MOUNT];
   char *authentication_domain[MAX_CLASS];
+  char *homedir_list[MAX_HOME]; /*path to home directory, no slash at the end : i.e /home*/
 }CONVERTER_CONF;
 
 extern CONVERTER_CONF converter_conf;

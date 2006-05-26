@@ -7,8 +7,6 @@ Some Hitachi Software's codes are used.
 /*
  * All Rights Reserved, Copyright (C) 2003, Hitachi Software Engineering Co., Ltd.
  */
-
-
 /*the action of yacc*/
 /*build DOMAIN structure(domain_hash_table)*/
 
@@ -481,35 +479,6 @@ void register_dummy_home_rule(){
 }
 
 
-/*
-if path is homedir, 
-return homedir name, with slash, 
-return value is malloced, must free.
-For example, assume /home is included in homedir_list,
-path: /home/ynakam/hoge
-->  return /home/
-path: /usr/bin/
--> return NULL
-path: /home/
--> return NULL
-*/
-char *match_home_dir(char *path, char **homedir_list){
-  int i;
-  char *home;
-  char *s;
-  for(i =0 ; homedir_list[i]!=NULL ;i++){
-    home = joint_str(homedir_list[i],"/");   
-    if(strcmp(home, path)==0)
-      continue;
-    s = strstr(path, home);
-    if(s == path){
-      return strdup(homedir_list[i]);
-    }else{
-      free(home);
-    }
-  }
-  return NULL;
-}
 
 char *get_user_from_path(char *path, char **homedir_list){
   char *home;
@@ -1889,4 +1858,5 @@ int append_file_rule(char *domain_name, char *filename, int perm, int state){
     /* when allow <dir>* is described, add dummy permission to dummy domain. */
     label_child_dir(filename);
   }
+  return 0;
 }

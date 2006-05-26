@@ -35,6 +35,9 @@ char *make_label(char *name);
 int chk_child_dir(char *s, char *t);
 int chk_child_file(char *old_s, char *t);
 
+int is_home_dir(char *path, char **homedir_list);
+char *match_home_dir(char *path, char **homedir_list);
+
 #define ROOT_LABEL		"rootdir_t"
 
 

@@ -1,3 +1,5 @@
+/* All Rights Reserved (C) 2005-2006, Yuichi Nakmura ynakam@gwu.edu */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

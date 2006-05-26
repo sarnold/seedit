@@ -1,14 +1,11 @@
+/* Written by Yuichi Nakamura based on Hitachi Software's code.
+   Some Hitachi Software's codes are used.
+*/
+/* All Rights Reserved (C) 2005-2006, Yuichi Nakmura ynakam@gwu.edu */
 /*
  * All Rights Reserved, Copyright (C) 2003, Hitachi Software Engineering Co., Ltd.
  */
-/* $Id: convert.c,v 1.30 2006/05/05 15:21:06 ynakam Exp $ */
 
-/**
- *  Convert DOMAIN hash table to SELinux configuration language.
- */
-/*Modification for FC4, rewrote to use macros in seedit_macros.te and many other Changes.
-By Yuichi Nakamura <ynakam@gwu.edu>
-*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -1557,7 +1554,7 @@ void modify_priv_rule(){
 
 
 void append_homedir_rule_to_domain(DOMAIN *domain, FILE_ACL_RULE rule, char **home_prefix_list){
-  FILE_ACL_RULE newrule;
+  
   char *path;
   int i;
   if(home_prefix_list==NULL||rule.path[0]!='~')

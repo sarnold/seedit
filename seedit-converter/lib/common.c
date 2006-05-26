@@ -738,3 +738,40 @@ chk_child_file(char *old_s, char *t)
 
 	return 0;
 }
+
+/*
+if path is homedir, 
+return homedir name, with slash, 
+return value is malloced, must free.
+For example, assume /home is included in homedir_list,
+path: /home/ynakam/hoge
+->  return /home/
+path: /usr/bin/
+-> return NULL
+path: /home/
+-> return NULL
+*/
+char *match_home_dir(char *path, char **homedir_list){
+  int i;
+  char *home;
+  char *s;
+  for(i =0 ; homedir_list[i]!=NULL ;i++){
+    home = joint_str(homedir_list[i],"/");   
+    if(strcmp(home, path)==0)
+      continue;
+    s = strstr(path, home);
+    if(s == path){
+      return strdup(homedir_list[i]);
+    }else{
+      free(home);
+    }
+  }
+  return NULL;
+}
+
+int is_home_dir(char *path, char **homedir_list){
+  if (match_home_dir(path, homedir_list)==NULL)
+    return 0;
+  
+  return 1;
+}

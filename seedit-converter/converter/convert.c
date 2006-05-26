@@ -83,7 +83,6 @@ void convert(char *outdir){
     file_context_fp = openfile(outdir,"file_contexts");
     unconfined_fp = openfile(outdir,"unconfined_domains");
     customizable_types_fp=openfile(outdir,"customizable_types");
-    homedir_template_fp = openfile(outdir,"homedir_template");
   }  
 
  /* print default files */
@@ -153,7 +152,7 @@ void convert(char *outdir){
 	out_netcontext(policy_fp);
 
 	/* print file_contexts */
-	out_file_contexts_config(file_context_fp,homedir_template_fp);
+	out_file_contexts_config(file_context_fp);
 
 	/*print customizable_types*/
 	out_customizable_types(customizable_types_fp);

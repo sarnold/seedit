@@ -224,6 +224,11 @@ register_domain(char *dname, int role_flag)
 /*register deny file rule*/
 int register_file_deny(char *path){
   set_tmp_perm(DENY_PRM);
+  if(is_home_dir(path, converter_conf.homedir_list)){	
+    snprintf(errmsg, sizeof(errmsg), "deny %s; deny for user home directory does not work, neglected.\n", path);
+    yywarn(errmsg);
+    return 0;
+  }
   register_file_rule(path);
   return 0;
 }

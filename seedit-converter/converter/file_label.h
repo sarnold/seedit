@@ -15,7 +15,7 @@ int create_dir_label_table();
 void print_file_label_tab();
 void delete_file_label_tab();
 void out_file_type(FILE *);
-void out_file_contexts_config(FILE *file_contexts, FILE *homedir_template);
+void out_file_contexts_config(FILE *file_contexts);
 
 int register_label_table(char *);
 char *resolve_label_conflict(char *);

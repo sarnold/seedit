@@ -270,25 +270,12 @@ Example:
 	test.cgi. Domain is defined below. So, test.cgi runs as
 	different domain.           
   \item Limitation about homedirectories\\
-	Individual user's home directory can not be controlled, except /root.
-	If home directory for specific user is used, it is neglected.
-	Example:
+	Deny statement for individual home directory does not work.
+	For example,
 	\begin{verbatim}
-	{
-	domain foo_t;
-	allow /home/ynakam/public_html/** w;
-	}
+deny /home/ynakam/public_html;
 	\end{verbatim}
-	Above configuration is neglected.
-	\begin{verbatim}
-	{
-	domain foo_t;
-	allow ~/public_html/** w;
-	}
-	It makes sense. foo\_t domain is allowed to write public\_html
-		for all users(except root) home directories.
-	\end{verbatim}
-
+does not work.
 
  \end{enumerate}
 

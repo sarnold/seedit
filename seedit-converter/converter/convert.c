@@ -1675,7 +1675,7 @@ void make_dir_list(){
       acl = acl_array[j];
      
       if(acl.allowed!=DENY_PRM){
-	dir_list = get_dir_list(acl.path);
+	dir_list = get_dir_list(acl.path, converter_conf.homedir_list);
 	if(dir_list!=NULL){
 	  register_dirs(domain, dir_list);
 	}

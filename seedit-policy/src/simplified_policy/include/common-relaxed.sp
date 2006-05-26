@@ -4,7 +4,6 @@
 allowdev -root /dev;
 
 allow /* s;
-allow /home s;
 
 allow /dev/console s,r,w;
 allow /dev/null s,r,w;

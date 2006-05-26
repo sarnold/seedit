@@ -29,7 +29,7 @@ char *make_role_to_domain(char *name);
 char *make_domain_to_role(char *name);
 
 void strip_slash(char *s);
-char **get_dir_list(char *path);
+char **get_dir_list(char *path,char **homedir_list);
 int ntarray_check_exist(char **array,char *str);
 char *make_label(char *name);
 int chk_child_dir(char *s, char *t);
@@ -37,6 +37,7 @@ int chk_child_file(char *old_s, char *t);
 
 int is_home_dir(char *path, char **homedir_list);
 char *match_home_dir(char *path, char **homedir_list);
+char **joint_ntarray(char **a1, char **a2);
 
 #define ROOT_LABEL		"rootdir_t"
 

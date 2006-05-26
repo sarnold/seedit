@@ -732,7 +732,7 @@ void out_file_contexts_home_dir(FILE *outfp){
     if(strcmp((fl->filename)+1,"/")==0){
       for(j=0; converter_conf.homedir_list[j]!=NULL ;j++){
 	homedir = converter_conf.homedir_list[j];
-	fprintf(outfp, "%s\tsystem_u:object_r:%s\n",homedir,  fl->labelname);
+	fprintf(outfp, "%s/[^/]+\tsystem_u:object_r:%s\n",homedir,  fl->labelname);
       }
     }else{
       for(j=0; converter_conf.homedir_list[j]!=NULL ;j++){

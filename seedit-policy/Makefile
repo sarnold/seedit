@@ -66,8 +66,8 @@ install: policy dir
 	cp -r policy/macros $(SEEDITCONFROOT)/converter/conf
 	cp policy/Makefile  $(SEEDITCONFROOT)/converter/
 	cp -r policy/simplified_policy/*  $(SEEDITCONFROOT)/policy
-	cd policy;make install contexts
-	cp $(POLICYROOT)/contexts/files/file_contexts.all $(POLICYROOT)/contexts/files/file_contexts.all.old
+	cd policy;make install 
+	cp $(POLICYROOT)/contexts/files/file_contexts $(POLICYROOT)/contexts/files/file_contexts.old
 	cp -r $(BASEPOLICYDIR)/contexts/*  $(POLICYROOT)/contexts
 	rm $(POLICYROOT)/contexts/customizable_types
 	touch $(POLICYROOT)/users/system.users

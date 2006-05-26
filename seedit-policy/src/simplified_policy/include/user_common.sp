@@ -4,8 +4,6 @@ domain_trans gdm_t /etc/X11/xdm/Xsession;
 
 allowdev -tty open;
 allowdev -pts open;
-allow /home s;
-allow ~/** r,w,x,s;
 allow /etc/passwd r,s;
 allow /bin/bash r,x,s;
 allow /bin/sh r,s;

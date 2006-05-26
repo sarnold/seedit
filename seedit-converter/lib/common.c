@@ -185,7 +185,7 @@ char **extend_ntarray(char **array,char *str){
     tmp = (char **)malloc(sizeof(char *)*2);
   }else{
     array_num = get_ntarray_num(array);
-    tmp = (char **)realloc(array, sizeof(char *)*(array_num + 2));
+    tmp = (char **)my_realloc(array, sizeof(char *)*(array_num + 2));
   }
   array = tmp;
   array[ array_num ] = strdup(str);
@@ -193,6 +193,28 @@ char **extend_ntarray(char **array,char *str){
   return tmp;
 }
 
+char **joint_ntarray(char **a1, char **a2){
+  int num;
+  int num_a1;
+  int num_a2;
+  char **result;
+  int i;
+  num_a1 = get_ntarray_num(a1);
+  num_a2 = get_ntarray_num(a2);
+  num = num_a1 + num_a2;
+  
+  result = (char **)my_malloc(sizeof(char *)*(num + 2));
+  for(i=0;i<num_a1;i++){
+    result[i] = a1[i];
+  }
+  for(i=0;i<num_a2;i++){
+    result[i+ num_a1] = a2[i];
+  }
+
+  result[num ] =NULL;
+
+  return result;
+}
 
 /*By Yuichi Nakamura*/
 /*make fullpath from dir and file. fullpath=<dir>/<file>*/
@@ -455,8 +477,9 @@ void strip_slash(char *s){
 /*
 get NULL terminated array, that contains parent dir and |path| it self for |path|.
 */
-char **get_dir_list(char *path){
+char **get_dir_list(char *path,char **homedir_list){
   char **list=NULL;
+  char **tmp_list;
   char *p;
   char *prev;
   char *current;
@@ -464,17 +487,23 @@ char **get_dir_list(char *path){
   int i;
   char *work;
   char delm[]="/";
+
   if(path[0]!='/' && path[0]!='~'){
     return NULL;
   }
   
   if(path[0]=='~'){
-    list = get_dir_list(path+1);
+    list = get_dir_list(path+1, homedir_list);
     for(i=0; list[i]!=NULL;i++){
       work = strdup(list[i]);
       list[i]=joint_str("~",work);
       free(work);
     }
+    for(i=0;homedir_list[i]!=NULL;i++){
+      tmp_list  = get_dir_list(homedir_list[i], homedir_list);
+      list = joint_ntarray(list, tmp_list);
+    } 
+   
     return list;
   }
 

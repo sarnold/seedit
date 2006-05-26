@@ -249,7 +249,7 @@ void label_parent_dir(char **dir_list){
     }
   }
   for(i=0;dir_list[i]!=NULL;i++){
- 
+
     memset(&buf,0,sizeof(buf));
     r = stat(dir_list[i],&buf);
     if(dir_list[i][0]=='~'||(r==0 && S_ISDIR(buf.st_mode))||r!=0){
@@ -544,7 +544,7 @@ int register_file_rule(char *path){
   add_file_user_list(filename);
 
 #ifdef DIRSEARCH
-  dir_list = get_dir_list(filename);
+  dir_list = get_dir_list(filename,converter_conf.homedir_list);
   if(dir_list!=NULL){
     /*label all parent directory*/
     label_parent_dir(dir_list);
@@ -958,7 +958,7 @@ void register_one_domain_trans(char *from_domain, char *path){
   }
 
 #ifdef DIRSEARCH
-  dir_list = get_dir_list(filename);
+  dir_list = get_dir_list(filename, converter_conf.homedir_list);
   if(dir_list!=NULL){
     /*label all parent directory*/
     label_parent_dir(dir_list);
@@ -1850,7 +1850,7 @@ void include_rule(char *str){
 int append_file_rule(char *domain_name, char *filename, int perm, int state){
   char **dir_list;
 #ifdef DIRSEARCH
-  dir_list = get_dir_list(filename);
+  dir_list = get_dir_list(filename, converter_conf.homedir_list);
   if(dir_list!=NULL){
     /*label all parent directory*/
     label_parent_dir(dir_list);

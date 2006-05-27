@@ -1551,29 +1551,72 @@ void modify_priv_rule(){
 }
 
 
+/*
+If |user| roles role other  than |role|
+return 1
+*/
+int user_roles_other_role(char *user, char *role){
+  USER_ROLE *user_role;
+  char **role_array;
+  int array_num;
+  int i;
+  user_role = (USER_ROLE *)search_element(user_hash_table, user);
+
+  if(user_role == NULL)
+    return 0;
+  
+  role_array = user_role->role_name_array;
+  array_num = user_role->role_name_array_num;
+  
+  for(i=0;i<array_num;i++){
+    if(strcmp(role, role_array[i])!=0)
+      return 1;
+  }
+  return 0;
+}
 
 void append_homedir_rule_to_domain(DOMAIN *domain, FILE_ACL_RULE rule, char **home_prefix_list){
   
   char *path;
   int i;
+  char *user;
+  char *role;
   if(home_prefix_list==NULL||rule.path[0]!='~')
     return;
   
   for(i=0; home_prefix_list[i]!=NULL;i++){
-    path = joint_str(home_prefix_list[i],rule.path+1);
-    append_file_rule(domain->name, path, rule.allowed, rule.state);   
-    free(path);
-
-    /*
-      if domain->roleflag == 1
-      user = get user from path(path)
-      user_role = (USER_ROLE *)search_element(user_hash_table, user);
-      check whether user is used in other role
-      If used in other role
-          do nothing
-      else
-          append_file_rule
-    */
+    if(domain->roleflag == 0){/*Normal domain*/
+      path = joint_str(home_prefix_list[i],rule.path+1);
+      append_file_rule(domain->name, path, rule.allowed, rule.state);   
+      free(path);
+    }else{/*Role */
+      path = joint_str(home_prefix_list[i],rule.path+1);
+      user = get_user_from_path(path,converter_conf.homedir_list);
+      if(user == NULL){
+	free(path);
+	continue;
+      }
+      role = make_domain_to_role(domain->name);
+      if(user_roles_other_role(user, role)){
+	;
+      }else{
+	append_file_rule(domain->name, path, rule.allowed, rule.state);
+      }
+      /*
+	if domain->roleflag == 1
+	user = get user from path(path)
+	user_role = (USER_ROLE *)search_element(user_hash_table, user);
+	check whether user is used in other role
+	If used in other role
+	do nothing
+	else
+	append_file_rule
+      */   
+      free(path);
+      free(user);
+      free(role);
+    }
+    
 
    }
   

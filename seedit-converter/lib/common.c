@@ -804,3 +804,31 @@ int is_home_dir(char *path, char **homedir_list){
   
   return 1;
 }
+
+
+char *get_user_from_path(char *path, char **homedir_list){
+  char *home;
+  char *user;
+  char *result;
+  char *work;
+  char *s;
+  int l;
+  home = match_home_dir(path, homedir_list); 
+
+  if(home == NULL)
+    return NULL;
+  
+  l = strlen(home);
+  work = strdup(path);
+  user = work + l +1;
+
+  s = strchr(user, '/');
+  if(s!=NULL)
+    *s = '\0';
+  
+  free(home);
+
+  result = strdup(user);
+  free(work);
+  return result;
+}

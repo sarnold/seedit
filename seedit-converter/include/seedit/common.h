@@ -37,6 +37,7 @@ int chk_child_file(char *old_s, char *t);
 
 int is_home_dir(char *path, char **homedir_list);
 char *match_home_dir(char *path, char **homedir_list);
+char *get_user_from_path(char *path, char **homedir_list);
 char **joint_ntarray(char **a1, char **a2);
 
 #define ROOT_LABEL		"rootdir_t"

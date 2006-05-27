@@ -485,33 +485,6 @@ void register_dummy_home_rule(){
 
 
 
-char *get_user_from_path(char *path, char **homedir_list){
-  char *home;
-  char *user;
-  char *result;
-  char *work;
-  char *s;
-  int l;
-  home = match_home_dir(path, homedir_list); 
-
-  if(home == NULL)
-    return NULL;
-  
-  l = strlen(home);
-  work = strdup(path);
-  user = work + l +1;
-
-  s = strchr(user, '/');
-  if(s!=NULL)
-    *s = '\0';
-  
-  free(home);
-
-  result = strdup(user);
-  free(work);
-  return result;
-}
-
 /*
   extract user name from homedirectory 
   and add to g_user_file_list.
@@ -1647,6 +1620,28 @@ register_role(char *name)
 	return 0;
 }
 
+
+/*
+Give label to  
+/home/|user| mandatoray
+*/
+void label_user_homedir(char *user){
+  char **homedir_list;
+  char *path;
+  int i;
+  if(strcmp(user, "user_u")==0 || strcmp(user, "root")==0){
+    return;
+  }
+  homedir_list = converter_conf.homedir_list;
+  for(i=0; homedir_list[i]!=NULL ;i++){
+    path = joint_3_str(homedir_list[i],"/", user);
+    add_filerule_to_domain(DUMMY_DOMAIN_NAME, path, READ_PRM, FILE_ALL_CHILD);
+    add_file_user_list(path);
+    free(path);
+  }
+  
+}
+
 /**
  *  @name:	register_user
  *  @about:	register new name with user_hash_table
@@ -1660,6 +1655,8 @@ register_user(char *name)
 	USER_ROLE *u;
 	//RBAC *r;
 	char **new_array;
+
+	label_user_homedir(name);
 
 	/* first call */
 	if (user_hash_table == NULL)

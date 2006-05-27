@@ -1563,6 +1563,18 @@ void append_homedir_rule_to_domain(DOMAIN *domain, FILE_ACL_RULE rule, char **ho
     path = joint_str(home_prefix_list[i],rule.path+1);
     append_file_rule(domain->name, path, rule.allowed, rule.state);   
     free(path);
+
+    /*
+      if domain->roleflag == 1
+      user = get user from path(path)
+      user_role = (USER_ROLE *)search_element(user_hash_table, user);
+      check whether user is used in other role
+      If used in other role
+          do nothing
+      else
+          append_file_rule
+    */
+
    }
   
 }

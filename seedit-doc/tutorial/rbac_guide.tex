@@ -13,7 +13,7 @@ SPDL supports configuration of RBAC(Role Based Access Control).
 In default policy, the domain for login user is unconfined\_t.
 So, the behavior of user is not confined by SELinux.\\
 
-To increase security of user, RBAC is useful.
+To increase security of login user, RBAC is useful.
 
 xxxxx
 
@@ -36,6 +36,25 @@ To disable RBAC, use following.
 \end{verbatim}
 
 \section{Default RBAC Configuration}
+Following 3 roles are defined by default.
+
+\begin{itemize}
+ \item sysadm\_r\\
+       It is role for administrator. It can login as unconfined
+       domain sysadm\_t. By default, only root can login as the role.
+ \item staff\_r \\
+       It is role, to do not administrative work for administrative
+       user.
+       By default, only root can login as the role.
+ \item user\_r \\
+       It is a role for normal users.
+       
+\end{itemize}
+
+su command can not be used, except sysadm\_r.
+
+\section{Login by RBAC}
+
 
 
 \section{Creating new role}

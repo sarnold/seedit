@@ -1719,7 +1719,7 @@ register_user(char *name)
 }
 
 /**
- *  @name:	free_rback
+ *  @name:	free_rbac
  *  @about:	free rbac data
  *  @args:	v (void *) -> rbac data
  *  @return:	return 0 on success

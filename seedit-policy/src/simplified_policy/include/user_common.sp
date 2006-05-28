@@ -24,3 +24,4 @@ allowtmp -dir /tmp -name auto r,w,s;
 allowtmp -fs tmpfs -name auto r,w,s;
 
 allowpriv getsecurity;
+allowpriv cap_chown;

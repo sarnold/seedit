@@ -86,20 +86,6 @@
 	  <permission value="getcap"/>
 	  <permission value="setcap"/>
 	</rule>
-	<rule value="allow">
-	  <domain value="global"/>
-	  <type value="self"/>
-	  <secclass value="capability"/>
-	  <permission value="setpcap"/>
-	  <permission value="fowner"/>
-	  <permission value="fsetid"/>
-	  <permission value="linux_immutable"/>
-	  <permission value="chown"/>
-	  <permission value="dac_override"/>
-	  <permission value="dac_read_search"/>
-	  <permission value="setgid"/>
-	  <permission value="setuid"/>
-	</rule>
       </rules>
     </section>
     <section>
@@ -355,7 +341,7 @@
       </rules>
     </option>
     
-     <option category="kernel" value="sys_pacct">	  
+     <option category="kernel" value="cap_sys_pacct">	  
       <macro value="allow_admin_sys_pacct"/>
       <rules>
 	<rule value="allow">
@@ -366,6 +352,8 @@
 	</rule>
       </rules>
     </option>
+
+    
 
     <option category="kernel" value="cap_sys_module">	 
       <macro value="allow_admin_cap_sys_module"/>
@@ -682,6 +670,11 @@
 	</rule>
       </rules>
     </option>
+
+
+    
+
+
     <option category="priv" value="cap_sys_boot">
       <macro value="allow_admin_cap_sys_boot"/>
       <rules>
@@ -693,6 +686,118 @@
 	</rule>
       </rules>
     </option>
+
+   <option category="priv" value="cap_dac_override">
+      <macro value="allow_admin_cap_dac_override"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="self"/>
+	  <secclass value="capability"/>
+	  <permission value="dac_override"/>
+	</rule>
+      </rules>
+    </option>
+
+     <option category="priv" value="cap_dac_read_search">
+      <macro value="allow_admin_cap_dac_read_search"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="self"/>
+	  <secclass value="capability"/>
+	  <permission value="dac_read_search"/>
+	</rule>
+      </rules>
+    </option>
+
+    <option category="priv" value="cap_setuid">
+      <macro value="allow_admin_cap_setuid"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="self"/>
+	  <secclass value="capability"/>
+	  <permission value="setuid"/>
+	</rule>
+      </rules>
+    </option>
+
+      <option category="priv" value="cap_setgid">
+      <macro value="allow_admin_cap_setgid"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="self"/>
+	  <secclass value="capability"/>
+	  <permission value="setgid"/>
+	</rule>
+      </rules>
+    </option>
+
+   <option category="priv" value="cap_chown">
+      <macro value="allow_admin_cap_chown"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="self"/>
+	  <secclass value="capability"/>
+	  <permission value="chown"/>
+	</rule>
+      </rules>
+    </option>
+    
+   <option category="priv" value="cap_setpcap">
+      <macro value="allow_admin_cap_setpcap"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="self"/>
+	  <secclass value="capability"/>
+	  <permission value="setpcap"/>
+	</rule>
+      </rules>
+    </option>
+    
+    
+   <option category="priv" value="cap_fowner">
+      <macro value="allow_admin_cap_fownerp"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="self"/>
+	  <secclass value="capability"/>
+	  <permission value="fowner"/>
+	</rule>
+      </rules>
+    </option>
+    
+    <option category="priv" value="cap_fsetid">
+      <macro value="allow_admin_cap_fsetid"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="self"/>
+	  <secclass value="capability"/>
+	  <permission value="fsetid"/>
+	</rule>
+      </rules>
+    </option>
+    
+     <option category="priv" value="cap_linux_immutable">
+      <macro value="allow_admin_cap_linux_immutable"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="self"/>
+	  <secclass value="capability"/>
+	  <permission value="linux_immutable"/>
+	</rule>
+      </rules>
+    </option>
+    
+
+
     <option category="priv" value="quotaon">
       <macro value="allow_admin_quotaon"/>
       <rules>

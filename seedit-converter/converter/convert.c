@@ -1575,21 +1575,27 @@ int user_roles_other_role(char *user, char *role){
   return 0;
 }
 
-void append_homedir_rule_to_domain(DOMAIN *domain, FILE_ACL_RULE rule, char **home_prefix_list){
+
+
+/*if rule is changed, changed rule is returned*/
+FILE_ACL_RULE append_homedir_rule_to_domain(DOMAIN *domain, FILE_ACL_RULE rule, char **home_prefix_list){
   
   char *path;
   int i;
   char *user;
   char *role;
-  if(home_prefix_list==NULL||rule.path[0]!='~')
-    return;
-  
+
+  if(home_prefix_list==NULL||rule.path[0]!='~'){
+    return rule;
+  }
+
   for(i=0; home_prefix_list[i]!=NULL;i++){
     if(domain->roleflag == 0){/*Normal domain*/
       path = joint_str(home_prefix_list[i],rule.path+1);
       append_file_rule(domain->name, path, rule.allowed, rule.state);   
       free(path);
     }else{/*Role */
+    
       path = joint_str(home_prefix_list[i],rule.path+1);
       user = get_user_from_path(path,converter_conf.homedir_list);
       if(user == NULL){
@@ -1597,13 +1603,20 @@ void append_homedir_rule_to_domain(DOMAIN *domain, FILE_ACL_RULE rule, char **ho
 	continue;
       }
       role = make_domain_to_role(domain->name);
+
       if(user_roles_other_role(user, role)){
 	;
-      }else{
-	append_file_rule(domain->name, path, rule.allowed, rule.state);
+      }else{     
+	
+	append_file_rule(domain->name, path, rule.allowed, rule.state);	
       }
-      /*
-	if domain->roleflag == 1
+      
+      if(ntarray_check_exist(domain->user, user)){
+      	append_file_rule(domain->name, path, rule.allowed, rule.state);
+	
+      }
+       /*
+	 if domain->roleflag == 1
 	user = get user from path(path)
 	user_role = (USER_ROLE *)search_element(user_hash_table, user);
 	check whether user is used in other role
@@ -1618,8 +1631,16 @@ void append_homedir_rule_to_domain(DOMAIN *domain, FILE_ACL_RULE rule, char **ho
     }
     
 
-   }
+  }
+
+      
+  if(domain->roleflag == 1){
+    if(!ntarray_check_exist(domain->user, "user_u")){
+      rule.allowed = DENY_PRM;
+    }
+  }
   
+  return rule;
 }
 
 /*
@@ -1635,6 +1656,7 @@ void append_homedir_rule(){
   DOMAIN *domain;
   HASH_NODE **domain_array;
   FILE_ACL_RULE rule;
+  FILE_ACL_RULE rule_after;
   int rule_num_orig;
 
   homedir_list = converter_conf.homedir_list;
@@ -1657,13 +1679,21 @@ void append_homedir_rule(){
   for (i = 0; i < domain_hash_table->element_num; i++){
     domain = (DOMAIN *)domain_array[i]->data;
     rule_num_orig = domain->file_rule_array_num;
+
     for(j=0; j<rule_num_orig; j++){
-      rule = domain->file_rule_array[j];
+      rule = domain->file_rule_array[j];	
+     
       if(rule.path[0]=='~'){
-	append_homedir_rule_to_domain(domain, rule, home_prefix_list);
+	/* doing some trickey, because file_rule_array may be changed by realloc*/
+	rule_after = append_homedir_rule_to_domain(domain, rule, home_prefix_list);
+	/*if rule is modified(only rule.allowed may be modified)*/
+	if(rule.allowed !=rule_after.allowed){
+	  domain->file_rule_array[j] = rule_after;
+	}
       }
     }
   }
+
 }
 
 /*

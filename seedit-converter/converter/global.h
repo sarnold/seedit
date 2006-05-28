@@ -185,6 +185,7 @@ struct domain_t {
   int file_rule_array_num;
   HASH_TABLE	*appeared_file_name;   /*key:file name that appeared in allow/deny, value:1*/
 
+  char **user; /*user statement, NULL terminated array*/
 
   FILE_TMP_RULE	*tmp_rule_array;	/* "allowtmp"	*/  
   int		tmp_rule_array_num;

@@ -786,6 +786,7 @@ insert_domain_hash_by_name(char *name)
 
 	newdomain->name = strdup(name);
 	newdomain->roleflag = 0;
+	newdomain->user = NULL;
 	newdomain->program_flag = 0;
 	newdomain->appeared_file_name = NULL;
 	newdomain->file_rule_array = NULL;
@@ -1655,9 +1656,12 @@ register_user(char *name)
 	USER_ROLE *u;
 	//RBAC *r;
 	char **new_array;
+	DOMAIN *domain;
 
 	label_user_homedir(name);
-
+	domain = search_domain_hash(current_domain);
+	domain -> user = extend_ntarray(domain->user, name);
+	
 	/* first call */
 	if (user_hash_table == NULL)
 	{

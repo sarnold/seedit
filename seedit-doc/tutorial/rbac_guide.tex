@@ -40,7 +40,7 @@ Following 3 roles are defined by default.
 
 \begin{itemize}
  \item sysadm\_r\\
-       It is role for administrator. It can login as unconfined
+       It is role for administrator. It can work as unconfined
        domain sysadm\_t. By default, only root can login as the role.
  \item staff\_r \\
        It is role, to do not administrative work for administrative
@@ -54,12 +54,79 @@ Following 3 roles are defined by default.
        
 \end{itemize}
 
-su command can not be used, except sysadm\_r.
+Attention!!\\
+{\it su command can not be used, except sysadm\_r}.
+
 
 \section{Login by RBAC}
+\subsection{Check role}
+When you enable RBAC, role are given to login user. 
+You can see it by id command.\\
+When you login as root user,  staff\_r role is given.\\
+Let's see it by id command.
+\begin{verbatim}
+# id 
+uid=0(root) gid=0(root) groups=0(root),1(bin),2(daemon),
+3(sys),4(adm),6(disk),10(wheel) 
+context=root:staff_r:staff_t
+\end{verbatim}
+\begin{verbatim}
+context=root:staff_r:staff_t	
+\end{verbatim}
+shows role, staff\_r is role. User shell is given domain according to
+role, in this case staff\_t. Inside SELinux, domain is used for access
+control.\\
+staff\_r is given little access rights. You can not do any
+administration work in this role.\\
+For example, you can not access homepage.
+\begin{verbatim}
+# cat /var/www/html/index.html
+Permission denied
+\end{verbatim}
 
-
+\subsection{Change role}
+To do administrative work, you have to switch role to sysadm\_r role.
+You can do it by newrole command, like below.
+\begin{verbatim}
+# newrole -r sysadm_r
+Authenticating root
+Password:
+\end{verbatim}
+You have to enter password of current user(this case root).
+Then check role by id command.
+\begin{verbatim}
+# id 
+uid=0(root) gid=0(root) groups=0(root),1(bin),2(daemon),
+3(sys),4(adm),6(disk),10(wheel) 
+context=root:sysadm_r:sysadm_t
+\end{verbatim}
+Role is  sysadm\_r. Domain of user shell is sysadm\_t. sysadm\_t is
+unconfined domain, so you can do any work.\\
+To switch role, the user must be allowed to use the role, if the user is
+not allowed to use the role, newrole will fail.\\
+To allow user to use role, see next section.
 
 \section{Creating new role}
+The best way to understand RBAC is to create  new role. Let's see it by
+example.
+Here, we will create new role for webmaster, the name is webmaster\_r.
+\subsection{Create uid=0 user}
+
+\begin{verbatim}
+# useradd -u 0 -o webmaster
+# passwd webmaster
+\end{verbatim}
+
+\subsection{Create template}
+You can create template configuration by seedit-template command.\\
+The usage is following.
+\begin{verbatim}
+seedit-template -r <role> -u <user>
+\end{verbatim}
+
+
+
+%%restorecon を使えるようにするとか allowpriv part_relabel
+
 
 \end{document}

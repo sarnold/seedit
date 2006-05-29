@@ -7,7 +7,7 @@ user ynakam;
 include user_common.sp;
 include common-relaxed.sp;
 
-allow /root/** r,s;
+allow /root/** r,w,s;
 allow ~/** r,w,s;
 
 }

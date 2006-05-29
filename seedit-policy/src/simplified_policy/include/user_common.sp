@@ -17,6 +17,7 @@ allow /etc/profile.d/** r,x,s;
 allow /usr/share/** r,s;
 allow /etc/sysconfig/* r,s;
 allow /var/spool/mail/** r,s;
+allow  /var/run/nscd/** r,s;
 
 allownet -protocol tcp,udp -port * client;
 

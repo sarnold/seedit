@@ -19,3 +19,8 @@ allow /etc/hosts.deny r,s;
 allowtmp -dir /tmp -name auto r,w,s;
 allowtmp -dir /var/tmp -name auto r,w,s;
 allowtmp -fs tmpfs -name auto r,w,s;
+
+#To change  from uid=0 
+#And it is not audited in permissive mode, 
+allowpriv cap_setuid;
+allowpriv cap_setgid;

@@ -51,3 +51,4 @@ allow /usr/share/locale/** r,s;
 #skip permission check in NIC and node layer
 allownet -protocol * -netif * send,recv;
 allownet -protocol * -node * send,recv,bind;
+

@@ -29,4 +29,7 @@ allowpriv getsecurity;
 allowfs proc_pid_self r,w,s;
 allowpriv netlink;
 allowpriv audit_write;
+
+allowpriv cap_dac_override;
+allowpriv cap_dac_read_search;
 }

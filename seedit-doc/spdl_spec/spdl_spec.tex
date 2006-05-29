@@ -813,18 +813,101 @@ allownet -protocol udp -domain bar_t;
 
 \section{Configuring access control other administrative access
   rights:allowpriv}
-allowpriv {\it string};\\
-configures other priveleges.
+\begin{itemize}
+ \item Syntax \\
+       allowpriv {\it string};\\
+       {\it string} is name  of privilage. It is described in next section.
+ \item Meaning \\
+       Allow access rights represented by        {\it string}.
+\end{itemize}
+Next, 
+what can be configured for {\it string} can be categorized into
+following.
+\begin{itemize}
+ \item POSIX capability\\
+ \item Related to kernel\\
+ \item Related to SELinux operations\\
+ \item Others
+\end{itemize}
+
+
+\subsection{allowpriv: POSIX capability}
 Strings that begin with {\it cap\_} is posix capability. You can see
 detailed meaning by man capabilities.
-\subsection{allowpriv: related to kernel}
-Configures priviledges to communicate and administrate kernel. For detail of what is granted see allow\_admin\_xxxx in
-       macros/seedit\_macros.te. For example, to analyze what is allowed
-       in {\it allowpriv klog\_adm} see allow\_admin\_klog\_adm macro.
+
+\subsubsection{Capabilities that can not be configured}
+Following POSIX capabilities can not be configured, because it can be
+configured in different place. \\
 \begin{itemize}
- \item Syntax\\
-       allowpriv netlink$\mid$klog\_read$\mid$klog\_write$\mid$klog\_adm$\mid$insmod;
- \item Meaning\\
+ \item CAP\_NET\_BIND\_SERVICE\\
+       This restricts usage of wellknown ports, but by allownet, you can
+       configure better. So this is omitted.
+ \item CAP\_MKNOD\\
+       This is allowed in allowpriv devcreate.
+ \item CAP\_AUDIT\_WRITE\\
+       Operations that is restricted by this is the same as
+       allowpriv audit\_write ,so this  is omitted.
+ \item CAP\_AUDIT\_CONTROL\\
+       Operations that is  restricted by this is the same as allowpriv
+       audit\_control, so this is  omitted.
+\end{itemize}
+
+\subsubsection{Configurable capabilities}
+\begin{itemize}
+ \item cap\_sys\_pacct\\
+       Configures kernel accounting(see acct(2)).
+ \item cap\_sys\_module\\
+       Allows to install kernel module.
+ \item cap\_net\_admin\\
+       Allow capability {\it CAP\_NET\_ADMIN}(Such as 
+       administrate NIC, route table). 
+ \item cap\_sys\_boot\\
+       Allow capability{\it CAP\_SYS\_BOOT}. This means allow the
+       usage of reboot system call.
+ \item cap\_sys\_rawio\\        
+       Allow capability {\it CAP\_SYS\_RAWIO}.This means usage of
+       ioperm, iopl system call and access to /dev/mem.
+ \item cap\_sys\_chroot\\
+       Allow to use chroot.
+ \item cap\_sys\_nice\\
+       Allow capability {\it CAP\_SYS\_NICE}. This means process scheduling.
+ \item cap\_sys\_resource\\
+       Allow capability {\it CAP\_SYS\_RESOURCE}. This means usage
+       of rlimit etc.
+ \item cap\_sys\_time\\
+       Allow capability {\it CAP\_SYS\_TIME}. Thie means modify
+       system clock.
+ \item cap\_sys\_admin\\
+       The same as POSIX capability {\it CAP\_SYS\_ADMIN}. This
+       permissions overlaps other permissions, so if you allow
+       this, not so serious problem. By denying this,
+       it can restrict sethostname and some ioctl operations.
+ \item cap\_sys\_tty\_config\\
+       The same as capability {\it CAP\_TTY\_CONFIG}. Change
+       keyboard configuration, and usage of vhangup call. 
+ \item cap\_ipc\_lock\\ 
+       Allow capability {\it CAP\_IPC\_LOCK}. This means to lock
+       memory.
+ \item cap\_dac\_override\\ 
+ \item cap\_dac\_read\_search \\
+ \item cap\_setuid 
+ \item cap\_setgid \\
+ \item cap\_chown \\
+ \item cap\_setpcap\\
+ \item  cap\_fowner\\
+ \item  cap\_fsetid \\
+ \item cap\_linux\_immutable\\
+ \item cap\_sys\_ptrace\\
+\item cap\_lease\\
+\item cap\_ipc\_owner\\
+\item cap\_kill\\
+
+\end{itemize}
+
+
+\subsection{allowpriv: related to kernel}
+Configures priviledges to communicate and administrate kernel. 
+Following strings can be used.
        \begin{enumerate}
 	\item netlink\\
 	      Allows to communicate with kernel by netlink socket. 
@@ -844,18 +927,11 @@ Configures priviledges to communicate and administrate kernel. For detail of wha
 	\item klog\_adm\\
 	      Allows to change configuration of audit in kernel. The
 	      same as capability audit\_control,sys\_pacct.
-	\item cap\_sys\_pacct\\
-	      Configures kernel accounting(see acct(2)).
-	\item cap\_sys\_module\\
-	      Allows to install kernel module.
+	      
        
        \end{enumerate}
-\end{itemize}
+
 \subsection{allowpriv: related to SELinux operations}
-\begin{itemize}
- \item Syntax\\
-       allowpriv load\_policy$\mid$setenforce$\mid$relabel$\mid$part\_relabel$\mid$getsecurity$\mid$getsecattr;
- \item Meaning\\
        Allow priviledges to administrate SELinux.
        \begin{enumerate}
 	\item relabel\\
@@ -877,60 +953,20 @@ Configures priviledges to communicate and administrate kernel. For detail of wha
 	\item getsecattr\\
 	      Get security information(such as domain, stored in /proc/pid/attr) of other processes.
        \end{enumerate}
-\end{itemize}
-
-\subsection{allowpriv: POSIX  capabilities}
 
 \subsection{allowpriv: other privileges}
-\begin{itemize}
- \item Syntax\\
-       allowpriv  net$\mid$boot$\mid$quotaon$\mid$mount
-       $\mid$rawio$\mid$ptrace$mid$chroot$\mid$unlabel
-       $\mid$memlock$\mid$nice$\mid$resource$\mid$
-       time$\mid$devcreate$\mid$setattr$\mid$search$\mid$read
-       $\mid$write$\mid$all
- \item Meaning\\
        Allow other priviledges.
        \begin{enumerate}
-	\item cap\_net\_admin\\
-	      Allow capability {\it CAP\_NET\_ADMIN}(Such as 
-	      administrate NIC, route table). 
-	\item cap\_sys\_boot\\
-	      Allow capability{\it CAP\_SYS\_BOOT}. This means allow the
-	      usage of reboot system call.
+
 	\item quotaon\\         
 	      Allow to quotaon.
 	\item mount\\         
 	      Allow to mount device.
-	\item cap\_sys\_rawio\\        
-	      Allow capability {\it CAP\_SYS\_RAWIO}.This means usage of
-	      ioperm, iopl system call and access to /dev/mem.
-	\item ptrace\\ 
-	      Allow to use ptrace.
-	\item cap\_sys\_chroot\\
-	      Allow to use chroot.
+
 	\item unlabel\\
 	      Allow full access to unlabeled files(Files labeled as
 	      unlabeled\_t).
-	\item cap\_ipc\_lock\\ 
-	      Allow capability {\it CAP\_IPC\_LOCK}. This means to lock
-	      memory.
-	\item cap\_sys\_nice\\
-	      Allow capability {\it CAP\_SYS\_NICE}. This means process scheduling.
-	\item cap\_sys\_resource\\
-	      Allow capability {\it CAP\_SYS\_RESOURCE}. This means usage
-	      of rlimit etc.
-	\item cap\_sys\_time\\
-	      Allow capability {\it CAP\_SYS\_TIME}. Thie means modify
-	      system clock.
-	\item cap\_sys\_admin\\
-	      The same as POSIX capability {\it CAP\_SYS\_ADMIN}. This
-	      permissions overlaps other permissions, so if you allow
-	      this, not so serious problem. By denying this,
-	      it can restrict sethostname and some ioctl operations.
-	\item cap\_sys\_tty\_config\\
-	      The same as capability {\it CAP\_TTY\_CONFIG}. Change
-	      keyboard configuration, and usage of vhangup call. 
+
 	\item devcreate\\
 	      Allow to create device files in directory that the domain can write.
 	      Without this, a process can not create device
@@ -945,7 +981,7 @@ Configures priviledges to communicate and administrate kernel. For detail of wha
 	      Allow w permission to all files.
 	\item all\\
        \end{enumerate}     
-\end{itemize}
+
 \subsection{denypriv}
 This can be used to cancel allowpriv configuration.
 

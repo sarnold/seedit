@@ -1,5 +1,5 @@
 \documentclass{article}
-\title{SELinux Policy Editor(seedit) RBAC guide (for Ver 2.0))}
+\title{seedit RBAC(Role Based Access Control) guide (for Ver 2.0))}
 \author{Yuichi Nakamura \thanks{ynakam@gwu.edu}}
 \begin{document}
 \def\labelenumi{(\theenumi)}
@@ -106,12 +106,84 @@ To switch role, the user must be allowed to use the role, if the user is
 not allowed to use the role, newrole will fail.\\
 To allow user to use role, see next section.
 
+\section{Configuration elements for RBAC}
+\subsection{role and user statements}
+To configure RBAC, there are SPDL configuration elements, {\it role} and
+{\it user}.
+\begin{itemize}
+ \item role {\it name  of role}\\
+       This means configurations is going to be done for specified
+       role. Access right is given to corresponding domain. And the
+       configuration filename must be {\it role name}.sp.
+ \item user {\it user name}\\
+       This allows user to use role.  user\_u user name is special, it is
+       the default role of users that is not configured to use domain.
+\end{itemize}
+
+\subsubsection{Example}
+Let's see example.
+\begin{verbatim}
+1:{
+2:role webmaster_r;
+3:user webmaster;
+4:allow /var/www/** r,w,s;
+}	
+\end{verbatim}
+
+Line 2 means, configurations between \{\} is for webmaster\_r role.\\
+Line 3 means, user name webmaster can use webmaster\_r role.\\
+Following, access rights are given to domain webmaster\_t
+domain(Remember that webmaster\_r role behaves as webmaster\_t domain in SELinux system).
+Line 4 means, webmaster\_t domain(This equals user that logined as
+webmaster\_r role)is allowed to read, write under /var/www.\\
+\subsubsection{user\_u user name}
+Let's see example  of user\_u user name.\\
+
+\begin{verbatim}
+Assume all configurations for RBAC are following.
+* In sysadm_r.sp
+{
+role sysadm_r;
+user root;
+..
+}	
+* In webmaster_r.sp
+{
+role webmaster_r;
+user webmaster
+..
+}
+* In user_r.sp
+{
+role user_r;
+user user_u;
+..
+}
+\end{verbatim}
+In above, 3 roles are configured. 
+You can see, user root and webmaster are assigned role.
+In this case user\_u is {\it all users except root and webmaster}.
+
+
+\subsection{Home directories}
+
+To configure access control to home directories, we could use
+\textasciitilde / . In normal domain, it means all users home
+directoies. But, for configuration of role, the meaning is different.\\
+
+
+
+
+
 \section{Creating new role}
 The best way to understand RBAC is to create  new role. Let's see it by
 example.
 Here, we will create new role for webmaster, the name is webmaster\_r.
+And assign the role to user whose name is webmaster.
 \subsection{Create uid=0 user}
-
+The uid for  user that does some administration work, must be 0.
+It is to pass Linux permission check.\\
+Following commands create user webmaster as uid=0.
 \begin{verbatim}
 # useradd -u 0 -o webmaster
 # passwd webmaster
@@ -121,8 +193,27 @@ Here, we will create new role for webmaster, the name is webmaster\_r.
 You can create template configuration by seedit-template command.\\
 The usage is following.
 \begin{verbatim}
-seedit-template -r <role> -u <user>
+seedit-template -r <role> -u <user> -o <output directory>
 \end{verbatim}
+If you specify -o option, configuration is written to file, before
+writing to file, run command without -o option to make sure.\\
+
+
+Following is example of generating configration for webmaster\_r role.
+
+\begin{verbatim}
+# seedit-template -r webmaster_r -u webmaster
+{
+role webmaster_r;
+user webmaster;
+include user_common.sp;
+include common-relaxed.sp;
+allow ~/** r,w,s;
+}
+\end{verbatim}
+Template configuration is generated. Before writing to file, let's see
+the meaning.
+
 
 
 

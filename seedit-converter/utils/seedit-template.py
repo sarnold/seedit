@@ -33,7 +33,7 @@ def outRole(output, role, user):
     output.write("user %s;\n" % user)
     output.write("include user_common.sp;\n")
     output.write("include common-relaxed.sp;\n")
-    output.write("allow ~/** r,w,s\n")
+    output.write("allow ~/** r,w,s\n;")
     output.write("}\n")
 
 

@@ -1659,8 +1659,6 @@
     <permission value="lock"/>
     <permission value="relabelfrom"/>
     <permission value="relabelto"/>
-    <permission value="read"/>
-    <permission value="write"/>
     <permission value="create"/>
     <permission value="shutdown"/>
     <permission value="getopt"/>
@@ -1676,8 +1674,6 @@
     <permission value="lock"/>
     <permission value="relabelfrom"/>
     <permission value="relabelto"/>
-    <permission value="read"/>
-    <permission value="write"/>
     <permission value="create"/>
     <permission value="shutdown"/>
     <permission value="getopt"/>
@@ -1694,6 +1690,7 @@
 	  <type value="type"/>
 	  <secclass value="unix_dgram_socket"/>
 	    <permission value="accept"/>
+    <permission value="read"/>
    <permission value="listen"/>
    <permission value="recvfrom"/>
    <permission value="recv_msg"/> 
@@ -1710,6 +1707,7 @@
    <permission value="recv_msg"/> 
    <permission value="name_bind"/>
    <permission value="bind"/>
+    <permission value="read"/>
 	</rule>
       </rules>
     </option>
@@ -1724,7 +1722,8 @@
    <permission value="append"/>
     <permission value="connect"/>
     <permission value="sendto"/>
-    <permission value="send_msg"/>
+    <permission value="send_msg"/>    
+   <permission value="write"/>
 	</rule>
 	<rule value="allow">
 	  <domain value="domain"/>
@@ -1734,6 +1733,7 @@
     <permission value="connect"/>
     <permission value="sendto"/>
     <permission value="send_msg"/>
+    <permission value="write"/>
 	  <permission value="connectto"/>
 	</rule>
       </rules>

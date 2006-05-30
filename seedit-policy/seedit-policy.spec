@@ -4,7 +4,7 @@
 Summary: Sample policy of Simplified Policy
 #Name: seedit-policy-%{type}
 Name: seedit-policy
-Version: 2.0.0.b3
+Version: 2.0.0.b4
 Release: %{distro}
 License: GPL
 Group:  System Environment/Base

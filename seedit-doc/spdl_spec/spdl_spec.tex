@@ -25,14 +25,14 @@ permissions.
        removed. Permission removal is implemented by allowing that
        permission to all domains. Integrating permission means, treating
        set of permissions as one permission. For example r permission
-       for file integrates SELinux perissions related to file read.
+       for file integrates SELinux permissions related to file read.
        For detail of what kind of permissions are removed, integrated  see {\it
        Integrated/unsupported permissions in Simplified Policy } in
        http://seedit.sourceforge.net/doc/permission\_integrate/.
 \end{itemize}
 
 
-\subsection{Overview of SPDL congiguration elements}
+\subsection{Overview of SPDL configuration elements}
 Configuration elements are following.
 \begin{itemize}
  \item Giving domain to applications\\
@@ -44,7 +44,7 @@ Configuration elements are following.
  \item Access control to file\\       
        {\it allow/deny} are SPDL elements that enables to configure
        access control to normal files. {\it allowdev} exists for device
-       files, and {\it allowtmp} exists for temporaly(dynamically
+       files, and {\it allowtmp} exists for temporally(dynamically
        created) files.
  \item Access control to network\\
        {\it allownet} does this.
@@ -99,7 +99,7 @@ default it is /etc/selinux/seedit/src/policy/simplified\_policy/include.
 \subsection{declare domain:domain}
 \begin{enumerate}
  \item Syntax \\
-      domain {\it domainname} ;
+      domain {\it domain name} ;
  \item Meaning\\
        Declare domain. All configuration in a section is done for
        the domain declared by this statement. 
@@ -110,12 +110,12 @@ Domain name must end with {\it \_t}. This statement can not be used twice in one
 \subsection{declare role:role}
 \begin{enumerate}
  \item Syntax\\
-    role {\it  rolename } ;
+    role {\it  role name } ;
  \item Meaning\\
-     Declare role.  {\it  rolename } is associated to user by using
+     Declare role.  {\it  role name } is associated to user by using
        {\it user} statement as shown below.
  \item Constraints\\
-       {\it rolename} must end with {\it \_r}.
+       {\it role name} must end with {\it \_r}.
 \end{enumerate}
 
 \section{Configuring RBAC:user}
@@ -140,7 +140,7 @@ Above means user root and ynakam can use user\_r.
 \subsection{Domain transition:domain\_trans}
 \begin{enumerate}
  \item Syntax\\
-    domain\_trans {\it parentdomain} {\it filename-of-entrypoint};
+    domain\_trans {\it parent domain} {\it filename-of-entrypoint};
  \item Meaning\\
     This defines how domain is attached to process. 
  \item Example\\
@@ -170,7 +170,7 @@ Above means user root and ynakam can use user\_r.
        command line, and /etc/init.d scripts.That is to
        say, allow domain transition from unconfined domain. unconfined
        domain means, the domain that is configured {\it allowpriv all;}.
-    However, domain transtion from authentication program domain(such as
+    However, domain transition from authentication program domain(such as
        domains for su,login,sshd) is not configured. Which domains are
        regarded as authentication\_domain is configured in
        authentication\_domain field in converter.conf.\\
@@ -238,10 +238,10 @@ program /usr/sbin/httpd;
 	allow /var/www/** r,s;\\
 	....\\
 	httpd\_t is allowed to read all files and directories under
-	/var/www and its childrens.
+	/var/www and its children.
   \item Detailed configuration support\\
 	In addition to a s,r,x,w permissions, new permissions o,t,a,c,e
-	can be used. Permission {\it w} is devided into those
+	can be used. Permission {\it w} is divided into those
 	permissions.\\
 	\begin{itemize}
 	 \item o: Overwrite\\
@@ -272,7 +272,7 @@ Example:
 	In this case, /usr/sbin/httpd have dx permission to
 	test.cgi. Domain is defined below. So, test.cgi runs as
 	different domain.           
-  \item Limitation about homedirectories\\
+  \item Limitation about home-directories\\
 	Deny statement for individual home directory does not work.
 	For example,
 	\begin{verbatim}
@@ -333,7 +333,7 @@ deny /etc;
 
 \subsection{Priority of allow, deny when conflict happens}
  \begin{enumerate}
-  \item OR operation(When allow confilicts) \\
+  \item OR operation(When allow conflicts) \\
 	When allow rule conflicts, 
 	OR operation is applied.\\
 	\begin{itemize}
@@ -350,7 +350,7 @@ allow /var/run/* r;
 allow /var/run/** w;
 	       \end{verbatim}
 foo\_t have r permission to in /var.
-But for subdirectory(/var/run/xxx etc), it has w permission.
+But for sub-directory(/var/run/xxx etc), it has w permission.
 
   \item Conflict between child and parent
 	       \begin{verbatim}
@@ -363,7 +363,7 @@ foo\_t have r permission to under /var(including subdir).
 For /var/run , it has only w permission.
 	\end{itemize}
 
-  \item Cancel previous configulation(When allow/deny conflicts)\\
+  \item Cancel previous configuration(When allow/deny conflicts)\\
 	When allow and deny conflicts, 
 configuration that appears later survives.
        \begin{itemize}
@@ -425,7 +425,7 @@ xxx
  Device files must be handled carefully. Because device files are
 interface to kernel. When device file is linked to driver that handles
 critical information, read/write to such device will lead to leak of
-confidentical informaion or break of system. Following allowdev
+confidential information or break of system. Following allowdev
 statements restricts access to device files.
 \begin{enumerate}
  \item syntax
@@ -444,7 +444,7 @@ statements restricts access to device files.
 	domain httpd_t;
 	allow /dev/* r,w;
        \end{verbatim}
-       In above, httpd\_t can acesss normal files under /dev, but can
+       In above, httpd\_t can access normal files under /dev, but can
        not access device files.
        \begin{verbatim}
 	{ 
@@ -495,14 +495,14 @@ So tty/pts device files should be treated differently in SPDL.
 	\item all\\
 	      All other roles tty/pts
 	\item vcs\\
-	      This can be used only in allowdev -tty. Means vcs file(/dev/vcs*, /dev/vcsa*), these provide access to screenshot of tty terminal. 
+	      This can be used only in allowdev -tty. Means vcs file(/dev/vcs*, /dev/vcsa*), these provide access to screen-shot of tty terminal. 
        \end{itemize}
 
 \end{enumerate}
 
 \section{Configuring access control to files on misc file systems:allowfs}
  SELinux can do fine-grained access control to files on filesystems that
- suport extended-attributes, such as ext3, ext2 and xfs. For such files,
+ support extended-attributes, such as ext3, ext2 and xfs. For such files,
  you configure access control using {\it allow} statement. In other
  filesystems, you should configure {\it allowfs} described in this
  section.
@@ -534,7 +534,7 @@ So tty/pts device files should be treated differently in SPDL.
 	      Access control to proc file system is a little
 	      fine-grained. proc\_kmsg means, /proc/kmsg, proc\_kcore
 	      means /proc/kcore. proc\_pid\_self means process information of
-	      own process in /proc/pid/. proc\_pid\_other means proccess information for all
+	      own process in /proc/pid/. proc\_pid\_other means process information for all
 	      others. proc means other files on /proc. 
 	\item xattrfs\\
 	      This means filesystem that supports extended-attribute,
@@ -553,15 +553,15 @@ So tty/pts device files should be treated differently in SPDL.
        \end{itemize}
 \end{itemize}
 
-\section{Configuring access control to temporaly file:allowtmp}
+\section{Configuring access control to temporally file:allowtmp}
 \subsection{Why allowtmp is necessary?}
-{\it allowtmp} is prepared to configure access control to temporaly
+{\it allowtmp} is prepared to configure access control to temporally
 files.
 Before going detail, let's see why such configuration element is necessary.
 SELinux identifies files based on inode, not file name. File name based
 configuration does not work correctly when inode number changes or inode
 does not exist at the time of configuration(typically such files are
-temporaly files).
+temporally files).
 Such files exist under  /var/run, /tmp, /var/tmp.
 For example, assume following configuration exists.\\
 \begin{verbatim}
@@ -593,11 +593,11 @@ domain b_t;
 allow /tmp r,w;
 }
 \end{verbatim}
-This means, program A can access program B's temporaly files, and
-program B can access program A's temporaly files. \\
+This means, program A can access program B's temporally files, and
+program B can access program A's temporally files. \\
 In above example, access control configuration can not be described for
 individual files, but for directory what such files belongs.
-If you think it is enough, folloing will not necessary :-).\\
+If you think it is enough, following will not necessary :-).\\
 
 \subsection{What is allowtmp?}
 To resolve this problem, SELinux has a feature called file type
@@ -668,7 +668,7 @@ Files created under /var/run by named\_t is labeled as
        named\_var\_run\_t and named\_t can r,w,s access to such
        files(httpd\_t can not access)
 initrc\_t can r,w,s access to above files because {\it -name all} is
-       specified. {\it -name all} is used to administate files created
+       specified. {\it -name all} is used to administrate files created
        by allowtmp.
 
 \end{enumerate}
@@ -684,10 +684,10 @@ Interface), node(IP address) and inheritance of socket.
 \begin{enumerate}
  \item Syntax\\
  allownet -protocol {\it protocol} -port {\it port number} {\it permission};\\
- {\it protocol}: tcp,udp can be specified, splitted by camma.\\
+ {\it protocol}: tcp,udp can be specified, splitted by ,.\\
  {\it port number}: number and {\it -1023} and {\it 1024-} , and * can
-       be described, splitted by camma.\\
- {\it permission}: {\it client} or {\it server} splitted by camma can be
+       be described, splitted by ,.\\
+ {\it permission}: {\it client} or {\it server} splitted by , can be
        described
  \item Meaning\\
        Allow permissions to be TCP/UDP server/client using port. Port number {\it
@@ -710,11 +710,11 @@ allownet -protocol tcp,udp use;
 
 \subsection{Usage of RAW socket}
 Usage of RAW socket must be restricted, because RAW socket can be used
-for IP spoofing and easedropping.
+for IP spoofing and eavesdropping.
 \begin{enumerate}
  \item Syntax\\
        allownet -protocol raw use;\\
-        {\it permission}: {\it client} or {\it server} or * splitted by camma can be
+        {\it permission}: {\it client} or {\it server} or * splitted by , can be
        described.
  \item Meaning\\
        The domain is allowed to use RAW socket.
@@ -728,16 +728,16 @@ to all domains.
        \begin{enumerate}
 	\item allownet -protocol {\it protocol} -netif {\it name of NIC} {\it
 	      permission};\\
-	      {\it protocol}: tcp,udp,raw and * can be specified, splitted by camma.\\
-	      {\it name of NIC}: NIC name(such as lo,eth0,eth1) splitted by camma.\\
-	      {\it permission}: {\it send} or {\it recv} splitted by camma can
+	      {\it protocol}: tcp,udp,raw and * can be specified, splitted by ,.\\
+	      {\it name of NIC}: NIC name(such as lo,eth0,eth1) splitted by ,.\\
+	      {\it permission}: {\it send} or {\it recv} splitted by , can
 	      be described.       
 	\item allownet -protocol {\it protocol} -node {\it address} {\it
 	      permission};\\
-	      {\it protocol}: tcp,udp,raw and * can be specified, splitted by camma.\\
+	      {\it protocol}: tcp,udp,raw and * can be specified, splitted by ,.\\
 	      {\it address}: {\it ipv4address}/{\it netmask} or * splitted by
-	      camma. Example: 192.168.0.1/255.255.255.0 . And * means all address.\\
-	      {\it permission}: {\it send} or {\it recv} splitted by camma can
+	      ,. Example: 192.168.0.1/255.255.255.0 . And * means all address.\\
+	      {\it permission}: {\it send} or {\it recv} splitted by , can
 	      be described. 
        \end{enumerate}
  \item Meaning\\
@@ -765,7 +765,7 @@ Following syntax allows using socket of other domain. It is rare to configure.
  \item  Syntax 
 	\begin{enumerate}
 	 \item allownet -protocol {\it protocol}  -domain {\it domain} use;
-	       {\it protocol}, tcp,udp can be specified, splitted by camma.
+	       {\it protocol}, tcp,udp can be specified, splitted by ,.
 	\end{enumerate}
 
  \item Meaning\\
@@ -819,7 +819,7 @@ allownet -protocol udp -domain bar_t;
 \begin{itemize}
  \item Syntax \\
        allowpriv {\it string};\\
-       {\it string} is name  of privilage. It is described in next section.
+       {\it string} is name  of privilege. It is described in next section.
  \item Meaning \\
        Allow access rights represented by        {\it string}.
 \end{itemize}
@@ -835,7 +835,7 @@ following.
 
 
 \subsection{allowpriv: POSIX capability}
-Strings that begin with {\it cap\_} is posix capability. You can see
+Strings that begin with {\it cap\_} is POSIX capability. You can see
 detailed meaning by man capabilities.
 
 \subsubsection{Capabilities that can not be configured}
@@ -909,7 +909,7 @@ configured in different place. \\
 
 
 \subsection{allowpriv: related to kernel}
-Configures priviledges to communicate and administrate kernel. 
+Configures privileges to communicate and administrate kernel. 
 Following strings can be used.
        \begin{enumerate}
 	\item netlink\\
@@ -926,7 +926,7 @@ Following strings can be used.
 	      Allows to send log message to audit subsystem in
 	      kernel.
 	\item audit\_adm\\
-	      Change configuration of kenel audit subsystem.
+	      Change configuration of kernel audit subsystem.
 	\item klog\_adm\\
 	      Allows to change configuration of audit in kernel. The
 	      same as capability audit\_control,sys\_pacct.
@@ -935,7 +935,7 @@ Following strings can be used.
        \end{enumerate}
 
 \subsection{allowpriv: related to SELinux operations}
-       Allow priviledges to administrate SELinux.
+       Allow privileges to administrate SELinux.
        \begin{enumerate}
 	\item relabel\\
 	      Allow to relabel all files. You must also allow
@@ -958,7 +958,7 @@ Following strings can be used.
        \end{enumerate}
 
 \subsection{allowpriv: other privileges}
-       Allow other priviledges.
+       Allow other privileges.
        \begin{enumerate}
 
 	\item quotaon\\         

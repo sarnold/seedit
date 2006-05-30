@@ -25,4 +25,5 @@ allownet -protocol tcp -port 80,443 server;
 
 allowpriv netlink;
 allowpriv getsecurity;
+allow /etc/selinux/config r;
 }

@@ -1,21 +1,45 @@
 \documentclass{article}
-\title{seedit RBAC(Role Based Access Control) guide (for Ver 2.0))}
-\author{Yuichi Nakamura \thanks{ynakam@gwu.edu}}
+\title{SELinux Policy Editor RBAC(Role Based Access Control) guide (for Ver 2.0))}
+\author{Yuichi Nakamura \thanks{himainu-ynakam@miomio.jp}}
 \begin{document}
 \def\labelenumi{(\theenumi)}
 \maketitle
 \tableofcontents
 \newpage
 
+This document describes how to use RBAC(Role Based Access Control) in seedit.
 
 \section{What is RBAC}
+\subsection{Overview}
 SPDL supports configuration of RBAC(Role Based Access Control).
 In default policy, the domain for login user is unconfined\_t.
 So, the behavior of user is not confined by SELinux.\\
-
 To increase security of login user, RBAC is useful.
+By using RBAC, you can restrict behavior of users by assigning role to
+user. For example, you can assign role webmaster\_r to user webmaster,
+and give him rights to do web master work. 
 
-xxxxx
+\subsection{How RBAC works in SELinux}
+How RBAC works is composed of 2 parts, one is assign role to user, 
+second is assign domain to user shell.
+
+\begin{enumerate}
+ \item Assign role \\
+  When user logs in from login programs(login, sshd, gdm), login programs
+  assign role to users. The rule that describes what kind of roles the
+  user is allowed to use, is described in policy.
+  Login programs assign roles referring to policy.For example, if user
+       webmaster is allowed to use webmaster\_r role,  login program assign webmaster\_r to user webmaster.\\
+ \item Assign domain\\
+  Role is only strings, 
+  to confine behavior of user, domain must be given to user shell. \\
+  When user shell is launched domain is given according to role. For
+       example, when user webmaster login as webmaster\_r role,
+       webmaster\_t domain is given to user shell. webmaster\_t domain
+       is configured to be allowed homepage admin works.
+
+\end{enumerate}
+
 
 \section{Enable RBAC}
 To enable RBAC, use following command.
@@ -69,13 +93,14 @@ Following 3 roles are defined by default.
 \end{itemize}
 
 
-
-
 \section{Login by RBAC}
 \subsection{Check role}
 When you enable RBAC, role are given to login user. 
 You can see it by id command.\\
-When you login as root user,  staff\_r role is given.\\
+When you login as root user,  staff\_r role is given.
+root is allowed to use staff\_r and sysadm\_r, but login program give
+staff\_r role.
+\\
 Let's see it by id command.
 \begin{verbatim}
 # id 
@@ -185,7 +210,7 @@ In this case user\_u is {\it all users except root and webmaster}.
 
 To configure access control to home directories, we could use
 \textasciitilde / . In normal domain, it means all users home
-directoies. But, for configuration of role, the meaning is different.\\
+directories. But, for configuration of role, the meaning is different.\\
 The rule is simple:
 \begin{verbatim}
 ~/ means home directories for users that can use role	
@@ -246,7 +271,7 @@ If you specify -o option, configuration is written to file, before
 writing to file, run command without -o option to make sure.\\
 
 
-Following is example of generating configration for webmaster\_r role.
+Following is example of generating configuration for webmaster\_r role.
 
 \begin{verbatim}
 # seedit-template -r webmaster_r -u webmaster
@@ -267,7 +292,7 @@ imported, system critical access rights are not allowed here.
 And webmaster\_t is allowed to access user webmaster's home
 directory(When user webmaster login as webmaster\_r he can access his
 home directory).\\
-3 allowpriv are outputted, this is usally needed to do administration work.
+3 allowpriv are outputted, this is usually needed to do administration work.
 \begin{verbatim}
 allowpriv part_relabel;	
 \end{verbatim}

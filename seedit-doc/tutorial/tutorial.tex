@@ -203,7 +203,7 @@ Installed simplified policy is a targeted one. Not strict policy.
 It does not include RBAC support. Only selected daemons are protected.
 Simplified policy can support RBAC and more strict policy, but such
 policies are under construction :-) .About RBAC, it is ready to use, if
-you are interested in it, see SELinux Policy Editor RBAC guide.
+you are interested in it, see RBAC guide.
 
 \subsection{seedit-unconfined}
 Some processes are given domain and behavior is confined.
@@ -573,7 +573,7 @@ audit2spdl not always suggest best solution.
 You have to review suggested configuration carefully.
 For example, audit2spdl does not generate detailed file
 permission(o,a,c,e,t), but generate w. \\
-To generate permissoin o,a,c,e,t, use s option, like audit2spdl -dls .
+To generate permission o,a,c,e,t, use s option, like audit2spdl -dls .
 
 
 \item Fail to suggest\\
@@ -814,7 +814,7 @@ foo\_t can read files under /foo/bar, and write /foo/bar/test.txt.
 If /foo/bar/test.txt does not exist at the time of configuration, 
 and after configuration /foo/bar/test.txt is created, foo\_t can {\it
        read} test.txt, because newly created test.txt inherits allow
-       /foo/bar/**. This is confusiong, but limitation of our
+       /foo/bar/**. This is confusing, but limitation of our
        implementation.\\
 To fix this, you have to do 
 \begin{verbatim}
@@ -851,7 +851,7 @@ Therefore, for files whose access right is different from directory, and they
        are deleted/created, access control does not work well.
 To resolve this, you have following solutions.
 \begin{enumerate}
- \item Give up controling access for individual files\\
+ \item Give up controlling access for individual files\\
        you can write\\
 allow /foo/var/** r,s,{\it w}.
 By configuring above, if test.txt is deleted and created, foo\_t can
@@ -870,21 +870,21 @@ You can configure like following.
        on domain and directory name, foo\_t + /foo/bar = foo\_foo\_bar\_t).
        And foo\_t can read, write files that have foo\_foo\_bar\_t label.
        By above, when  test.txt is deleted and created again, test.txt
-       is given label(foo\_foo\_bar\_t) and identifined by label.
+       is given label(foo\_foo\_bar\_t) and identified by label.
        In allowtmp, file type transition in SELinux is internally used.\\
        If you want to access test.txt from other domain, you have to
        specify label not filename, like below.
 \begin{verbatim}
 	allow foo_foo_bar_t r;
 \end{verbatim}
-       In default policy,allowtmp is used to control access to /etc/mtab and temporaly
+       In default policy,allowtmp is used to control access to /etc/mtab and temporally
        files under /tmp, /var/tmp.
 \end{enumerate}
  \item Device files other than /dev\\
        Devices have critical impact to security, so it is treated specially.
        In default policy, device is assumed to exist under /dev.
        If you write allow statement for devices other than /dev
-       directry, you can not access it.
+       directory, you can not access it.
        If you want to access devices other than /dev, you have to write
        allowdev statement.
        If you want to read access devices in /var/chroot/dev/null, 

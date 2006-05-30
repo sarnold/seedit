@@ -107,8 +107,9 @@ not allowed to use the role, newrole will fail.\\
 To allow user to use role, see next section.
 
 \section{Configuration elements for RBAC}
+To configure RBAC, it is better to understand how to describe.
 \subsection{role and user statements}
-To configure RBAC, there are SPDL configuration elements, {\it role} and
+To configure RBAC, there are 2 SPDL configuration elements, {\it role} and
 {\it user}.
 \begin{itemize}
  \item role {\it name  of role}\\
@@ -170,9 +171,30 @@ In this case user\_u is {\it all users except root and webmaster}.
 To configure access control to home directories, we could use
 \textasciitilde / . In normal domain, it means all users home
 directoies. But, for configuration of role, the meaning is different.\\
+The rule is simple:
+\begin{verbatim}
+~/ means home directories for users that can use role	
+\end{verbatim}
+Let's see example.
+\begin{verbatim}
+{
+1:role webmaster_r;
+2:user web1;
+3:user web2;
+4:allow ~/** r,w,s;
+\end{verbatim}
+In this case, line 4 is allow to write home directories for user1 and
+user2.
+So, when user web1/web2 login as webmaster\_r role, they can read write
+their home directories, but can not access other users home directories.
 
-
-
+\begin{verbatim}
+{
+1:role user_r;
+2:user user_u;
+3:allow ~/** r,w,s;
+\end{verbatim}
+user\_u is supported, too. Line 3 means home directories for user\_u users.
 
 
 \section{Creating new role}
@@ -211,13 +233,40 @@ include common-relaxed.sp;
 allow ~/** r,w,s;
 }
 \end{verbatim}
-Template configuration is generated. Before writing to file, let's see
-the meaning.
+Template configuration is generated. user webmaster can use webmaster\_r
+role. By include common configurations to behave as login user is
+imported, system critical access rights are not allowed here.
+And webmaster\_t is allowed to access user webmaster's home
+directory(When user webmaster login as webmaster\_r he can access his
+home directory).
+
+\subsection{Write to file}
+You can write above configuration by -o option of seedit-template.
+\begin{verbatim}
+# seedit-template -r webmaster_r -u webmaster -o /etc/seedit/policy/	
+\end{verbatim}
+Configuration is written to /etc/seedit/policy/webmaster\_r.sp
 
 
+\subsection{Add permissions for administration }
+Then, add permissions to administrate web page.
+You need write permission under /var/www.
+So, add 
+\begin{verbatim}
+allow /var/www/** r,w,s;
+\end{verbatim}
+before \}.
 
+\subsection{Load and test}
+Let's load configuration by seedit-load.
+\begin{verbatim}
+#seedit-load
+\end{verbatim}
+
+And test to login.
 
 %%restorecon を使えるようにするとか allowpriv part_relabel
-
+%ユーザを後で作ったら、restoreconが必要！！
+%/homeのタイプを、dir_rootdir_tにしたようがいいのかも？
 
 \end{document}

@@ -202,7 +202,8 @@ Usually, you do not have to care  about generated policy.
 Installed simplified policy is a targeted one. Not strict policy.
 It does not include RBAC support. Only selected daemons are protected.
 Simplified policy can support RBAC and more strict policy, but such
-policies are under construction :-) .
+policies are under construction :-) .About RBAC, it is ready to use, if
+you are interested in it, see SELinux Policy Editor RBAC guide.
 
 \subsection{seedit-unconfined}
 Some processes are given domain and behavior is confined.
@@ -773,8 +774,10 @@ Test vsftpd again.  \\
 %%%enforcingモードでテスト
 %コンパイルエラーの見方
 \\
-SPDL has advanced feature to configure RBAC and more strict policy, it
-is out of scope of document, it will be introduced later day.
+SPDL has advanced feature to configure more secure policy. 
+For example, login user is not confined by default, 
+to enhance login user security, you can use RBAC feature. 
+About RBAC see RBAC guide.
 
 \section{Other notices}
 \begin{itemize}

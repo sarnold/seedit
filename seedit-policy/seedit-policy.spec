@@ -49,6 +49,10 @@ if [ $1 = 1 ]; then
 	touch /.autorelabel
 fi
 
+if [ -e /etc/seedit/policy/sysadm_r.sp ]; then
+	/usr/sbin/seedit-rbac off -n
+fi
+
 %postun
 if [ $1 = 0 ]; then
 	cat %{selinuxconf} |sed -e 's/^SELINUX=.*$/SELINUX=permissive/'|sed -e 's/^SELINUXTYPE=.*$/SELINUXTYPE=targeted/' >%{selinuxconf}.tmp
@@ -56,8 +60,12 @@ if [ $1 = 0 ]; then
 	mv %{selinuxconf}.tmp %{selinuxconf}
 	/sbin/restorecon %{selinuxconf}
 	touch /.autorelabel
+
 else
 	mv /etc/selinux/seedit/contexts/files/file_contexts.all.old2 /etc/selinux/seedit/contexts/files/file_contexts.all.old
+	if [ -e /etc/seedit/policy/sysadm_r.sp ]; then
+		/usr/sbin/seedit-rbac on -n
+	fi
 	/usr/sbin/seedit-load -v
 fi
 

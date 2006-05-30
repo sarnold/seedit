@@ -12,7 +12,10 @@ import os
 import re
 
 def printUsage():
-    print ("usage:%s -d <domain> -e <executable> -o <output directory>" % sys.argv[0])
+    print ("usage:\n For domain: %s -d <domain> -e <executable> -o <output directory>" % sys.argv[0])
+    print ("\tFor role: %s -d <role> -e <user> -o <output directory>" % sys.argv[0])
+    print ("\t-n option skipps seedit-load")
+    
     sys.exit(1)
 
 def outDomain(output, domain, exe):
@@ -33,7 +36,10 @@ def outRole(output, role, user):
     output.write("user %s;\n" % user)
     output.write("include user_common.sp;\n")
     output.write("include common-relaxed.sp;\n")
-    output.write("allow ~/** r,w,s\n;")
+    output.write("allow ~/** r,w,s;\n")
+    output.write("allowpriv part_relabel;\n")
+    output.write("allowpriv dac_override;\n")
+    output.write("allowpriv dac_read_search;\n")    
     output.write("}\n")
 
 
@@ -45,6 +51,7 @@ user =""
 output=sys.stdout
 outdir =""
 filename =""
+
 
 try:
     opts, args = getopt.getopt(sys.argv[1:], "r:d:e:o:u:", ["role=","domain=","entrypoint=","output=","user="])
@@ -72,6 +79,7 @@ for opt,arg in opts:
         outdir = arg
     if opt in ("-u", "--user"):
         user = arg
+    
 
 
 

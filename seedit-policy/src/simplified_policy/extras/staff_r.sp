@@ -2,7 +2,6 @@
 {
 role staff_r;
 user root;
-user ynakam;
 
 include user_common.sp;
 include common-relaxed.sp;

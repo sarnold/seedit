@@ -54,8 +54,21 @@ Following 3 roles are defined by default.
        
 \end{itemize}
 
-Attention!!\\
-{\it su command can not be used, except sysadm\_r}.
+\begin{itemize}
+ \item Attention\\
+       \begin{enumerate}
+	\item  su command can not be used, except sysadm\_r\\
+	\item  Only user who can use sysadm\_r can login from gdm.\\
+	       You need to add a lots of configurations to login from
+	       other roles, and it may decrease security. By default
+	       only root user can login from X. If other users want to
+	       login from X, you have to allow to use sysadm\_r, but be
+	       careful, because behavior of such users are not confined
+	       by SELinux.
+       \end{enumerate}
+\end{itemize}
+
+
 
 
 \section{Login by RBAC}
@@ -106,6 +119,7 @@ To switch role, the user must be allowed to use the role, if the user is
 not allowed to use the role, newrole will fail.\\
 To allow user to use role, see next section.
 
+
 \section{Configuration elements for RBAC}
 To configure RBAC, it is better to understand how to describe.
 \subsection{role and user statements}
@@ -118,7 +132,8 @@ To configure RBAC, there are 2 SPDL configuration elements, {\it role} and
        configuration filename must be {\it role name}.sp.
  \item user {\it user name}\\
        This allows user to use role.  user\_u user name is special, it is
-       the default role of users that is not configured to use domain.
+       the default role of users that is not configured to use
+       domain.How to allow to use sysadm\_r, see section \ref{sec:allowsysadm}.
 \end{itemize}
 
 \subsubsection{Example}
@@ -196,6 +211,16 @@ their home directories, but can not access other users home directories.
 \end{verbatim}
 user\_u is supported, too. Line 3 means home directories for user\_u users.
 
+\subsection{Allow user to use sysadm\_r role}\label{sec:allowsysadm}
+You can easily allow to use sysadm\_r.
+Open /etc/seedit/policy/sysadm\_r.sp(Configuration file for sysadm\_r
+role).
+add following, after {\it user root;}
+\begin{verbatim}
+user <username you want to allow to use sysadm_r>;	
+\end{verbatim}
+and seedit-load.
+
 
 \section{Creating new role}
 The best way to understand RBAC is to create  new role. Let's see it by
@@ -231,6 +256,9 @@ user webmaster;
 include user_common.sp;
 include common-relaxed.sp;
 allow ~/** r,w,s;
+allowpriv part_relabel;
+allowpriv dac_override;
+allowpriv dac_read_search;
 }
 \end{verbatim}
 Template configuration is generated. user webmaster can use webmaster\_r
@@ -238,7 +266,18 @@ role. By include common configurations to behave as login user is
 imported, system critical access rights are not allowed here.
 And webmaster\_t is allowed to access user webmaster's home
 directory(When user webmaster login as webmaster\_r he can access his
-home directory).
+home directory).\\
+3 allowpriv are outputted, this is usally needed to do administration work.
+\begin{verbatim}
+allowpriv part_relabel;	
+\end{verbatim}
+This is necessary to use restorecon. You can use restorecon to files those
+webmaster\_r is writable. If you do not use restorecon, delete this.
+\begin{verbatim}
+allowpriv dac_override;
+allowpriv dac_read_search;
+\end{verbatim}
+Those are necessary to skip Linux permission check.
 
 \subsection{Write to file}
 You can write above configuration by -o option of seedit-template.
@@ -277,14 +316,6 @@ mode, and  add
 configuration to /etc/seedit/policy/webmaster\_r.sp using audit2spdl
 like normal domain.
 
-\subsection{Tips}
-If you want to use restorecon, you have to add,
-\begin{verbatim}
-allowpriv part_relabel;
-\end{verbatim}
-Then, you will be able to do restorecon to files that the role is can write.
-
-%%restorecon を使えるようにするとか allowpriv part_relabel
 %ユーザを後で作ったら、restoreconが必要！！
 
 

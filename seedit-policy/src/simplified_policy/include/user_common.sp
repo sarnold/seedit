@@ -28,3 +28,5 @@ allow /usr/libexec/openssh/** r,x,s;
 
 allowpriv getsecurity;
 allowpriv cap_chown;
+
+allowcom -ipc unix r,w;

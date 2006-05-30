@@ -45,7 +45,6 @@ if [ $1 = 1 ]; then
 	cat %{selinuxconf} |sed -e 's/^SELINUX=.*$/SELINUX=permissive/'|sed -e 's/^SELINUXTYPE=.*$/SELINUXTYPE=seedit/' >%{selinuxconf}.tmp
 	mv %{selinuxconf} %{selinuxconf}.orig
 	mv  %{selinuxconf}.tmp %{selinuxconf}
-	/sbin/restorecon %{selinuxconf}
 	touch /.autorelabel
 fi
 
@@ -58,7 +57,6 @@ if [ $1 = 0 ]; then
 	cat %{selinuxconf} |sed -e 's/^SELINUX=.*$/SELINUX=permissive/'|sed -e 's/^SELINUXTYPE=.*$/SELINUXTYPE=targeted/' >%{selinuxconf}.tmp
 	mv %{selinuxconf} %{selinuxconf}.orig
 	mv %{selinuxconf}.tmp %{selinuxconf}
-	/sbin/restorecon %{selinuxconf}
 	touch /.autorelabel
 
 else

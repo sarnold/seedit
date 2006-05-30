@@ -503,7 +503,7 @@ char **get_dir_list(char *path,char **homedir_list){
       tmp_list  = get_dir_list(homedir_list[i], homedir_list);
       list = joint_ntarray(list, tmp_list);
     } 
-   
+    
     return list;
   }
 
@@ -532,6 +532,10 @@ char **get_dir_list(char *path,char **homedir_list){
       list = extend_ntarray(list,current);    
     }
   }
+  if(is_home_dir(path, homedir_list)){
+    list = extend_ntarray(list,"~/");
+  }
+
   free(current);
   free(work);
   return list;

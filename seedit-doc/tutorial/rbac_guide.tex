@@ -262,11 +262,30 @@ Let's load configuration by seedit-load.
 \begin{verbatim}
 #seedit-load
 \end{verbatim}
-
 And test to login.
+Login as webmaster.
+Let's see role.
+\begin{verbatim}
+#id
+uid=0(root) gid=502(webmaster) groups=502(webmaster) 
+context=webmaster:webmaster_r:webmaster_t
+\end{verbatim}
+Now you are webmaster!\\
+You can upload file to /var/www/html from your home directory.
+If you find something is denied and it is necessary, test in permissive
+mode, and  add
+configuration to /etc/seedit/policy/webmaster\_r.sp using audit2spdl
+like normal domain.
+
+\subsection{Tips}
+If you want to use restorecon, you have to add,
+\begin{verbatim}
+allowpriv part_relabel;
+\end{verbatim}
+Then, you will be able to do restorecon to files that the role is can write.
 
 %%restorecon を使えるようにするとか allowpriv part_relabel
 %ユーザを後で作ったら、restoreconが必要！！
-%/homeのタイプを、dir_rootdir_tにしたようがいいのかも？
+
 
 \end{document}

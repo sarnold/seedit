@@ -465,8 +465,13 @@ int not_generate_condition_normal_file(char *filename){
   if(filename[0]!='/'){
     return 1;
   }
-  /*/home is outputted in different place*/
+  /*/home/<username> is outputted in different place*/
   if(is_home_dir(filename, converter_conf.homedir_list))
+    return 1;
+
+
+  /*/home it self is outputted in different place*/
+  if(check_exist_in_list(filename, converter_conf.homedir_list))
     return 1;
 
   return 0;
@@ -688,7 +693,7 @@ void out_file_contexts_home_dir(FILE *outfp){
 	if (strcmp(filename,"/")==0){
 	  for(j=0; converter_conf.homedir_list[j]!=NULL ;j++){
 	    homedir = converter_conf.homedir_list[j];
-	    snprintf(fc_str, sizeof(fc_str), "%s/[^/]*/(|.*)\tsystem_u:object_r:%s\n", homedir, fl->labelname);
+	    snprintf(fc_str, sizeof(fc_str), "%s/(|.*)\tsystem_u:object_r:%s\n", homedir, fl->labelname);
 	  }	
 	}else{
 	  for(j=0; converter_conf.homedir_list[j]!=NULL ;j++){
@@ -732,6 +737,7 @@ void out_file_contexts_home_dir(FILE *outfp){
     if(strcmp((fl->filename)+1,"/")==0){
       for(j=0; converter_conf.homedir_list[j]!=NULL ;j++){
 	homedir = converter_conf.homedir_list[j];
+	fprintf(outfp, "%s\tsystem_u:object_r:%s\n",homedir,  fl->labelname);
 	fprintf(outfp, "%s/[^/]+\tsystem_u:object_r:%s\n",homedir,  fl->labelname);
       }
     }else{

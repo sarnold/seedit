@@ -24,5 +24,7 @@ allownet -protocol tcp,udp -port * client;
 allowtmp -dir /tmp -name auto r,w,s;
 allowtmp -fs tmpfs -name auto r,w,s;
 
+allow /usr/libexec/openssh/** r,x,s;
+
 allowpriv getsecurity;
 allowpriv cap_chown;

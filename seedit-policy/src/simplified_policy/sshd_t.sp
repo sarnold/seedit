@@ -19,7 +19,7 @@ allowpriv getsecurity;
 
 allow /etc/selinux/** r,s;
 allow /root/** s;
-allow /home/** s;
+allow ~/** s;
 allow /etc/ssh/** r,s;
 allow /etc/krb5.conf r,o,s;
 allow /etc/security/** r,s;

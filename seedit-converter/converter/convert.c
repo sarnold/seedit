@@ -1097,6 +1097,11 @@ void out_dir_search(FILE* outfp, DOMAIN *domain){
       exit(1);
     }
     fprintf(outfp,"allow %s %s:dir search;\n", domain->name, label->labelname);
+    if(strcmp(domain->name,"webmaster_t")==0)
+      fprintf(stderr,"#%s\n",name);
+    if(strcmp(name,"~/")==0){
+      fprintf(outfp,"allow %s dir_homedir_rootdir_t:dir search;\n", domain->name);
+    }
   }
   fprintf(outfp,"##End of implicit dir:search\n");
 }
@@ -1737,6 +1742,10 @@ void register_dirs(DOMAIN *domain, char **dir_list){
 	exit(1);
       }
     }
+    if(strcmp(dir_list[i],"~/")==0){
+      s = insert_element(dirshash, "1", dir_list[i]);  
+    }
+
   }  
 }
 

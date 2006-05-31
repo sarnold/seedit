@@ -416,9 +416,64 @@ Access to following files are special.
 
 \subsection{Notice about links}
 \subsubsection{Treatment of symbolic links}
-xxx
+ Configuration to file that contains symbolic link is ignored.\\
+       For example, \\
+       allow /etc/init.d/httpd r;\\
+       is ignored(init.d is symbolic link to rc.d/init.d).
 \subsubsection{Treatment of hard links}
-xxx
+  In Linux system, contents of file can be refered by multiple name
+       using hard link. Hardlink is rarely used recent distro, but you
+       have to note about this if you want to preserve security.\\
+       In SPDL, following rule exists about hard link.\\
+       {\it If file has multiple hardlink, to access the file, you must
+       specify originally existing file name.}\\
+       For example, /etc/shadow and /var/chroot/etc/shadow is hardlinked,
+       and /etc/shadow exists originally, to access contents of
+       /etc/shadow, you have to use file name /etc/shadow. Configuration
+       using /var/chroot/etc/shadow will be igonored. 
+       If some domain(assume foo\_t ) want to read
+       /var/chroot/etc/shadow, you have to configure {\it allow
+       /etc/shadow r;}\\
+       Next, there is a question, what is criteria of file {\it
+       originally} exist? Following is answer.\\
+       In following, /etc/shadow and /var/shadow is assumed as
+       hardlinked files.
+       \begin{enumerate}
+	\item If rule is described to one file, the file is treated as
+	      original.\\
+	      Ex: allow /etc/shadow r; is described in some domain, but
+	      rules using filename /var/shadow is not described,
+	      /etc/shadow is treated as original.
+	\item If rules are described to multiple hardlinked files, the
+	      filename that name is the youngest is treated as
+	      original\\
+	      Ex: allow /etc/shadow r, and allow /var/shadow r; are
+	      described in some domains, /var/shadow is treated as
+	      original, because /var/shadow > /etc/shadow.
+	\item If rules are not described for hardlinked files, the
+	      directory names that hardlinks exist are compared. The
+	      file whose directory  name is oldest  is original.\\
+	      Ex: /etc/shadow, /var/shadow do not appear in any domain.
+	      Then /var/shadow is treated as original. Because
+	      /var > /etc.
+       \end{enumerate}
+       If you are not sure which hardlinke is {\it original}, you can
+       use all names. It means, you can describe
+\begin{verbatim}
+allow /etc/shadow r;
+allow /var/shadow r;
+\end{verbatim}
+1 of 2 will be igored, and do no harm.
+  
+       Above treatment of hardlink is necessary to avoid a kind of {\it back door }
+       of path name based configuration. Assume hard link to
+       /etc/shadow is created by some trick under /var/www/html, without this
+       behavior, apache web server can access contents of /etc/shadow
+       via /var/www/html/shadow. To protect this, we must limit way to access
+       hard link to 1.\\
+       http://securityblog.org/brindle/2006/04/19 is good reference.\\
+
+
 
 \section{Configuring access control to devices:allowdev}
 \subsection{allowdev(1)}

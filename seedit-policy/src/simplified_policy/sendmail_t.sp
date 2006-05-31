@@ -27,5 +27,5 @@ allow /usr/bin/procmail r,x,s;
 allow system_crond_tmp_t r,s,a;
 
 allowpriv netlink;
-
+allowpriv cap_sys_tty_config;
 }

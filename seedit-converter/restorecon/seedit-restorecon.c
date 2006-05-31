@@ -128,30 +128,23 @@ For seedit
 if new_context is child context for prev_context return 1
 ex: prev_context var_t, new_context var_www_t -> 1
 ex  var_t dir_var_www_t -> 1
-ex  etc_t var_www_t ->1 : etc_t is for dir /etc
-if prev_type is derived from directory name, then relabel
-ex  etc_shadow_t var_www_t->0: etc_shadow_t is file /etc/shadow
 err: -1
 */
 int chk_child(security_context_t prev_context, security_context_t new_context){
   char *prev_type;
   char *new_type;
+  char *prev_type_prefix_buf;
   char *prev_type_prefix;
   char *index;
   int is_child = 0;
-  char *dirname;
-  char *s;
-  int i;
-  int len; 
-  struct stat st;
 
   prev_type = strrchr((char *)prev_context, ':')+1;
   new_type  = strrchr((char *)new_context, ':')+1;
   if(prev_type == NULL || new_type == NULL)
     return -1;
   
-  prev_type_prefix = strdup(prev_type);
-  index = rindex(prev_type_prefix, 't');
+  prev_type_prefix_buf = strdup(prev_type);
+  index = rindex(prev_type_prefix_buf, 't');
   if(index==NULL)
     return -1;
   *index = '\0';
@@ -161,29 +154,17 @@ int chk_child(security_context_t prev_context, security_context_t new_context){
   if(strstr(new_type, "dir_")==new_type){
     new_type = new_type + 4;
   }
-  
-  /*if prev_type is derived from directory name, then relabel*/
-  s = strdup(prev_type_prefix);
-  len = strlen(s);
-  for(i =0 ;i<len;i++){
-    if(s[i]=='_')
-      s[i] = '/';
+  if(strstr(prev_type_prefix_buf, "dir_")==prev_type_prefix_buf){
+    prev_type_prefix = prev_type_prefix_buf + 4;
+  }else{
+    prev_type_prefix = prev_type_prefix_buf;
   }
-  dirname = joint_str("/", s);
-  free(s);
-  if (lstat(dirname, &st)==0){
-    if (S_ISDIR(st.st_mode)) {
-      free(prev_type_prefix);
-      return 1;
-    }
-  }
-
-  /*  printf("prev:%s, new:%s\n", prev_type, new_type);*/
   
   if (strstr(new_type, prev_type_prefix) == new_type){
     is_child =1;
   }
- free(prev_type_prefix);
+
+ free(prev_type_prefix_buf);
   if(is_child)
     return 1;
 
@@ -291,6 +272,10 @@ int restore(const char *filename) {
 		if (verbose)
 		  printf("%s reset %s context %s->%s\n",
 			 progname, filename, (retcontext >= 0 ? prev_context : ""), scontext);
+	      }else{
+		if (verbose)
+		  printf("Skipped to preserve label, may be hardlinked: %s(%s->%s)\n",
+			  filename, (retcontext >= 0 ? prev_context : ""), scontext);
 	      }
       }
     }

@@ -113,11 +113,53 @@ class seStatusTab(seeditCommon):
         
         
 class processStatusTab(seeditCommon):
+    
+    
+    def refreshButtonCallBack(self,widget, data=None):
+        self.doCommand("/usr/bin/seedit-unconfined -e", self.mWorkingResult)
+        self.doCommand("/usr/bin/seedit-unconfined -n", self.mNetResult)
+
+    def initTextView(self):
+        sw = gtk.ScrolledWindow()
+        sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        textview = gtk.TextView()
+        textbuffer = textview.get_buffer()
+        sw.add(textview)
+        return (sw,textbuffer)
+    
+    def doCommand(self, command, textbuffer):
+        input = os.popen(command, "r")
+        lines = input.readlines()
+        string =""
+        for line in lines:
+            string = string + line
+
+        textbuffer.set_text(string)
+        
+    
     def __init__(self,parent):
         vbox = gtk.VBox()
         self.mParentWindow=parent
         self.mElement = vbox
+        notebook = gtk.Notebook()
+        notebook.set_tab_pos(gtk.POS_TOP)
+        vbox.pack_start(notebook)
+        (tab1, buffer1) = self.initTextView()
+        label = gtk.Label(_("Working process"))
+        notebook.append_page(tab1, label)
+        label = gtk.Label(_("Network process"))
+        (tab2,buffer2) = self.initTextView()
+        notebook.append_page(tab2, label)
 
+        button = gtk.Button(_("Refresh"))
+        button.connect("clicked", self.refreshButtonCallBack)
+        hbox = gtk.HBox()
+        hbox.pack_start(button,False,False)
+        vbox.pack_start(hbox,False,False)
+        self.mWorkingResult = buffer1
+        self.mNetResult = buffer2
+        self.doCommand("/usr/bin/seedit-unconfined -e", self.mWorkingResult)
+        self.doCommand("/usr/bin/seedit-unconfined -n", self.mNetResult)
 
 class seeditStatusWindow(seeditCommon):
         
@@ -129,7 +171,7 @@ class seeditStatusWindow(seeditCommon):
         self.mWindow = window
         window.set_title(_("seedit Status"))
         window.connect('destroy', lambda w: gtk.main_quit())
-        window.set_resizable(False)
+
         vbox = gtk.VBox()
         window.add(vbox)
 

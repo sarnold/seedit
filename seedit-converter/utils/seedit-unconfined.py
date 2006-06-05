@@ -93,6 +93,15 @@ def showCurrentMode():
 def getProgNameByPid(pid):
     prog = os.readlink("/proc/"+pid+"/exe")
     return prog
+
+
+def getPortStr(line):
+    list = string.split(line)
+    proto = list[0]
+    local = list[3]
+    list = string.split(local,":")
+    port = list.pop()
+    return proto+"/"+port
   
 def showNetworkProcess(unconfinedDomainsList):
     input=os.popen("/bin/netstat -nlp", "r")
@@ -114,7 +123,8 @@ def showNetworkProcess(unconfinedDomainsList):
                 else:
                     str = _("Confined by %s") % domain
                 line = line + str
-                print "%s\t%s" % (prog, str)
+                port = getPortStr(line)
+                print "%s\t%s\t%s" % (port,prog, str)
 #            print line
 ###main###
 

@@ -15,6 +15,7 @@ import string
 import re
 import getopt
 import gettext
+sys.path.insert(0,"/usr/lib")
 from seedit.seedit import getAttr
 from stat import *
 

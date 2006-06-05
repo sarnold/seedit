@@ -14,6 +14,7 @@ import sys
 import string
 import re
 import getopt
+sys.path.insert(0,"/usr/lib")
 from seedit.seedit import getAttr, readXML
 
 

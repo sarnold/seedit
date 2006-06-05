@@ -1,14 +1,19 @@
 #!/usr/bin/python
+#All Rights Reserved (C) 2006, Yuichi Nakmura himainu-ynakam@miomio.jp
 
 
 import pygtk
 pygtk.require('2.0')
 import gtk
+import gobject
 import sys
 import gettext
+import string
 sys.path.insert(0,"/usr/lib")
 from  seedit.GUICommon import *
 from  seedit.UILogic import *
+from  seedit.unconfined import *
+
 
 
 class seStatusTab(seeditCommon):
@@ -116,40 +121,94 @@ class processStatusTab(seeditCommon):
     
     
     def refreshButtonCallBack(self,widget, data=None):
-        self.doCommand("/usr/bin/seedit-unconfined -e", self.mWorkingResult)
-        self.doCommand("/usr/bin/seedit-unconfined -n", self.mNetResult)
-
-    def initTextView(self):
-        sw = gtk.ScrolledWindow()
-        sw.set_size_request(400,300)
-        sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        textview = gtk.TextView()
-        textbuffer = textview.get_buffer()
-        sw.add(textview)
-        return (sw,textbuffer)
-    
-    def doCommand(self, command, textbuffer):
-        input = os.popen(command, "r")
-        lines = input.readlines()
-        string =""
-        for line in lines:
-            string = string + line
-
-        textbuffer.set_text(string)
+        self.mWorkingListStore.clear()
+        self.mNetworkListStore.clear()
+        list = getWorkingProcessList(gUnconfinedDomains)
+        for l in list:
+           self.mWorkingListStore.append(l)
+        list = getNetworkProcessList(gUnconfinedDomains)
+        for l in list:
+            self.mNetworkListStore.append(l)
         
+
+    def initModel(self, data):
+        lstore = gtk.ListStore(
+            gobject.TYPE_STRING,
+            gobject.TYPE_STRING,
+            gobject.TYPE_STRING)
+
+        for item in data:
+            lstore.append(data)
+        return lstore
+
+    #From demo pygtk 2.0
+    def addColumns(self, treeview, header):
+        model = treeview.get_model()
+        
+
+        renderer = gtk.CellRendererToggle()
+
+        column = gtk.TreeViewColumn(header[0], gtk.CellRendererText(),
+                                    text=0)
+        column.set_sort_column_id(0)
+        treeview.append_column(column)
+
+
+        column = gtk.TreeViewColumn(header[1], gtk.CellRendererText(),
+                                    text=1)
+        column.set_sort_column_id(1)
+        treeview.append_column(column)
+        column = gtk.TreeViewColumn(header[2], gtk.CellRendererText(),
+                                     text=2)
+        column.set_sort_column_id(2)
+        treeview.append_column(column)
+        
+    def initTreeView(self,model,header):
+        sw = gtk.ScrolledWindow()
+        sw.set_shadow_type(gtk.SHADOW_ETCHED_IN)
+        sw.set_size_request(400,300)
+
+        sw.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
+        treeview = gtk.TreeView(model)
+        treeview.set_rules_hint(True)
+        treeview.set_search_column(2)
+        sw.add(treeview)
+        self.addColumns(treeview,header)
+        return sw
+
+
     
     def __init__(self,parent):
+        self.mWorkingListStore = gtk.ListStore(
+            gobject.TYPE_STRING,
+            gobject.TYPE_STRING,
+            gobject.TYPE_STRING)
+        self.mNetworkListStore = gtk.ListStore(
+            gobject.TYPE_STRING,
+            gobject.TYPE_STRING,
+            gobject.TYPE_STRING)
+        
+        list = getWorkingProcessList(gUnconfinedDomains)
+        for l in list:
+           self.mWorkingListStore.append(l)
+        list = getNetworkProcessList(gUnconfinedDomains)
+        for l in list:
+            self.mNetworkListStore.append(l)
+
+        
         vbox = gtk.VBox()
         self.mParentWindow=parent
         self.mElement = vbox
         notebook = gtk.Notebook()
         notebook.set_tab_pos(gtk.POS_TOP)
         vbox.pack_start(notebook)
-        (tab1, buffer1) = self.initTextView()
+        header = (_("PID"),_("Process"),_("Domain"))
+        tab1 = self.initTreeView(self.mWorkingListStore,header)
         label = gtk.Label(_("Working process"))
         notebook.append_page(tab1, label)
         label = gtk.Label(_("Network process"))
-        (tab2,buffer2) = self.initTextView()
+        header = (_("Port"),_("Process"),_("Domain"))
+        tab2  = self.initTreeView(self.mNetworkListStore,header)
         notebook.append_page(tab2, label)
 
         button = gtk.Button(_("Refresh"))
@@ -157,10 +216,8 @@ class processStatusTab(seeditCommon):
         hbox = gtk.HBox()
         hbox.pack_start(button,False,False)
         vbox.pack_start(hbox,False,False)
-        self.mWorkingResult = buffer1
-        self.mNetResult = buffer2
-        self.doCommand("/usr/bin/seedit-unconfined -e", self.mWorkingResult)
-        self.doCommand("/usr/bin/seedit-unconfined -n", self.mNetResult)
+
+      
 
 class seeditStatusWindow(seeditCommon):
         
@@ -205,6 +262,8 @@ class seeditStatusWindow(seeditCommon):
 
 if __name__ == '__main__':
     gettext.install("seedit-gui","/usr/share/locale")
+    gUnconfinedDomains=[] #List of unconfined domains
+    gUnconfinedDomains = getUnconfinedDomains("/etc/selinux/seedit/policy/unconfined_domains")
     seeditStatusWindow()
 
     gtk.main()

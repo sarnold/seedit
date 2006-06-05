@@ -1,4 +1,5 @@
 #!/usr/bin/python
+#All Rights Reserved (C) 2006, Yuichi Nakmura himainu-ynakam@miomio.jp
 
 import pygtk
 pygtk.require('2.0')

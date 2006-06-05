@@ -1,4 +1,3 @@
-%define pythonver 2.4
 %define distro FC5
 Summary: Compliler for simplified policy
 Name: seedit-converter
@@ -21,7 +20,7 @@ make clean
 
 %install
 rm -rf $RPM_BUILD_ROOT
-%makeinstall PYTHONVER=%{pythonver}
+%makeinstall
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -37,7 +36,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_sbindir}/seedit-restorecon
 %{_bindir}/seedit-unconfined
 %{_bindir}/seedit-template
-%{_libdir}/python%{pythonver}/site-packages/seedit/*
+%{_libdir}/seedit/*
 
 %changelog
 * Tue Apr 18 2006 Yuichi Nakamura<ynakam@gwu.edu> 1.4.0

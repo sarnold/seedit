@@ -7,8 +7,7 @@ INCLUDE = -I../include
 OBJS 	= y.tab.o lex.yy.o parse.o common.o
 TARGET = libseedit.a
 prefix = /usr
-PYTHONVER = 2.4
-PYTHONROOT = $(prefix)/lib/python$(PYTHONVER)/site-packages
+PYTHONROOT = $(prefix)/lib/
 all: $(TARGET)
 
 $(TARGET):  $(OBJS)

@@ -9,13 +9,13 @@ import gettext
 from  seedit.GUICommon import *
 
 GUI_STATUS=1
-GUI_CREATE=2
+GUI_MANAGE=2
 GUI_ADD=3
-GUI_DELETE=5
 GUI_EDIT=4
 gVersion = "2.0.0 b4"
 gIconPath= "/usr/share/icons/seedit/"
-
+if not os.path.exists(gIconPath+"icon.png"):
+    gIconPath="./icons/"
 STATUS_COMMAND="./seedit-gui-status.py"
 
         
@@ -99,14 +99,15 @@ class seeditMainWindow(seeditCommon):
         frame.set_size_request(400, 300)
         vbox.pack_start(frame)
         model = gtk.ListStore(str, gtk.gdk.Pixbuf,int)
+
+      
         defaultIcon = gtk.gdk.pixbuf_new_from_file(gIconPath+"icon.png")
         newIcon = gtk.gdk.pixbuf_new_from_file(gIconPath+"new.png")
         delIcon = gtk.gdk.pixbuf_new_from_file(gIconPath+"del.png")
         
         model.append([_("Status"), defaultIcon,GUI_STATUS])
         
-        model.append([_("Create Domain/Role"), newIcon,GUI_CREATE])
-        model.append([_("Delete Domain/Role"), delIcon,GUI_DELETE])        
+        model.append([_("Manage Domain/Role"), newIcon,GUI_MANAGE])
         model.append([_("Add policy"), defaultIcon,GUI_ADD])
         model.append([_("Edit policy"), defaultIcon,GUI_EDIT])
 
@@ -116,8 +117,7 @@ class seeditMainWindow(seeditCommon):
         self.iconView.set_orientation(gtk.ORIENTATION_VERTICAL)
         self.iconView.set_selection_mode(gtk.SELECTION_SINGLE)
         self.iconView.set_columns(-1)
-        self.iconView.set_item_width(-1)
-        self.iconView.set_size_request(72, -1)
+        self.iconView.set_item_width(72)
         self.iconView.connect('item-activated', self.onActive, model)
 
         frame.add(self.iconView)

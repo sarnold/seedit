@@ -6,13 +6,14 @@ import gtk
 import sys
 import os
 import gettext
+sys.path.insert(0,"/usr/lib")
 from  seedit.GUICommon import *
+from seedit.UILogic import *
 
 GUI_STATUS=1
 GUI_MANAGE=2
 GUI_ADD=3
 GUI_EDIT=4
-gVersion = "2.0.0 b4"
 gIconPath= "/usr/share/icons/seedit/"
 if not os.path.exists(gIconPath+"icon.png"):
     gIconPath="./icons/"
@@ -20,15 +21,7 @@ STATUS_COMMAND="./seedit-gui-status.py"
 
         
 class seeditMainWindow(seeditCommon):
-    ui = '''<ui>
-    <menubar name="MenuBar">
-      <menu action="Help">
-        <menuitem action="About"/>
-      </menu>
-      
-    </menubar>
-    </ui>'''
-
+  
     def forkProgram(self,path):
         pid = os.fork()
         if(pid==0):
@@ -42,14 +35,6 @@ class seeditMainWindow(seeditCommon):
             self.forkProgram(STATUS_COMMAND)
         else:
             self.showNotImplementedDialog()
-        
-
-    def showAbout(self,data=None):
-        message = _("SELinux Policy Editor Control Panel\nVersion %s\n") % (gVersion) 
-        message += _("All rights reserved (c) 2006 Yuichi Nakamura\n")
-        message += _("This software is distributed under GPL.\n")
-        message += _("For more information, visit http://seedit.sourceforge.net/\n")
-        self.showMessageDialog(gtk.MESSAGE_INFO,message)
     
     def onActive(self, iconView, path,model=None):
         selected = iconView.get_selected_items()
@@ -64,33 +49,8 @@ class seeditMainWindow(seeditCommon):
         window.connect('destroy', lambda w: gtk.main_quit())
         vbox = gtk.VBox()
         window.add(vbox)
-
-  # Create a UIManager instance
-        uimanager = gtk.UIManager()
-
-        # Add the accelerator group to the toplevel window
-        accelgroup = uimanager.get_accel_group()
-        window.add_accel_group(accelgroup)
-
-        # Create an ActionGroup
-        actiongroup = gtk.ActionGroup('seeditUIManager')
-        self.actiongroup = actiongroup
-
-        # Create actions
-        actiongroup.add_actions([
-                                 ('About', gtk.STOCK_ABOUT,_("_About"), None,
-                                  _('About'), self.showAbout),
-                                 ('Help', None, _('_Help')),
-                                 ])
-
-
-        # Add the actiongroup to the uimanager
-        uimanager.insert_action_group(actiongroup, 0)
-        # Add a UI description
-        uimanager.add_ui_from_string(self.ui)
-
-        # Create a MenuBar
-        menubar = uimanager.get_widget('/MenuBar')
+     
+        menubar = self.initMenu(window)
         vbox.pack_start(menubar, False)
 
         

@@ -121,6 +121,7 @@ class processStatusTab(seeditCommon):
 
     def initTextView(self):
         sw = gtk.ScrolledWindow()
+        sw.set_size_request(400,300)
         sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         textview = gtk.TextView()
         textbuffer = textview.get_buffer()
@@ -170,6 +171,7 @@ class seeditStatusWindow(seeditCommon):
         window = gtk.Window()
         self.mWindow = window
         window.set_title(_("seedit Status"))
+        
         window.connect('destroy', lambda w: gtk.main_quit())
 
         vbox = gtk.VBox()

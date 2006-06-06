@@ -33,22 +33,23 @@ def doCommand(command):
             l = string.replace(l,"\n","")
             print l
         print _("#Error!! check above error message")
+        return -1
     else:
         print _("seedit-load: Success")
 
-
+    return 0
 def doLoad():
     loadCommand = "cd /etc/seedit/converter; make diffrelabel "+gMakeFlags+" 2>&1" 
-    doCommand(loadCommand)
+    return doCommand(loadCommand)
 
 def doInit():
     initCommand = "cd /etc/seedit/converter; make relabel "+gMakeFlags+" 2>&1"
     print _("Initializing file labels it takes long time")
-    doCommand(initCommand)
+    return doCommand(initCommand)
 
 def doTest():
     testCommand = "cd /etc/seedit/converter; make policy "+gMakeFlags+"  2>&1" 
-    doCommand(testCommand)
+    return doCommand(testCommand)
 
 ####Main func
 if __name__ == '__main__':
@@ -81,10 +82,17 @@ for opt,arg in opts:
 
 if gBehavior=="":
     gBehavior="load"
-    
+
+s=0
+
 if gBehavior == "load":
-    doLoad()
+    s= doLoad()
 elif gBehavior == "init":
-    doInit()
+    s= doInit()
 elif gBehavior =="test":
-    doTest()
+    s= doTest()
+
+if s<0:
+    sys.exit(1)
+
+

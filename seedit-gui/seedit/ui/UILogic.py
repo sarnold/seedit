@@ -13,8 +13,13 @@ DISABLED=-1
 SEEDIT_ERROR= -1
 SEEDIT_SUCCESS= 1
 
+SEEDIT_ERROR_FILE_WRITE=-2
+SEEDIT_ERROR_SEEDIT_LOAD=-3
+
 gSELinuxConfigFile ="/etc/selinux/config"
 gSPPath="/etc/seedit/policy/"
+gSeedit_load= "/usr/sbin/seedit-load"
+
 
 def getMode():
     try:
@@ -175,3 +180,49 @@ def createDomainTemplate(program, domain , parentDomain, daemonFlag, authFlag):
 
     result = result + "}\n"
     return result
+
+
+
+
+def saveStringToFile(str, file):
+
+    try:
+        fh = open(file, "w")
+    except:
+        return SEEDIT_ERROR_FILE_WRITE
+    
+
+    fh.write(str)
+    fh.close
+    return SEEDIT_SUCCESS
+
+
+#do seedit-load
+def loadPolicy():
+    command = gSeedit_load+" -v"
+    input=os.popen(command, "r")
+    lines = input.readlines()
+    for line in lines:
+        print line
+    if input.close():
+        return SEEDIT_ERROR_SEEDIT_LOAD
+    
+    return SEEDIT_SUCCESS
+    
+
+def createDomain(data, file):
+
+    #Save to file
+    r = saveStringToFile(data,file)
+    if r<0:
+        return r
+
+
+    #seedit-load,
+    #if err, delete and seedit-load again
+    r = loadPolicy()
+    if r<0:
+        os.unlink(file)
+        loadPolicy()
+        return r
+    return SEEDIT_SUCCESS

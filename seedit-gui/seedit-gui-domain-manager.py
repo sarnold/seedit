@@ -78,8 +78,17 @@ class createDomainTab(seeditCommon):
             self.showMessageDialog(gtk.MESSAGE_INFO, _("Save cancelled.\n"))
             return
 
-        
-        
+
+        s = createDomain(data,filename)
+        if s == SEEDIT_ERROR_SEEDIT_LOAD:
+            self.showMessageDialog(gtk.MESSAGE_INFO, _("Syntax error is found. Save cancelled.\n"))
+            return
+        elif s == SEEDIT_ERROR_FILE_WRITE:
+            self.showMessageDialog(gtk.MESSAGE_INFO, _("File write error. Save cancelled.\n"))
+            return
+        elif s == SEEDIT_SUCCESS:
+            self.showMessageDialog(gtk.MESSAGE_INFO, _("Success.\n"))
+            return
         
     def yesNoSelection(self, message, default, callback):
         hbox = gtk.HBox()

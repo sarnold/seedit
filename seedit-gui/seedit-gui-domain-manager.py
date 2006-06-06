@@ -9,213 +9,191 @@ import gobject
 import sys
 import gettext
 import string
+import re
 sys.path.insert(0,"/usr/lib")
 from  seedit.ui.GUICommon import *
 from  seedit.ui.UILogic import *
 from  seedit.unconfined import *
 
-class seStatusTab(seeditCommon):
-    def comboCallBack(self,combobox, data=None):
-        model = combobox.get_model()
-        index = combobox.get_active()
-        print index
-        
-    def applyButtonCallBack(self,widget, data=None):
-        index = self.mCurrentModeComboBox.get_active()
-        if index == 0:
-            currentMode = ENFORCING
-        elif index ==1:
-            currentMode = PERMISSIVE
-        else:
-            currentMode = DISABLED
-        
-        index = self.mBootModeComboBox.get_active()
-        if index == 0:
-            bootMode = ENFORCING
-        elif index ==1:
-            bootMode = PERMISSIVE
-        else:
-            bootMode = DISABLED
-        
-        result = setMode(currentMode)
-        if result == SEEDIT_ERROR:
-            message = _("Failed to change current mode. Permission denied")
-            self.showMessageDialog(gtk.MESSAGE_ERROR,message)
-            mode = getMode()
-            self.setModeCombo(self.mCurrentModeComboBox,mode)
-        
-        result = setBootMode(bootMode)
-        if result == SEEDIT_ERROR:
-            message = _("Failed to change boot mode. Permission denied")
-            self.showMessageDialog(gtk.MESSAGE_ERROR,message)
-            mode = getBootMode()
-            self.setModeCombo(self.mBootModeComboBox,mode)
+class createDomainTab(seeditCommon):
+    
+    def daemonRadioCallBack(self,widget, data):
+        if widget.get_active() == 1:
+            self.mDaemonFlag = data
+
+    def authRadioCallBack(self, widget, data):
+        if widget.get_active() == 1:
+            self.mAuthFlag = data
+            
+    def autoDomainName(self, filename):
+        index = filename.rindex("/")
+        domain = filename[index+1:] +"_t"
+        domain = re.sub("\W","_", domain)
+                       
+        return domain
+    
+    def browseButtonCallBack(self, data=None):
+        dialog = gtk.FileChooserDialog(_("Choose Program"),
+                               None,
+                               gtk.FILE_CHOOSER_ACTION_OPEN,
+                               (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+                                gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+        dialog.set_default_response(gtk.RESPONSE_OK)
+        filter = gtk.FileFilter()
+        filter.set_name(_("All files"))
+        filter.add_pattern("*")
+        dialog.add_filter(filter)
+       
+        response = dialog.run()
+        if response == gtk.RESPONSE_OK:
+            filename = dialog.get_filename()
+            filename = os.path.realpath(filename)
+            self.mProgramEntry.set_text(filename)
+            domain = self.autoDomainName(filename)
+            self.mDomainEntry.set_text(domain)
+        elif response == gtk.RESPONSE_CANCEL:
+            pass
+       
+        dialog.destroy()
 
         
-    def setModeCombo(self, combo, mode):
+    def createButtonCallBack(self, data=None):
+        program = self.mProgramEntry.get_text()
+        domain = self.mDomainEntry.get_text()
+        parentDomain = self.mParentDomainEntry.get_text()
+        string = createDomainTemplate(program, domain, parentDomain, self.mDaemonFlag, self.mAuthFlag)
+        if  string != None:
+            self.mTextBuffer.set_text(string)
+            
+            self.mToBeSavedFile= gSPPath+domain+".sp"
+            self.mToBeSavedFileLabel.set_label(self.mToBeSavedFile)
+        
+    def saveButtonCallBack(self, data=None):
+        filename = self.mToBeSavedFile
+        start = self.mTextBuffer.get_start_iter()
+        end = self.mTextBuffer.get_end_iter()
+        data = self.mTextBuffer.get_text(start,end)
+                
+        if not self.checkOverWrite(filename):
+            self.showMessageDialog(gtk.MESSAGE_INFO, _("Save cancelled.\n"))
+            return
 
-        if mode == PERMISSIVE:
-            combo.set_active(1)
-        elif mode == ENFORCING:
-            combo.set_active(0)
-        else:        
-            combo.set_active(2)
+        
+        
+        
+    def yesNoSelection(self, message, default, callback):
+        hbox = gtk.HBox()
+        label = gtk.Label(message)
+        hbox.pack_start(label, False, False,5)
+        radio = gtk.RadioButton(None, _("Yes"))
+        self.mDaemonFlag = True
+        radio.connect("toggled", callback, True)
+        if default == True:
+            radio.set_active(True)
+
+        hbox.pack_start(radio, False, False,5)
+        radio = gtk.RadioButton(radio, _("No"))
+        if default == False:
+            radio.set_active(True)
+        radio.connect("toggled", callback, False)
+        
+        
+        hbox.pack_start(radio, False, False,5)
+
+        return hbox
     
     def __init__(self,parent):
-        vbox = gtk.VBox()
+        
+        vboxFrame = gtk.VBox()
+        vboxFrame.set_border_width(10)
         self.mParentWindow=parent
-        self.mElement = vbox
-
-        label = gtk.Label(_("seedit Installed?"))
+        self.mElement = vboxFrame
+        
+        frame = gtk.Frame(_("Domain information"))
+        vboxFrame.pack_start(frame, False, False,5)
+        
+        vbox = gtk.VBox()
+        frame.add(vbox)
+        label = gtk.Label(_("Program you want to confine:"))
         hbox = gtk.HBox()
-        hbox.pack_start(label, False, False,10)
+        hbox.pack_start(label, False, False,5)
         vbox.pack_start(hbox, False, False)
-        if seeditInstalled()==True:
-            label = gtk.Label(_("Yes"))
-        else:
-            label = gtk.Label(_("No!"))
-        hbox.pack_start(label, False, False,10)
-
+        entry = gtk.Entry()
+        entry.set_max_length(100)        
+        hbox.pack_start(entry,False, False,5)
+        button = gtk.Button(_("Browse"))
+        button.connect("clicked", self.browseButtonCallBack)
+        hbox.pack_start(button, False, False, 5)
+        self.mProgramEntry = entry
         
-        label = gtk.Label(_("Current mode:"))
-        hbox1=gtk.HBox()
-        hbox1.pack_start(label,False,False,10)
-        combo = gtk.combo_box_new_text()
-        self.mCurrentModeComboBox = combo
-        hbox1.pack_start(combo,False,False,10)
-        combo.append_text(_("Enforcing"))
-        combo.append_text(_("Permissive"))
-        combo.append_text(_("Disabled"))
-
-        mode = getMode()
-        self.setModeCombo(self.mCurrentModeComboBox,mode)
-        vbox.pack_start(hbox1,False,False)
-        
-        
-        label = gtk.Label(_("Mode at boot:"))
-        hbox1=gtk.HBox()
-        hbox1.pack_start(label,False,False,10)
-        combo = gtk.combo_box_new_text()
-        self.mBootModeComboBox = combo
-        hbox1.pack_start(combo,False,False,10)
-        combo.append_text(_("Enforcing"))
-        combo.append_text(_("Permissive"))
-        combo.append_text(_("Disabled"))
-
-        mode = getBootMode()
-        self.setModeCombo(combo,mode)
-        vbox.pack_start(hbox1,False,False)
-        separator = gtk.HSeparator() 
-        vbox.pack_start(separator,False,False,5)
-        
-        button = gtk.Button(_("Apply"))
-        button.connect("clicked", self.applyButtonCallBack)
+        label = gtk.Label(_("Name of domain:"))
         hbox = gtk.HBox()
-        hbox.pack_start(button,False,False)
-        vbox.pack_start(hbox,False,False)
+        hbox.pack_start(label, False, False,5)
+        entry = gtk.Entry()
+        entry.set_max_length(50)
+        hbox.pack_start(entry,False, False,5)
+        self.mDomainEntry = entry
+        vbox.pack_start(hbox, False, False)
         
-        
-class processStatusTab(seeditCommon):
-    
-    
-    def refreshButtonCallBack(self,widget, data=None):
-        self.mWorkingListStore.clear()
-        self.mNetworkListStore.clear()
-        list = getWorkingProcessList(gUnconfinedDomains)
-        for l in list:
-           self.mWorkingListStore.append(l)
-        list = getNetworkProcessList(gUnconfinedDomains)
-        for l in list:
-            self.mNetworkListStore.append(l)
-        
+        # Create the expander
+        expander = gtk.Expander(_("Optional"))
+        vbox.pack_start(expander, False, False, 0)
+        # The Label for the expander
+        label = gtk.Label(_("Parent Domain"))
+        hbox = gtk.HBox()
+        hbox.pack_start(label, False, False,5)
+        entry = gtk.Entry()
+        entry.set_max_length(100)
+        self.mParentDomainEntry = entry
+        hbox.pack_start(entry,False, False,5)
+        expander.add(hbox)
 
-    def initModel(self, data):
-        lstore = gtk.ListStore(
-            gobject.TYPE_STRING,
-            gobject.TYPE_STRING,
-            gobject.TYPE_STRING)
+        self.mDaemonFlag= True
+        hbox = self.yesNoSelection(_("Daemon program?"), self.mDaemonFlag, self.daemonRadioCallBack)
+        vbox.pack_start(hbox, False, False, 0)
 
-        for item in data:
-            lstore.append(data)
-        return lstore
+        self.mAuthFlag = False
+        hbox = self.yesNoSelection(_("Authentication program?"), self.mAuthFlag, self.authRadioCallBack)
+        vbox.pack_start(hbox, False, False, 0)
 
-    #From demo pygtk 2.0
-    def addColumns(self, treeview, header):
-        model = treeview.get_model()
+        hbox = gtk.HBox()
+        button = gtk.Button(_("Create Template"))
+        hbox.pack_start(button, False, False, 5)
+        button.connect("clicked", self.createButtonCallBack)
+        vbox.pack_start(hbox, False, False, 5)
         
 
-        renderer = gtk.CellRendererToggle()
 
-        column = gtk.TreeViewColumn(header[0], gtk.CellRendererText(),
-                                    text=0)
-        column.set_sort_column_id(0)
-        treeview.append_column(column)
-
-
-        column = gtk.TreeViewColumn(header[1], gtk.CellRendererText(),
-                                    text=1)
-        column.set_sort_column_id(1)
-        treeview.append_column(column)
-        column = gtk.TreeViewColumn(header[2], gtk.CellRendererText(),
-                                     text=2)
-        column.set_sort_column_id(2)
-        treeview.append_column(column)
-        
-    def initTreeView(self,model,header):
-        sw = gtk.ScrolledWindow()
-        sw.set_shadow_type(gtk.SHADOW_ETCHED_IN)
-        sw.set_size_request(400,300)
-
-        sw.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
-        treeview = gtk.TreeView(model)
-        treeview.set_rules_hint(True)
-        treeview.set_search_column(2)
-        sw.add(treeview)
-        self.addColumns(treeview,header)
-        return sw
-
-
-    
-    def __init__(self,parent):
-        self.mWorkingListStore = gtk.ListStore(
-            gobject.TYPE_STRING,
-            gobject.TYPE_STRING,
-            gobject.TYPE_STRING)
-        self.mNetworkListStore = gtk.ListStore(
-            gobject.TYPE_STRING,
-            gobject.TYPE_STRING,
-            gobject.TYPE_STRING)
-        
-        list = getWorkingProcessList(gUnconfinedDomains)
-        for l in list:
-           self.mWorkingListStore.append(l)
-        list = getNetworkProcessList(gUnconfinedDomains)
-        for l in list:
-            self.mNetworkListStore.append(l)
-
-        
+        frame = gtk.Frame(_("Created template"))
+        vboxFrame.pack_start(frame, False, False, 5)
         vbox = gtk.VBox()
-        self.mParentWindow=parent
-        self.mElement = vbox
-        notebook = gtk.Notebook()
-        notebook.set_tab_pos(gtk.POS_TOP)
-        vbox.pack_start(notebook)
-        header = (_("PID"),_("Process"),_("Domain"))
-        tab1 = self.initTreeView(self.mWorkingListStore,header)
-        label = gtk.Label(_("Working process"))
-        notebook.append_page(tab1, label)
-        label = gtk.Label(_("Network process"))
-        header = (_("Port"),_("Process"),_("Domain"))
-        tab2  = self.initTreeView(self.mNetworkListStore,header)
-        notebook.append_page(tab2, label)
-
-        button = gtk.Button(_("Refresh"))
-        button.connect("clicked", self.refreshButtonCallBack)
+        frame.add(vbox)
         hbox = gtk.HBox()
-        hbox.pack_start(button,False,False)
-        vbox.pack_start(hbox,False,False)
+        label = gtk.Label(_("Will be saved to:"))
+        hbox.pack_start(label,False,False,5)
+        label = gtk.Label(_(""))
+        self.mToBeSavedFileLabel= label
+        self.mToBeSavedFile=None
+        
+        hbox.pack_start(label,False,False,5)
+        vbox.pack_start(hbox,False,False,0)
+        
+        sw = gtk.ScrolledWindow()
+        sw.set_size_request(300,200)
+        sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        textview = gtk.TextView()
+        textbuffer = textview.get_buffer()
+        self.mTextBuffer= textbuffer
+        sw.add(textview)
+        vbox.pack_start(sw, True, True, 5)
+        
+        hbox = gtk.HBox()
+        button = gtk.Button(_("Save and Apply"))
+        hbox.pack_start(button, False, False, 5)
+        button.connect("clicked", self.saveButtonCallBack)
+        vbox.pack_start(hbox, False, False, 5)
+        
 
-      
 
 class seeditDomainManageWindow(seeditCommon):
         
@@ -226,6 +204,7 @@ class seeditDomainManageWindow(seeditCommon):
         window = gtk.Window()
         self.mWindow = window
         window.set_title(_("seedit Domain/Role Manager"))
+
         
         window.connect('destroy', lambda w: gtk.main_quit())
 
@@ -238,13 +217,13 @@ class seeditDomainManageWindow(seeditCommon):
         notebook = gtk.Notebook()
         notebook.set_tab_pos(gtk.POS_TOP)
         vbox.pack_start(notebook)
-
-        tab1 = seStatusTab(self.mWindow)
-        label = gtk.Label(_("SELinux"))
+       
+        tab1 = createDomainTab(self.mWindow)
+        label = gtk.Label(_("Create Domain"))
         notebook.append_page(tab1.mElement, label)
-        label = gtk.Label(_("Process"))
-        tab2 = processStatusTab(self.mWindow)
-        notebook.append_page(tab2.mElement, label)
+        label = gtk.Label(_("Create Role"))
+#        tab2 = processStatusTab(self.mWindow)
+#        notebook.append_page(tab2.mElement, label)
         label = gtk.Label("")
         vbox.pack_end(label)
         window.show_all()

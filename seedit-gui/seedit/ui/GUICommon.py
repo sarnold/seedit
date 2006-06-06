@@ -3,6 +3,7 @@
 import pygtk
 pygtk.require('2.0')
 import gtk
+import os
 import sys
 import gettext
 
@@ -59,6 +60,16 @@ class seeditCommon:
         dialog.run()
         dialog.destroy()
 
+    def showYesNoDialog(self,message):
+        dialogType = gtk.MESSAGE_INFO
+        dialog = gtk.MessageDialog(None,
+                                   gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+                                   dialogType, gtk.BUTTONS_YES_NO,
+                                   message)
+        response = dialog.run()
+        dialog.destroy()
+        return response
+
     def showMessageDialog(self, type, message):
         
         #if type==SEEDIT_ERROR:
@@ -85,3 +96,13 @@ class seeditCommon:
         message += _("This software is distributed under GPL.\n")
         message += _("For more information, visit http://seedit.sourceforge.net/\n")
         self.showMessageDialog(gtk.MESSAGE_INFO,message)
+
+    def checkOverWrite(self, filename):
+
+        if os.path.exists(filename):
+            response = self.showYesNoDialog(_("File %s already exists. \n Overwrite?")%(filename))
+            if response == gtk.RESPONSE_YES:
+                return True
+            elif response == gtk.RESPONSE_NO:
+                return False
+        return True

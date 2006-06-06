@@ -14,6 +14,7 @@ SEEDIT_ERROR= -1
 SEEDIT_SUCCESS= 1
 
 gSELinuxConfigFile ="/etc/selinux/config"
+gSPPath="/etc/seedit/policy/"
 
 def getMode():
     try:
@@ -144,4 +145,33 @@ def seeditInstalled():
     return False
 
 
+'''
+Error : return None
+'''
+def createDomainTemplate(program, domain , parentDomain, daemonFlag, authFlag):
+    result=""
+    result = "{\n"
 
+    if not re.search("\w_t$", domain):
+        return None
+
+    result = result + "domain "+domain +";\n"
+    
+    if program:
+        result = result +"program "+program+";\n"
+
+    if re.search("\w_t$",parentDomain):
+        result = result +"domain_trans "+parentDomain+" "+program+";\n"
+
+    result = result + "include common-relaxed.sp;\n"
+
+    if daemonFlag:
+        result = result + "include daemon.sp;\n"
+        result = result + "include nameservice.sp;\n"
+    if authFlag:
+        result = result + "include authentication.sp;\n"
+
+    result = result + "\n#Write access control here....\n\n"
+
+    result = result + "}\n"
+    return result

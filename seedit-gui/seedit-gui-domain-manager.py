@@ -217,7 +217,7 @@ class processStatusTab(seeditCommon):
 
       
 
-class seeditStatusWindow(seeditCommon):
+class seeditDomainManageWindow(seeditCommon):
         
     def __init__(self):
         
@@ -225,7 +225,7 @@ class seeditStatusWindow(seeditCommon):
         # Create the toplevel window
         window = gtk.Window()
         self.mWindow = window
-        window.set_title(_("seedit Status"))
+        window.set_title(_("seedit Domain/Role Manager"))
         
         window.connect('destroy', lambda w: gtk.main_quit())
 
@@ -260,8 +260,7 @@ class seeditStatusWindow(seeditCommon):
 
 if __name__ == '__main__':
     gettext.install("seedit-gui","/usr/share/locale")
-    gUnconfinedDomains=[] #List of unconfined domains
-    gUnconfinedDomains = getUnconfinedDomains("/etc/selinux/seedit/policy/unconfined_domains")
-    seeditStatusWindow()
+  
+    seeditDomainManageWindow()
 
     gtk.main()

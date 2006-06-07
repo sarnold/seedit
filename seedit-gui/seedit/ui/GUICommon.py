@@ -168,7 +168,7 @@ class loadPolicyDialog(gtk.Dialog):
         gtk.Dialog.__init__(self,_("load policy"),parent.mWindow, gtk.DIALOG_MODAL,(gtk.STOCK_OK, gtk.RESPONSE_CANCEL))
         self.set_response_sensitive(gtk.RESPONSE_CANCEL,False)
         
-#        self.set_decorated(False)
+        self.set_decorated(False)
         
         label= gtk.Label(_("Loading Policy... It may take time. Do not close window!"))
         self.mLabel = label

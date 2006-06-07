@@ -6,6 +6,9 @@ import gtk
 import os
 import sys
 import gettext
+import time
+sys.path.insert(0,"/usr/lib")
+from UILogic import *
 
 
 class seeditCommon:
@@ -106,3 +109,63 @@ class seeditCommon:
             elif response == gtk.RESPONSE_NO:
                 return False
         return True
+
+  
+
+'''
+Dialog that shows progress of seedit-load
+'''
+class loadPolicyDialog(gtk.Dialog):
+
+    def close(self):
+        self.destroy()
+    def doCommand(self,command):
+        input=os.popen(command, "r")
+        line = input.readline()
+        while line:
+            sys.stdout.write(line)
+            sys.stdout.flush()
+            input.flush()
+            self.mTextBuffer.insert(self.mTextBuffer.get_end_iter(),line)
+            line = input.readline()
+        
+        if input.close():
+            return SEEDIT_ERROR_SEEDIT_LOAD
+    
+        return SEEDIT_SUCCESS
+    
+    def loadPolicy(self):
+        command = gSeedit_load+" -v"
+        status = self.doCommand(command)
+#        self.destroy()
+        return status
+
+
+    def __init__(self,parent):
+        gtk.Dialog.__init__(self,_("load policy"),parent, gtk.DIALOG_MODAL)
+
+        label= gtk.Label(_("Loading Policy... It may take time"))
+        self.vbox.pack_start(label, False, False,0)
+        expander = gtk.Expander(_("Detail"))
+        self.vbox.pack_start(expander,False,False,0)
+        sw = gtk.ScrolledWindow()
+        sw.set_size_request(300,200)
+        sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        textview = gtk.TextView()
+        textbuffer = textview.get_buffer()
+        self.mTextBuffer= textbuffer
+        sw.add(textview)
+        expander.add(sw)
+        
+        self.show_all()
+        ####Thread here!
+        pid = os.fork()
+        if pid ==0:
+            self.loadPolicy()
+            self.response(1)
+            self.destroy()
+            sys.exit(0)
+        self.run()
+
+
+        

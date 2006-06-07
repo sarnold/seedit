@@ -79,7 +79,28 @@ class createDomainTab(seeditCommon):
             return
 
 
+        r = saveStringToFile(data,filename)
+        if r<0:
+            self.showMessageDialog(gtk.MESSAGE_INFO, _("File write error. Save cancelled.\n"))
+            return
+
+        ld = loadPolicyDialog(self.mParentWindow)
+        r = 0
+
+        r = loadPolicy()
+
+        if r < 0:
+            self.showMessageDialog(gtk.MESSAGE_INFO, _("Syntax error is found. Save cancelled.\n"))
+            os.unlink(filename)
+            ld.loadPolicy()
+            return
+        return
+
+
+        
         s = createDomain(data,filename)
+
+        
         if s == SEEDIT_ERROR_SEEDIT_LOAD:
             self.showMessageDialog(gtk.MESSAGE_INFO, _("Syntax error is found. Save cancelled.\n"))
             return

@@ -87,12 +87,15 @@ class createDomainTab(seeditCommon):
         (s, data) = ld.do()
 
         if s<0:
-            self.showMessageDialog(gtk.MESSAGE_INFO, _("Syntax error is found. Save cancelled.\n"))
             os.unlink(filename)
             ld=loadPolicyDialog(self.mParentWindow)
             ld.do()
+            self.showMessageDialog(gtk.MESSAGE_INFO, _("Syntax error was found.\n"))
+
+
             return
         else:
+
             self.showMessageDialog(gtk.MESSAGE_INFO, _("Domain created successfully.\n"))
                
         return 
@@ -234,13 +237,14 @@ class seeditDomainManageWindow(seeditCommon):
         notebook.set_tab_pos(gtk.POS_TOP)
         vbox.pack_start(notebook)
        
-        tab1 = createDomainTab(self.mWindow)
+        tab1 = createDomainTab(self)
         label = gtk.Label(_("Create Domain"))
         notebook.append_page(tab1.mElement, label)
         label = gtk.Label(_("Create Role"))
 #        tab2 = processStatusTab(self.mWindow)
 #        notebook.append_page(tab2.mElement, label)
         label = gtk.Label("")
+        self.mStatusLabel = label
         vbox.pack_end(label)
         window.show_all()
         

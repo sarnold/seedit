@@ -119,7 +119,9 @@ class loadPolicyThread(threading.Thread):
 
     def run(self):
         command = gSeedit_load+" -e"
+
         input=os.popen(command, "r")
+
         line = input.readline()
         while line:
             self.mDialog.mTextBuffer.insert(self.mDialog.mTextBuffer.get_end_iter(),line)
@@ -129,17 +131,23 @@ class loadPolicyThread(threading.Thread):
         if input.close():
             self.mDialog.set_response_sensitive(gtk.RESPONSE_CANCEL,True)
             self.mDialog.mLabel.set_text(_("Error:Syntax Error"))
+
             return SEEDIT_ERROR_SEEDIT_LOAD
         self.mDialog.mLabel.set_text(_("Success!!"))
+#        self.mDialog.mParentWindow.mStatusLabel.set_text(_("Domain created"))
+
+        
         self.mDialog.response(gtk.RESPONSE_OK)
         self.mDialog.destroy()
+
         return SEEDIT_SUCCESS
             
 '''
 Dialog that shows progress of seedit-load
 '''
 class loadPolicyDialog(gtk.Dialog):
-
+    def dummyCallback(self,data =None):
+        pass
     def showCallback(self, data=None):
         thread = loadPolicyThread(self)
         thread.start()
@@ -156,11 +164,18 @@ class loadPolicyDialog(gtk.Dialog):
             return (SEEDIT_ERROR_SEEDIT_LOAD, "")
 
     def __init__(self,parent):
-        gtk.Dialog.__init__(self,_("load policy"),parent, gtk.DIALOG_MODAL,(gtk.STOCK_OK, gtk.RESPONSE_CANCEL))
+        self.mParentWindow=parent
+        gtk.Dialog.__init__(self,_("load policy"),parent.mWindow, gtk.DIALOG_MODAL,(gtk.STOCK_OK, gtk.RESPONSE_CANCEL))
         self.set_response_sensitive(gtk.RESPONSE_CANCEL,False)
-        label= gtk.Label(_("Loading Policy... It may take time"))
+        
+#        self.set_decorated(False)
+        
+        label= gtk.Label(_("Loading Policy... It may take time. Do not close window!"))
         self.mLabel = label
         self.vbox.pack_start(label, False, False,0)
+
+        expander = gtk.Expander(_("Detail"))
+        self.vbox.pack_start(expander,False,False,0)
         sw = gtk.ScrolledWindow()
         sw.set_size_request(300,200)
         sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
@@ -168,8 +183,7 @@ class loadPolicyDialog(gtk.Dialog):
         textbuffer = textview.get_buffer()
         self.mTextBuffer= textbuffer
         sw.add(textview)
-        self.vbox.pack_start(sw,False,False,0)
-
+        expander.add(sw)
         self.connect("show", self.showCallback)
         self.show_all()
    

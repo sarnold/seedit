@@ -14,6 +14,7 @@ def printUsage():
     sys.stderr.write(_("\t-t\tTest of seedit-converter\n"))
     sys.stderr.write(_("\t-i\tInitialize all file labels. This takes time.\n"))
     sys.stderr.write(_("\t-v\tVerbose output\n"))
+    sys.stderr.write(_("\t-e\tVerbose output, to stderr\n"))
     sys.stderr.write(_("\t l,i,t option conflicts each other.\n"))
     sys.exit(1)
 
@@ -25,6 +26,8 @@ def doCommand(command):
         line = string.replace(line,"\n","")
         if gVerboseFlag:
             print line
+        if gVerboseStderrFlag:
+            sys.stderr.write(line)
         line = input.readline()
         error.append(line)
     if input.close():
@@ -55,11 +58,12 @@ def doTest():
 if __name__ == '__main__':
     gettext.install("seedit-load","/usr/share/locale")
 
+gVerboseStderrFlag=False
 gVerboseFlag = False
 gBehavior = "" #load,test,init
 
 try:
-    opts, args = getopt.getopt(sys.argv[1:], "tvi", ["test","verbose","init"])
+    opts, args = getopt.getopt(sys.argv[1:], "tvei", ["test","verbose","init"])
 except getopt.GetoptError:
     printUsage()
 
@@ -71,6 +75,8 @@ for opt,arg in opts:
         gBehavior="test"
     elif opt in ("-v","--verbose"):
         gVerboseFlag=True
+    elif opt in ("-e"):
+        gVerboseStderrFlag=True
     elif opt in ("-i","--init"):
         if(gBehavior!=""):
             printUsage()

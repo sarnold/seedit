@@ -1,10 +1,10 @@
-#!/usr/bin/python
+#!/usr/bin/python -u
 #All Rights Reserved (C) 2006, Yuichi Nakmura himainu-ynakam@miomio.jp
-
 
 import pygtk
 pygtk.require('2.0')
 import gtk
+import gtk.gdk
 import gobject
 import sys
 import gettext
@@ -78,39 +78,25 @@ class createDomainTab(seeditCommon):
             self.showMessageDialog(gtk.MESSAGE_INFO, _("Save cancelled.\n"))
             return
 
-
         r = saveStringToFile(data,filename)
         if r<0:
             self.showMessageDialog(gtk.MESSAGE_INFO, _("File write error. Save cancelled.\n"))
             return
 
-        ld = loadPolicyDialog(self.mParentWindow)
-        r = 0
+        ld=loadPolicyDialog(self.mParentWindow)
+        (s, data) = ld.do()
 
-        r = loadPolicy()
-
-        if r < 0:
+        if s<0:
             self.showMessageDialog(gtk.MESSAGE_INFO, _("Syntax error is found. Save cancelled.\n"))
             os.unlink(filename)
-            ld.loadPolicy()
+            ld=loadPolicyDialog(self.mParentWindow)
+            ld.do()
             return
-        return
-
-
-        
-        s = createDomain(data,filename)
-
-        
-        if s == SEEDIT_ERROR_SEEDIT_LOAD:
-            self.showMessageDialog(gtk.MESSAGE_INFO, _("Syntax error is found. Save cancelled.\n"))
-            return
-        elif s == SEEDIT_ERROR_FILE_WRITE:
-            self.showMessageDialog(gtk.MESSAGE_INFO, _("File write error. Save cancelled.\n"))
-            return
-        elif s == SEEDIT_SUCCESS:
-            self.showMessageDialog(gtk.MESSAGE_INFO, _("Success.\n"))
-            return
-        
+        else:
+            self.showMessageDialog(gtk.MESSAGE_INFO, _("Domain created successfully.\n"))
+               
+        return 
+               
     def yesNoSelection(self, message, default, callback):
         hbox = gtk.HBox()
         label = gtk.Label(message)
@@ -271,5 +257,8 @@ if __name__ == '__main__':
     gettext.install("seedit-gui","/usr/share/locale")
   
     seeditDomainManageWindow()
+    gtk.gdk.threads_init()
 
     gtk.main()
+
+

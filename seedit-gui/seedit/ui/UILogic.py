@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python -u
 import os
 import sys
 import string
@@ -200,10 +200,15 @@ def saveStringToFile(str, file):
 #do seedit-load
 def loadPolicy():
     command = gSeedit_load+" -v"
-    input=os.popen(command, "r")
-    lines = input.readlines()
-    for line in lines:
-        print line
+    input=os.popen(command+ ' 2>&1', "r",0)
+    while 1:
+       line = input.readline()
+       if not line:
+           break
+       else:
+           sys.stdout.write(line)
+           sys.stdout.flush()
+       
     if input.close():
         return SEEDIT_ERROR_SEEDIT_LOAD
     

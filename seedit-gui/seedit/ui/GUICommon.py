@@ -6,7 +6,7 @@ import gtk
 import os
 import sys
 import gettext
-import time
+import threading
 sys.path.insert(0,"/usr/lib")
 from UILogic import *
 
@@ -112,42 +112,55 @@ class seeditCommon:
 
   
 
+class loadPolicyThread(threading.Thread):
+    def __init__(self,dialog):
+        threading.Thread.__init__(self)
+        self.mDialog = dialog
+
+    def run(self):
+        command = gSeedit_load+" -e"
+        input=os.popen(command, "r")
+        line = input.readline()
+        while line:
+            self.mDialog.mTextBuffer.insert(self.mDialog.mTextBuffer.get_end_iter(),line)
+            line = input.readline()
+            sys.stdout.write(line)
+        
+        if input.close():
+            self.mDialog.set_response_sensitive(gtk.RESPONSE_CANCEL,True)
+            self.mDialog.mLabel.set_text(_("Error:Syntax Error"))
+            return SEEDIT_ERROR_SEEDIT_LOAD
+        self.mDialog.mLabel.set_text(_("Success!!"))
+        self.mDialog.response(gtk.RESPONSE_OK)
+        self.mDialog.destroy()
+        return SEEDIT_SUCCESS
+            
 '''
 Dialog that shows progress of seedit-load
 '''
 class loadPolicyDialog(gtk.Dialog):
 
-    def close(self):
-        self.destroy()
-    def doCommand(self,command):
-        input=os.popen(command, "r")
-        line = input.readline()
-        while line:
-            sys.stdout.write(line)
-            sys.stdout.flush()
-            input.flush()
-            self.mTextBuffer.insert(self.mTextBuffer.get_end_iter(),line)
-            line = input.readline()
-        
-        if input.close():
-            return SEEDIT_ERROR_SEEDIT_LOAD
-    
-        return SEEDIT_SUCCESS
-    
-    def loadPolicy(self):
-        command = gSeedit_load+" -v"
-        status = self.doCommand(command)
-#        self.destroy()
-        return status
+    def showCallback(self, data=None):
+        thread = loadPolicyThread(self)
+        thread.start()
 
+    '''
+    returns error code and data(such as error description)
+    '''
+    def do(self):
+        r = self.run()
+        self.destroy()
+        if r==gtk.RESPONSE_OK:
+            return (SEEDIT_SUCCESS,None)
+        else:
+            return (SEEDIT_ERROR_SEEDIT_LOAD, "")
 
     def __init__(self,parent):
-        gtk.Dialog.__init__(self,_("load policy"),parent, gtk.DIALOG_MODAL)
-
+        gtk.Dialog.__init__(self,_("load policy"),parent, gtk.DIALOG_MODAL,(gtk.STOCK_OK, gtk.RESPONSE_CANCEL))
+        self.set_response_sensitive(gtk.RESPONSE_CANCEL,False)
         label= gtk.Label(_("Loading Policy... It may take time"))
+        self.mLabel = label
         self.vbox.pack_start(label, False, False,0)
-        expander = gtk.Expander(_("Detail"))
-        self.vbox.pack_start(expander,False,False,0)
         sw = gtk.ScrolledWindow()
         sw.set_size_request(300,200)
         sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
@@ -155,17 +168,10 @@ class loadPolicyDialog(gtk.Dialog):
         textbuffer = textview.get_buffer()
         self.mTextBuffer= textbuffer
         sw.add(textview)
-        expander.add(sw)
-        
+        self.vbox.pack_start(sw,False,False,0)
+
+        self.connect("show", self.showCallback)
         self.show_all()
-        ####Thread here!
-        pid = os.fork()
-        if pid ==0:
-            self.loadPolicy()
-            self.response(1)
-            self.destroy()
-            sys.exit(0)
-        self.run()
-
-
+   
         
+     

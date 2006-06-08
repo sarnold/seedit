@@ -19,11 +19,51 @@ class deleteDomainTab(seeditCommon):
     
     def radioCallBack(self, widget, data):
         if widget.get_active() == 1:
-            self.mTemporalFlag= True
+            self.mTemporalFlag= data
+
+    def updateComboBoxes(self):
+        combo = self.mDomainListComboBox 
+        model = combo.get_model()
+        model.clear()
+        domainList = getDeletableDomainList()
+        for domain in domainList:
+            combo.append_text(domain)       
+
+        combo = self.mDisabledDomainListComboBox
+        model = combo.get_model()
+        model.clear()
+        domainList = getDisableTransDomain()
+        for domain in domainList:
+            combo.append_text(domain)
+        
     def deleteButtonCallBack(self, widget, data=None):
-        pass
+        domain = self.mDomainListComboBox.get_active_text()
+
+        if self.mTemporalFlag == False:
+            message =_("%s will be deleted permanently! Really delete?") % (domain)
+            response = self.showYesNoDialog(message)
+            if response == gtk.RESPONSE_NO:
+                self.showMessageDialog(gtk.MESSAGE_INFO, _("Operation cancelled.\n"))
+                return
+        
+        r = deleteDomain(domain, self.mTemporalFlag)        
+        if r == SEEDIT_SUCCESS:
+            self.showMessageDialog(gtk.MESSAGE_INFO, _("Success.\n"))
+            self.updateComboBoxes()
+            if self.mTemporalFlag == False:
+                ld=loadPolicyDialog(self.mParentWindow)
+                (s, data) = ld.do()
+    
+    
     def enableButtonCallBack(self, widget, data=None):
-        pass
+        domain = self.mDisabledDomainListComboBox.get_active_text()
+        r = setDisableTransBoolean(domain, "off")
+        if r == SEEDIT_SUCCESS:
+            self.showMessageDialog(gtk.MESSAGE_INFO, _("Success.\n"))
+            self.updateComboBoxes()
+        else:
+            self.showMessageDialog(gtk.MESSAGE_INFO, _("Error.\n"))
+
 
     def domainListComboCallBack(self,widget,data=None):
         domain = widget.get_active_text()
@@ -100,6 +140,12 @@ class deleteDomainTab(seeditCommon):
         hbox = gtk.HBox()
         label = gtk.Label(_("Select:"))
         hbox.pack_start(label, False, False,5)
+        combo = gtk.combo_box_new_text()
+        self.mDisabledDomainListComboBox = combo
+        domainList = getDisableTransDomain()
+        for domain in domainList:
+            combo.append_text(domain)
+        hbox.pack_start(combo, False, False,5)
         vbox.pack_start(hbox, False, False,5)
         
         hbox = gtk.HBox()
@@ -182,8 +228,6 @@ class createDomainTab(seeditCommon):
 
         if s<0:
             os.unlink(filename)
-            ld=loadPolicyDialog(self.mParentWindow)
-            ld.do()
             self.showMessageDialog(gtk.MESSAGE_INFO, _("Syntax error was found.\n"))
 
 
@@ -335,7 +379,7 @@ class seeditDomainManageWindow(seeditCommon):
         label = gtk.Label(_("Create Domain"))
         notebook.append_page(tab1.mElement, label)
         label = gtk.Label(_("Delete Domain"))
-        tab2 = deleteDomainTab(self.mWindow)
+        tab2 = deleteDomainTab(self)
         notebook.append_page(tab2.mElement, label)
         label = gtk.Label("")
         self.mStatusLabel = label

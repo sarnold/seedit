@@ -3,6 +3,7 @@ import os
 import sys
 import string
 import re
+import selinux
  
 from xml.dom.minidom import parse, parseString
 
@@ -19,6 +20,9 @@ SEEDIT_ERROR_SEEDIT_LOAD=-3
 gSELinuxConfigFile ="/etc/selinux/config"
 gSPPath="/etc/seedit/policy/"
 gSeedit_load= "/usr/sbin/seedit-load"
+gSetsebool="/usr/sbin/setsebool"
+gGetsebool="/usr/sbin/getsebool"
+
 
 gCoreDomainList=["crond_t", "rpm_t", "gdm_t", "initrc_t", "init_t", "login_t", "unconfined_t", "rpm_script_t",  "system_crond_t", "kernel_t", "unconfined_su_t"]
 
@@ -253,11 +257,13 @@ def getDomainList():
 
 def getDeletableDomainList():
     list =getDomainList()
+    disabled=getDisableTransDomain()
     result =[]
 
     for l in list:
         if l not in gCoreDomainList:
-            result.append(l)
+            if l not in disabled:
+                result.append(l)
 
     result.sort()
     return result
@@ -302,3 +308,60 @@ def getDomainProperty(domain):
             continue        
     
     return (programList, confinedFlag)
+
+def setDisableTransBoolean(domain,value):
+    prefix = re.sub("_t$", "" , domain)
+    bool = prefix + "_disable_trans"
+    if value=="on":
+        value = "1"
+    elif value=="off":
+        value ="0"
+    
+    command = gSetsebool +" -P "+bool +" "+value
+    
+    input=os.popen(command, "r")
+    line = input.readlines()
+    if input.close():
+        return SEEDIT_ERROR
+
+    return SEEDIT_SUCCESS
+
+def deleteDomain(domain, temporalFlag):
+
+    if temporalFlag:
+        return setDisableTransBoolean(domain,"on")
+
+    filename = gSPPath + domain +".sp"
+    try:
+        os.unlink(filename)
+    except:
+        return SEEDIT_ERROR
+    return SEEDIT_SUCCESS
+    
+'''
+
+Return list of domains whose _disable_trans is on
+Error:None
+
+'''
+def getDisableTransDomain():
+    result = []
+    command = gGetsebool +" -a"
+    input=os.popen(command, "r")
+    lines = input.readlines()
+    if input.close():
+        return None
+
+    for line in lines:
+        m = re.search("_disable_trans", line)
+        if m:
+            m = re.search("-->\s*on",line)
+            if m:
+                l = line.split()
+                bool = l[0]
+                prefix = re.sub("_disable_trans$","",bool)
+                domain = prefix+"_t"
+                result.append(domain)
+    return result
+
+

@@ -18,6 +18,28 @@ def errorExit(msg):
     sys.exit(1)
     return
 
+'''
+loadPolicyFlag is for -l option
+'''
+def readLog(input, loadPolicyFlag):
+    lines=input.readlines()
+    lineBuf=[]
+    if loadPolicyFlag:
+        reg = re.compile("avc:.*granted.*{.*load_policy.*}")
+        reg2= re.compile("type=DAEMON_START.*auditd.*start")
+    
+        for line in lines:
+            lineBuf.append(line)
+            m = reg.search(line)
+            m2 = reg2.search(line)
+            if m or m2:
+                del lineBuf
+                lineBuf=[]
+            
+        del lines
+        lines=lineBuf
+
+    return lines
 
 def readSPDLSpec(filename):
     """

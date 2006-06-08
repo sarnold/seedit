@@ -35,7 +35,10 @@ class deleteDomainTab(seeditCommon):
         domainList = getDisableTransDomain()
         for domain in domainList:
             combo.append_text(domain)
-        
+
+        self.mPropertyLabel.set_text("")
+        self.mPropertyLabel2.set_text("")
+
     def deleteButtonCallBack(self, widget, data=None):
         domain = self.mDomainListComboBox.get_active_text()
 
@@ -81,6 +84,25 @@ class deleteDomainTab(seeditCommon):
         for p in pList:
             str = str + p +" "
         self.mPropertyLabel.set_text(str)
+
+    def disabledDomainListComboCallBack(self,widget,data=None):
+        domain = widget.get_active_text()
+        pList = []
+
+        if domain == "":
+            return 
+        (pList, confinedFlag) = getDomainProperty(domain)
+
+        str =""
+        if confinedFlag == False:
+            str = _("Unconfined Domain\n")
+        str = str + _("Related Programs:")
+        
+        for p in pList:
+            str = str + p +" "
+        self.mPropertyLabel2.set_text(str)
+
+
         
     def __init__(self,parent):
         
@@ -142,12 +164,17 @@ class deleteDomainTab(seeditCommon):
         hbox.pack_start(label, False, False,5)
         combo = gtk.combo_box_new_text()
         self.mDisabledDomainListComboBox = combo
+        combo.connect('changed', self.disabledDomainListComboCallBack)
         domainList = getDisableTransDomain()
         for domain in domainList:
             combo.append_text(domain)
         hbox.pack_start(combo, False, False,5)
         vbox.pack_start(hbox, False, False,5)
-        
+        expander = gtk.Expander(_("Property"))
+        vbox.pack_start(expander, False, False, 0)
+        label = gtk.Label("") #Whether unconfined domain, confined programs
+        self.mPropertyLabel2 = label
+        expander.add(label)
         hbox = gtk.HBox()
         button = gtk.Button(_("Apply"))
         button.connect("clicked", self.enableButtonCallBack)

@@ -6,6 +6,7 @@ import gtk
 import os
 import sys
 import gettext
+import gobject
 import threading
 sys.path.insert(0,"/usr/lib")
 from UILogic import *
@@ -113,28 +114,37 @@ class seeditCommon:
   
 
 class loadPolicyThread(threading.Thread):
+
+    def updateTextBuffer(self, line):
+        self.mDialog.mTextBuffer.insert(self.mDialog.mTextBuffer.get_end_iter(),line)
+
+    
     def __init__(self,dialog):
         threading.Thread.__init__(self)
         self.mDialog = dialog
 
     def run(self):
-        command = gSeedit_load+" -e"
+        command = gSeedit_load+" -v"
 
         input=os.popen(command, "r")
 
         line = input.readline()
         while line:
-            self.mDialog.mTextBuffer.insert(self.mDialog.mTextBuffer.get_end_iter(),line)
+            gobject.idle_add(self.updateTextBuffer,line)
+
+#            self.mDialog.mTextBuffer.insert(self.mDialog.mTextBuffer.get_end_iter(),line)
             line = input.readline()
             sys.stdout.write(line)
         
         if input.close():
             self.mDialog.set_response_sensitive(gtk.RESPONSE_CANCEL,True)
-            self.mDialog.mLabel.set_text(_("Error:Syntax Error"))
-
+            gobject.idle_add(self.mDialog.mLabel.set_text, _("Error:Syntax Error"))
+            #          self.mDialog.mLabel.set_text(_("Error:Syntax Error"))
+            self.mDialog.response(gtk.RESPONSE_CANCEL)
             return SEEDIT_ERROR_SEEDIT_LOAD
-        self.mDialog.mLabel.set_text(_("Success!!"))
-#        self.mDialog.mParentWindow.mStatusLabel.set_text(_("Domain created"))
+
+        gobject.idle_add(self.mDialog.mLabel.set_text, _("Success!"))
+#        self.mDialog.mLabel.set_text(_("Success!!"))
 
         
         self.mDialog.response(gtk.RESPONSE_OK)

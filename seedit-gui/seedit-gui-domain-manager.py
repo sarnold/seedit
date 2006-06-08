@@ -51,7 +51,7 @@ class deleteDomainTab(seeditCommon):
         
         r = deleteDomain(domain, self.mTemporalFlag)        
         if r == SEEDIT_SUCCESS:
-            self.showMessageDialog(gtk.MESSAGE_INFO, _("Success.\n"))
+            self.showMessageDialog(gtk.MESSAGE_INFO, _("Domain removed,next load policy.\n"))
             self.updateComboBoxes()
             if self.mTemporalFlag == False:
                 ld=loadPolicyDialog(self.mParentWindow)

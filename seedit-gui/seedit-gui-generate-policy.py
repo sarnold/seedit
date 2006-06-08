@@ -19,76 +19,61 @@ from  seedit.audit2spdl import *
 This thread generate policy and store to mResult 
 '''
 class generatePolicyThread(threading.Thread):
+	def updateLabel(self, data):
+		(i,size)=data
+		self.mDialog.mProgressLabel.set_text(_("Progress:%d/%d") % (i,size))	
+
+	
 	def __init__(self,dialog):
 		threading.Thread.__init__(self)
 		self.mDialog = dialog
 	def run(self):
+		self.mDialog.mGenerateButton.set_sensitive(False)
+
 		domdoc=readSPDLSpec(gSpecXML)
-		print "hoge"
 		result =[]
-		self.mDialog.mProgressLabel.set_text("Progress:")
 		input = open("test.log", 'r')
 		lines = readLog(input, True)
 
 		size = len(lines)
 		i=0
 		for line in lines:
-		#	self.mDialog.mProgressLabel.set_text(_("Progress:%d/%d") % (i,size))
-			
+			data = (i,size)
+			gobject.idle_add(self.updateLabel, data)
 			print i
 			rule = parseLine(line)
 			if(rule):
 				spRuleList=genSPDL(rule,line,domdoc)
 				
 				list=SPDLstr(spRuleList,line)
-				print list
+				result.append(list)
 			i = i+1				     
-
-
-
-		self.mDialog.mResult=result
-		self.mDialog.mProgressLabel.set_text(_("Progress:%d/%d") % (size,size))
-		self.mDialog.mProgressLabel.show()
-
-
-		
-class generateDialog(gtk.Dialog):
-	def showCallback(self, data=None):
-		thread = generatePolicyThread(self)
-		thread.start()
-	
-	
-	def generate(self):
-		pass
-		r = self.run()
-		self.destroy()
-		self.mParent.present()
-		self.mParent.raise_()
-		self.mParent.show_all()
-		self.mParent.map()
-		
-	
-	def __init__(self,parent):
-		self.mResult = [] #To store generated policy
-		self.mParent = parent
-		gtk.Dialog.__init__(self,_("load policy"),parent, gtk.DIALOG_MODAL,(gtk.STOCK_OK, gtk.RESPONSE_CANCEL))
-		label= gtk.Label(_("Generating Policy... It may take time."))
-		self.vbox.pack_start(label, False, False,0)
-		self.mProgressLabel = label
-
-		self.connect("show", self.showCallback) #on show, generation thread run
-		self.show_all()
+		data = (i,size)
+		gobject.idle_add(self.updateLabel, data)
+		self.mDialog.mWindow.emit("done",result)
+		self.mDialog.mGenerateButton.set_sensitive(True)
 
 
 class seeditGeneratePolicyWindow(seeditCommon):
 	def generateCallBack(self,widget, data=None):
-		g = generateDialog(self.mWindow)
-		g.generate()
-		print g.mResult
-	
+
+		thread = generatePolicyThread(self)
+		thread.start()
+
+	'''
+	When policy generation is done, it is called
+	'''
+        def doneCallBack(self,widget,data=None):
+		print data
+
         def __init__(self):
+		gobject.signal_new("done", gtk.Window,
+				   gobject.SIGNAL_RUN_LAST,
+				   gobject.TYPE_NONE,
+				   (gobject.TYPE_PYOBJECT,))
 		window = gtk.Window()
 		self.mWindow = window
+		self.mResult = []
 		window.set_title(_("Policy generater"))
 		window.connect('destroy', lambda w: gtk.main_quit())
 		vbox = gtk.VBox()
@@ -96,6 +81,11 @@ class seeditGeneratePolicyWindow(seeditCommon):
 		button = gtk.Button(_("Generate"))
 		vbox.pack_start(button, False, False, 5)
 		button.connect("clicked", self.generateCallBack)
+		self.mGenerateButton=button
+		label = gtk.Label("")
+		vbox.pack_start(label, False, False, 5)
+		self.mProgressLabel =label
+		window.connect("done", self.doneCallBack)
 		window.show_all()
 		return 
 
@@ -105,5 +95,6 @@ if __name__ == '__main__':
     gettext.install("seedit-gui","/usr/share/locale")
     seeditGeneratePolicyWindow()
     gtk.gdk.threads_init()
-
+    gtk.gdk.threads_enter()
     gtk.main()
+    gtk.gdk.threads_leave()

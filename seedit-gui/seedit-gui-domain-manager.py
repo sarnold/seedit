@@ -20,10 +20,28 @@ class deleteDomainTab(seeditCommon):
     def radioCallBack(self, widget, data):
         if widget.get_active() == 1:
             self.mTemporalFlag= True
-    def deleteButtonCallBack(self, widget, data):
+    def deleteButtonCallBack(self, widget, data=None):
         pass
-    def enableButtonCallBack(self, widget, data):
+    def enableButtonCallBack(self, widget, data=None):
         pass
+
+    def domainListComboCallBack(self,widget,data=None):
+        domain = widget.get_active_text()
+        pList = []
+
+        if domain == "":
+            return 
+        (pList, confinedFlag) = getDomainProperty(domain)
+
+        str =""
+        if confinedFlag == False:
+            str = _("Unconfined Domain\n")
+        str = str + _("Related Programs:")
+        
+        for p in pList:
+            str = str + p +" "
+        self.mPropertyLabel.set_text(str)
+        
     def __init__(self,parent):
         
         vboxFrame = gtk.VBox()
@@ -31,7 +49,7 @@ class deleteDomainTab(seeditCommon):
         self.mParentWindow=parent
         self.mElement = vboxFrame
 
-        ###
+        ###Delete Domain Frame
         frame = gtk.Frame(_("Delete Domain"))
         vboxFrame.pack_start(frame, False, False,5)
         vbox = gtk.VBox()
@@ -40,8 +58,21 @@ class deleteDomainTab(seeditCommon):
         hbox = gtk.HBox()
         label = gtk.Label(_("Select:"))
         hbox.pack_start(label, False, False,5)
-        vbox.pack_start(hbox, False, False,5)
+        combo = gtk.combo_box_new_text()
+        self.mDomainListComboBox = combo
+        domainList = getDeletableDomainList()
+        for domain in domainList:
+            combo.append_text(domain)
+        combo.connect('changed', self.domainListComboCallBack)
 
+        hbox.pack_start(combo,False,False,5)
+        vbox.pack_start(hbox, False, False,5)
+        expander = gtk.Expander(_("Property"))
+        vbox.pack_start(expander, False, False, 0)
+        label = gtk.Label("") #Whether unconfined domain, confined programs
+        self.mPropertyLabel = label
+        expander.add(label)
+        
         hbox = gtk.HBox()
         radio = gtk.RadioButton(None, _("Temporally"))
         self.mTemporalFlag = True
@@ -60,8 +91,7 @@ class deleteDomainTab(seeditCommon):
         vbox.pack_start(hbox, False, False,5)
       
 
-
-        
+        ###Enable temporally disabled domain frame
         frame = gtk.Frame(_("Enable temporally disabled domain"))
         vboxFrame.pack_start(frame, False, False,5)
         vbox = gtk.VBox()

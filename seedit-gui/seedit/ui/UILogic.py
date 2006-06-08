@@ -20,6 +20,7 @@ gSELinuxConfigFile ="/etc/selinux/config"
 gSPPath="/etc/seedit/policy/"
 gSeedit_load= "/usr/sbin/seedit-load"
 
+gCoreDomainList=["crond_t", "rpm_t", "gdm_t", "initrc_t", "init_t", "login_t", "unconfined_t", "rpm_script_t",  "system_crond_t", "kernel_t", "unconfined_su_t"]
 
 def getMode():
     try:
@@ -231,3 +232,73 @@ def createDomain(data, file):
         loadPolicy()
         return r
     return SEEDIT_SUCCESS
+
+
+def getDomainList():
+    result =[]
+    list = os.listdir(gSPPath)
+
+    pat = re.compile("\.sp$")
+    
+    for l in list:
+        if l == "all.sp":
+            continue
+        m = pat.search(l)
+        if m:
+            domain = re.sub("\.sp$","",l)            
+            result.append(domain)
+
+    return result
+
+
+def getDeletableDomainList():
+    list =getDomainList()
+    result =[]
+
+    for l in list:
+        if l not in gCoreDomainList:
+            result.append(l)
+
+    result.sort()
+    return result
+
+
+'''
+Returns (<list of related programs>, <Flag whether domain is confined, if unconfined False>)
+error:None
+'''
+def getDomainProperty(domain):
+    programList =[]
+    confinedFlag =  True
+
+    file = gSPPath+domain+".sp"
+    try:
+        input = open(file,'r')
+    except:
+        return None
+    
+    lines = input.readlines()
+
+    input.close()
+    for line in lines:
+        m = re.search("^\s*allowpriv\s+all\s*;",line)
+        if m:
+            confinedFlag =False
+            continue
+        m = re.search("^\s*program\s+",line)
+        if m:
+            line = re.sub(";","",line)
+            line = re.sub("^\s*program\s+","",line)
+            line = re.sub("\n","",line)
+            programList.append(line)
+            continue
+
+        m = re.search("^\s*domain_trans\s+",line)
+        if m:
+            line = re.sub("^\s*domain_trans\s+","",line)
+            line = re.sub("\n","",line)
+            s = line.split()
+            programList.append(s[0])
+            continue        
+    
+    return (programList, confinedFlag)

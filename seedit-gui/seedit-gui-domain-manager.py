@@ -15,6 +15,70 @@ from  seedit.ui.GUICommon import *
 from  seedit.ui.UILogic import *
 from  seedit.unconfined import *
 
+class deleteDomainTab(seeditCommon):
+    
+    def radioCallBack(self, widget, data):
+        if widget.get_active() == 1:
+            self.mTemporalFlag= True
+    def deleteButtonCallBack(self, widget, data):
+        pass
+    def enableButtonCallBack(self, widget, data):
+        pass
+    def __init__(self,parent):
+        
+        vboxFrame = gtk.VBox()
+        vboxFrame.set_border_width(10)
+        self.mParentWindow=parent
+        self.mElement = vboxFrame
+
+        ###
+        frame = gtk.Frame(_("Delete Domain"))
+        vboxFrame.pack_start(frame, False, False,5)
+        vbox = gtk.VBox()
+        frame.add(vbox)
+        
+        hbox = gtk.HBox()
+        label = gtk.Label(_("Select:"))
+        hbox.pack_start(label, False, False,5)
+        vbox.pack_start(hbox, False, False,5)
+
+        hbox = gtk.HBox()
+        radio = gtk.RadioButton(None, _("Temporally"))
+        self.mTemporalFlag = True
+        radio.connect("toggled", self.radioCallBack, True)
+        radio.set_active(True)
+        hbox.pack_start(radio, False, False,5)
+        radio = gtk.RadioButton(radio, _("Permanentlly"))
+        radio.connect("toggled", self.radioCallBack, False)        
+        hbox.pack_start(radio, False, False,5)
+        vbox.pack_start(hbox, False, False,5)
+
+        hbox = gtk.HBox()
+        button = gtk.Button(_("Apply"))
+        button.connect("clicked", self.deleteButtonCallBack)
+        hbox.pack_start(button, False, False,5)
+        vbox.pack_start(hbox, False, False,5)
+      
+
+
+        
+        frame = gtk.Frame(_("Enable temporally disabled domain"))
+        vboxFrame.pack_start(frame, False, False,5)
+        vbox = gtk.VBox()
+        frame.add(vbox)
+        
+        hbox = gtk.HBox()
+        label = gtk.Label(_("Select:"))
+        hbox.pack_start(label, False, False,5)
+        vbox.pack_start(hbox, False, False,5)
+        
+        hbox = gtk.HBox()
+        button = gtk.Button(_("Apply"))
+        button.connect("clicked", self.enableButtonCallBack)
+        hbox.pack_start(button, False, False,5)
+        vbox.pack_start(hbox, False, False,5)
+        
+
 class createDomainTab(seeditCommon):
     
     def daemonRadioCallBack(self,widget, data):
@@ -240,9 +304,9 @@ class seeditDomainManageWindow(seeditCommon):
         tab1 = createDomainTab(self)
         label = gtk.Label(_("Create Domain"))
         notebook.append_page(tab1.mElement, label)
-        label = gtk.Label(_("Create Role"))
-#        tab2 = processStatusTab(self.mWindow)
-#        notebook.append_page(tab2.mElement, label)
+        label = gtk.Label(_("Delete Domain"))
+        tab2 = deleteDomainTab(self.mWindow)
+        notebook.append_page(tab2.mElement, label)
         label = gtk.Label("")
         self.mStatusLabel = label
         vbox.pack_end(label)

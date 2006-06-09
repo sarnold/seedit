@@ -72,7 +72,6 @@
 	  <secclass value="security"/>
 	  <permission value="compute_member"/>
 	  <permission value="setcheckreqprot"/>
-	  <permission value="setbool"/>
 	</rule>
       </rules>
     </section>
@@ -503,7 +502,6 @@
 	  <secclass value="file"/>
 	  <permission value="getattr"/>
 	  <permission value="read"/>
-	  <permission value="write"/>
 	</rule>
 	<rule value="allow">
 	  <domain value="domain"/>
@@ -514,9 +512,22 @@
 	  <permission value="compute_create"/>
 	  <permission value="compute_relabel"/>
 	  <permission value="compute_user"/>
+	  </rule>
+	</rules>
+    </option>
+
+  <option category="seop" value="setsecurity">	
+      <macro value="allow_admin_setsecurity"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="security_t"/>
+	  <secclass value="file"/>
+	   <permission value="write"/>
 	</rule>
       </rules>
     </option>
+
     <option category="seop" value="setenforce">	
       <macro value="allow_admin_setenforce"/>
       <rules>
@@ -528,6 +539,19 @@
 	</rule>
       </rules>
     </option>
+
+    <option category="seop" value="setbool">	
+      <macro value="allow_admin_setbool"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="security_t"/>
+	  <secclass value="security"/>
+	  <permission value="setbool"/>
+	</rule>
+      </rules>
+    </option>
+
 
     <option category="seop" value="load_policy">	
       <macro value="allow_admin_load_policy"/>

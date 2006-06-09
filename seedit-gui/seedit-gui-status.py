@@ -139,13 +139,10 @@ class processStatusTab(seeditCommon):
             lstore.append(data)
         return lstore
 
-    #From demo pygtk 2.0
+
     def addColumns(self, treeview, header):
         model = treeview.get_model()
         
-
-        renderer = gtk.CellRendererToggle()
-
         column = gtk.TreeViewColumn(header[0], gtk.CellRendererText(),
                                     text=0)
         column.set_sort_column_id(0)

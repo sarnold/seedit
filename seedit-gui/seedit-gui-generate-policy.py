@@ -249,7 +249,7 @@ class seeditGeneratePolicyWindow(seeditCommon):
 		window = gtk.Window()
 		self.mWindow = window
 		self.mResult = []
-		window.set_title(_("seedit policy generater"))
+		window.set_title(_("seedit policy generator"))
 		window.connect('destroy', lambda w: gtk.main_quit())
 		vboxFrame = gtk.VBox()
 		window.add(vboxFrame)

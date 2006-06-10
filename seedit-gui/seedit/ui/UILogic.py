@@ -365,3 +365,42 @@ def getDisableTransDomain():
     return result
 
 
+'''
+Append allows in  policyList to domain
+Append allows before }
+'''
+def appendPolicy(domain, policyList):
+
+    filename = gSPPath +domain+".sp"
+
+
+    try :
+        fp = open(filename,'r+')
+    except:
+        print "File I/O error %s" %(filename)
+        return SEEDIT_ERROR
+
+
+    line = fp.readline()
+    while not re.search("^[^#]*}",line):
+        pos = fp.tell()
+        line = fp.readline()
+        lastLine = line
+        if not line:
+            break
+
+    
+    if not lastLine:
+        fp.close()
+        return
+    fp.seek(pos)
+    fp.write("#Add by seedit-generator\n")
+    for policy in policyList:
+        fp.write(policy)
+        fp.write('\n')
+    
+    fp.write(lastLine)
+    fp.close()
+
+    return SEEDIT_SUCCESS
+

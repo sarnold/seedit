@@ -138,6 +138,7 @@ class seeditGeneratePolicyWindow(seeditCommon):
 			log = re.sub("pid=","\n\tpid=",log)
 			log = re.sub("scontext=","\n\tscontext=",log)
 			log = re.sub("\n$","",log)
+			domain = re.sub("\.sp","",domain)
 			appended=(False,domain,allow,log)
 			self.mGeneratedPolicyListStore.append(appended)
 
@@ -219,7 +220,54 @@ class seeditGeneratePolicyWindow(seeditCommon):
 			path = model.get_path(iter)[0]
 			model.remove(iter)
 
+	def removeCheckedRows(self, treeview):
+		model = treeview.get_model()
 		
+		iter = model.get_iter_first()
+		if iter:
+			while iter:
+				flag = model.get_value(iter,0)
+				domain = model.get_value(iter,1)
+				policy = model.get_value(iter,2)
+				next = model.iter_next(iter)
+				if flag ==  True:
+					model.remove(iter)
+				iter = next
+
+	def saveButtonCallBack(self, button, treeview):
+		model = treeview.get_model()
+		iter = model.get_iter_first()
+		#key: domain, value: list of policy to be allowed
+		toBeAppendedPolicy = dict()
+		appendExistsFlag=False
+                #make to be added policy
+		if iter:
+			while iter:
+				flag = model.get_value(iter,0)
+				domain = model.get_value(iter,1)
+				policy = model.get_value(iter,2)
+				next = model.iter_next(iter)
+				if flag ==  True:
+					appendExistsFlag=True
+					if not toBeAppendedPolicy.has_key(domain):
+						toBeAppendedPolicy[domain]=[]
+					toBeAppendedPolicy[domain].append(policy)
+				iter = next
+		if not appendExistsFlag:
+			return
+
+		for domain in toBeAppendedPolicy.keys():
+			appendPolicy(domain,  toBeAppendedPolicy[domain])
+
+		ld=loadPolicyDialog(self)
+		(s, data) = ld.do()
+
+		if s<0:
+			self.showMessageDialog(gtk.MESSAGE_INFO, _("Syntax error was found.\n"))
+			return
+	        #remove saved rows
+		self.removeCheckedRows(treeview)
+					
 
 
 	def globCallBack(self,button,treeview):
@@ -319,6 +367,7 @@ class seeditGeneratePolicyWindow(seeditCommon):
 
 
 		button = gtk.Button(_("Save and Apply"))
+		button.connect("clicked", self.saveButtonCallBack, self.mGeneratedPolicyTreeView)
 		hbox.pack_start(button, False, False, 5)
 		vbox.pack_start(hbox, False, False, 5)
 

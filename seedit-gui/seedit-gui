@@ -18,9 +18,9 @@ GUI_EDIT=4
 gIconPath= "/usr/share/icons/seedit/"
 if not os.path.exists(gIconPath+"icon.png"):
     gIconPath="./icons/"
-STATUS_COMMAND="./seedit-gui-status.py"
-DOMAIN_MANAGE_COMMAND="./seedit-gui-domain-manager.py"
-GENERATE_COMMAND="./seedit-gui-generate-policy.py"
+STATUS_COMMAND="./seedit-gui-status"
+DOMAIN_MANAGE_COMMAND="./seedit-gui-domain-manager"
+GENERATE_COMMAND="./seedit-gui-generate-policy"
 
         
 class seeditMainWindow(seeditCommon):

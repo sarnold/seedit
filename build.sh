@@ -1,5 +1,5 @@
 MODULES="seedit-converter seedit-policy"
-VERSION=2.0.0.b4
+VERSION=2.0.0.b5
 
 mkdir -p archive
 

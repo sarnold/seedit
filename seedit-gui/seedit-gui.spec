@@ -27,9 +27,9 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root,-)
 %{_sbindir}/seedit-gui
-%{_sbindir}/seedit-gui-status.py
-%{_sbindir}/seedit-gui-domain-manager.py
-%{_bindir}/seedit-gui-generate-policy.py
+%{_sbindir}/seedit-gui-status
+%{_sbindir}/seedit-gui-domain-manager
+%{_sbindir}/seedit-gui-generate-policy
 %{_libdir}/seedit/*
 /usr/share/icons/seedit/*
 

@@ -1,7 +1,7 @@
 Summary: GUI for SELinux  Policy Editor
 Name: seedit-gui
 Version: 2.0.0.b5
-Release: %{distro} 
+Release:  1
 License: GPL
 Group: System Environment/Base
 URL: http://sedit.sourceforge.net/
@@ -15,7 +15,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
 %build
 make clean
-%__make DISTRO=%{distro}
+%__make 
 
 %install
 rm -rf $RPM_BUILD_ROOT

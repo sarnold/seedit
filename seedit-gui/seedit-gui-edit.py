@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python -u
 #All Rights Reserved (C) 2006, Yuichi Nakmura himainu-ynakam@miomio.jp
 
 import pygtk
@@ -77,9 +77,23 @@ class seeditEditWindow(seeditCommon):
 	    end = buf.get_end_iter()
 	    str = buf.get_text(start, end)
 
-	    print self.mBackupLines
+	    filename = getDomainFileName(self.mDomain)
+	    r = saveStringToFile(str,filename)
+	    if r != SEEDIT_SUCCESS:
+		    self.showMessageDialog(gtk.MESSAGE_ERROR, _("File open Error:%s. \n")%(filename))
+		    return
 	    
-	    pass
+	    ld=loadPolicyDialog(self)
+	    (s, data) = ld.do()
+	    if s<0:
+		    r = saveStringToFile(self.mBackupLines, filename)
+		    if r != SEEDIT_SUCCESS:
+			    self.showMessageDialog(gtk.MESSAGE_ERROR, _("File open Error:%s. \n")%(filename))
+			    return
+
+	    self.mBackupLines = str
+	    
+
     def OpenCallBack(self,data=None):
 	    dialog = openDomainDialog(self)
 	    r = dialog.show()
@@ -87,11 +101,16 @@ class seeditEditWindow(seeditCommon):
 		    return
 	    input = dialog.openFile()
 	    if input ==None:
-		    self.showMessageDialog(gtk.MESSAGE_INFO, _("File open Error.\n"))
+		    self.showMessageDialog(gtk.MESSAGE_ERROR, _("File open Error.\n"))
 		    return
 
 	    lines = input.readlines()
-	    self.mBackupLines = lines
+	    self.mBackupLines=""
+	    for l in lines:
+		    self.mBackupLines = self.mBackupLines + l
+	    
+	    self.mTextBuffer.delete(self.mTextBuffer.get_start_iter(),self.mTextBuffer.get_end_iter())
+	    
 	    for line in lines:
 		    self.mTextBuffer.insert(self.mTextBuffer.get_end_iter(),line)
 	    self.mDomain = dialog.getOpenDomain()
@@ -129,7 +148,7 @@ class seeditEditWindow(seeditCommon):
         window = gtk.Window()
         self.mWindow = window
 	self.mDomain =""
-	self.mBackupLines=[] # Contents of file before save
+	self.mBackupLines="" # Contents of file before save
         window.set_title(_("seedit policy editor"))
         window.connect('destroy', lambda w: gtk.main_quit())
 

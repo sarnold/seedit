@@ -140,7 +140,7 @@ class loadPolicyThread(threading.Thread):
             self.mDialog.set_response_sensitive(gtk.RESPONSE_CANCEL,True)
             gobject.idle_add(self.mDialog.mLabel.set_text, _("Error:Syntax Error"))
             #          self.mDialog.mLabel.set_text(_("Error:Syntax Error"))
-            self.mDialog.response(gtk.RESPONSE_CANCEL)
+#            self.mDialog.response(gtk.RESPONSE_CANCEL)
             return SEEDIT_ERROR_SEEDIT_LOAD
 
         gobject.idle_add(self.mDialog.mLabel.set_text, _("Success!"))

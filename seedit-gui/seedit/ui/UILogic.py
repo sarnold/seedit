@@ -201,6 +201,19 @@ def saveStringToFile(str, file):
     fh.close
     return SEEDIT_SUCCESS
 
+def saveListToFile(list, file):
+
+    try:
+        fh = open(file, "w")
+    except:
+        return SEEDIT_ERROR_FILE_WRITE
+    
+    for l in list:
+        fh.write(l)
+    
+    fh.close
+    return SEEDIT_SUCCESS
+
 
 #do seedit-load
 def loadPolicy():
@@ -267,6 +280,11 @@ def getDeletableDomainList():
 
     result.sort()
     return result
+
+
+def getDomainFileName(domain):
+    filename = gSPPath + domain +".sp"
+    return filename
 
 def getEditableDomainList():
     list =getDomainList()

@@ -251,6 +251,20 @@ def createDomain(data, file):
     return SEEDIT_SUCCESS
 
 
+def getIncludeList():
+    result = []
+    path = gSPPath+"/include"
+    list = os.listdir(path)
+    pat = re.compile("\.sp$")
+    
+    for l in list:
+        m = pat.search(l)
+        if m:
+            include = "include/"+l
+            result.append(include)
+
+    return result
+
 def getDomainList():
     result =[]
     list = os.listdir(gSPPath)
@@ -283,7 +297,11 @@ def getDeletableDomainList():
 
 
 def getDomainFileName(domain):
-    filename = gSPPath + domain +".sp"
+    if re.search("\.sp$",domain):
+        #for include/
+        filename = gSPPath + domain
+    else:
+        filename = gSPPath + domain +".sp"
     return filename
 
 def getEditableDomainList():
@@ -294,6 +312,12 @@ def getEditableDomainList():
             result.append(l)
 
     result.sort()
+
+    list = getIncludeList()
+    list.sort()
+    for l in list:
+        result.append(l)
+    
     return result
 
 

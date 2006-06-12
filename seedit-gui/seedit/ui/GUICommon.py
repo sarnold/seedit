@@ -120,6 +120,7 @@ class loadPolicyThread(threading.Thread):
 
     
     def __init__(self,dialog):
+        self.mErrorLine=""
         threading.Thread.__init__(self)
         self.mDialog = dialog
 
@@ -131,7 +132,8 @@ class loadPolicyThread(threading.Thread):
         line = input.readline()
         while line:
             gobject.idle_add(self.updateTextBuffer,line)
-
+            if re.search("seedit-converter:Error:",line):
+                self.mErrorLine=line
 #            self.mDialog.mTextBuffer.insert(self.mDialog.mTextBuffer.get_end_iter(),line)
             line = input.readline()
             sys.stdout.write(line)
@@ -160,6 +162,7 @@ class loadPolicyDialog(gtk.Dialog):
         pass
     def showCallback(self, data=None):
         thread = loadPolicyThread(self)
+        self.mThread = thread
         thread.start()
 
     '''
@@ -171,7 +174,14 @@ class loadPolicyDialog(gtk.Dialog):
         if r==gtk.RESPONSE_OK:
             return (SEEDIT_SUCCESS,None)
         else:
-            return (SEEDIT_ERROR_SEEDIT_LOAD, "")
+            lineno=""
+            errLine = self.mThread.mErrorLine
+            m = re.search("line[\s\t]+\d+",errLine)
+            if m:
+                l=m.group().split()
+                lineno =l[1]
+                    
+            return (SEEDIT_ERROR_SEEDIT_LOAD,lineno)
 
     def __init__(self,parent):
         self.mParentWindow=parent

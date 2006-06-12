@@ -22,7 +22,10 @@ class openDomainDialog(gtk.Dialog):
 
 	def openFile(self):
 		domain = self.mDomain
-		filename = gSPPath +"/"+domain+".sp"
+		if re.search("\.sp$",domain):
+			filename = gSPPath +"/"+domain
+		else:
+			filename = gSPPath +"/"+domain+".sp"
 		try:
 			input = open(filename,'r')
 		except:
@@ -86,13 +89,27 @@ class seeditEditWindow(seeditCommon):
 	    ld=loadPolicyDialog(self)
 	    (s, data) = ld.do()
 	    if s<0:
+		    msg = _("%s:Syntax error in line %s") % (self.mDomain,data)
+		    lineno=int(data) -1
+		    start =  buf.get_start_iter()
+		    start.set_line(lineno)
+		    end = buf.get_start_iter()
+		    end.set_line(lineno+1)
+		    tag = buf.get_tag_table()
+		    tag = buf.create_tag(background="red")
+		    buf.apply_tag(tag,start,end)
 		    r = saveStringToFile(self.mBackupLines, filename)
 		    if r != SEEDIT_SUCCESS:
 			    self.showMessageDialog(gtk.MESSAGE_ERROR, _("File open Error:%s. \n")%(filename))
 			    return
-
+	    else:
+		    msg = _("%s:load success") % (self.mDomain)
+	    self.mStatusLabel.set_text(msg)
 	    self.mBackupLines = str
 	    
+	  
+
+	  
 
     def OpenCallBack(self,data=None):
 	    dialog = openDomainDialog(self)

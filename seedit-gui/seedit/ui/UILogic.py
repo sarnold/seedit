@@ -268,6 +268,16 @@ def getDeletableDomainList():
     result.sort()
     return result
 
+def getEditableDomainList():
+    list =getDomainList()
+    result =[]
+    for l in list:
+        if l not in "all":
+            result.append(l)
+
+    result.sort()
+    return result
+
 
 '''
 Returns (<list of related programs>, <Flag whether domain is confined, if unconfined False>)

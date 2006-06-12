@@ -20,8 +20,9 @@ if not os.path.exists(gIconPath+"icon.png"):
     gIconPath="./icons/"
 STATUS_COMMAND="./seedit-gui-status"
 DOMAIN_MANAGE_COMMAND="./seedit-gui-domain-manager"
-GENERATE_COMMAND="./seedit-gui-generate-policy"
 
+GENERATE_COMMAND="./seedit-gui-generate-policy"
+EDIT_COMMAND="./seedit-gui-edit"
         
 class seeditMainWindow(seeditCommon):
   
@@ -40,6 +41,8 @@ class seeditMainWindow(seeditCommon):
             self.forkProgram(DOMAIN_MANAGE_COMMAND)
         elif(mode == GUI_GENERATE):
             self.forkProgram(GENERATE_COMMAND)
+	elif(mode == GUI_EDIT):
+            self.forkProgram(EDIT_COMMAND)
         else:
             self.showNotImplementedDialog()
     

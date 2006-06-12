@@ -151,7 +151,7 @@ yycomment_num++;
 
 int yyerror(char *msg){
         if(source_file[0])
-            fprintf(stderr, "%s:%ld:", source_file,source_lineno -1 );
+            fprintf(stderr, "seedit-converter:Error:%s:line %ld:", source_file,source_lineno -1 );
         else
             fprintf(stderr,"(unknown source):line %d:",policydb_lineno);
 

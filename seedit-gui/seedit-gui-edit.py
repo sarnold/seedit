@@ -182,10 +182,9 @@ class seeditEditWindow(seeditCommon):
 			    return
 	    else:
 		    msg = _("%s:load success") % (self.mDomain)
+		    self.mBackupLines = str
+		    
 	    self.mStatusLabel.set_text(msg)
-	    self.mBackupLines = str
-	    
-	  
 
 	  
 

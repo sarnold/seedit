@@ -11,6 +11,84 @@ sys.path.insert(0,"/usr/lib")
 from  seedit.ui.GUICommon import *
 from  seedit.ui.UILogic import *
 
+class tabCommon(gtk.Frame):
+	def getTab(self):
+		return self
+
+	def __init__(self,name):
+		gtk.Frame.__init__(self)
+		self.mName = name
+
+
+class fileTab(tabCommon):
+
+	def __init__(self,name):
+		tabCommon.__init__(self,name)
+		frame = self
+
+		label=gtk.Label("hoge")
+		frame.add(label)
+
+
+class networkTab(tabCommon):
+
+	def __init__(self,name):
+		tabCommon.__init__(self,name)
+
+
+	
+
+class insertPolicyWindow(seeditCommon):
+	def allowFile(self):
+		return "#allow;\n"
+
+	def closeCallBack(self,data=None):
+		self.mWindow.destroy()
+
+	def addCallBack(self,widget,data):
+		notebook=data
+		page=notebook.get_current_page()
+		tab = notebook.get_nth_page(page)
+		name = tab.mName
+		if name=="file":
+			str = self.allowFile()
+		else:
+			str=""
+
+		buf = self.mParent.mTextBuffer
+		buf.insert_at_cursor(str)
+	
+	def __init__(self,parent):
+		self.mParent = parent
+		window = gtk.Window()
+		self.mWindow = window
+		window.set_title(_("Insert Policy"))
+		vbox =gtk.VBox()
+		window.add(vbox)
+
+
+		notebook = gtk.Notebook()
+		notebook.set_tab_pos(gtk.POS_TOP)
+		vbox.pack_start(notebook)
+		tab1 = fileTab("file")
+		label = gtk.Label(_("File"))
+		notebook.append_page(tab1.getTab(), label)
+
+		tab2 = networkTab("network")
+		label = gtk.Label(_("Network"))
+		notebook.append_page(tab2.getTab(), label)
+		hbox =gtk.HButtonBox()
+		button = gtk.Button(_("Add"),gtk.STOCK_ADD)
+		button.connect("clicked", self.addCallBack,notebook)			       
+
+		hbox.pack_start(button,False)
+		button = gtk.Button(_("Close"),gtk.STOCK_CLOSE)
+		button.connect("clicked", self.closeCallBack)			       
+		hbox.pack_start(button,False)
+
+		vbox.pack_start(hbox,False)
+		window.show_all()
+
 class openDomainDialog(gtk.Dialog):
 
 	def getOpenDomain(self):
@@ -135,8 +213,8 @@ class seeditEditWindow(seeditCommon):
 	    print "Open"
 	    pass
     def AddCallBack(self,data=None):
-	    print "Add"
-	    pass
+	    window = insertPolicyWindow(self)
+
     def initMenu(self,window):
         uimanager = gtk.UIManager()
 	accelgroup = uimanager.get_accel_group()

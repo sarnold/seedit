@@ -200,20 +200,11 @@ class createDomainTab(seeditCommon):
         return domain
     
     def browseButtonCallBack(self, data=None):
-        dialog = gtk.FileChooserDialog(_("Choose Program"),
-                               None,
-                               gtk.FILE_CHOOSER_ACTION_OPEN,
-                               (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
-                                gtk.STOCK_OPEN, gtk.RESPONSE_OK))
-        dialog.set_default_response(gtk.RESPONSE_OK)
-        filter = gtk.FileFilter()
-        filter.set_name(_("All files"))
-        filter.add_pattern("*")
-        dialog.add_filter(filter)
-       
+        dialog = fileSelectionDialog()
+
         response = dialog.run()
         if response == gtk.RESPONSE_OK:
-            filename = dialog.get_filename()
+            filename = dialog.getSelected()
             filename = os.path.realpath(filename)
             self.mProgramEntry.set_text(filename)
             domain = self.autoDomainName(filename)

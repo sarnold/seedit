@@ -209,3 +209,22 @@ class loadPolicyDialog(gtk.Dialog):
    
         
      
+class fileSelectionDialog(gtk.FileSelection):
+	def getSelected(self):
+		return self.mFileName
+	def okCallBack(self, w):
+		self.mFileName= self.get_filename()
+		self.response(gtk.RESPONSE_OK)
+		self.destroy()
+	def cancelCallBack(self, w):
+		self.response(gtk.RESPONSE_CANCEL)
+		self.destroy()
+	
+	def  __init__(self,title=None):
+		self.mFileName=""
+		gtk.FileSelection.__init__(self,title)
+		self.ok_button.connect("clicked", self.okCallBack)
+		
+		self.cancel_button.connect("clicked",self.cancelCallBack)
+		self.show()
+

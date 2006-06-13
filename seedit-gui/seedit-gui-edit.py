@@ -18,16 +18,41 @@ class tabCommon(gtk.Frame):
 	def __init__(self,name):
 		gtk.Frame.__init__(self)
 		self.mName = name
+		
+
 
 
 class fileTab(tabCommon):
-
+	def browseButtonCallBack(self, data=None):
+		dialog = fileSelectionDialog()
+		r=dialog.run()
+		if r ==gtk.RESPONSE_OK:
+			selected= dialog.getSelected()
+			self.mFileEntry.set_text(selected)
+		
+			
 	def __init__(self,name):
 		tabCommon.__init__(self,name)
 		frame = self
+		vbox = gtk.VBox()
+		frame.add(vbox)
+		hbox = gtk.HBox()
+		vbox.pack_start(hbox,False)
+		label=gtk.Label("File:")
+		hbox.pack_start(label,False)		
+		entry = gtk.Entry()
+		entry.set_max_length(150)
+		self.mFileEntry=entry
+		hbox.pack_start(entry,False)		
+		button = gtk.Button(_("Browse"))
+		button.connect("clicked", self.browseButtonCallBack)
+		hbox.pack_start(button, False, False, 5)
 
-		label=gtk.Label("hoge")
-		frame.add(label)
+		
+		
+
+
+		
 
 
 class networkTab(tabCommon):

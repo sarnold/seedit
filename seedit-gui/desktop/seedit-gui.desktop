@@ -2,8 +2,8 @@
 Name=SELinux Policy Editor
 GenericName=SELinux Policy Editor 
 Comment=This tool makes SELinux easy 
-Comment[ja]=SELinux$B$r4JC1$K;H$&$?$a$N%D!<%k$G$9(B
-Icon=apol.png
+Comment[ja]=SELinuxを簡単に使うためのツールです
+Icon=seedit-gui.png
 Exec=/usr/bin/seedit-gui
 Type=Application
 Terminal=false

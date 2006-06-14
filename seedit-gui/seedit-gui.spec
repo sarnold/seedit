@@ -29,12 +29,12 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root,-)
+%{_bindir}/seedit-gui
 %{_sbindir}/seedit-gui
 %{_sbindir}/seedit-gui-status
 %{_sbindir}/seedit-gui-domain-manager
 %{_sbindir}/seedit-gui-generate-policy
 %{_sbindir}/seedit-gui-edit
-%{_bindir}/seedit-gui
 %{_libdir}/seedit/*
 /usr/share/icons/seedit/*
 /usr/share/applications/seedit-gui.desktop

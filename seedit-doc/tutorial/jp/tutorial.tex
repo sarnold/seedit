@@ -60,7 +60,7 @@ allownet -protocol tcp -port 80 server;
 }	
 \end{verbatim}
 SPDLを使ったポリシーの意味は明快です。カスタマイズ、新規ポリシーの記述も簡単です。
-SPDLを生成するためのツールが用意されているからです。
+SPDLを生成するためのツールやGUIが用意されているからです。
 
 
 \subsection{seeditの歴史}
@@ -143,9 +143,15 @@ seedit-converter-2.0.(ディストリビューション
 \begin{verbatim}
 http://sourceforge.net/project/showfiles.php?group_id=135756	
 \end{verbatim}
+
+オプションとして、GUIも用意されています。ファイル名は、
+	seedit-gui-2.0.x-noarch.rpmです。\\
+
 seedit-converterには、Simplified PolicyをSELinuxのポリシに変換するツールと、Simplified
 	  Policy管理ツールが同梱されています。seedit-policyには、
-	  simplified policyが格納されています。\\
+	  simplified policyが格納されています。seedit-guiは、GUIです。
+	X Window Systemから、/usr/sbin/seedit-guiにてコントロールパネル
+	が起動します。\\
 
 Fedora Core5かつ最新版が2.0.0ならば、
 seedit-converter-2.0.0-FC5.i386.rpm, seedit-policy-2.0.0-FC5.noarch.rpm
@@ -252,9 +258,6 @@ SELINUXTYPE=seedit
 	# rpm -e seedit-converter seedit-policy
 	# rm -rf /etc/selinux/seedit
        \end{verbatim}
- \item 旧バージョンのGUIは使えません\\
-       新しいGUIは今開発中です。新バージョンは、GUIがなくとも、旧バージョンより遥かに使
-       いやすいと思います。
 \end{itemize}
 
 

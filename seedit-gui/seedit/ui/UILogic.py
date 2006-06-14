@@ -417,6 +417,11 @@ def getDisableTransDomain():
     return result
 
 
+def restoreBackup(domain):
+    filename = gSPPath +domain+".sp"
+    backupfile = gSPPath +domain+".sp.backup"
+    os.rename(backupfile, filename)    
+
 '''
 Append allows in  policyList to domain
 Append allows before }
@@ -424,15 +429,26 @@ Append allows before }
 def appendPolicy(domain, policyList):
 
     filename = gSPPath +domain+".sp"
-
-
+    backupfile = gSPPath +domain+".sp.backup"
+    
+    
     try :
         fp = open(filename,'r+')
     except:
-        print "File I/O error %s" %(filename)
+        print "File open error %s" %(filename)
+        return SEEDIT_ERROR
+    try:
+        bfp = open(backupfile,'w')
+    except:
+        print "File open error %s" %(backupfile)
         return SEEDIT_ERROR
 
-
+    lines = fp.readlines()
+    for line in lines:
+        bfp.write(line)
+    bfp.close()
+    fp.seek(0)
+    
     line = fp.readline()
     while not re.search("^[^#]*}",line):
         pos = fp.tell()

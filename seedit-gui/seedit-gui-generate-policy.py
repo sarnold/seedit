@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python -u
 #All Rights Reserved (C) 2006, Yuichi Nakmura himainu-ynakam@miomio.jp
 
 import pygtk
@@ -263,6 +263,8 @@ class seeditGeneratePolicyWindow(seeditCommon):
 		(s, data) = ld.do()
 
 		if s<0:
+			for domain in toBeAppendedPolicy.keys():
+				restoreBackup(domain)
 			self.showMessageDialog(gtk.MESSAGE_INFO, _("Syntax error was found.\n"))
 			return
 	        #remove saved rows

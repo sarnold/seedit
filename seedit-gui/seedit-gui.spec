@@ -36,6 +36,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_sbindir}/seedit-gui-edit
 %{_libdir}/seedit/*
 /usr/share/icons/seedit/*
+/usr/share/locale/*
 
 %changelog
 * Sun Jun 18 2006 Yuichi Nakamura<himainu-ynakam@miomio.jp> 2.0.0b5

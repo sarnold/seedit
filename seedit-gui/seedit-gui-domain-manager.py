@@ -346,7 +346,7 @@ class createDomainTab(seeditCommon):
         hbox = gtk.HBox()
         label = gtk.Label(_("Will be saved to:"))
         hbox.pack_start(label,False,False,5)
-        label = gtk.Label(_(""))
+        label = gtk.Label("")
         self.mToBeSavedFileLabel= label
         self.mToBeSavedFile=None
         

@@ -16,10 +16,13 @@ install:
 	install -m 744 seedit-gui-status.py $(prefix)/sbin/seedit-gui-status
 	install -m 744 seedit-gui-domain-manager.py $(prefix)/sbin/seedit-gui-domain-manager
 	install -m 744 seedit-gui-generate-policy.py $(prefix)/sbin/seedit-gui-generate-policy
+	mkdir -p $(prefix)/share/locale/ja/LC_MESSAGES/
+	install -m 744 po/ja.mo $(prefix)/share/locale/ja/LC_MESSAGES/seedit-gui.mo
 
 clean:
 
 
 pot:
 	pygettext.py $(SRC)
-	cat messages.pot|grep msgid|sort > message_template
+mo:
+	msgfmt.py po/ja.po

@@ -16,213 +16,213 @@ msgstr ""
 
 #: seedit-gui-domain-manager.py:46
 msgid "%s will be deleted permanently! Really delete?"
-msgstr ""
+msgstr "%sは完全に削除されます！本当に削除しますか？"
 
 #: seedit-gui-domain-manager.py:49
 msgid ""
 "Operation cancelled.\n"
-msgstr ""
+msgstr "操作はキャンセルされました"
 
 #: seedit-gui-domain-manager.py:54
 msgid ""
 "Domain removed,next load policy.\n"
-msgstr ""
+msgstr "ドメインは削除されました。ポリシーをロードします"
 
 #: seedit-gui-domain-manager.py:65
 msgid ""
 "Success.\n"
-msgstr ""
+msgstr "成功です\n"
 
 #: seedit-gui-domain-manager.py:68
 msgid ""
 "Error.\n"
-msgstr ""
+msgstr "エラー\n"
 
 #: seedit-gui-domain-manager.py:81 seedit-gui-domain-manager.py:98
 msgid ""
 "Unconfined Domain\n"
-msgstr ""
+msgstr "unconfinedドメイン"
 
 #: seedit-gui-domain-manager.py:82 seedit-gui-domain-manager.py:99
 msgid "Related Programs:"
-msgstr ""
+msgstr "関連したプログラム:"
 
 #: seedit-gui-domain-manager.py:115 seedit-gui-domain-manager.py:399
 msgid "Delete Domain"
-msgstr ""
+msgstr "ドメインを削除"
 
 #: seedit-gui-domain-manager.py:121 seedit-gui-domain-manager.py:163
 msgid "Select:"
-msgstr ""
+msgstr "選択："
 
 #: seedit-gui-domain-manager.py:132 seedit-gui-domain-manager.py:173
 msgid "Property"
-msgstr ""
+msgstr "プロパティ"
 
 #: seedit-gui-domain-manager.py:139
 msgid "Temporally"
-msgstr ""
+msgstr "一時的に無効"
 
 #: seedit-gui-domain-manager.py:144
 msgid "Permanentlly"
-msgstr ""
+msgstr "完全に削除"
 
 #: seedit-gui-domain-manager.py:150 seedit-gui-domain-manager.py:179
 #: seedit-gui-status.py:111
 msgid "Apply"
-msgstr ""
+msgstr "適用"
 
 #: seedit-gui-domain-manager.py:157
 msgid "Enable temporally disabled domain"
-msgstr ""
+msgstr "一時的に無効にされたドメインを有効にする"
 
 #: seedit-gui-domain-manager.py:236
 msgid ""
 "Save cancelled.\n"
-msgstr ""
+msgstr "セーブはキャンセルされました\n"
 
 #: seedit-gui-domain-manager.py:241
 msgid ""
 "File write error. Save cancelled.\n"
-msgstr ""
+msgstr "ファイル書き込みエラー。セーブはキャンセルされました。"
 
 #: seedit-gui-domain-manager.py:249 seedit-gui-generate-policy.py:266
 msgid ""
 "Syntax error was found.\n"
-msgstr ""
+msgstr "書式エラーが見付かりました。\n"
 
 #: seedit-gui-domain-manager.py:255
 msgid ""
 "Domain created successfully.\n"
-msgstr ""
+msgstr "ドメインは正常に作成されました。\n"
 
 #: seedit-gui-domain-manager.py:263 seedit-gui-status.py:74
 msgid "Yes"
-msgstr ""
+msgstr "はい"
 
 #: seedit-gui-domain-manager.py:270
 msgid "No"
-msgstr ""
+msgstr "いいえ"
 
 #: seedit-gui-domain-manager.py:287
 msgid "Domain information"
-msgstr ""
+msgstr "ドメインの情報"
 
 #: seedit-gui-domain-manager.py:292
 msgid "Program you want to confine:"
-msgstr ""
+msgstr "動作を封じ込めたいプログラム："
 
 #: seedit-gui-domain-manager.py:299 seedit-gui-edit.py:88
 msgid "Browse"
-msgstr ""
+msgstr "ブラウズ"
 
 #: seedit-gui-domain-manager.py:304
 msgid "Name of domain:"
-msgstr ""
+msgstr "ドメイン名"
 
 #: seedit-gui-domain-manager.py:314
 msgid "Optional"
-msgstr ""
+msgstr "詳細設定"
 
 #: seedit-gui-domain-manager.py:317
 msgid "Parent Domain"
-msgstr ""
+msgstr "親ドメイン"
 
 #: seedit-gui-domain-manager.py:327
 msgid "Daemon program?"
-msgstr ""
+msgstr "デーモンプログラムですか？"
 
 #: seedit-gui-domain-manager.py:331
 msgid "Authentication program?"
-msgstr ""
+msgstr "認証を行うプログラムですか？"
 
 #: seedit-gui-domain-manager.py:335
 msgid "Create Template"
-msgstr ""
+msgstr "テンプレートを作成"
 
 #: seedit-gui-domain-manager.py:342
 msgid "Created template"
-msgstr ""
+msgstr "作成されたテンプレート"
 
 #: seedit-gui-domain-manager.py:347
 msgid "Will be saved to:"
-msgstr ""
+msgstr "セーブされるファイル："
 
 #: seedit-gui-domain-manager.py:366 seedit-gui-generate-policy.py:369
 msgid "Save and Apply"
-msgstr ""
+msgstr "セーブし、設定を適用"
 
 #: seedit-gui-domain-manager.py:381
 msgid "seedit Domain/Role Manager"
-msgstr ""
+msgstr "seedit ドメイン・ロール管理"
 
 #: seedit-gui-domain-manager.py:397
 msgid "Create Domain"
-msgstr ""
+msgstr "ドメインを作成"
 
 #: seedit-gui-edit.py:96
 msgid "Itself"
-msgstr ""
+msgstr "ディレクトリ内のファイルは含まない"
 
 #: seedit-gui-edit.py:101
 msgid "All files in directory"
-msgstr ""
+msgstr "ディレクトリ直下のファイル全て"
 
 #: seedit-gui-edit.py:105
 msgid "All files in directory,subdirectories"
-msgstr ""
+msgstr "サブディレクトリのファイルを含め、ディレクトリの下の全ファイル"
 
 #: seedit-gui-edit.py:112
 msgid "Permissoins"
-msgstr ""
+msgstr "パーミッション"
 
 #: seedit-gui-edit.py:119
 msgid "s(Search)"
-msgstr ""
+msgstr "s(ディレクトリサーチ)"
 
 #: seedit-gui-edit.py:120
 msgid "r(Read)"
-msgstr ""
+msgstr "r(読み込み)"
 
 #: seedit-gui-edit.py:121
 msgid "x(eXecute)"
-msgstr ""
+msgstr "x(実行)"
 
 #: seedit-gui-edit.py:125
 msgid "w(Write)"
-msgstr ""
+msgstr "w(書き込み)"
 
 #: seedit-gui-edit.py:127
 msgid "Detailed write Permission"
-msgstr ""
+msgstr "詳細書き込みパーミッション"
 
 #: seedit-gui-edit.py:133
 msgid "a(Append)"
-msgstr ""
+msgstr "a(追記)"
 
 #: seedit-gui-edit.py:134
 msgid "o(Overwrite)"
-msgstr ""
+msgstr "o(上書き)"
 
 #: seedit-gui-edit.py:135
 msgid "c(Create)"
-msgstr ""
+msgstr "c(新規作成)"
 
 #: seedit-gui-edit.py:136
 msgid "e(Erase)"
-msgstr ""
+msgstr "e(消去)"
 
 #: seedit-gui-edit.py:137
 msgid "t(seTattr)"
-msgstr ""
+msgstr "t(属性変更)"
 
 #: seedit-gui-edit.py:164
 msgid "Protocol"
-msgstr ""
+msgstr "プロトコル"
 
 #: seedit-gui-edit.py:182 seedit-gui-status.py:205
 msgid "Port"
-msgstr ""
+msgstr "ポート"
 
 #: seedit-gui-edit.py:189
 msgid "Specific Number:"
@@ -230,77 +230,77 @@ msgstr ""
 
 #: seedit-gui-edit.py:199
 msgid "All unreserved wellknown ports"
-msgstr ""
+msgstr "他ドメインで使っていない全てのウェルノウンポート番号"
 
 #: seedit-gui-edit.py:203
 msgid "All ports over 1024"
-msgstr ""
+msgstr "1024より上の全ポート番号"
 
 #: seedit-gui-edit.py:206
 msgid "All ports"
-msgstr ""
+msgstr "全てのポート番号"
 
 #: seedit-gui-edit.py:213
 msgid "Behavior"
-msgstr ""
+msgstr "ふるまい"
 
 #: seedit-gui-edit.py:217
 msgid "Server"
-msgstr ""
+msgstr "サーバとして機能"
 
 #: seedit-gui-edit.py:221
 msgid "Client"
-msgstr ""
+msgstr "クライアントとして機能"
 
 #: seedit-gui-edit.py:276
 msgid "Insert Policy"
-msgstr ""
+msgstr "ポリシーを挿入する"
 
 #: seedit-gui-edit.py:286 seedit-gui-generate-policy.py:321
 msgid "File"
-msgstr ""
+msgstr "ファイル"
 
 #: seedit-gui-edit.py:292
 msgid "Network"
-msgstr ""
+msgstr "ネットワーク"
 
 #: seedit-gui-edit.py:295
 msgid "Add"
-msgstr ""
+msgstr "追加"
 
 #: seedit-gui-edit.py:299
 msgid "Close"
-msgstr ""
+msgstr "閉じる"
 
 #: seedit-gui-edit.py:334 seedit-gui-edit.py:444
 msgid "Open domain"
-msgstr ""
+msgstr "ドメインを開く"
 
 #: seedit-gui-edit.py:336
 msgid "Select domain:"
-msgstr ""
+msgstr "ドメインを選択"
 
 #: seedit-gui-edit.py:378 seedit-gui-edit.py:395
 msgid ""
 "File open Error:%s. \n"
-msgstr ""
+msgstr "ファイルオープンエラー:%s\n"
 
 #: seedit-gui-edit.py:384
 msgid "%s:Syntax error in line %s"
-msgstr ""
+msgstr "%s:書式エラーが%sで発見されました"
 
 #: seedit-gui-edit.py:398
 msgid "%s:load success"
-msgstr ""
+msgstr "%s:ポリシーのロードが成功しました"
 
 #: seedit-gui-edit.py:412
 msgid ""
 "File open Error.\n"
-msgstr ""
+msgstr "ファイルオープンエラー\n"
 
 #: seedit-gui-edit.py:425
 msgid "Editing %s"
-msgstr ""
+msgstr "%sを編集しています"
 
 #: seedit-gui-edit.py:437 seedit/ui/GUICommon.py:45
 msgid "_About"
@@ -308,43 +308,52 @@ msgstr ""
 
 #: seedit-gui-edit.py:438 seedit/ui/GUICommon.py:46
 msgid "About"
-msgstr ""
+msgstr "このプログラムについて"
 
 #: seedit-gui-edit.py:439 seedit/ui/GUICommon.py:47
 msgid "_Help"
 msgstr ""
 
+msgid "_Save"
+msgstr "保存"
+
+msgid "_Open"
+msgstr "開く"
+
+msgid "_Add"
+msgstr "追加"
+
 #: seedit-gui-edit.py:443
 msgid "Save and apply"
-msgstr ""
+msgstr "セーブし、設定を適用"
 
 #: seedit-gui-edit.py:445
 msgid "Add policy"
-msgstr ""
+msgstr "ポリシーを追加"
 
 #: seedit-gui-edit.py:460
 msgid "seedit policy editor"
-msgstr ""
+msgstr "seeditポリシー編集"
 
 #: seedit-gui-generate-policy.py:25
 msgid "Progress:%d/%d"
-msgstr ""
+msgstr "進捗：%d/%d"
 
 #: seedit-gui-generate-policy.py:55
 msgid "Input error"
-msgstr ""
+msgstr "入力エラー"
 
 #: seedit-gui-generate-policy.py:82
 msgid "Done"
-msgstr ""
+msgstr "完了"
 
 #: seedit-gui-generate-policy.py:300
 msgid "seedit policy generator"
-msgstr ""
+msgstr "seedit ポリシー生成ツール"
 
 #: seedit-gui-generate-policy.py:311
 msgid "Input:"
-msgstr ""
+msgstr "入力："
 
 #: seedit-gui-generate-policy.py:314
 msgid "audit.log"
@@ -356,72 +365,72 @@ msgstr ""
 
 #: seedit-gui-generate-policy.py:331
 msgid "Read All log"
-msgstr ""
+msgstr "全てのログを読み込み"
 
 #: seedit-gui-generate-policy.py:338
 msgid "Generate"
-msgstr ""
+msgstr "ポリシーを生成"
 
 #: seedit-gui-generate-policy.py:345
 msgid "Result"
-msgstr ""
+msgstr "結果"
 
 #: seedit-gui-generate-policy.py:349
 msgid "Log"
-msgstr ""
+msgstr "ログ"
 
 #: seedit-gui-generate-policy.py:349
 msgid "Policy"
-msgstr ""
+msgstr "ポリシー"
 
 #: seedit-gui-generate-policy.py:349 seedit-gui-status.py:200
 #: seedit-gui-status.py:205
 msgid "Domain"
-msgstr ""
+msgstr "ドメイン"
 
 #: seedit-gui-generate-policy.py:360
 msgid "Glob"
-msgstr ""
+msgstr "まとめて指定"
 
 #: seedit-gui-generate-policy.py:364
 msgid "Delete"
-msgstr ""
+msgstr "削除"
 
 #: seedit-gui-status.py:42
 msgid "Failed to change current mode. Permission denied"
-msgstr ""
+msgstr "現在のモードを変更するパーミッションがありません。"
 
 #: seedit-gui-status.py:49
 msgid "Failed to change boot mode. Permission denied"
-msgstr ""
+msgstr "ブート時のモードを変更するパーミッションがありません。"
 
 #: seedit-gui-status.py:69
 msgid "seedit Installed?"
-msgstr ""
+msgstr "seeditがインストールされている？"
 
 #: seedit-gui-status.py:76
 msgid "No!"
-msgstr ""
+msgstr "いいえ"
 
 #: seedit-gui-status.py:80
 msgid "Current mode:"
-msgstr ""
+msgstr "現在のモード："
 
 #: seedit-gui-status.py:86 seedit-gui-status.py:101
 msgid "Enforcing"
-msgstr ""
+msgstr "Enforcingモード"
 
 #: seedit-gui-status.py:87 seedit-gui-status.py:102
 msgid "Permissive"
-msgstr ""
+msgstr "Permissiveモード"
 
 #: seedit-gui-status.py:88 seedit-gui-status.py:103
 msgid "Disabled"
-msgstr ""
+msgstr "無効"
 
 #: seedit-gui-status.py:95
 msgid "Mode at boot:"
-msgstr ""
+msgstr "ブート時のモード"
 
 #: seedit-gui-status.py:200
 msgid "PID"
@@ -429,23 +438,23 @@ msgstr ""
 
 #: seedit-gui-status.py:200 seedit-gui-status.py:205 seedit-gui-status.py:242
 msgid "Process"
-msgstr ""
+msgstr "プロセス"
 
 #: seedit-gui-status.py:202
 msgid "Working process"
-msgstr ""
+msgstr "動作中のプロセス"
 
 #: seedit-gui-status.py:204
 msgid "Network process"
-msgstr ""
+msgstr "ネットワークプロセス"
 
 #: seedit-gui-status.py:209
 msgid "Refresh"
-msgstr ""
+msgstr "更新"
 
 #: seedit-gui-status.py:225
 msgid "seedit Status"
-msgstr ""
+msgstr "seedit ステータスビューア"
 
 #: seedit-gui-status.py:240
 msgid "SELinux"
@@ -457,23 +466,23 @@ msgstr "SELinux Policy Editor コントロールパネル"
 
 #: seedit-gui.py:78
 msgid "Status"
-msgstr ""
+msgstr "ステータス"
 
 #: seedit-gui.py:80
 msgid "Manage Domain"
-msgstr ""
+msgstr "ドメインを管理"
 
 #: seedit-gui.py:81
 msgid "Generate policy"
-msgstr ""
+msgstr "ポリシーを生成"
 
 #: seedit-gui.py:82
 msgid "Edit policy"
-msgstr ""
+msgstr "ポリシーを編集"
 
 #: seedit/ui/GUICommon.py:63
 msgid "Sorry! This is not implemented yet"
-msgstr ""
+msgstr "まだ実装されていません！"
 
 #: seedit/ui/GUICommon.py:98
 msgid ""
@@ -484,41 +493,41 @@ msgstr ""
 #: seedit/ui/GUICommon.py:99
 msgid ""
 "All rights reserved (c) 2006 Yuichi Nakamura\n"
-msgstr ""
+msgstr "All rights reserved (c) 2006 中村雄一\n"
 
 #: seedit/ui/GUICommon.py:100
 msgid ""
 "This software is distributed under GPL.\n"
-msgstr ""
+msgstr "このソフトウェアはGPLライセンスで配布されています\n"
 
 #: seedit/ui/GUICommon.py:101
 msgid ""
 "For more information, visit http://seedit.sourceforge.net/\n"
-msgstr ""
+msgstr "詳細な情報については http://selpe.sourceforge.jp/を参照して下さい\n"
 
 #: seedit/ui/GUICommon.py:107
 msgid ""
 "File %s already exists. \n"
 " Overwrite?"
-msgstr ""
+msgstr "%sは既に存在します。上書きしますか？"
 
 #: seedit/ui/GUICommon.py:143
 msgid "Error:Syntax Error"
-msgstr ""
+msgstr "書式エラー"
 
 #: seedit/ui/GUICommon.py:148
 msgid "Success!"
-msgstr ""
+msgstr "成功"
 
 #: seedit/ui/GUICommon.py:188
 msgid "load policy"
-msgstr ""
+msgstr "設定の反映"
 
 #: seedit/ui/GUICommon.py:193
 msgid "Loading Policy... It may take time. Do not close window!"
-msgstr ""
+msgstr "設定を反映しています。しばらく時間がかかりますが、ウィンドウを閉じないでください"
 
 #: seedit/ui/GUICommon.py:197
 msgid "Detail"
-msgstr ""
+msgstr "詳細"
 

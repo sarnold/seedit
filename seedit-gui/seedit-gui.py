@@ -92,7 +92,7 @@ class seeditMainWindow(seeditCommon):
 
         frame.add(self.iconView)
         
-        label = gtk.Label(_(""))        
+        label = gtk.Label("")        
         vbox.pack_end(label,False,False)
         window.show_all()
 

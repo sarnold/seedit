@@ -440,9 +440,9 @@ class seeditEditWindow(seeditCommon):
 
 
 
-				  ('Save', gtk.STOCK_SAVE, "_Save", None,_("Save and apply"), self.SaveCallBack),
-				  ('Open', gtk.STOCK_OPEN, "_Open", None,_("Open domain"), self.OpenCallBack),
-				  ('Add', gtk.STOCK_ADD, "_Add", None,_("Add policy"), self.AddCallBack),
+				  ('Save', gtk.STOCK_SAVE, _("_Save"), None,_("Save and apply"), self.SaveCallBack),
+				  ('Open', gtk.STOCK_OPEN, _("_Open"), None,_("Open domain"), self.OpenCallBack),
+				  ('Add', gtk.STOCK_ADD, _("_Add"), None,_("Add policy"), self.AddCallBack),
 				  
 				  ])
         uimanager.insert_action_group(actiongroup, 0)
@@ -476,7 +476,7 @@ class seeditEditWindow(seeditCommon):
         sw.add(textview)
 	vbox.pack_start(sw,True)
 
-	label=gtk.Label(_(""))
+	label=gtk.Label("")
 	self.mStatusLabel = label
 	vbox.pack_start(label,False)
 	window.show_all()

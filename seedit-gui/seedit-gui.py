@@ -18,11 +18,11 @@ GUI_EDIT=4
 gIconPath= "/usr/share/icons/seedit/"
 if not os.path.exists(gIconPath+"icon.png"):
     gIconPath="./icons/"
-STATUS_COMMAND="./seedit-gui-status"
-DOMAIN_MANAGE_COMMAND="./seedit-gui-domain-manager"
+STATUS_COMMAND="/usr/sbin//seedit-gui-status"
+DOMAIN_MANAGE_COMMAND="/usr/sbin/seedit-gui-domain-manager"
 
-GENERATE_COMMAND="./seedit-gui-generate-policy"
-EDIT_COMMAND="./seedit-gui-edit"
+GENERATE_COMMAND="/usr/sbin/seedit-gui-generate-policy"
+EDIT_COMMAND="/usr/sbin/seedit-gui-edit"
         
 class seeditMainWindow(seeditCommon):
   

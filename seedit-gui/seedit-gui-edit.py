@@ -33,7 +33,7 @@ class fileTab(tabCommon):
 	def dirRadioCallBack(self,widget,data=None):
 		if widget.get_active() == 1:
 			self.mDir=data
-			print self.mDir
+
 
 	def setPermissionButton(self, permission,value):
 		self.mPermission[permission]=value
@@ -107,7 +107,7 @@ class fileTab(tabCommon):
 		hbox.pack_start(radio, False, False, 5)
 		
 		#Permissions
-		self.mPermission = {'s':True, 'r':False, 'x':False, 'w':False, 'a':False, 'o':False, 'c':False, 'e':False, 't':False}
+		self.mPermission = {'s':False, 'r':False, 'x':False, 'w':False, 'a':False, 'o':False, 'c':False, 'e':False, 't':False}
 		self.mPermissionButton =dict()
 		pFrame=gtk.Frame(_("Permissoins"))
 		vbox.pack_start(pFrame,False)
@@ -148,7 +148,16 @@ class networkTab(tabCommon):
 
 class insertPolicyWindow(seeditCommon):
 	def allowFile(self):
-		return "#allow;\n"
+		tab = self.mFileTab.getTab()
+		file = tab.mFileEntry.get_text()
+		dirType =  tab.mDir
+		permission = tab.mPermission
+
+
+		str = allowFileStr(file,dirType,permission)
+		return str
+
+	
 
 	def closeCallBack(self,data=None):
 		self.mWindow.destroy()
@@ -163,8 +172,12 @@ class insertPolicyWindow(seeditCommon):
 		else:
 			str=""
 
-		buf = self.mParent.mTextBuffer
-		buf.insert_at_cursor(str)
+		if str=="":
+			return
+		else:
+			buf = self.mParent.mTextBuffer
+			buf.insert_at_cursor(str)
+			self.mWindow.destroy()
 	
 	def __init__(self,parent):
 		self.mParent = parent
@@ -179,6 +192,7 @@ class insertPolicyWindow(seeditCommon):
 		notebook.set_tab_pos(gtk.POS_TOP)
 		vbox.pack_start(notebook)
 		tab1 = fileTab("file")
+		self.mFileTab=tab1
 		label = gtk.Label(_("File"))
 		notebook.append_page(tab1.getTab(), label)
 

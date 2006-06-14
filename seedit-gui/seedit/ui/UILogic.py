@@ -456,3 +456,39 @@ def appendPolicy(domain, policyList):
 
     return SEEDIT_SUCCESS
 
+
+'''
+make SPDL expression
+file, filename
+dirType: itself,direct,all
+permission: dict, key:permission, value:boolean
+'''
+def allowFileStr(file, dirType, permission):
+    file =file.rstrip()
+    file =file.rstrip('/')
+
+    if file=="":
+        return ""
+    
+
+    if dirType=="itself":
+        pass
+    elif dirType=="direct":
+        file = file+"/*"
+    elif dirType =="all":
+        file = file+"/**"
+
+    keys = permission.keys()
+    permStr=""
+    for key in keys:
+        if permission[key]:
+            permStr=permStr+key+','
+
+    permStr = permStr.rstrip(',')
+    if permStr=="":
+        return ""
+    
+
+    str = "allow "+file+" "+permStr+";\n"
+    return str
+

@@ -20,6 +20,7 @@ install:
 	mkdir -p $(prefix)/share/locale/ja/LC_MESSAGES/
 	install -m 744 po/ja.mo $(prefix)/share/locale/ja/LC_MESSAGES/seedit-gui.mo
 
+	ln -s $(prefix)/bin/consolehelper  /usr/bin/seedit-gui
 clean:
 
 

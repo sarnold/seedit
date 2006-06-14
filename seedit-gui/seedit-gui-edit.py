@@ -29,8 +29,30 @@ class fileTab(tabCommon):
 		if r ==gtk.RESPONSE_OK:
 			selected= dialog.getSelected()
 			self.mFileEntry.set_text(selected)
-		
 			
+	def dirRadioCallBack(self,widget,data=None):
+		if widget.get_active() == 1:
+			self.mDir=data
+			print self.mDir
+	def permissionCheckButtonCallBack(self,widget,data):
+		if self.mPermission.has_key(data):
+			pass
+		else:
+			print "No key %s" % data
+			return
+		
+		if widget.get_active():
+			self.mPermission[data]=True
+		else:
+			self.mPermission[data]=False
+
+	def addPermissionCheckButton(self, hbox, permission, label):		
+		button = gtk.CheckButton(label)
+		self.mReadAllLogFlag=False
+		button.connect("toggled", self.permissionCheckButtonCallBack, permission)
+		hbox.pack_start(button, False)
+		
+	     
 	def __init__(self,name):
 		tabCommon.__init__(self,name)
 		frame = self
@@ -38,22 +60,49 @@ class fileTab(tabCommon):
 		frame.add(vbox)
 		hbox = gtk.HBox()
 		vbox.pack_start(hbox,False)
-		label=gtk.Label("File:")
+		label=gtk.Label("File/Dir name:")
 		hbox.pack_start(label,False)		
 		entry = gtk.Entry()
-		entry.set_max_length(150)
+		entry.set_max_length(200)
 		self.mFileEntry=entry
 		hbox.pack_start(entry,False)		
 		button = gtk.Button(_("Browse"))
 		button.connect("clicked", self.browseButtonCallBack)
 		hbox.pack_start(button, False, False, 5)
 
-		
-		
+		#Radios
+		self.mDir="itself" 
+		hbox=gtk.HBox()
+		vbox.pack_start(hbox,False)
+		radio = gtk.RadioButton(None, _("Itself"))
+		radio.connect("toggled", self.dirRadioCallBack, "itself")
+		radio.set_active(True)
+		hbox.pack_start(radio, False, False, 5)
 
+		radio = gtk.RadioButton(radio, _("All files in directory"))
+		radio.connect("toggled", self.dirRadioCallBack, "direct")
+		hbox.pack_start(radio, False, False, 5)
 
+		radio = gtk.RadioButton(radio, _("All files in directory,subdirectories"))
+		radio.connect("toggled", self.dirRadioCallBack, "all")
+		hbox.pack_start(radio, False, False, 5)
 		
+		#Permissions
+		self.mPermission = {'s':True, 'r':False, 'x':False, 'w':False, 'a':False, 'o':False, 'c':False, 'e':False, 't':False}
+		pFrame=gtk.Frame(_("Permissoins"))
+		vbox.pack_start(pFrame,False)
+		pVbox=gtk.VBox()
+		pFrame.add(pVbox)
+		hbox = gtk.HBox()
+		pVbox.pack_start(hbox, False)
 
+		self.addPermissionCheckButton(hbox,"s",_("s(Search)"))
+		self.addPermissionCheckButton(hbox,"r",_("r(Read)"))
+		self.addPermissionCheckButton(hbox,"x",_("x(eXecute)"))
+		self.addPermissionCheckButton(hbox,"w",_("w(Write)"))
+
+		expander = gtk.Expander(_("Detailed Permission"))
+		
 
 class networkTab(tabCommon):
 

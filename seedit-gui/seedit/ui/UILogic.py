@@ -492,3 +492,48 @@ def allowFileStr(file, dirType, permission):
     str = "allow "+file+" "+permStr+";\n"
     return str
 
+def checkPortText(portText):
+    portText=portText.rstrip()
+    m = re.search("^\d+$",portText)
+    if m:
+        return True
+    m = re.search("^(\d+,)+\d+$",portText)
+    if m:
+        return True
+    return False
+
+'''
+Logic to make allownet from add policy dialog
+'''
+def allowNetStr(protocol, portType, portText, serverFlag, clientFlag):
+    if protocol=="raw":
+        return "allownet -protocol raw use;\n"
+
+    port =""
+    if portType == "specific":
+        if checkPortText(portText):
+            port =  portText
+    elif portType == "wellknown":
+        port ="-1023"
+    elif portType == "unpriv":
+        port ="1024-"
+    elif portType =="all":
+        port ="*"
+    if port=="":
+        return ""
+    
+    perm=""
+    if serverFlag:
+        perm ="server"
+    if clientFlag:
+        if perm=="":
+            perm = "client"
+        perm = perm+",client"
+    
+    if perm=="":
+        return ""
+    
+    str = "allownet -protocol %s -port %s %s;\n" % ( protocol, port, perm)
+    
+    return str
+

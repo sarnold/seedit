@@ -82,7 +82,7 @@ class fileTab(tabCommon):
 		label=gtk.Label("File/Dir name:")
 		hbox.pack_start(label,False)		
 		entry = gtk.Entry()
-		entry.set_max_length(200)
+#		entry.set_max_length(200)
 		self.mFileEntry=entry
 		hbox.pack_start(entry,False)		
 		button = gtk.Button(_("Browse"))
@@ -136,15 +136,92 @@ class fileTab(tabCommon):
 		self.addPermissionCheckButton(hbox,"e",_("e(Erase)"))
 		self.addPermissionCheckButton(hbox,"t",_("t(seTattr)"))
 
-
-
 class networkTab(tabCommon):
+	def behaviorCheckButtonCallBack(self,widget,data):
+		value = widget.get_active()
 
+		if data=="server":
+			self.mServerFlag=value
+		elif data=="client":
+			self.mClientFlag=value
+		
+		
+	def protocolRadioCallBack(self,widget,data=None):
+		if widget.get_active() == 1:
+			self.mProtocol=data
+	def portRadioCallBack(self,widget,data=None):
+		if widget.get_active() == 1:
+			self.mPortType=data
+			
 	def __init__(self,name):
 		tabCommon.__init__(self,name)
+		frame = self
+		frameVbox = gtk.VBox()
+		frame.add(frameVbox)
 
+		#protocol
+		self.mProtocol="tcp"
+		frame = gtk.Frame(_("Protocol"))
+		frameVbox.pack_start(frame,False)
+		hbox=gtk.HBox()
+		frame.add(hbox)
+		radio = gtk.RadioButton(None, "tcp")
+		radio.connect("toggled", self.protocolRadioCallBack, "tcp")
+		radio.set_active(True)
+		hbox.pack_start(radio,False)
+		radio = gtk.RadioButton(radio, "udp")
+		radio.connect("toggled", self.protocolRadioCallBack, "udp")
+		hbox.pack_start(radio,False)
+		radio = gtk.RadioButton(radio, "raw")
+		radio.connect("toggled", self.protocolRadioCallBack, "raw")
+		hbox.pack_start(radio,False)
+		
+		#Port
+		self.mPort=""
+		self.mPortType="specific" #specific is specific number, all is *, wellknown is -1023, unpriv is 1024-
+		frame = gtk.Frame(_("Port"))
+		frameVbox.pack_start(frame,False)
+		vbox=gtk.VBox()
+		frame.add(vbox)
+		
+		hbox=gtk.HBox()
+		vbox.pack_start(hbox,False)
+		radio = gtk.RadioButton(None, _("Specific Number:"))
+		radio.connect("toggled", self.portRadioCallBack, "specific")
+		hbox.pack_start(radio,False)
+		entry = gtk.Entry()
+		entry.set_max_length(40)
+		self.mPortEntry = entry
+		hbox.pack_start(entry,False)
+		
+		hbox=gtk.HBox()
+		vbox.pack_start(hbox,False)
+		radio = gtk.RadioButton(radio, _("All unreserved wellknown ports"))
+		radio.connect("toggled", self.portRadioCallBack, "wellknown")
+		hbox.pack_start(radio,False)
+		
+		radio = gtk.RadioButton(radio, _("All ports over 1024"))
+		radio.connect("toggled", self.portRadioCallBack, "unpriv")
+		hbox.pack_start(radio,False)
+		radio = gtk.RadioButton(radio, _("All ports"))
+		radio.connect("toggled", self.portRadioCallBack, "all")
+		hbox.pack_start(radio,False)
+		
+         	#Behavior
+		self.mServerFlag=False
+		self.mClientFlag=False
+		frame = gtk.Frame(_("Behavior"))
+		frameVbox.pack_start(frame,False)
+		hbox=gtk.HBox()
+		frame.add(hbox)
+		button = gtk.CheckButton(_("Server"))
+		button.connect("toggled", self.behaviorCheckButtonCallBack, "server")
+		hbox.pack_start(button, False)
 
-	
+		button = gtk.CheckButton(_("Client"))
+		button.connect("toggled", self.behaviorCheckButtonCallBack, "client")
+		hbox.pack_start(button, False)
+		
 
 class insertPolicyWindow(seeditCommon):
 	def allowFile(self):
@@ -157,7 +234,18 @@ class insertPolicyWindow(seeditCommon):
 		str = allowFileStr(file,dirType,permission)
 		return str
 
-	
+	def allowNetwork(self):
+		tab = self.mNetworkTab.getTab()
+		protocol = tab.mProtocol
+		portType= tab.mPortType
+		portText = tab.mPortEntry.get_text()
+
+		serverFlag =tab.mServerFlag
+		clientFlag =tab.mClientFlag
+			
+		str = allowNetStr(protocol, portType, portText, serverFlag, clientFlag)
+
+		return str
 
 	def closeCallBack(self,data=None):
 		self.mWindow.destroy()
@@ -169,6 +257,8 @@ class insertPolicyWindow(seeditCommon):
 		name = tab.mName
 		if name=="file":
 			str = self.allowFile()
+		elif name=="network":
+			str = self.allowNetwork()
 		else:
 			str=""
 
@@ -197,6 +287,8 @@ class insertPolicyWindow(seeditCommon):
 		notebook.append_page(tab1.getTab(), label)
 
 		tab2 = networkTab("network")
+		self.mNetworkTab=tab2
+		 
 		label = gtk.Label(_("Network"))
 		notebook.append_page(tab2.getTab(), label)
 		hbox =gtk.HButtonBox()

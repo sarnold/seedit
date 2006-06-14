@@ -1,0 +1,13 @@
+[Desktop Entry]
+Name=SELinux Policy Editor
+GenericName=SELinux Policy Editor 
+Comment=This tool makes SELinux easy 
+Comment[ja]=SELinuxを簡単に使うためのツールです
+Icon=apol.png
+Exec=/usr/bin/seedit-gui
+Type=Application
+Terminal=false
+Encoding=UTF-8
+Categories=Application;SystemSetup;X-Red-Hat-Base;
+X-Desktop-File-Install-Version=0.2
+StartupNotify=true

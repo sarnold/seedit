@@ -1,5 +1,8 @@
 prefix = /usr
 
+SRC = seedit-gui-domain-manager.py seedit-gui-edit.py seedit-gui-generate-policy.py seedit-gui-status.py seedit-gui.py seedit/ui/GUICommon.py seedit/ui/UILogic.py
+
+
 
 all:
 
@@ -15,3 +18,8 @@ install:
 	install -m 744 seedit-gui-generate-policy.py $(prefix)/sbin/seedit-gui-generate-policy
 
 clean:
+
+
+pot:
+	pygettext.py $(SRC)
+	cat messages.pot|grep msgid|sort > message_template

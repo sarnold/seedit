@@ -20,13 +20,18 @@ install:
 	mkdir -p $(prefix)/share/locale/ja/LC_MESSAGES/
 	install -m 744 po/ja.mo $(prefix)/share/locale/ja/LC_MESSAGES/seedit-gui.mo
 
+	if [ -e /usr/bin/seedit-gui ]; then\
+		rm /usr/bin/seedit-gui;\
+	fi
 	ln -s $(prefix)/bin/consolehelper  /usr/bin/seedit-gui
-	mkdir -p $(sysconfdir)/security
-	install -m 744 security/seedit-gui $(sysconfdir)/security
+	mkdir -p $(sysconfdir)/security/console.apps
+	install -m 744 console.apps/seedit-gui $(sysconfdir)/security/console.apps
 	mkdir -p $(sysconfdir)/pam.d
 	install -m 744 pam.d/seedit-gui    $(sysconfdir)/pam.d
 	mkdir -p $(prefix)/share/applications/
 	install -m 744 desktop/seedit-gui.desktop $(prefix)/share/applications
+	mkdir -p $(prefix)/share/pixmaps/
+	install -m 744 icons/seedit-gui.png $(prefix)/share/pixmaps
 
 
 clean:

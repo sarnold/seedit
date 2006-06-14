@@ -34,23 +34,42 @@ class fileTab(tabCommon):
 		if widget.get_active() == 1:
 			self.mDir=data
 			print self.mDir
+
+	def setPermissionButton(self, permission,value):
+		self.mPermission[permission]=value
+		self.mPermissionButton[permission].set_active(value)
+				 
 	def permissionCheckButtonCallBack(self,widget,data):
 		if self.mPermission.has_key(data):
 			pass
 		else:
 			print "No key %s" % data
 			return
-		
-		if widget.get_active():
-			self.mPermission[data]=True
-		else:
-			self.mPermission[data]=False
+
+		value = widget.get_active()
+		self.mPermission[data]=value
+
+		if data  == 'r':
+			self.setPermissionButton('s',value)
+		elif data == 'x':
+			self.setPermissionButton('r',value)
+			self.setPermissionButton('s',value)
+		elif data =='w':
+			self.setPermissionButton('r',value)
+			self.setPermissionButton('s',value)
+
+		elif data in ('a', 'o','c','e', 't'):
+			self.setPermissionButton('r',value)
+			self.setPermissionButton('s',value)
+
+			
 
 	def addPermissionCheckButton(self, hbox, permission, label):		
 		button = gtk.CheckButton(label)
 		self.mReadAllLogFlag=False
 		button.connect("toggled", self.permissionCheckButtonCallBack, permission)
 		hbox.pack_start(button, False)
+		self.mPermissionButton[permission]=button
 		
 	     
 	def __init__(self,name):
@@ -89,6 +108,7 @@ class fileTab(tabCommon):
 		
 		#Permissions
 		self.mPermission = {'s':True, 'r':False, 'x':False, 'w':False, 'a':False, 'o':False, 'c':False, 'e':False, 't':False}
+		self.mPermissionButton =dict()
 		pFrame=gtk.Frame(_("Permissoins"))
 		vbox.pack_start(pFrame,False)
 		pVbox=gtk.VBox()
@@ -99,10 +119,24 @@ class fileTab(tabCommon):
 		self.addPermissionCheckButton(hbox,"s",_("s(Search)"))
 		self.addPermissionCheckButton(hbox,"r",_("r(Read)"))
 		self.addPermissionCheckButton(hbox,"x",_("x(eXecute)"))
+		
+		hbox = gtk.HBox()
+		pVbox.pack_start(hbox, False)
 		self.addPermissionCheckButton(hbox,"w",_("w(Write)"))
 
-		expander = gtk.Expander(_("Detailed Permission"))
-		
+		expander = gtk.Expander(_("Detailed write Permission"))
+		hbox.pack_start(expander, False)
+		pVbox=gtk.VBox()
+		expander.add(pVbox)
+		hbox = gtk.HBox()
+		pVbox.pack_start(hbox, False)
+		self.addPermissionCheckButton(hbox,"a",_("a(Append)"))
+		self.addPermissionCheckButton(hbox,"o",_("o(Overwrite)"))
+		self.addPermissionCheckButton(hbox,"c",_("c(Create)"))
+		self.addPermissionCheckButton(hbox,"e",_("e(Erase)"))
+		self.addPermissionCheckButton(hbox,"t",_("t(seTattr)"))
+
+
 
 class networkTab(tabCommon):
 

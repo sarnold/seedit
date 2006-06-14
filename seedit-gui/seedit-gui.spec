@@ -40,7 +40,7 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/applications/seedit-gui.desktop
 /usr/share/locale/*
 /etc/pam.d/seedit-gui
-/etc/security/seedit-gui
+/etc/security/console.apps/seedit-gui
 
 %changelog
 * Sun Jun 18 2006 Yuichi Nakamura<himainu-ynakam@miomio.jp> 2.0.0b5

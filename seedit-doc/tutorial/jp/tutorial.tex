@@ -150,8 +150,7 @@ http://sourceforge.net/project/showfiles.php?group_id=135756
 seedit-converterには、Simplified PolicyをSELinuxのポリシに変換するツールと、Simplified
 	  Policy管理ツールが同梱されています。seedit-policyには、
 	  simplified policyが格納されています。seedit-guiは、GUIです。
-	X Window Systemから、/usr/sbin/seedit-guiにてコントロールパネル
-	が起動します。\\
+
 
 Fedora Core5かつ最新版が2.0.0ならば、
 seedit-converter-2.0.0-FC5.i386.rpm, seedit-policy-2.0.0-FC5.noarch.rpm
@@ -259,6 +258,11 @@ SELINUXTYPE=seedit
 	# rm -rf /etc/selinux/seedit
        \end{verbatim}
 \end{itemize}
+
+\section{GUIについて}
+X Window Systemから、「seedit-gui」または「デスクトップ→管理→
+SELinux Policy Editor」にてGUIが起動
+します。以下で紹介するコマンドラインの操作も、GUIで行えます。\\
 
 
 \section{システムの状況を把握する}

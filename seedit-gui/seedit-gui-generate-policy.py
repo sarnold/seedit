@@ -14,7 +14,9 @@ sys.path.insert(0,"/usr/lib")
 from  seedit.ui.GUICommon import *
 from  seedit.ui.UILogic import *
 from  seedit.audit2spdl import *
+import seedit.audit2spdl
 
+gRestorecon = "/sbin/restorecon"
 	
 '''
 This thread generate policy and store to mResult 
@@ -234,6 +236,14 @@ class seeditGeneratePolicyWindow(seeditCommon):
 					model.remove(iter)
 				iter = next
 
+	def doRestorecon(self,line):
+		line  = re.sub("#restorecon","",line)
+		command = gRestorecon + line
+		input = os.popen(command,'r')
+		print command
+		input.close()
+		
+		
 	def saveButtonCallBack(self, button, treeview):
 		model = treeview.get_model()
 		iter = model.get_iter_first()
@@ -251,7 +261,10 @@ class seeditGeneratePolicyWindow(seeditCommon):
 					appendExistsFlag=True
 					if not toBeAppendedPolicy.has_key(domain):
 						toBeAppendedPolicy[domain]=[]
-					toBeAppendedPolicy[domain].append(policy)
+					if policy[0]=='#':
+						self.doRestorecon(policy)
+					else:
+						toBeAppendedPolicy[domain].append(policy)
 				iter = next
 		if not appendExistsFlag:
 			return
@@ -389,9 +402,11 @@ class seeditGeneratePolicyWindow(seeditCommon):
 
             
 if __name__ == '__main__':
-    gettext.install("seedit-gui","/usr/share/locale")
-    seeditGeneratePolicyWindow()
-    gtk.gdk.threads_init()
-    gtk.gdk.threads_enter()
-    gtk.main()
-    gtk.gdk.threads_leave()
+	seedit.audit2spdl.gRestoreconFlag = True
+	seedit.audit2spdl.gHighSecurityFlag = True
+	gettext.install("seedit-gui","/usr/share/locale")
+	seeditGeneratePolicyWindow()
+	gtk.gdk.threads_init()
+	gtk.gdk.threads_enter()
+	gtk.main()
+	gtk.gdk.threads_leave()

@@ -1,7 +1,7 @@
 ## minimum types used in converter
 type security_t,file_type,fs_type;
 #unlabeled_t is for unlabeled object
-type unlabeled_t,file_type,fs_type;
+type unlabeled_t,file_type,fs_type,domain;
 #in some condition, unlabeled files are labeled as file_t
 type file_t, file_type,fs_type;
 type fs_t,fs_type;

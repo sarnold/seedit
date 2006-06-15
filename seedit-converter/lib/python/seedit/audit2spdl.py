@@ -12,6 +12,7 @@ import getopt
 import gettext
 from seedit import getAttr
 from stat import *
+gMatchpathcon = "/usr/sbin/matchpathcon -n"
 
 def errorExit(msg):
     sys.stderr.write(msg)
@@ -388,7 +389,10 @@ def genFileAllow(rule,line,domdoc):
 
     spRule["ruletype"]="allowfile"
     spRule["domain"]=rule["domain"]
+    spRule["type"]=rule["type"]
     spRule["name"]=rule["name"]
+    spRule["secclass"]=rule["secclass"]
+
     ##make grab
     if rule["secclass"] == "dir":
         pass    
@@ -398,6 +402,7 @@ def genFileAllow(rule,line,domdoc):
         path = path + "/*"
     #convert /home -> ~/
     if re.search("^/home/", path):
+        spRule["homepath"]=path #path before ~
         path = re.sub("/home/[^/]+","~",path)
 
     spRule["path"] = path
@@ -949,6 +954,47 @@ def allowTtyPtsStr(spRule):
 #    str = str+" "+permListToStr(permList)+";"
     return str
 
+
+'''
+if do not need restorecon return ""
+if need restorecon, returns restorecon command string
+'''
+def restoreconStr(spRule):
+    path = spRule["path"]
+    if spRule.has_key("homepath"):
+        path = spRule["homepath"]
+    
+    if spRule["secclass"]=="dir":
+        return "" # for secclass=dir, matchpathcon(path) and type does not match
+    if path =="":
+        return ""
+    if path[0]!='/':
+        return ""
+
+    command = gMatchpathcon + " " +path
+    input=os.popen(command, "r")
+    lines = input.readlines()
+    if input.close():
+        return ""
+    
+
+    line  = lines[0].strip("\n")
+    type = line.split(':')[2]
+    
+    type = re.sub("^dir_","",type)
+    logType = spRule["type"]
+    
+
+    logType = re.sub("^dir_","",logType)
+
+    if type == logType:
+        return ""
+
+    result = "restorecon -R "+path
+    return result
+ 
+
+
 def allowfileStr(spRule):
     str=""
 
@@ -967,8 +1013,13 @@ def allowfileStr(spRule):
     if path =="":
         str = "#"+str
         str = _("#Failed to generate, because failed to obtain fullpath.\n") +str
+
+    if gRestoreconFlag:
+        restorecon = restoreconStr(spRule)
+        if restorecon != "":
+            str = "#" + restorecon
     return str
-    
+
 
 def allowfsStr(spRule):
     str=""
@@ -1104,5 +1155,8 @@ gHighSecurityFlag=False
 gLoadPolicyFlag=False
 # -v option 
 gVerboseFlag =False
+
+#if True, generates restorecon command
+gRestoreconFlag = False
 
 gOutput="/etc/selinux/seedit/src/simplified_policy"

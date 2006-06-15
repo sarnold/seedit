@@ -16,7 +16,7 @@ install:
 	install -m 744 seedit-gui-status.py $(prefix)/sbin/seedit-gui-status
 	install -m 744 seedit-gui-domain-manager.py $(prefix)/sbin/seedit-gui-domain-manager
 	install -m 744 seedit-gui-generate-policy.py $(prefix)/sbin/seedit-gui-generate-policy
-	install -m 744 seedit-gui-load.py $(prefix)/sbin/
+	install -m 744 seedit-gui-load.py $(prefix)/sbin/seedit-gui-load
 
 	install -m 744 seedit-gui-edit.py $(prefix)/sbin/seedit-gui-edit
 	mkdir -p $(prefix)/share/locale/ja/LC_MESSAGES/

@@ -15,6 +15,7 @@ GUI_STATUS=1
 GUI_MANAGE=2
 GUI_GENERATE=3
 GUI_EDIT=4
+GUI_LOAD=5
 gIconPath= "/usr/share/icons/seedit/"
 if not os.path.exists(gIconPath+"icon.png"):
     gIconPath="./icons/"
@@ -23,7 +24,8 @@ DOMAIN_MANAGE_COMMAND="/usr/sbin/seedit-gui-domain-manager"
 
 GENERATE_COMMAND="/usr/sbin/seedit-gui-generate-policy"
 EDIT_COMMAND="/usr/sbin/seedit-gui-edit"
-        
+LOAD_COMMAND="/usr/sbin/seedit-gui-load"
+
 class seeditMainWindow(seeditCommon):
   
     def forkProgram(self,path):
@@ -43,6 +45,8 @@ class seeditMainWindow(seeditCommon):
             self.forkProgram(GENERATE_COMMAND)
 	elif(mode == GUI_EDIT):
             self.forkProgram(EDIT_COMMAND)
+        elif(mode == GUI_LOAD):
+            self.forkProgram(LOAD_COMMAND)
         else:
             self.showNotImplementedDialog()
     
@@ -80,6 +84,7 @@ class seeditMainWindow(seeditCommon):
         model.append([_("Manage Domain"), newIcon,GUI_MANAGE])
         model.append([_("Generate policy"), defaultIcon,GUI_GENERATE])
         model.append([_("Edit policy"), defaultIcon,GUI_EDIT])
+        model.append([_("Apply policy/Relabel"), defaultIcon,GUI_LOAD])
 
         self.iconView = gtk.IconView(model)
         self.iconView.set_text_column(0)

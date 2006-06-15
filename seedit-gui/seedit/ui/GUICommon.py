@@ -119,14 +119,16 @@ class loadPolicyThread(threading.Thread):
         self.mDialog.mTextBuffer.insert(self.mDialog.mTextBuffer.get_end_iter(),line)
 
     
-    def __init__(self,dialog):
+    def __init__(self,dialog,command, closeFlag=True):
+        self.mCommand = command
         self.mErrorLine=""
+        self.mCloseFlag=closeFlag
         threading.Thread.__init__(self)
         self.mDialog = dialog
 
     def run(self):
-        command = gSeedit_load+" -v"
 
+        command = self.mCommand
         input=os.popen(command, "r")
 
         line = input.readline()
@@ -134,26 +136,30 @@ class loadPolicyThread(threading.Thread):
             gobject.idle_add(self.updateTextBuffer,line)
             if re.search("seedit-converter:Error:",line):
                 self.mErrorLine=line
-#            self.mDialog.mTextBuffer.insert(self.mDialog.mTextBuffer.get_end_iter(),line)
+
             line = input.readline()
             sys.stdout.write(line)
+            
         
         if input.close():
             self.mDialog.set_response_sensitive(gtk.RESPONSE_CANCEL,True)
             gobject.idle_add(self.mDialog.mLabel.set_text, _("Error:Syntax Error"))
-            #          self.mDialog.mLabel.set_text(_("Error:Syntax Error"))
-#            self.mDialog.response(gtk.RESPONSE_CANCEL)
+         
             return SEEDIT_ERROR_SEEDIT_LOAD
 
         gobject.idle_add(self.mDialog.mLabel.set_text, _("Success!"))
-#        self.mDialog.mLabel.set_text(_("Success!!"))
 
-        
-        self.mDialog.response(gtk.RESPONSE_OK)
-        self.mDialog.destroy()
+        if self.mCloseFlag:
+            self.mDialog.response(gtk.RESPONSE_OK)
+            self.mDialog.destroy()
+        else:
+            self.mDialog.set_response_sensitive(gtk.RESPONSE_CANCEL,True)
 
         return SEEDIT_SUCCESS
-            
+
+
+
+
 '''
 Dialog that shows progress of seedit-load
 '''
@@ -161,7 +167,7 @@ class loadPolicyDialog(gtk.Dialog):
     def dummyCallback(self,data =None):
         pass
     def showCallback(self, data=None):
-        thread = loadPolicyThread(self)
+        thread = loadPolicyThread(self,self.mCommand,self.mCloseFlag)
         self.mThread = thread
         thread.start()
 
@@ -183,14 +189,24 @@ class loadPolicyDialog(gtk.Dialog):
                     
             return (SEEDIT_ERROR_SEEDIT_LOAD,lineno)
 
-    def __init__(self,parent):
+    def __init__(self,parent,closeFlag=True,title=None, message=None,command=None):
+        if title == None:
+            title=_("load policy")
+        if message==None:
+            message=_("Loading Policy... It may take time. Do not close window!")
+        self.mCloseFlag=closeFlag # if False, dialog will not close even if success
         self.mParentWindow=parent
-        gtk.Dialog.__init__(self,_("load policy"),parent.mWindow, gtk.DIALOG_MODAL,(gtk.STOCK_OK, gtk.RESPONSE_CANCEL))
+        gtk.Dialog.__init__(self,title,parent.mWindow, gtk.DIALOG_MODAL,(gtk.STOCK_OK, gtk.RESPONSE_CANCEL))
+        if command ==None:
+            self.mCommand = gSeedit_load+" -v"
+        else:
+            self.mCommand = command
+        
         self.set_response_sensitive(gtk.RESPONSE_CANCEL,False)
         
         self.set_decorated(False)
         
-        label= gtk.Label(_("Loading Policy... It may take time. Do not close window!"))
+        label= gtk.Label(message)
         self.mLabel = label
         self.vbox.pack_start(label, False, False,0)
 

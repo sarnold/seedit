@@ -35,6 +35,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_sbindir}/seedit-gui-domain-manager
 %{_sbindir}/seedit-gui-generate-policy
 %{_sbindir}/seedit-gui-edit
+%{_sbindir}/seedit-gui-load
 %{_libdir}/seedit/*
 /usr/share/icons/seedit/*
 /usr/share/applications/seedit-gui.desktop

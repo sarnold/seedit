@@ -120,6 +120,9 @@ class loadPolicyThread(threading.Thread):
 
     
     def __init__(self,dialog,command, closeFlag=True):
+        if command == None:
+            command = gSeeditLoad +" -v"
+
         self.mCommand = command
         self.mErrorLine=""
         self.mCloseFlag=closeFlag
@@ -139,7 +142,7 @@ class loadPolicyThread(threading.Thread):
 
             line = input.readline()
             sys.stdout.write(line)
-            
+                        
         
         if input.close():
             self.mDialog.set_response_sensitive(gtk.RESPONSE_CANCEL,True)

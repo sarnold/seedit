@@ -1096,7 +1096,9 @@ def SPDLstr(spRuleList,line):
     outStruct=[]
     for spRule in spRuleList:
         fileName = domainToFileName(spRule["domain"])
-
+        if spRule["domain"]=="unlabeled_t":
+            ruleStr = "#Broken domain, skipped."
+            return ruleStr
         ruleStr=""
         ruletype=spRule["ruletype"]
         if ruletype=="allowfile":

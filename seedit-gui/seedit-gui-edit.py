@@ -361,6 +361,9 @@ class seeditEditWindow(seeditCommon):
       <toolitem action="Save"/>
       <separator/>
       <toolitem action="Add"/>
+      <separator/>
+      <toolitem action="Reload"/>
+
     </toolbar>
     </ui>'''
 
@@ -400,7 +403,20 @@ class seeditEditWindow(seeditCommon):
 		    
 	    self.mStatusLabel.set_text(msg)
 
-	  
+    def writeTextView(self, input, domain):
+	    lines = input.readlines()
+	    self.mBackupLines=""
+	    for l in lines:
+		    self.mBackupLines = self.mBackupLines + l
+	    
+	    self.mTextBuffer.delete(self.mTextBuffer.get_start_iter(),self.mTextBuffer.get_end_iter())
+	    
+	    for line in lines:
+		    self.mTextBuffer.insert(self.mTextBuffer.get_end_iter(),line)
+
+	    self.mStatusLabel.set_text(_("Editing %s") % (domain))
+	    input.close()
+	    
 
     def OpenCallBack(self,data=None):
 	    dialog = openDomainDialog(self)
@@ -411,22 +427,20 @@ class seeditEditWindow(seeditCommon):
 	    if input ==None:
 		    self.showMessageDialog(gtk.MESSAGE_ERROR, _("File open Error.\n"))
 		    return
-
-	    lines = input.readlines()
-	    self.mBackupLines=""
-	    for l in lines:
-		    self.mBackupLines = self.mBackupLines + l
-	    
-	    self.mTextBuffer.delete(self.mTextBuffer.get_start_iter(),self.mTextBuffer.get_end_iter())
-	    
-	    for line in lines:
-		    self.mTextBuffer.insert(self.mTextBuffer.get_end_iter(),line)
 	    self.mDomain = dialog.getOpenDomain()
-	    self.mStatusLabel.set_text(_("Editing %s") % (self.mDomain))
-	    print "Open"
-	    pass
+	    
+	    self.writeTextView(input,self.mDomain)
+	    
+
     def AddCallBack(self,data=None):
 	    window = insertPolicyWindow(self)
+
+    def ReloadCallBack(self,data=None):
+	    if self.mDomain == "":
+		    return
+	    filename = getDomainFileName(self.mDomain)
+	    input = open(filename)
+	    self.writeTextView(input,self.mDomain)
 
     def initMenu(self,window):
         uimanager = gtk.UIManager()
@@ -443,7 +457,7 @@ class seeditEditWindow(seeditCommon):
 				  ('Save', gtk.STOCK_SAVE, _("_Save"), None,_("Save and apply"), self.SaveCallBack),
 				  ('Open', gtk.STOCK_OPEN, _("_Open"), None,_("Open domain"), self.OpenCallBack),
 				  ('Add', gtk.STOCK_ADD, _("_Add"), None,_("Add policy"), self.AddCallBack),
-				  
+				  ('Reload', gtk.STOCK_REFRESH, _("_Reload"), None,_("Reload"), self.ReloadCallBack)
 				  ])
         uimanager.insert_action_group(actiongroup, 0)
         uimanager.add_ui_from_string(self.ui)

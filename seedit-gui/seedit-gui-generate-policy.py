@@ -282,8 +282,13 @@ class seeditGeneratePolicyWindow(seeditCommon):
 				value = re.sub("/[^/*]*[\s\t]+","/* ",value)
 				
 				model.set_value(iter,2,value)
-
-
+			if re.search("^allownet[\s\t]+",value):
+				m = re.search("-port[\s\t]+\d+",value)
+				num = int((m.group().split())[1])
+				if num >= 1024:
+					value = re.sub("-port[\s\t]+\d+[\s\t]","-port 1024- ",value)
+					model.set_value(iter,2,value)
+				
 	
         def __init__(self):
 		self.mGeneratedPolicyListStore = gtk.ListStore(

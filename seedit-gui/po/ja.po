@@ -531,3 +531,34 @@ msgstr "設定を反映しています。しばらく時間がかかりますが
 msgid "Detail"
 msgstr "詳細"
 
+#: seedit-gui-load.py:26
+msgid "Initialize label"
+msgstr "ファイルラベルを初期化"
+
+#: seedit-gui-load.py:27
+msgid "Relabeling all file labels, it will take very  long time."
+msgstr "全てのファイルのラベルを初期化してます。時間がかかります。"
+
+#: seedit-gui-load.py:34
+msgid "restorecon"
+msgstr "restoreconする"
+
+#: seedit-gui-load.py:35 seedit-gui-load.py:80
+msgid "restorecon to file"
+msgstr "restoreconする：ファイル・ディレクトリ名"
+
+#: seedit-gui-load.py:54
+msgid "seedit load policy/relabel"
+msgstr "seedit ポリシーのロード、ラベル付け"
+
+#: seedit-gui-load.py:67
+msgid "Load policy"
+msgstr "ポリシーをロードする"
+
+#: seedit-gui-load.py:74
+msgid "Initialize all file labels"
+msgstr "全ファイルのラベルを初期化する"
+
+#: seedit-gui.py:87
+msgid "Apply policy/Relabel"
+msgstr "ポリシーのロード、ラベル付け"

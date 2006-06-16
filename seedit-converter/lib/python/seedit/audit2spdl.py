@@ -959,7 +959,7 @@ def allowTtyPtsStr(spRule):
 if do not need restorecon return ""
 if need restorecon, returns restorecon command string
 '''
-def restoreconStr(spRule):
+def restoreconStr(spRule,allowFileStr):
     path = spRule["path"]
     if spRule.has_key("homepath"):
         path = spRule["homepath"]
@@ -990,6 +990,17 @@ def restoreconStr(spRule):
     if type == logType:
         return ""
 
+    #check hardlink
+    if not os.path.isdir(path):
+        if os.path.exists(path):
+            s = os.stat(path)
+            if s.st_nlink > 1:
+                result = _("%s is hardlinked.\n #Nothing generated for safety.\n") % (path)
+                result = result +"#"+allowFileStr
+                
+                return result
+
+                
     result = "restorecon -R "+path
     return result
  
@@ -1015,7 +1026,7 @@ def allowfileStr(spRule):
         str = _("#Failed to generate, because failed to obtain fullpath.\n") +str
 
     if gRestoreconFlag:
-        restorecon = restoreconStr(spRule)
+        restorecon = restoreconStr(spRule,str)
         if restorecon != "":
             str = "#" + restorecon
     return str

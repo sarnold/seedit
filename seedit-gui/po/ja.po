@@ -578,7 +578,7 @@ msgstr "#セキュリティ上の理由から、何も提示しません"
 #: ../../trunk/seedit-converter/lib/python/seedit/audit2spdl.py:1026
 msgid ""
 "#Failed to generate, because failed to obtain fullpath.\n"
-msgstr "#生成失敗しました。\n#フルパス情報を得ることに失敗したことが原因です。"
+msgstr "#生成失敗しました。\n#フルパス情報を得ることに失敗したことが原因です。\n"
 
 #: ../../trunk/seedit-converter/lib/python/seedit/audit2spdl.py:1041
 msgid ""

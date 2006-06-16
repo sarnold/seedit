@@ -291,8 +291,10 @@ class seeditGeneratePolicyWindow(seeditCommon):
 		if iter:
 			value = model.get_value(iter,2)
 			if re.search("^allow[\s\t]+",value):
+				value = re.sub("/[^/*]+\/\*\*","/**",value)
 				value = re.sub("/\*[\s\t]+","/** ",value)
 				value = re.sub("/[^/*]*[\s\t]+","/* ",value)
+
 				
 				model.set_value(iter,2,value)
 			if re.search("^allownet[\s\t]+",value):

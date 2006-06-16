@@ -25,6 +25,7 @@ allow /bin/bash r,x,s;
 
 #to get selinux security information
 allowpriv getsecurity;
+allowpriv setsecurity;
 
 allowfs proc_pid_self r,w,s;
 allowpriv netlink;

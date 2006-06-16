@@ -49,20 +49,24 @@ relabel: install
 diffrelabel: install
 	if [ -e fcdiff.tmp ] ; then \
 		exec 3< fcdiff.tmp;\
-		while read FL 0<&3; do \
-	  	if [ -e $$FL ] ; then \
-	    		$(RESTORECON) $$FL -R -vv;\
-		fi;\
+		while read FLs 0<&3; do \
+		for FL in $$FLs; do \
+		  	if [ -e $$FL ] ; then \
+		    		$(RESTORECON) $$FL -R -vv;\
+			fi;\
+		done; \
 		done; \
 		exec 3<&-;\
 	fi;
 	$(LOADPOLICY) $(POLICYDIR)/policy.$(POLICYVER)
 	diff $(OLD_FILE_CONTEXTS) $(FILE_CONTEXTS) -r|grep -e "^[<>]"|sed -e 's/^[><][ \t]*//'|sed -e 's/[ \t]\+.*//'|sed -e 's/(.*//'|sort|sed s/"\[\^\/\]"//g > fcdiff.tmp
 	exec 3< fcdiff.tmp;\
-	while read FL 0<&3; do \
+	while read FLs 0<&3; do \
+	for FL in $$FLs; do \
 	  if [ -e $$FL ] ; then \
 	    $(RESTORECON) $$FL -R -vv;\
 	  fi;\
+	done;\
 	done; \
 	exec 3<&-;\
 	cp $(FILE_CONTEXTS) $(OLD_FILE_CONTEXTS)

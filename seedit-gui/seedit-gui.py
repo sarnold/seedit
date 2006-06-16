@@ -56,6 +56,10 @@ class seeditMainWindow(seeditCommon):
         i = selected[0][0]
         mode = model[i][2]
         self.launchGUI(mode)
+
+    def onButtonClick(self,button, mode):
+        
+        self.launchGUI(mode)
         
     def __init__(self):
         window = gtk.Window()
@@ -86,17 +90,30 @@ class seeditMainWindow(seeditCommon):
         model.append([_("Edit policy"), defaultIcon,GUI_EDIT])
         model.append([_("Apply policy/Relabel"), defaultIcon,GUI_LOAD])
 
-        self.iconView = gtk.IconView(model)
-        self.iconView.set_text_column(0)
-        self.iconView.set_pixbuf_column(1)
-        self.iconView.set_orientation(gtk.ORIENTATION_VERTICAL)
-        self.iconView.set_selection_mode(gtk.SELECTION_SINGLE)
-        self.iconView.set_columns(-1)
-#        self.iconView.set_item_width(70)
-        self.iconView.connect('item-activated', self.onActive, model)
+        noIconViewFlag=False #in old pygtk, no IconView widget
+        try:
+            self.iconView = gtk.IconView(model)
+        except:
+            noIconViewFlag = True
 
-        frame.add(self.iconView)
-        
+        if noIconViewFlag == False:
+            self.iconView.set_text_column(0)
+            self.iconView.set_pixbuf_column(1)
+            self.iconView.set_orientation(gtk.ORIENTATION_VERTICAL)
+            self.iconView.set_selection_mode(gtk.SELECTION_SINGLE)
+            self.iconView.set_columns(-1)
+            self.iconView.connect('item-activated', self.onActive, model)
+
+            frame.add(self.iconView)
+        else:
+            #No iconview, use vbox
+            vbox= gtk.VBox()
+            frame.add(vbox)
+            for row in model:
+                button = gtk.Button(row[0])
+                vbox.pack_start(button,False)
+                button.connect('clicked',self.onButtonClick,row[2])
+            
         label = gtk.Label("")        
         vbox.pack_end(label,False,False)
         window.show_all()

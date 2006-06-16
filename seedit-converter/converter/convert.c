@@ -1483,6 +1483,7 @@ out_allow(FILE *outfp,FILE *unconfined_fp)
 		    
 		  }else{
 		    fprintf(outfp, "type %s,domain,unconfined_domain;\n", domain->name);
+		    fprintf(outfp, "allow %s self:process transition;\n", domain->name);
 		  }
 		}else{
 		  fprintf(outfp, "type %s,domain;\n", domain->name);
@@ -2100,7 +2101,7 @@ out_rbac(FILE *outfp)
 
 
 	if (rbac_hash_table == NULL){
-	  fprintf(rbac_out, "allow system_r system_r;\n");
+	  //	  fprintf(rbac_out, "allow system_r system_r;\n");
 	  fprintf(rbac_out, "user system_u roles system_r;\n");
 	  fprintf(rbac_out, "user user_u roles { system_r };\n");
 	  fprintf(rbac_out, "user root roles { system_r };\n");

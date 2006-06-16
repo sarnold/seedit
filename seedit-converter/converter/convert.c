@@ -1186,7 +1186,7 @@ void out_fs_acl(FILE *fp, DOMAIN *domain){
       type = strdup("self");
       fprintf(fp, "#Can access /proc/pid/self\n");
     }else if(strcmp(rule.fs,"proc_pid_other")==0){
-      type =strdup("global");
+      type =strdup("domain");
       fprintf(fp, "#Can access /proc/pid/<other processes>\n");
     }else{
       type =(char *) my_malloc(len + 1);

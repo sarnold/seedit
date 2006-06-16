@@ -2102,6 +2102,7 @@ out_rbac(FILE *outfp)
 	if (rbac_hash_table == NULL){
 	  fprintf(rbac_out, "user system_u roles system_r;\n");
 	  fprintf(rbac_out, "user user_u roles { system_r };\n");
+	  fprintf(rbac_out, "user root roles { system_r };\n");
 	  return;
 	}
 	/*print role system_r ..*/

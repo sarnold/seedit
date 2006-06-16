@@ -42,7 +42,7 @@ class seeditCommon:
 
         # Create actions
         actiongroup.add_actions([
-                                 ('About', gtk.STOCK_ABOUT,_("_About"), None,
+                                 ('About', gtk.STOCK_DIALOG_INFO,_("_About"), None,
                                   _('About'), self.showAbout),
                                  ('Help', None, _('_Help')),
                                  ])

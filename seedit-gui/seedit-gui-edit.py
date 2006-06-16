@@ -448,7 +448,7 @@ class seeditEditWindow(seeditCommon):
         window.add_accel_group(accelgroup)
 	actiongroup = gtk.ActionGroup('seeditUIManager')
         self.actiongroup = actiongroup
-	actiongroup.add_actions([ ('About', gtk.STOCK_ABOUT,_("_About"), None,
+	actiongroup.add_actions([ ('About', gtk.STOCK_DIALOG_INFO,_("_About"), None,
                                   _('About'), self.showAbout),
                                  ('Help', None, _('_Help')),
 

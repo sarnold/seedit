@@ -39,6 +39,9 @@ genfscon nfs /				system_u:object_r:nfs_t
 genfscon nfs4 /				system_u:object_r:nfs_t
 genfscon afs /				system_u:object_r:nfs_t
 
+genfscon inotifyfs /			system_u:object_r:inotifyfs_t
+genfscon hugetlbfs /			system_u:object_r:hugetlbfs_t
+
 
 # unsupported filesystems
 genfscon rootfs /			system_u:object_r:unsupported_fs_t

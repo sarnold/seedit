@@ -387,7 +387,6 @@ def genFileAllow(rule,line,domdoc):
     else:
         if os.path.exists(path):
             path = os.path.realpath(path)
-        print path
         
     permList = findFilePermission(domdoc,rule,"allowfile")
     if not permList:

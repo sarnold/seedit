@@ -12,11 +12,31 @@ static char source_file[255];
 int source_lineno;
 
 
-void do_include(FILE *output, char *incstr, char *include_dir, int lineno){
+/*if include is found , return included str*/
+char *check_include(char *line){
+  char *p;
+  char *tmp;
+  tmp = strdup(line);
+  chop_nl(tmp);
+  p = strtok(tmp, " ");
+  if(p != NULL){
+    if(strcmp(p, "include")==0){
+	p = strtok(NULL ," ");
+	free(tmp);
+	return strdup(p);
+    }
+  }
+  free(tmp);
+  return NULL;
+}
+
+void do_include(FILE *output, char *incstr, char *include_dir, int lineno,int nest){
   char *filename;
   char *tmp;
   FILE *fp;
   char buf[INPUTBUF];
+  char *p;
+  int inc_lineno=0;
 
   if(incstr == NULL){
     fprintf(stderr, "In line:%d, Syntax Error.\n", lineno);
@@ -41,33 +61,25 @@ void do_include(FILE *output, char *incstr, char *include_dir, int lineno){
   fprintf(output, "#line 1 \"%s\"\n",filename);
 
   while (fgets(buf, sizeof(buf), fp) != NULL){
-    fprintf(output, "%s", buf);
+    inc_lineno++;
+    if((p = check_include(buf))!=NULL){
+      nest ++;
+      do_include(output,p,include_dir,lineno,nest);
+      fprintf(output, "#line 1 \"%s\"\n",filename);
+      fprintf(output, "#line %d\n",inc_lineno+2);
+    }else{
+      fprintf(output, "%s", buf);
+    }
   }
 
-  if(source_file){
-    fprintf(output, "#line 1 \"%s\"\n",source_file);
-    fprintf(output, "#line %d\n",source_lineno);
+  if(nest==0){
+    if(source_file){
+      fprintf(output, "#line 1 \"%s\"\n",source_file);
+      fprintf(output, "#line %d\n",source_lineno);
+    }
   }
 
   fclose(fp);
-}
-
-/*if include is found , return included str*/
-char *check_include(char *line){
-  char *p;
-  char *tmp;
-  tmp = strdup(line);
-  chop_nl(tmp);
-  p = strtok(tmp, " ");
-  if(p != NULL){
-    if(strcmp(p, "include")==0){
-	p = strtok(NULL ," ");
-	free(tmp);
-	return strdup(p);
-    }
-  }
-  free(tmp);
-  return NULL;
 }
 
 void preprocess_include(FILE *input, FILE *output,char *include_dir){
@@ -106,7 +118,7 @@ void preprocess_include(FILE *input, FILE *output,char *include_dir){
     }
 
     if((p = check_include(buf))!=NULL){
-      do_include(output,p,include_dir,lineno);
+      do_include(output,p,include_dir,lineno,0);
     }else{
       fprintf(output,"%s",buf);
     }

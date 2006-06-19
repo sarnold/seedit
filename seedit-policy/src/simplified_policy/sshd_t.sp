@@ -32,8 +32,6 @@ allow /bin/bash r,x;
 allow /var/empty/** r,s;
 allow /var/log/* r,w,s;
 
-# for FC5
-allow /var/run/nscd/* r,s;
 #utmp
 allow initrc_var_run_t  r,o,s;
 

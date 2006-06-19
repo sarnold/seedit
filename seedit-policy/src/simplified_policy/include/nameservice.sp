@@ -8,5 +8,7 @@ allow /etc/passwd r,s;
 allow /etc/protocols r,s;
 allow /etc/resolv.conf r,s;
 allow /etc/services r,s;
+allow /var/run/nscd/** r,s;
+
 
 allownet -protocol udp -port 53 client;

@@ -382,6 +382,12 @@ def genFileAllow(rule,line,domdoc):
     spRuleList=[]
     spRule = dict()    
     path = guessFilePath(rule,line)
+    if rule["secclass"]=="lnk_file":
+        pass
+    else:
+        path = os.path.realpath(path)
+
+        
     permList = findFilePermission(domdoc,rule,"allowfile")
     if not permList:
         permList = findFilePermission(domdoc,rule,"allowdev")

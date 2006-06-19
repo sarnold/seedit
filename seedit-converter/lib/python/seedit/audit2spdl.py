@@ -385,8 +385,9 @@ def genFileAllow(rule,line,domdoc):
     if rule["secclass"]=="lnk_file":
         pass
     else:
-        path = os.path.realpath(path)
-
+        if os.path.exists(path):
+            path = os.path.realpath(path)
+        print path
         
     permList = findFilePermission(domdoc,rule,"allowfile")
     if not permList:
@@ -1158,6 +1159,7 @@ gConverterConf="/etc/seedit/converter/conf/base_policy/converter.conf"
 gSpecXML="/etc/seedit/converter/conf/base_policy/spdl_spec.xml"
 #labels defined by allow exclusive rule
 gExcLabelList=getExcLabelList(gGeneratedPolicy)
+
 
 #labels used for allowfs rule
 gFsLabelList=getFsLabelList(gConverterConf)

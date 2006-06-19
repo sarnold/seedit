@@ -158,7 +158,7 @@ def seeditInstalled():
 '''
 Error : return None
 '''
-def createDomainTemplate(program, domain , parentDomain, daemonFlag, authFlag):
+def createDomainTemplate(program, domain , parentDomain, daemonFlag, authFlag,desktopFlag):
     result=""
     result = "{\n"
 
@@ -180,6 +180,11 @@ def createDomainTemplate(program, domain , parentDomain, daemonFlag, authFlag):
         result = result + "include nameservice.sp;\n"
     if authFlag:
         result = result + "include authentication.sp;\n"
+    if desktopFlag:
+        result = result +"include xapps.sp;\n"
+        result = result +"include tmpfile.sp;\n"
+        result = result +"include nameservice.sp;\n"
+
 
     result = result + "\n#Write access control here....\n\n"
 

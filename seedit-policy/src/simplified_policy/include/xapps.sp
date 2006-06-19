@@ -13,6 +13,8 @@ allow /var/cache/fontconfig/**  r,s;
 allow ~/.rh-fontconfig/** r,s;
 
 allow ~/.gnome2/**  s,r;
+allow ~/.local/**  s,r;
+allow xauthority_t  r,s;
 
 
 allow /dev/dsp  r,s,o;
@@ -29,3 +31,6 @@ allow /etc/gtk-2.0/** r,s;
 allow /etc/gnome-vfs-2.0/** r,s;
 allow /usr/share/X11/locale/** r,s;
 allow /usr/share/themes/** r,s;
+
+allowcom -ipc unconfined_t w,r;
+allowcom -ipc xserver_t r,w;

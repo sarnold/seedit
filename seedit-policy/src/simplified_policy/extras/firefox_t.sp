@@ -11,8 +11,6 @@ include xapps.sp;
 allow /etc/selinux/config  r,s;
 allowpriv getsecurity;
 
-allowcom -ipc unconfined_t w,r;
-allowcom -ipc xserver_t r,w;
 
 #access to system files
 allow /etc/localtime  r,s;
@@ -30,8 +28,6 @@ allow /usr/bin/** x,r,s;
 #access to other process's tmp files
 allow gdm_tmp_t  o,r,s;
 allow unconfined_tmp_t  r,w,s;
-allow xauthority_t  r,s;
-
 
 allowpriv netlink;
 
@@ -42,7 +38,6 @@ allownet -protocol tcp -port 1024- client;
 allow ~/** r,w,s;
 deny ~/Desktop/** ;
 allow ~/.mozilla/** r,w,s;
-allow ~/.local/**  s,r;
 
 
 }

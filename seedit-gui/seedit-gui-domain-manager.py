@@ -191,6 +191,9 @@ class createDomainTab(seeditCommon):
     def authRadioCallBack(self, widget, data):
         if widget.get_active() == 1:
             self.mAuthFlag = data
+    def desktopRadioCallBack(self, widget, data):
+        if widget.get_active() == 1:
+            self.mDesktopFlag = data
             
     def autoDomainName(self, filename):
         index = filename.rindex("/")
@@ -219,7 +222,7 @@ class createDomainTab(seeditCommon):
         program = self.mProgramEntry.get_text()
         domain = self.mDomainEntry.get_text()
         parentDomain = self.mParentDomainEntry.get_text()
-        string = createDomainTemplate(program, domain, parentDomain, self.mDaemonFlag, self.mAuthFlag)
+        string = createDomainTemplate(program, domain, parentDomain, self.mDaemonFlag, self.mAuthFlag, self.mDesktopFlag)
         if  string != None:
             self.mTextBuffer.set_text(string)
             
@@ -329,6 +332,10 @@ class createDomainTab(seeditCommon):
 
         self.mAuthFlag = False
         hbox = self.yesNoSelection(_("Authentication program?"), self.mAuthFlag, self.authRadioCallBack)
+        vbox.pack_start(hbox, False, False, 0)
+        
+        self.mDesktopFlag = False
+        hbox = self.yesNoSelection(_("Desktop application?"), self.mDesktopFlag, self.desktopRadioCallBack)
         vbox.pack_start(hbox, False, False, 0)
 
         hbox = gtk.HBox()

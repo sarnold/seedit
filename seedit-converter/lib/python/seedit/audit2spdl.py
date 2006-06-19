@@ -285,6 +285,10 @@ def findFilePermission(doc,rule,allowtype):
         if rule["secclass"]=="dir" and "write" in rule["permission"]:
             result = appendResult(result, "dummy")
             return result
+        elif rule["secclass"]=="dir" and "remove_name" in rule["permission"]:
+            result = appendResult(result, "dummy")
+            return result
+
     
     integrateTagList=doc.getElementsByTagName("integrate")
     allowfileNode=None

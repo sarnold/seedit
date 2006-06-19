@@ -700,8 +700,8 @@ int register_tmp_file_acl(char *path, char *e_name, int permission_flag){
   memset(&buf,0,sizeof(buf));
   /* if the file named "path" doesn't exist or isn't directory */
   if (stat(path, &buf) == -1 ||!(S_ISDIR(buf.st_mode))){
-    action_error("Filename %s must be directory\n", path);
-    exit(1);
+    //    action_error("Filename %s must be directory\n", path);
+    //exit(1);
   }  
 
   tmp_name = check_tmp_name(e_name);
@@ -722,7 +722,7 @@ int register_tmp_file_acl(char *path, char *e_name, int permission_flag){
    * This solves bug which happens when "allow exclusive" is described
    * to unlabeled directory. To enforce labeling ,this registers dummy acl
    */
-  add_filerule_to_domain(dummy_domain.name, path, READ_PRM, FILE_ITSELF);
+  add_filerule_to_domain(dummy_domain.name, path, READ_PRM, FILE_ALL_CHILD);
 
   /* add to tmp_rule_array */
   domain = search_domain_hash(current_domain);

@@ -7,5 +7,6 @@ include common-relaxed.sp;
 include tmpfile.sp;
 
 allow /usr/bin/Xorg r,dx;
+allowtmp -dir ~/ -name xauthority_t r,w,s;
 allowpriv all;
 }

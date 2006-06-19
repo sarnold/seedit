@@ -1130,7 +1130,6 @@
 	  <type value="type"/>
 	  <secclass value="dir"/>
 	  <permission value="unlink"/>
-	  <permission value="rename"/>
 	  <permission value="reparent"/>
 	  <permission value="rmdir"/>
 	  <permission value="remove_name"/>
@@ -1141,7 +1140,6 @@
 	  <type value="type"/>
 	  <secclass value="file"/><secclass value="lnk_file"/><secclass value="sock_file"/><secclass value="fifo_file"/>
 	  <permission value="unlink"/>
-	  <permission value="rename"/>
 	</rule>
       </rules>
     </option>
@@ -1161,6 +1159,8 @@
 	  <permission value="add_name"/>
 	  <permission value="write"/>
 	  <permission value="link"/>
+	  <permission value="remove_name"/>
+	  <permission value="rename"/>
 	</rule>
 	<rule value="allow">
 	  <domain value="domain"/>
@@ -1168,6 +1168,7 @@
 	  <secclass value="file"/><secclass value="lnk_file"/><secclass value="sock_file"/><secclass value="fifo_file"/>
 	  <permission value="create"/>
 	  <permission value="link"/>
+	  <permission value="rename"/>
 	</rule>
       </rules>
     </option>

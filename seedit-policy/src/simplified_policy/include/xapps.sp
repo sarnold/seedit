@@ -18,6 +18,7 @@ allow ~/.gnome2/**  s,r;
 allow /dev/dsp  r,s,o;
 allow /dev/mixer r,s,o;
 
+allow /usr/share/gimp/** r,s;
 allow /usr/share/applications/** r,s;
 allow /usr/share/mime/** r,s;
 allow /etc/mime.types  r,s;

@@ -1,6 +1,6 @@
 \documentclass{article}
 \title{Specification of Simplified Policy Description Language(SPDL) ver 2.0}
-\author{Yuichi Nakamura \thanks{The George Washington University, Hitachi Software, ynakam@gwu.edu}}
+\author{Yuichi Nakamura \thanks{himainu-ynakam@miomio.jp}}
 \begin{document}
 \maketitle
 \tableofcontents
@@ -10,6 +10,10 @@ This document describes syntax and meaning of SPDL configuration elements.
 
 
 \section{Overview}
+Simplified policy is written in  syntax  called Simplified Policy
+Description Language(SPDL). SPDL compiler(seedit-converter) converts
+SPDL into normal SELinux policy language.
+
 \subsection{Feature}
 The feature of SPDL is hiding labels, and reducing number of
 permissions.
@@ -36,9 +40,13 @@ permissions.
 Configuration elements are following.
 \begin{itemize}
  \item Giving domain to applications\\
-       To give domain, SPDL  supports to configure domain transition by
-       {\it domain\_trans}. For easier configuration, SPDL has {\it
-       program} element.
+       To assign domain, we  have to configure domain transitions. 
+       
+       SPDL has two elements to configure domain transition:  {\it domain\_trans} and  {\it
+       program} .
+       {\it domain\_trans} is syntax to configure domain transition,
+       {\it program} is syntax for simplified configuration.
+
  \item RBAC\\
        SPDL supports RBAC. {\it role} and {\it user} elements do that.
  \item Access control to file\\       
@@ -63,14 +71,21 @@ Domain and roles are denied all permissions unless allowed by SPDL.
 \item Domain \\
  Domain is the same as domain in SELinux. It is attached to process by domain transition.
 \item Role\\
- Role in simplified policy language is simplified. Role is identified
-      with a domain for user shell. In simplified language, we describe access
+ Role in SPDL is simplified. Role is identified
+      with a domain for user shell. In SPDL, we describe access
       rights for role. In fact, it is giving access rights for user
       shell of the role. For example, when you give access right for
       {\it sysadm\_r}, access right is given to 
 {\it sysadm\_t}(Domain for user shell of {\it sysadm\_r}).\\
  Note that in generated SELinux policy, all roles can type every types.
-      There is no syntax corresponding to {\it role:x:types:y} in simplified language.
+      There is no syntax corresponding to {\it role:x:types:y} in
+      simplified language.
+\item Unconfined domain\\
+unconfined domain is a domain that is configured to be allowed
+      everything. If process is given unconfined domain, it is passes
+      all SELinux permission checks, so it runs the same as in normal Linux.\\
+
+To configure unconfined domain {\it allowpriv all;} is used.
 \end{itemize}                  
 
 \section{Structure of configuration by simplified language}
@@ -82,11 +97,10 @@ $\{$  (begin of section)\\
 $domain/role$  (declare domain or role, one domain or role can be declared in one section) \\
 $users$  (This can be used only for role)\\
 $domain\_trans$|$program$ (Configure domain transition)\\
-$allow/deny$  (Describe access control for files)\\
-$allowxxx$   (Describe access control for resources other than file)\\
-$\}$\\
+$allow/deny$|$allowxx$  (Describe access control for files, access control for resources other than file)\\
+$\}$  (end of section)\\
 
-\section{Including configuration from other file:include}
+\section{Import configuration from other file:include}
 you can include configuration from other file by {\it include}
 statement.
 Syntax is following.\\
@@ -95,19 +109,19 @@ The include path can be specified by -I option of seedit-converter, by
 default it is /etc/selinux/seedit/src/policy/simplified\_policy/include.
 
 
-\section{Declaring domain and role}
-\subsection{declare domain:domain}
+\section{Declare domain and role}
+\subsection{Declare domain:domain}
 \begin{enumerate}
  \item Syntax \\
       domain {\it domain name} ;
  \item Meaning\\
        Declare domain. All configuration in a section is done for
-       the domain declared by this statement. 
+       the declared domain.
  \item Constraints\\
 Domain name must end with {\it \_t}. This statement can not be used twice in one section. 
 \end{enumerate}
 
-\subsection{declare role:role}
+\subsection{Declare role:role}
 \begin{enumerate}
  \item Syntax\\
     role {\it  role name } ;
@@ -115,10 +129,10 @@ Domain name must end with {\it \_t}. This statement can not be used twice in one
      Declare role.  {\it  role name } is associated to user by using
        {\it user} statement as shown below.
  \item Constraints\\
-       {\it role name} must end with {\it \_r}.
+       {\it role name} must end with {\it \_r}. This statement can not be used twice in one section. 
 \end{enumerate}
 
-\section{Configuring RBAC:user}
+\section{Configure RBAC:user}
 \begin{enumerate}
  \item Syntax\\
        user {\it user name};
@@ -136,19 +150,21 @@ Above means user root and ynakam can use user\_r.
 
 \end{enumerate}
 
-\section{Configuring domain transition:domain\_trans}
+\section{Domain transition}
 \subsection{Domain transition:domain\_trans}
 \begin{enumerate}
  \item Syntax\\
     domain\_trans {\it parent domain} {\it filename-of-entrypoint};
  \item Meaning\\
-    This defines how domain is attached to process. 
+    This defines how domain is assigned to process. 
  \item Example\\
-   \{\\
-   domain httpd\_t;\\
-   domain\_trans initrc\_t /sbin/httpd;\\
-   ....\\
-   Above means that when process(domain: initrc\_t) executes
+\begin{verbatim}
+{
+   domain httpd_t;
+   domain_trans initrc_t /sbin/httpd;
+...
+\end{verbatim}
+    Above means that when process(domain: initrc\_t) executes
        /sbin/httpd, /sbin/httpd runs as httpd\_t domain.
  \item Note\\
        Dynamic domain transition can be configured by omitting entry
@@ -168,8 +184,7 @@ Above means user root and ynakam can use user\_r.
  \item Meaning\\
     {\it path-to-program} is attached domain in normal case.   By this, {\it path-to-program} is attached domain launched from
        command line, and /etc/init.d scripts.That is to
-       say, allow domain transition from unconfined domain. unconfined
-       domain means, the domain that is configured {\it allowpriv all;}.
+       say, allow domain transition from unconfined domain. 
     However, domain transition from authentication program domain(such as
        domains for su,login,sshd) is not configured. Which domains are
        regarded as authentication\_domain is configured in
@@ -185,26 +200,25 @@ program /usr/sbin/httpd;
 		line and /etc/init.d script.
 \end{verbatim}
  \item Note\\
-    This element is intended to be used in relaxed policy. This does not
-       mean nothing in strict policy, because {\it
-       allowpriv all;} is not used.
+    This element is intended to be used in relaxed policy. This will not
+       mean nothing in more strict policy where there is not unconfined domain.
 \end{enumerate}
 
 
-\section{Configuring access control to normal files:allow/deny}
+\section{Access control to normal files:allow/deny}
 \subsection{allow}\label{section:allow}
  \begin{enumerate}
   \item Syntax
 	\begin{enumerate}
-	 \item allow {\it filename} $\mid$ {\it label} [r],[w],[x],[s];
+	 \item allow {\it filename} $\mid$ {\it label} [r],[w],[x],[s],[o],[t],[a],[c],[e],[dx];
 	\end{enumerate}
   \item Meaning\\
 	\begin{enumerate}
-	 \item  Allow operation to file specified by permissions. 
+	 \item  Allow access to file.
 	\end{enumerate}
   \item Specifying filename\\
 	\begin{itemize}
-	 \item Grab\\
+	 \item Wildcard\\
 	       For {\it filename} {\it directory}/* and {\it directory}** can
 	be used.  For example, /var/* means, all files in /var
 	directory, and /var directory. /var/** means, all files under
@@ -214,7 +228,7 @@ program /usr/sbin/httpd;
 	       File name that starts with  \textasciitilde ~ represents
 	       home directory(Not including /root).
 	       For example, ~/public\_html means,
-	       /home/username/public\_html.\\
+	       /home/{\it all users}/public\_html.\\
 	       But in role configuration, it is different, it means home directories for users that can use role.
 
 	\end{itemize}
@@ -475,7 +489,7 @@ allow /var/shadow r;
 
 
 
-\section{Configuring access control to devices:allowdev}
+\section{Access control to devices:allowdev}
 \subsection{allowdev(1)}
  Device files must be handled carefully. Because device files are
 interface to kernel. When device file is linked to driver that handles
@@ -555,7 +569,7 @@ So tty/pts device files should be treated differently in SPDL.
 
 \end{enumerate}
 
-\section{Configuring access control to files on misc file systems:allowfs}
+\section{Access control to files on misc file systems:allowfs}
  SELinux can do fine-grained access control to files on filesystems that
  support extended-attributes, such as ext3, ext2 and xfs. For such files,
  you configure access control using {\it allow} statement. In other
@@ -608,7 +622,7 @@ So tty/pts device files should be treated differently in SPDL.
        \end{itemize}
 \end{itemize}
 
-\section{Configuring access control to temporally file:allowtmp}
+\section{Access control to temporally file:allowtmp}
 \subsection{Why allowtmp is necessary?}
 {\it allowtmp} is prepared to configure access control to temporally
 files.
@@ -730,7 +744,7 @@ initrc\_t can r,w,s access to above files because {\it -name all} is
 
 
 
-\section{Configuring access control to network:allownet}
+\section{Access control to network:allownet}
 {\it allownet} statements is prepared to configure network access control.
 It can configure access control to  port , netif(Network
 Interface), node(IP address) and inheritance of socket.
@@ -814,7 +828,7 @@ And can send/recv packet to/from eth0.
 \end{verbatim}
 \end{enumerate}
 
-\subsection{Inheriting socket from other domain}\label{sec:socket}
+\subsection{Inherit socket from other domain}\label{sec:socket}
 Following syntax allows using socket of other domain. It is rare to configure.
 \begin{enumerate}
  \item  Syntax 
@@ -837,7 +851,7 @@ domain foo_t;
 allownet -protocol udp -domain bar_t; 
 \end{verbatim}
 \end{enumerate}
-\section{Configuring access control to process communication:allowcom}
+\section{Access control of process communication:allowcom}
 \subsection{allowcom (IPC)}
 \begin{enumerate}
  \item Syntax(1)\\
@@ -869,7 +883,7 @@ allownet -protocol udp -domain bar_t;
 
 
 
-\section{Configuring access control other administrative access
+\section{Access control other administrative access
   rights:allowpriv}
 \begin{itemize}
  \item Syntax \\

@@ -35,11 +35,6 @@ conf: macro unsupport
 
 
 install:all	
-	mkdir -p $(POLICYROOT)/policy
-	mkdir -p $(POLICYROOT)/users/
-	mkdir -p $(POLICYROOT)/contexts/files
-	mkdir -p $(POLICYROOT)/contexts/files
-	mkdir -p $(POLICYROOT)/contexts/users
 	mkdir -p $(SEEDITCONFROOT)/policy
 	mkdir -p $(SEEDITCONFROOT)/converter
 	mkdir -p $(SEEDITCONFROOT)/converter/conf

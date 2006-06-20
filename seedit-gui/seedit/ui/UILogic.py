@@ -193,6 +193,21 @@ def createDomainTemplate(program, domain , parentDomain, daemonFlag, authFlag,de
 
 
 
+def fileString(filename):
+    string = ""
+    try:
+        fh = open(filename, "r")
+    except:
+        print "File open error:%s" % (filename)
+        return ""
+
+    lines = fh.readlines()
+
+    for line in lines:
+        string = string + line
+
+    return string
+    
 
 def saveStringToFile(str, file):
 
@@ -286,6 +301,24 @@ def getDomainList():
 
     return result
 
+def getExtraDomainList():
+    result =[]
+    list = os.listdir(gSPPath+"/extras/")
+
+    pat = re.compile("\.sp$")
+    
+    for l in list:
+        if l == "all.sp":
+            continue
+        m = pat.search(l)
+        if m:
+            domain = re.sub("\.sp$","",l)            
+            result.append(domain)
+
+    return result
+
+
+
 
 def getDeletableDomainList():
     list =getDomainList()
@@ -308,6 +341,11 @@ def getDomainFileName(domain):
     else:
         filename = gSPPath + domain +".sp"
     return filename
+
+def getExtraDomainFileName(domain):
+    filename = gSPPath + "/extras/"+domain +".sp"
+    return filename
+
 
 def getEditableDomainList():
     list =getDomainList()
@@ -389,8 +427,10 @@ def deleteDomain(domain, temporalFlag):
         return setDisableTransBoolean(domain,"on")
 
     filename = gSPPath + domain +".sp"
+    newname = gSPPath +"/extras/" +domain+".sp"
     try:
-        os.unlink(filename)
+        os.rename(filename, newname)
+        #os.unlink(filename)
     except:
         return SEEDIT_ERROR
     return SEEDIT_SUCCESS

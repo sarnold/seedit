@@ -43,7 +43,7 @@ class deleteDomainTab(seeditCommon):
         domain = self.mDomainListComboBox.get_active_text()
 
         if self.mTemporalFlag == False:
-            message =_("%s will be deleted permanently! Really delete?") % (domain)
+            message =_("Really remove %s?  The backup is created in extras directory. ") % (domain)
             response = self.showYesNoDialog(message)
             if response == gtk.RESPONSE_NO:
                 self.showMessageDialog(gtk.MESSAGE_INFO, _("Operation cancelled.\n"))
@@ -222,7 +222,19 @@ class createDomainTab(seeditCommon):
         program = self.mProgramEntry.get_text()
         domain = self.mDomainEntry.get_text()
         parentDomain = self.mParentDomainEntry.get_text()
-        string = createDomainTemplate(program, domain, parentDomain, self.mDaemonFlag, self.mAuthFlag, self.mDesktopFlag)
+
+        extraDomains = getExtraDomainList()
+        if domain in extraDomains:
+            message = _("Domain template already exists in extras directory. Do you want to reuse?")
+            response = self.showYesNoDialog(message)
+            if response == gtk.RESPONSE_YES:
+                filename = getExtraDomainFileName(domain)
+                string = fileString(filename)
+            else:
+                string = createDomainTemplate(program, domain, parentDomain, self.mDaemonFlag, self.mAuthFlag, self.mDesktopFlag)
+            
+        else:
+            string = createDomainTemplate(program, domain, parentDomain, self.mDaemonFlag, self.mAuthFlag, self.mDesktopFlag)
         if  string != None:
             self.mTextBuffer.set_text(string)
             

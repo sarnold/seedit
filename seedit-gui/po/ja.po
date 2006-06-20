@@ -588,3 +588,12 @@ msgstr "#allowfs:セキュリティ上の理由から何も提示しません。
 #: ../../trunk/seedit-converter/lib/python/seedit/audit2spdl.py:1058
 msgid "#allowcom, nothing generated from this log for safety"
 msgstr "#allowcom:セキュリティ上の理由から何も提示しません。"
+
+#: seedit-gui-domain-manager.py:228
+msgid "Domain template already exists in extras directory. Do you want to reuse?"
+msgstr "ドメインのテンプレートがextrasディレクトリに見つかりました。これを使いますか？"
+
+#: seedit-gui-domain-manager.py:46
+msgid "Really remove %s?  The backup is created in extras directory. "
+msgstr "本当に%sを削除しますか？ extrasディレクトリにバックアップは残ります。"
+

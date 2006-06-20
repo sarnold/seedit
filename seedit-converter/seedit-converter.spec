@@ -37,6 +37,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/seedit-unconfined
 %{_bindir}/seedit-template
 %{_libdir}/seedit/*
+%config /etc/seedit/converter
+%config /etc/selinux/seedit
+
 
 %changelog
 * Tue Apr 18 2006 Yuichi Nakamura<ynakam@gwu.edu> 1.4.0

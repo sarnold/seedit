@@ -9,10 +9,10 @@ RESTORECON=/sbin/restorecon
 SELINUXCONF=$(sysconfdir)/selinux/config
 POLICYROOT=$(sysconfdir)/selinux/$(SELINUXTYPE)
 SEEDITCONFROOT=$(sysconfdir)/seedit
-CONFDIR=./policy/simplified_policy
-BASEPOLICYDIR=./policy/base_policy
-MACRODIR=./policy/macros
-OUTDIR =./policy/sepolicy
+CONFDIR=./simplified_policy
+BASEPOLICYDIR=./base_policy
+MACRODIR=./macros
+OUTDIR =./sepolicy
 FCFILE=./distro/$(DISTRO)/dynamic_contexts
 SPDLSPEC=./base_policy/spdl_spec.xml
 

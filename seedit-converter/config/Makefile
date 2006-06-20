@@ -47,9 +47,7 @@ install:all
 	cp -r base_policy $(SEEDITCONFROOT)/converter/conf
 	cp -r macros $(SEEDITCONFROOT)/converter/conf
 	mv $(SEEDITCONFROOT)/converter/conf/base_policy/spdl_spec.xml.expand  $(SEEDITCONFROOT)/converter/conf/base_policy/spdl_spec.xml
-	cp -r $(BASEPOLICYDIR)/contexts/*  $(POLICYROOT)/contexts
-	touch $(POLICYROOT)/users/system.users
-	touch $(POLICYROOT)/users/local.users
+
 
 doc:./doc/permission_integrate.pdf
 

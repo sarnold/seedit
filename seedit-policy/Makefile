@@ -48,6 +48,8 @@ install: policy dir
 	cp -r policy/simplified_policy/*  $(SEEDITCONFROOT)/policy
 	cd policy;make install 
 	cp $(POLICYROOT)/contexts/files/file_contexts $(POLICYROOT)/contexts/files/file_contexts.old
+	touch $(POLICYROOT)/users/system.users
+	touch $(POLICYROOT)/users/local.users
 
 
 postconfig: install

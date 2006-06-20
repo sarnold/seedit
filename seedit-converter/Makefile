@@ -6,12 +6,15 @@ all:
 	$(MAKE) -C xml
 	$(MAKE) -C utils
 	$(MAKE) -C restorecon
+	$(MAKE) -C config
+
 install: all
 	$(MAKE) -C lib install
 	$(MAKE) -C converter install
 	$(MAKE) -C xml install
 	$(MAKE) -C utils install 
 	$(MAKE) -C restorecon install
+	$(MAKE) -C config install
 
 uninstall:
 	$(MAKE) -C lib uninstall

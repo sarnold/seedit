@@ -597,3 +597,6 @@ msgstr "ドメインのテンプレートがextrasディレクトリに見つか
 msgid "Really remove %s?  The backup is created in extras directory. "
 msgstr "本当に%sを削除しますか？ extrasディレクトリにバックアップは残ります。"
 
+#: seedit-gui-domain-manager.py:350
+msgid "Desktop application?"
+msgstr "デスクトップで動作するアプリケーションですか?"

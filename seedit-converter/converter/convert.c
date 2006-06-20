@@ -724,7 +724,6 @@ out_one_com_acl(FILE *outfp, DOMAIN *d, COM_ACL_RULE *acl)
 
 	if(flag & UNIX_ACL){
 	  fprintf(outfp, "\n#%s and  %s can communicate unix domain \n", domain_name, to_domain);
-	  fprintf(outfp, "allow_ipc_unix_common(%s,%s)\n", domain_name, to_domain);
 	  if (acl->perm & READ_PRM) {
 	    fprintf(outfp, "\n#unix read\n");
 	    fprintf(outfp, "allow_ipc_unix_r(%s,%s)\n", domain_name, to_domain);

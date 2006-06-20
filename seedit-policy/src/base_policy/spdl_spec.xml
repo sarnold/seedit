@@ -154,6 +154,16 @@
 	  <permission value="sys_ptrace"/>
 	  <permission value="audit_write"/>
 	</rule>
+
+	<rule value="allow">
+	  <domain value="global"/>
+	  <type value="file_type"/>
+	  <type value="global"/>
+	  <secclass value="dir"/>
+	  <permission value="add_name"/>
+	  <permission value="remove_name"/>
+	</rule>
+
       </rules>
     </section>
     <section>
@@ -207,6 +217,40 @@
 	  <permission value="write"/>
 	  <permission value="append"/>
 	  </rule>
+
+ 
+	<rule value="allow">
+	  <domain value="global"/>
+	  <type value="global"/>
+	  <secclass value="unix_dgram_socket"/>
+    <permission value="ioctl"/>
+    <permission value="getattr"/>
+    <permission value="setattr"/>
+    <permission value="lock"/>
+    <permission value="relabelfrom"/>
+    <permission value="relabelto"/>
+    <permission value="create"/>
+    <permission value="shutdown"/>
+    <permission value="getopt"/>
+    <permission value="setopt"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="global"/>
+	  <type value="global"/>
+	  <secclass value="unix_stream_socket"/>
+    <permission value="ioctl"/>
+    <permission value="getattr"/>
+    <permission value="setattr"/>
+    <permission value="lock"/>
+    <permission value="relabelfrom"/>
+    <permission value="relabelto"/>
+    <permission value="create"/>
+    <permission value="shutdown"/>
+    <permission value="getopt"/>
+    <permission value="setopt"/>
+	</rule>
+
+
       </rules>
     </section>
     <section>
@@ -670,8 +714,6 @@
 	  <domain value="domain"/>
 	  <type value="file_type"/>
 	  <secclass value="dir"/>
-	  <permission value="add_name"/>
-	  <permission value="remove_name"/>
 	  <permission value="reparent"/>
 	  <permission value="rmdir"/>
 	</rule>
@@ -1084,8 +1126,6 @@
 	  <domain value="domain"/>
 	  <type value="type"/>
 	  <secclass value="dir"/>
-	  <permission value="add_name"/>
-	  <permission value="remove_name"/>
 	  <permission value="reparent"/>
 	  <permission value="rmdir"/>
 	</rule>
@@ -1132,7 +1172,6 @@
 	  <permission value="unlink"/>
 	  <permission value="reparent"/>
 	  <permission value="rmdir"/>
-	  <permission value="remove_name"/>
 	  <permission value="write"/>
 	</rule>
 	<rule value="allow">
@@ -1156,10 +1195,8 @@
 	  <secclass value="dir"/>
 	  <permission value="append"/>
 	  <permission value="create"/>
-	  <permission value="add_name"/>
 	  <permission value="write"/>
 	  <permission value="link"/>
-	  <permission value="remove_name"/>
 	  <permission value="rename"/>
 	</rule>
 	<rule value="allow">
@@ -1652,60 +1689,6 @@
   
   <integrate value="allowcom">
     <description>Integrated permissions for allowcom rules</description>
-    <option value="unix">
-      <macro value="allow_ipc_unix"/>
-      <rules>
-	<rule value="allow">
-	  <domain value="domain"/>
-	  <type value="type"/>
-	  <secclass value="unix_dgram_socket"/>
-	  <permission value="ioctl"/><permission value="read"/><permission value="write"/><permission value="create"/><permission value="getattr"/><permission value="setattr"/><permission value="lock"/><permission value="relabelfrom"/><permission value="relabelto"/><permission value="append"/><permission value="bind"/><permission value="connect"/><permission value="listen"/><permission value="accept"/><permission value="getopt"/><permission value="setopt"/><permission value="shutdown"/><permission value="recvfrom"/><permission value="sendto"/><permission value="recv_msg"/><permission value="send_msg"/><permission value="name_bind"/>
-	</rule>
-	<rule value="allow">
-	  <domain value="domain"/>
-	  <type value="type"/>
-	  <secclass value="unix_stream_socket"/>
-	  <permission value="ioctl"/><permission value="read"/><permission value="write"/><permission value="create"/><permission value="getattr"/><permission value="setattr"/><permission value="lock"/><permission value="relabelfrom"/><permission value="relabelto"/><permission value="append"/><permission value="bind"/><permission value="connect"/><permission value="listen"/><permission value="accept"/><permission value="getopt"/><permission value="setopt"/><permission value="shutdown"/><permission value="recvfrom"/><permission value="sendto"/><permission value="recv_msg"/><permission value="send_msg"/><permission value="name_bind"/>
-	  <permission value="connectto"/>
-	</rule>
-      </rules>
-    </option>
-
-  <option internal="yes" suboption="common" value="unix">
-      <macro value="allow_ipc_unix_common">Commonly used permission in UNIX domain socket</macro>
-      <rules>
-	<rule value="allow">
-	  <domain value="domain"/>
-	  <type value="type"/>
-	  <secclass value="unix_dgram_socket"/>
-    <permission value="ioctl"/>
-    <permission value="getattr"/>
-    <permission value="setattr"/>
-    <permission value="lock"/>
-    <permission value="relabelfrom"/>
-    <permission value="relabelto"/>
-    <permission value="create"/>
-    <permission value="shutdown"/>
-    <permission value="getopt"/>
-    <permission value="setopt"/>
-	</rule>
-	<rule value="allow">
-	  <domain value="domain"/>
-	  <type value="type"/>
-	  <secclass value="unix_stream_socket"/>
-    <permission value="ioctl"/>
-    <permission value="getattr"/>
-    <permission value="setattr"/>
-    <permission value="lock"/>
-    <permission value="relabelfrom"/>
-    <permission value="relabelto"/>
-    <permission value="create"/>
-    <permission value="shutdown"/>
-    <permission value="getopt"/>
-    <permission value="setopt"/>
-	</rule>
-      </rules>
-    </option>
 
     <option suboption="r" value="unix">
       <macro value="allow_ipc_unix_r"/>
@@ -2019,8 +2002,6 @@
 	  <secclass value="dir"/>
 	  <permission value="write"/>
 	  <permission value="setattr"/>
-	  <permission value="add_name"/>
-	  <permission value="remove_name"/>
 	</rule>
       </rules>
     </option>
@@ -2099,8 +2080,6 @@
 	  <secclass value="dir"/>
 	  <permission value="write"/>
 	  <permission value="setattr"/>
-	  <permission value="add_name"/>
-	  <permission value="remove_name"/>
 	</rule>
       </rules>
     </option>
@@ -2203,8 +2182,6 @@
 	  <permission value="lock"/>
 	  <permission value="search"/>
 	  <permission value="ioctl"/>
-	  <permission value="add_name"/>
-	  <permission value="remove_name"/>
 	  <permission value="write"/>
 	</rule>	
       </rules>

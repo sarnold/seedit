@@ -48,7 +48,6 @@ install:all
 	cp -r macros $(SEEDITCONFROOT)/converter/conf
 	mv $(SEEDITCONFROOT)/converter/conf/base_policy/spdl_spec.xml.expand  $(SEEDITCONFROOT)/converter/conf/base_policy/spdl_spec.xml
 	cp -r $(BASEPOLICYDIR)/contexts/*  $(POLICYROOT)/contexts
-	rm $(POLICYROOT)/contexts/customizable_types
 	touch $(POLICYROOT)/users/system.users
 	touch $(POLICYROOT)/users/local.users
 

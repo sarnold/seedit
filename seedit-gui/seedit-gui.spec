@@ -1,6 +1,6 @@
 Summary: GUI for SELinux  Policy Editor
 Name: seedit-gui
-Version: 2.0.0.b6
+Version: 2.0.0.b7
 Release:  1
 License: GPL
 Group: System Environment/Base

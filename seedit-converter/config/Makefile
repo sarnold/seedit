@@ -51,3 +51,16 @@ install:all
 	rm $(POLICYROOT)/contexts/customizable_types
 	touch $(POLICYROOT)/users/system.users
 	touch $(POLICYROOT)/users/local.users
+
+doc:./doc/permission_integrate.pdf
+
+./doc/permission_integrate.pdf: $(SPDLSPEC) doc/permission_integrate.tex
+	./scripts/genmacro.py -i $(SPDLSPEC) -m latex -o doc/table.tex
+	cd doc;	latex permission_integrate.tex;\
+	latex permission_integrate.tex;\
+	latex permission_integrate.tex;\
+	latex2html -show_section_numbers -link 2 -split 0 permission_integrate.tex;\
+	dvipdf  permission_integrate.dvi
+
+clean:
+	rm -rf policy doc/*.aux doc/*.toc doc/*.pdf src/base_policy/unsupported.te src/macros/seedit_macros.te

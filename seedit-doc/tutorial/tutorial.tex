@@ -196,26 +196,50 @@ You can launch GUI from Gnome menu. Choose Desktop $\rightarrow$ Manage $\righta
 Policy Editor.
 You can also launch  GUI, by typing seedit-gui.\\
 You will see window {\it SELinux Policy Editor Control Panel}.
-In the control panel, you see icons(you will see buttons instead of
+In the control panel, you will see icons(you will see buttons instead of
 icons in CentOS 4) like figure \ref{fig:controlpanel}.\\
 
-\begin{figure}
+\begin{figure}[h]
 \caption{SELinux Policy Editor Control Panel}\label{fig:controlpanel}
 \includegraphics*{images/controlpanel.png}
 \end{figure}
 
-By double-clicking icon, you can manage SELinux. 
-
-
-
-
-
+By double-clicking icon, management windows  open. 
+What you can do by double-cliking icons is summarized in following.
+\begin{itemize}
+ \item Status\\
+       The usage is shonw in section \ref{sec:seedit-status}.
+       \begin{itemize}
+	\item See status of SELinux, such as SELinux mode, domains for
+	      runnning  process, domains for network process.
+	\item Change SELinux mode
+       \end{itemize}
+ \item Manage Domain
+       \begin{itemize}
+	\item Create new domain
+	\item Remove domain, disable domain
+       \end{itemize}
+ \item Generate Policy
+       \begin{itemize}
+	\item Generate policy from access log.
+       \end{itemize}
+ \item Edit policy
+       \begin{itemize}
+	\item Edit policy by text editor. The text editor has some
+	      useful features.
+       \end{itemize}
+ \item Apply policy,Relabel
+       \begin{itemize}
+	\item Load policy manually\\
+	      Policy is load automatically in GUI, but you can do it manually.
+	\item Initialize all file labels\\
+	\item Run restorecon command\\
+       \end{itemize}
+\end{itemize}
 
 
 
 \section{See what's happening on your system}
-
-
 \subsection{Where is policy?}
 Simplified policy(policy described by SPDL) is located at
 /etc/seedit/policy, it is explained in later section.
@@ -232,10 +256,18 @@ Simplified policy can support RBAC and more strict policy, but such
 policies are under construction :-) .About RBAC, it is ready to use, if
 you are interested in it, see RBAC guide.
 
-\subsection{seedit-unconfined}
+\subsection{seedit-status(GUI)}\label{sec:seedit-status}
 Some processes are given domain and behavior is confined.
-To know what is confined and what is unconfined, you can use
-seedit-unconfined command. 
+To know what is confined and what is unconfined, you check from GUI.
+From control panel, select {\it Status}.
+
+
+
+
+
+\subsection{seedit-unconfined(Command)}
+You can also do the same task from seedit-unconfined command.
+
 \subsubsection{See running process}
 You can see status of processes by seedit-unconfined -e.
 You have to be root to obtain correct result.

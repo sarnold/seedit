@@ -13,6 +13,7 @@ import gettext
 from seedit import getAttr
 from stat import *
 gMatchpathcon = "/usr/sbin/matchpathcon -n"
+gAusearch = "/sbin/ausearch"
 
 def errorExit(msg):
     sys.stderr.write(msg)
@@ -168,16 +169,31 @@ def guessPathByAusearch(line):
     If not exist file is returned, notexist_|filename| is returned
     Can not be guessed, "" is returned
     """
+
     id = getAuditId(line)
     pid = getPid(line)
     if(id):
         try:
-            result=os.popen("ausearch -a "+id+" -p "+pid+" 2>&1", "r")
+            result=os.popen(gAusearch + " -a "+id+" -p "+pid+" 2>&1", "r")
             l=result.readline()
 
             path =""
+            cwd=""
             while l:
+                if(string.find(l,"type=CWD")>=0):
+                    m=re.compile("cwd=\S+").search(l)
+                    if m:
+                        cwd = string.split(m.group(),"=").pop()
+                        cwd = string.replace(cwd,"\"","")
+                    if path!="":
+                        if path[0]!="/":
+                            path = cwd + "/"+path
+                            path = os.path.normpath(path)
+                            return path
+
+                        
                 if(string.find(l,"type=PATH")>=0 or string.find(l,"type=AVC_PATH")>=0):
+
                     m=re.compile("name=\S+").search(l)
                     if (m==None):
                         m = re.compile("path=\S+").search(l)
@@ -187,18 +203,24 @@ def guessPathByAusearch(line):
                         path = string.replace(path,"\"","")
                         #path is got from type=PATH/AVC_PATH entry now..
                         #Let's check file exist..
+                      
                         try:
                             os.stat(path)
                             return path                            
                         except:
-                            #path ="notexist_"+path
-                            return ""
+                            if cwd!="":
+                                 path = cwd + "/"+path
+                                 path = os.path.normpath(path)
+                                 return path  
+
                     else:                        
                         return ""                    
                 l=result.readline()
 
                 if path==".":
-                    return ""
+                    path=""
+
+            
                 
             return path
             
@@ -237,8 +259,9 @@ def guessFilePath(rule,line):
     if path =="":
         #print "#Path can not be guessed from ausearch"
         path = guessPathByLocate(line)
-        if path =="":
-            path=makePathFromType(rule["type"])
+#        if path =="":
+#            path=makePathFromType(rule["type"])
+
         return path
     else:
         return path
@@ -283,7 +306,9 @@ def findFilePermission(doc,rule,allowtype):
 
     if security=="high":
         if rule["secclass"]=="dir" and "write" in rule["permission"]:
-            result = appendResult(result, "dummy")
+            result = appendResult(result, "c")
+            result = appendResult(result, "r")
+            result = appendResult(result, "s")
             return result
         elif rule["secclass"]=="dir" and "remove_name" in rule["permission"]:
             result = appendResult(result, "dummy")

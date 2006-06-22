@@ -291,9 +291,18 @@ class seeditGeneratePolicyWindow(seeditCommon):
 		if iter:
 			value = model.get_value(iter,2)
 			if re.search("^allow[\s\t]+",value):
+				path = value.split()[1]
+				dirFlag=False
+				if os.path.isdir(path):
+					dirFlag=True
+
 				value = re.sub("/[^/*]+\/\*\*","/**",value)
 				value = re.sub("/\*[\s\t]+","/** ",value)
-				value = re.sub("/[^/*]*[\s\t]+","/* ",value)
+				if dirFlag:
+					value = re.sub(path ,path+"/* ",value)
+
+				else:	
+					value = re.sub("/[^/*]*[\s\t]+","/* ",value)
 
 				
 				model.set_value(iter,2,value)

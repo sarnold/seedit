@@ -15,8 +15,11 @@ tutorial_jp.pdf: tutorial.dvi
 	pdvips tutorial.dvi
 	ps2pdf13 tutorial.ps
 	mv tutorial.pdf tutorial_jp.pdf	
+bb:
+	ebb images/*.png
+	mv *.bb images
 
-tutorial.dvi: *.tex
+tutorial.dvi: *.tex bb
 	platex tutorial.tex
 	platex tutorial.tex
 	platex tutorial.tex

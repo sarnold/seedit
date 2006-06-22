@@ -217,7 +217,7 @@ What you can do by double-cliking icons is summarized in following.
  \item Manage Domain
        \begin{itemize}
 	\item Create new domain
-	\item Remove domain, disable domain
+	\item Remove domain, disable domain(section \ref{sec:unconfine:gui})
        \end{itemize}
  \item Generate Policy
        \begin{itemize}
@@ -240,6 +240,8 @@ What you can do by double-cliking icons is summarized in following.
 
 
 \section{See what's happening on your system}
+After install, you have to see what's happening(status of SELinux) on your system.
+
 \subsection{Where is policy?}
 Simplified policy(policy described by SPDL) is located at
 /etc/seedit/policy, it is explained in later section.
@@ -256,13 +258,61 @@ Simplified policy can support RBAC and more strict policy, but such
 policies are under construction :-) .About RBAC, it is ready to use, if
 you are interested in it, see RBAC guide.
 
-\subsection{seedit-status(GUI)}\label{sec:seedit-status}
+\subsection{Check status of SELinux(GUI)}\label{sec:seedit-status}
+To check status of SELinux, select {\it Status} from control panel, then
+window named{\it seedit Status} opens.
+
+\subsubsection{Check/Switch enforcing/permissive mode}\label{sec:mode}
+From {\it SELinux} tab, you can check/change mode of SELinux.
+Figure \ref{fig:status-selinux} is screenshot.
+
+\begin{figure}[h]
+\caption{Check/change SELinux mode}\label{fig:status-selinux}
+\includegraphics{images/status-selinux.png}
+\end{figure}
+
+By {\it seedit Installed? Yes}, you can know seedit is sucessfully
+installed.
+From {\it Current mode}, you can see current mode is permissive mode.
+You can change current mode from this box, select {\it Enforcing} and
+press {\it Apply} button.\\
+{\it Mode at boot} is mode at system boot, if it is {\it Permissive},
+after reboot, system will run as permissive mode.   It is strongly
+recommended to configure as Enforcing when you use real system.
+
+\subsubsection{See running process}
 Some processes are given domain and behavior is confined.
-To know what is confined and what is unconfined, you check from GUI.
-From control panel, select {\it Status}.
+
+From process$\rightarrow$Working Process, you can see domain of running
+process.
+Fig \ref{fig:status-working} is example output.
+
+\begin{figure}[h]
+\caption{Check domain of running processes}\label{fig:status-working}
+\includegraphics*{images/status-working.png}
+\end{figure}
+You can see such process as bash is unconfined,  and httpd is  confined
+by httpd\_t domain.
+
+You can also sort  result by selecting PID, Process, Domain.
+And by {\it Refresh} button, result is updated.
 
 
+\subsubsection{See network process}
+You can see status of network process(that is waiting network
+connection) from   process$\rightarrow$Network Process
+It is important to know status of network process. Because attackers use
+network process to intrude. 
 
+Fig \ref{fig:status-network} is example output.
+\begin{figure}[h]
+\caption{Check domain of network processes}\label{fig:status-network}
+\includegraphics*{images/status-network.png}
+\end{figure}
+From above, You have to be especially careful to service whose domamin
+is  unconfined.
+If you create domain, you can confine it, or you may decide not to run
+the service.
 
 
 \subsection{seedit-unconfined(Command)}
@@ -310,12 +360,10 @@ It is like AppArmor's unconfined command.
 (1) is current SELinux mode. After network programs are shown.
 (2) says smbd is not confined. (3) says
 sendmail is confined by domain sendmail\_t.
-From above, You have to be especially careful to smbd. 
-If you create domain, you can confine it, or you may decide not to run
-the service.
 
-\subsection{Switching enforcing/permissive mode}\label{sec:mode}
-After install system is permissive mode. you can switch to enforcing mode by following.
+\subsubsection{Switching enforcing/permissive mode}\label{sec:mode:command}
+After install system is permissive mode. you can switch to enforcing
+mode by following commands.
 \begin{verbatim}
 # setenforce 1
 # getenforce 
@@ -349,8 +397,25 @@ confined,unconfined). What you have to do after that can be summarized like belo
 
 \section{Unconfine applications}\label{sec:unconfine}
 You can unconfine application by 2ways. Use boolean or remove config file.
+\subsection{GUI}\label{sec:unconfine:gui}
+You can do it from GUI. Select {\it Manage Domain}, then {\it seedit
+Domain/Role Manager} window opens. Select {\it Delete Domain} tab.
 
-\subsection{Use boolean}
+
+
+\subsubsection{Temporally disable}
+
+
+You can disable domain and  unconfine application  easily by 
+
+
+\subsubsection{Remove domain}
+
+
+
+\subsection{Command line}
+
+\subsubsection{Use boolean}
 If you know SELinux boolean, it's very easy.
 For example, confined domain name is httpd\_t, then turn on
 httpd\_disable\_trans boolean and restart daemon.
@@ -373,7 +438,7 @@ Current SELinux mode: enforcing
 PID     Comm    Domain
 1111     httpd   Confined by httpd_t domain
 \end{verbatim}
-\subsection{Remove config file}
+\subsubsection{Remove config file}
 Config file of domain is located
 /etc/seedit/policy/{\it domain name}.sp.
 If you remove it and restart application, you can unconfine application.

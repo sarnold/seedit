@@ -407,13 +407,22 @@ Domain/Role Manager} window opens. Select {\it Delete Domain} tab.
 \end{figure}
 
 \subsubsection{Temporally disable}
-
-
-You can disable domain and  unconfine application  easily by 
-
+The easiest way to unconfine application is to disable domain temporally.
+\begin{enumerate}
+ \item Select domain which you want to disable
+ \item Select radio button {\it Temporally}
+ \item Press  Apply button
+\end{enumerate}
+For example, Apache is confined by httpd\_t domain  and you want to
+unconfine Apache. Select httpd\_t, and press apply button.
+Restart Apache and check domain by {\it Status} GUI, you will see {\it
+Unconfined(initrc\_t)} is shown in domain.\\
+To confine it again, select domain from {\it Enable temporally disabled
+domain}, and press  {\it Apply} button.\\
+This behavior is using boolean of SELinux, you can see detail by command line.
 
 \subsubsection{Remove domain}
-
+In above, 
 
 
 \subsection{Command line}

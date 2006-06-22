@@ -12,7 +12,11 @@ html: tutorial.dvi
 tutorial.pdf: tutorial.dvi 
 	dvipdfm tutorial.dvi
 
-tutorial.dvi: *.tex
+bb:
+	ebb images/*.png
+	mv *.bb images
+
+tutorial.dvi: *.tex bb
 	latex tutorial.tex
 	latex tutorial.tex
 	latex tutorial.tex

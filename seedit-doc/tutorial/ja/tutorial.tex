@@ -1,0 +1,1236 @@
+\documentclass{article}
+\title{SELinux Policy Editor(seedit)チュートリアル(for Ver 2.0)}
+\author{中村　雄一\thanks{himainu-ynakam@miomio.jp}}
+\begin{document}
+\def\labelenumi{(\theenumi)}
+\maketitle
+\tableofcontents
+\newpage
+ 
+この文書は、SELinux Policy Editor 2.0のマニュアルです。インストール方法
+と、設定方法を紹介しています。
+
+\section{背景：SELinuxの難しさ}
+SELinuxは既に多くのディストリビューションに取り込まれています。しかし、
+多くのユーザーはSELinuxを無効にしてきました。SELinuxは手に負えない、と感
+じるユーザーが多かったからです。
+SELinuxの難しさはポリシーの設定にあります。ポリシーが難しい理由は以下が
+挙げられます。
+\begin{itemize}
+ \item 多すぎるパーミッション\\
+       SELinuxのパーミッション定義は７００種類にも及びます。細かい設定が
+       できる反面、必要な設定が増大します。       
+ \item ラベル管理が大変\\
+       SELinuxは、ファイルやポート番号などにタイプというラベルを付与し、
+       アクセス制御を行います。ラベルは直感的に分かりにくい上，ファイル
+       やポート番号のラベル管理の手間が生じます。
+ \item 多すぎるマクロ\\
+       SELinuxの設定をする際には、「マクロ」を利用して、複数行の設定を一
+       行での設定をまとめて行います。しかし、マクロの種類がどんどん増え
+       ています。例えば，BINDを設定するために使われているマクロだけでも、
+       80種類近くに及びます。一般的なシステム管理者には、設定内容の理解
+       と設定の記述は極めて困難です。
+\end{itemize}
+
+\section{SELinux Policy Editor(seedit)とは？}
+\subsection{概略}
+SELinux Policy Editor(略称seedit)は、SELinuxを簡単にするツールです。
+seeditは、Simplified Policy(単純化ポリシー)と、Simplified Policy周辺ツー
+ルから成り立つツールです。\\
+最も重要な要素はSimplified Policyです。
+Simplified Policyとは、Simplified Policy Description Language(単純化ポリ
+シ記述言語、以下SPDL)で記述されたSELinuxのポリシのことです。SPDLは、
+SELinuxの設定を大幅に簡略化します。SPDLは、セキュリティ上影響の少ないパー
+ミッションを省略・統合することによってパーミッションの数を減らします。ま
+た、ラベルを隠蔽し、ファイル名、ポート番号を直接使って設定できるようにし
+ています。同時に、マクロ地獄からも解放
+されます。\\
+SPDLで記述されたポリシーが，SELinuxの設定に変換され，設定が反映されます。
+\\
+以下が、SPDLによって書かれたSimplified Policyの例です。Apache Webサーバーに「httpd\_t」
+というドメイン（権限のこと）を割り当てて設定しています。
+\begin{verbatim}
+{
+domain httpd_t;
+program /usr/sbin/httpd;
+...
+allow /var/www/** r,s;
+allownet -protocol tcp -port 80 server;
+...
+}	
+\end{verbatim}
+SPDLを使ったポリシーの意味は明快です。カスタマイズ、新規ポリシーの記述も簡単です。
+SPDLを生成するためのツールやGUIが用意されているからです。
+
+
+\subsection{seeditの歴史}
+SELinux Policy Editorの元となるバージョンは、日立ソフトウェアエンジニア
+リング(http://www.selinux.hitachi-sk.co.jp/)により開発され、2003年2月にGPLにて公開さ
+れました。このバージョンをアップデートしたものが、バージョン1.0として2005年7月に公
+開されました。\\
+現バージョン(2.0)は、中村が再設計し、日立ソフトの実装を一部使いながら，
+再実装したものです。
+
+\subsection{seeditの限界}
+seeditは、到達できるセキュリティレベルに限界があります。
+Simplified Policyは、情報フロー分析が不可能です。
+「ポリシーは、形式的（数学的）
+に分析可能であるべきである」と考える人は、seeditを使ってはいけません。
+SELinuxのstrictポリシーを頑張って使ってください。
+情報フロー分析可能なSimplified Policyについては、現在考察を進めていると
+ころです。
+
+
+\section{SELinuxの背景知識}
+ seeditを使う前に，SELinuxに関する最低限の知識を押さえておく必要があります。
+\begin{enumerate}
+ \item TE(Type-Enforcement)\\
+       SELinuxのアクセス制御メカニズムはTE(Type Enforcement)と呼ばれてい
+       ます。TEでは、プロセスには、ドメインと呼ばれる権限が割り当てられ
+       ます。例えば、Apache Webサーバー(/usr/sbin/httpd)には、httpd\_tと
+       いうドメインが割り当てられます。
+ポリシーと呼ばれる設定ファイルに、ドメインがどんなリソース
+       （ファイルなど）にアクセスができるかのルールが記述されています。
+       リソースを識別するために、タイプと呼ばれるラベルを使います(seedit
+       では隠蔽されます)。
+       全てのプロセスは、ポリシーに記述された通りのドメインを
+       与えられ，その権限の範囲内だけで動作します。
+       SELinuxの鍵となるのは、どんなドメインを割り当てるか、ドメインにど
+       んなアクセスを許可するか、というポリシーの設定となります。\\
+       なお、ドメインの割り当てられるタイミングは、実行ファイルの実行時になります。ポ
+       リシーファイルに、「実行ファイルを実行した場合、特定のドメインを
+       割り当てる」と書いてある場合のみ、ドメインが割り当てられます。
+       あるアプリケーションに割り当てるドメイン名を変更した場合は、アプ
+       リケーションの再起動が必要になるのに注意が必要です。
+       ドメイン名を変えず、ドメインの持つ権限のみを変えた場合はアプリケー
+       ションの再起動は
+       不要です。
+ \item Enforcing/permissive モード\\
+       SELinuxには、enforcingモード、permissiveモードと呼ばれる２つのモー
+       ドが用意されています。\\
+       Enforcingモードは通常のモードです。ポリシーに書かれたアクセス制御
+       設定が有効な状態です。\\
+       Permissiveモードは、テストモードとも言えるモードです。SELinuxによっ
+       て拒否されるアクセスがあったとしても，それは拒否されず，ログにア
+       クセス拒否の事実が記述されるだけ、というモードです。 Permissiveモー
+       ドでは、アプリケーションは通常のLinuxと同様に動きます。が、アプリ
+       ケーションがどんなアクセスをするのか挙動を調べ、ポリシーを書くの
+       に役立ちます。
+       現在のモードを確認するには、{\it getenforce}コマンドを使います。
+       enforcing/permissiveモードの切り替えには、{\it
+       setenforce} コマンドを使います。使い方は、後で紹介します。
+ \item SELinuxのアクセス拒否ログ\\
+       SELinuxによってアクセスが拒否された場合、Fedora Core5の場合、
+       /var/log/messagesにアクセス拒否ログが出ます。dmesgコマンドでも閲
+       覧可能です。Fedora Core4や、auditdサービスが動作している場合は，
+       /var/log/audit/audit.logにログが出力されることに気を付けます。
+\end{enumerate}
+
+\section{インストール方法}
+\subsection{RPMから導入}  \label{sec:rpm}
+RPMパッケージを使うことで簡単にインストールできます
+\begin{enumerate}
+ \item  必要なパッケージ\\
+checkpolicyパッケージが必要です。以下でインストールしておきます。
+\begin{verbatim}
+# yum install checkpolicy	
+\end{verbatim}
+
+    \item ファイルを入手\\
+seedit-converter-2.0.(ディストリビューション
+	  名).rpm, seedit-policy-2.0.x-(ディストリビューション
+	  名).rpmを以下のURLより入手します。
+\begin{verbatim}
+http://sourceforge.net/project/showfiles.php?group_id=135756	
+\end{verbatim}
+
+オプションとして、GUIも用意されています。ファイル名は、
+	seedit-gui-2.0.x-noarch.rpmです。\\
+
+seedit-converterには、Simplified PolicyをSELinuxのポリシに変換するツールと、Simplified
+	  Policy管理ツールが同梱されています。seedit-policyには、
+	  simplified policyが格納されています。seedit-guiは、GUIです。
+
+
+Fedora Core5かつ最新版が2.0.0ならば、
+seedit-converter-2.0.0-FC5.i386.rpm, seedit-policy-2.0.0-FC5.noarch.rpm
+	  の２つのファイルをダウンロードします。
+ \item rpmをインストール\\
+入手したrpmを以下のようにインストールし,リブートします。
+\begin{verbatim}
+$ su 
+# rpm -ivh seedit-*.rpm
+# reboot
+\end{verbatim}
+ \item 初期化\\ \label{item:init}
+再起動時、ファイルのラベルが付与され直しされます。数分かかります。無事ログイン
+	  できたら、以下のコマンドで初期化作業をして下さい。
+\begin{verbatim}
+# seedit-load
+# reboot
+\end{verbatim}
+seedit-loadコマンドは、SPDLで書かれたポリシ(Simplified Policy)を、
+	  SELinuxのポリシに変換し、カーネルに読み込ませたり、ファイルと
+	  タイプの関連付けを直したりするコマンドです。このコマンドを入力
+	  することで、自分
+	  のシステムに合わせたポリシを生成してくれます（このコマンドを入
+	  力する前は、rpmパッケージ開発者の環境に適したポリシが生成され
+	  てます。）。
+
+ \item インストールは終わりです\\
+seeditが正しくインストールされているか否かは、sestatusコマンドで確認可能です。
+次のような出力になれば成功です。
+\begin{verbatim}
+# sestatus
+SELinux status:                 enabled
+Current mode:                   permissive
+Mode from config file:          permissive
+...
+Policy from config file:        seedit
+\end{verbatim}
+「Policy from config file:        seedit」となってます。
+また、インストール直後は、Permissiveモードになっていることに気を付けます。
+Permissiveモードでは、SELinuxはシステムを守ってくれません。
+enforcingモードの切り替え方法は、 \ref{sec:mode}にあります。
+
+\item アンインストール方法\\
+アンインストールは簡単です。
+\begin{verbatim}
+# rpm -e seedit-policy seedit-converter	
+# reboot
+\end{verbatim}
+再起動時、SELinuxのtargeted policy(Fedora Coreデフォルト)の、permissive
+	  モードで起動します。
+\end{enumerate}
+
+\subsection{ソースからのインストール方法}
+\begin{enumerate}
+ \item Obtain files\\
+ seedit-converter-2.0.x.tgz and seedit-policy-2.0.x.tgzを以下からダウン
+       ロードします。
+\begin{verbatim}
+http://sourceforge.net/project/showfiles.php?group_id=135756	
+\end{verbatim}
+ \item コンパイルとインストール\\
+\begin{verbatim}
+# tar czvf seedit-*.tgz
+# cd seedit-converter
+# make install
+# cd .. 
+# cd seedit-policy
+# make install
+# touch /.autorelabel
+# reboot
+\end{verbatim}
+次の作業は、 \ref{sec:rpm} (\ref{item:init})と同じです。\\
+ \item アンインストール\\
+次のようにして、Fedora Coreデフォルトの状態に戻ることができます。
+/etc/selinux/configを以下のように編集します。
+\begin{verbatim}
+SELINUXTYPE=seedit
+-->
+SELINUXTYPE=targeted
+\end{verbatim}
+次のコマンドを入力し、再起動します。 
+\begin{verbatim}
+#touch /.autorelabel
+#reboot	
+\end{verbatim}
+\end{enumerate}
+
+\subsection{何が影響されるか？}
+インストールによって、
+/etc/selinux/configが以下のように編集されます。
+\begin{verbatim}
+SELINUX=permissive	
+SELINUXTYPE=seedit
+\end{verbatim}
+それ以外は、既存のシステムに影響を及ぼしません。
+
+
+\subsection{旧バージョンユーザーへの注意}
+\begin{itemize}
+ \item Simplified Policyは古いバージョン(1.0,1.2)と互換性はありません。
+ \item 古いバージョンからアップグレードする場合は、以下のようにして完全
+       に削除します。
+       \begin{verbatim}
+	# rpm -e seedit-converter seedit-policy
+	# rm -rf /etc/selinux/seedit
+       \end{verbatim}
+\end{itemize}
+
+\section{GUIについて}
+X Window Systemから、「seedit-gui」または「デスクトップ→管理→
+SELinux Policy Editor」にてGUIが起動
+します。以下で紹介するコマンドラインの操作も、GUIで行えます。\\
+
+
+\section{システムの状況を把握する}
+seeditをインストールすることで、システムに何が起こっているのかを把握しま
+しょう。
+\subsection{Simplified policyはどこに?}
+Simplified policyは、/etc/seedit/policy以下に「.sp」という拡張子のファイ
+ルとしてインストールされています（詳細は後ほど）。Simplified policyは、
+seedit-loadコマンド（内部的にseedit-converterコマンドが実際の作業を行っ
+ています）によって、SELinuxのポリシー(SELinuxのバイナリポリシ、
+file\_contextsファイル)に変換されます。変換後のポリシーは
+/etc/selinux/seedit/policy, /etc/selinux/seedit/contexts/filesにインストー
+ルされます。これらがカーネルに読み込まれていますが、/etc/selinux/seedit
+以下のファイルを気にする必要は通常ありません。
+
+\subsection{デフォルトで用意されているSimplified Policy}
+デフォルトでインストールされているSimplified Policyは、「targetedポリシー」
+相当のもので、設定が甘いです。具体的に以下のようになってます。
+\begin{itemize}
+ \item 選択されたデーモンプロセスだけが守られており、SELinuxによって制限
+       されないプロセスの存在を許容\\
+       「SELinuxによって制限されていないプロセス」には、「全てのアクセス
+       を許可」するドメインが割り当てられます。アクセス制御は、普通の
+       Linuxのパーミッションチェックのみになります。
+ \item RBAC(Role Base Access Control)は設定されていない
+\end{itemize}
+SPDLは、原理的にはRBACも設定可能ですし、strictポリシー相当のものも記述可
+能です。RBACについては、「RBACガイド」を参照してください。
+
+\subsection{seedit-unconfinedコマンド}
+\subsubsection{unconfinedドメイン}
+  デフォルトでは、SELinuxで制限されていないプロセスが存在します。
+これらのプロセスには、「SELinuxによって制限されないドメイン(以下
+unconfinedドメインと呼びます)」が割り当てられています。
+unconfinedドメインは、全てのアクセスを許可するように設定されています。
+unconfinedドメインが割り当てられたアプリケー
+ションは、SELinuxによるアクセス制御を事実上受けなくなり、普通のLinuxの上
+で動いているのと同様になります。\\
+例えば、システム起動スクリプトには、initrc\_tドメインというunconfinedド
+メインが割り当てられています。\\
+どのプロセスにunconfinedドメインが割り当てられているのかを把握することがセキュリ
+ティ上重要になってきます。
+そのために、「seedit-unconfinedコマンド」が用意されています。
+seedit-unconfinedコマンドは、rootユーザーになってから使います。
+\subsubsection{動作中のプロセスのポリシー適用状況を確認}
+
+「seedit-unconfined -e」にて、動作中のプロセスのポリシー適用状況を確認で
+きます。以下に実行例を示します。
+\begin{verbatim}
+$ su -
+# seedit-unconfined -e
+Current SELinux mode: permissive ----(1)
+PID     Comm    Domain
+1       init    Unconfined(init_t) ---(2)
+...
+1853    sshd    Confined by sshd_t ---(3)
+\end{verbatim}
+\begin{itemize}
+ \item (1) は、現在のSELinuxのモードを示しています。「permissiveモードである」
+と言っています。permissiveモードでは、SELinuxのアクセス制限がかからない
+ことに今一度注意しましょう。
+ \item (2)は、initプロセスは、SELinuxに制限されていないことを言っていま
+       す。そして、SELinuxに制限されていないドメインinit\_tが割り当てら
+       れています(init\_tドメインは、全てのアクセスが許可されていること
+       を意味します。)。
+ \item  (3)は、sshdに、「sshd\_tドメイン」が割り当てられているとい
+       う意味です。sshd\_tドメインは、sshdに必要最小限のアクセス許可を与
+       えるように設定されています(設定内容は後で示す方法で確認できます)。
+\end{itemize}
+  ちなみに、ps -eZコマンドでも、動作中のプロセスのドメインを確認可能です。
+  しかし、どのドメインがunconfinedドメインかを知ること
+  はできません。SELinuxの制限がかかってないドメイン一覧は、
+  /etc/selinux/seedit/policy/unconfined\_domainsに記述されていますので、
+  このファイルの内容と照合する必要があります。
+
+\subsubsection{ネットワークプロセスのドメインを確認}
+ネットワークプロセス（外部からネットワーク接続を待ち受けているプロセス）
+の状況をseedit-unconfined -nコマンドで確認できます（AppArmorの
+unconfined`コマンドみたいなものです）。
+ネットワークプロセスは、攻撃者が侵入する際の入口として使われます。ここを
+しっかりと守ることが、外部からの不正侵入による被害を無くすために重要になります。
+以下のような状況が理想です。
+\begin{itemize}
+ \item 全てのネットワークプロセスに適切なドメインが割り当てられている
+ \item SELinuxによって制限されないプロセスがある場合\\
+       以下のような選択肢があります。
+\begin{itemize}
+ \item 適切なドメインを割り当てる設定をする\\
+       設定方法は、後ほど紹介します。
+ \item SELinux以外の対策を強化する\\
+       ファイアウォール(iptables)によって、接続できるアドレスを制限した
+       り、当ての優先度を上げるなどする
+ \item そのようなプロセスを立ち上げない（サービスを止める)
+\end{itemize}
+\end{itemize}
+さて、実際に確認してみましょう。seedit-unconfined -nの実行例を以下に示し
+ます。
+\begin{verbatim}
+#seedit-unconfined -n 
+Current SELinux mode: permissive ----(1)
+/usr/sbin/smbd  Unconfined(initrc_t) -- (2)
+/usr/sbin/sendmail.sendmail     Confined by sendmail_t --(3)
+...	
+\end{verbatim}
+ネットワークプロセス一覧が表示され、ドメインの適用状況が表示されます
+\begin{itemize}
+ \item  (1)は現在のSELinuxのモードです。
+ \item (2)は、smbd は制限されていないことを言っています。
+ \item sendmailは、sendmail\_tドメインが割り当てられており、sendmail\_t
+	は、最小限の権限を持つよう設定されてます。
+\end{itemize}
+この場合、smbdに対して何らかの対処をしないとセキュリティを保てません。
+
+\subsection{Enforcing/Permissiveモードを切り換える}\label{sec:mode}
+インストール直後は、permissiveモードですが、以下のコマンドでEnforcingモードに切り換え可能です。
+\begin{verbatim}
+# setenforce 1
+# getenforce 
+enforcing
+\end{verbatim}
+ただし、これだと再起動時にまたPermissiveモードに戻ってしまいます。
+ブート時からEnforcingモードにするには、/etc/selinux/configを次のようにします。
+実運用の際には、このようにEnforcingモードにすることを強く薦めます。
+
+\begin{verbatim}
+SELinux=permissive
+-->
+SELINUX=enforcing
+\end{verbatim}
+
+\section{次に何をすればいいの？}
+さて、SELinuxのステータスを把握したところで、次に何をすればいいのでしょ
+う。以下のようにまとめることができます。
+\begin{enumerate}
+ \item アプリケーションのSELinux保護を無効に\\
+       アプリケーションが、SELinuxのアクセス拒否のため動作しなかった場合、
+       もっとも簡単な解決方法は、そのアプリケーションにたいしてのみ、
+       SELinuxのアクセス制御が働かないようにすることです。
+       セキュリティはもちろん落ちますが、SELinux全部を無効にするよりはマ
+       シといえます。 \ref{sec:unconfine}で紹介します。
+       
+ \item ポリシーを修正する\\
+       アプリケーションが、SELinuxのアクセス拒否のため動作しなかった場合、
+       本来は、ポリシーを編集すべきです。 \ref{sec:policy}で紹介します。
+ \item ドメインを新たに設定する\\
+       SELinuxによって動作が制限されていないアプリケーションの安全性を高
+       めるには、自分でドメインを設定し、アプリケーションにドメインを割
+       り当てる必要があります。 \ref{sec:policy}で紹介します。
+\end{enumerate}
+
+\section{アプリケーションに対するSELinux保護を無効に}\label{sec:unconfine}
+アプリケーションに対するSELinux保護を無効にする方法は２つあります。
+booleanパラメータを使う方法と、ポリシーファイルを移動する方法です。
+ここで「アプリケーションに対するSELinux保護を無効にする」と言っています
+が、
+前述のunconfinedドメインを割り当てることにより、SELinuxのアクセス制御が
+全部許可されるようにする、という意味です。
+\subsection{方法１：booleanパラメータを使う}
+SELinuxのbooleanパラメータ(条件変数とも呼ばれます)を知っているのならば、
+簡単にできます。
+例えば、Apacheの場合、
+httpd\_tドメインが割り当てられていますので、
+httpd\_disable\_transをonにして、Apacheを再起動するだけです。
+再起動するのは、ドメインの割り当ては実行ファイルの実行のタイミングで起こ
+るためです。httpd\_tドメインというドメインが割り当てられてるのを、
+unconfinedなドメイン（この場合initrc\_t)を割り当てるようになります。割り
+当てたいドメイン名が変わるので、Apacheを再起動する必要があります。
+
+\begin{verbatim}
+実行例:
+# setsebool -P httpd_disable_trans 1
+# /etc/init.d/httpd restart
+# seedit-unconfined -e
+Current SELinux mode: enforcing
+PID     Comm    Domain
+1111     httpd    Unconfined(initrc_t)
+\end{verbatim}
+元に戻したいときは、booleanをoffにします。
+\begin{verbatim}
+Example: 
+# setsebool -P httpd_disable_trans 0
+# /etc/init.d/httpd restart
+# seedit-unconfined -e
+Current SELinux mode: enforcing
+PID     Comm    Domain
+1111     httpd   Confined by httpd_t domain
+\end{verbatim}
+\subsection{方法２：ポリシーファイルを移動する}
+ドメインが設定されているファイルは、
+/etc/seedit/policy/{\it ドメイン名}.sp.
+というファイルです。/etc/seedit/policyディレクトリ以外にある設定は無効に
+なります。この振舞を利用し、ファイルを別のディレクトリに移動して、設定を反映
+し直し、アプリを再起動すればOKです。
+\begin{verbatim}
+実行例: 
+ApacheのSELinux保護を無効に
+# cd /etc/seedit/policy
+# mkdir unused
+# mv httpd_t.sp unused
+# seedit-load
+# /etc/init.d/httpd restart
+# seedit-unconfined -e
+Current SELinux mode: enforcing
+PID     Comm    Domain
+1111     httpd    Unconfined(initrc_t)
+\end{verbatim}
+元に戻したい場合は、/etc/seedit/policyディレクトリに再度移動し、設定を反
+映します。
+\begin{verbatim}
+Example: 
+# cd /etc/seedit/policy
+# mv unused/httpd_t.sp .
+# seedit-load
+# /etc/init.d/httpd restart
+# seedit-unconfined -e
+...
+\end{verbatim}
+\section{ポリシー(Simplified Policy)を編集してみよう}\label{sec:policy}
+\subsection{ポリシーはどこに？}
+Simplified Policyは、/etc/seedit/policyディレクトリに配置されています。
+このディレクトリの下には、 {\it ドメイン名}.spというファイルが配置されて
+います。
+\subsection{ポリシーの書式概要}
+ Simplified Policyは、Simplified Policy Description Language(SPDL)という
+ 書式で書かれています。詳細は、別のドキュメント(Specification of SPDL)に
+ 書かれていますが、全てを理解する必要はありません。書式を知らなくとも、
+ Simplified Policyを生成するツールがあるからです。\\
+が、SPDLの概要を知っておくことは、どんな設定がされているのか知る上で重要
+ です。ここでは、SPDLの概要を具体例と共に見ていきます。 具体例としては、
+ 図\ref{policyexample}のApache用ポリシを使います。
+
+\begin{figure}
+\caption{Simplified  Policyの例：Apache Webサーバのためのポリシ}\label{policyexample}
+\begin{verbatim}
+     1  {
+     2  domain httpd_t;
+     3  program /usr/sbin/httpd;
+     4  include common-relaxed.sp;
+     5  include daemon.sp;
+     6  include nameservice.sp;
+     7  allow /var/www/** r,s;
+     8  allow /var/log/httpd/** r,a,s;
+     9  allow /etc s;
+    ...<snip>..
+    10  allownet -protocol tcp -port 80,443 server;
+    11  allowpriv netlink;
+    12  }	
+\end{verbatim}
+\end{figure} 
+
+\subsubsection{アプリケーションにドメインを付与する}
+2行目と3行目は、アプリケーションにドメインを付与する設定です。
+2行目は、ドメインの命名です。「httpd\_t」というドメインを命名しています。
+以下、\{\}内に記述される設定は、httpd\_tドメインに対するものになります。
+デフォルトでは、ドメインは何もアクセス権限を与えられません。明示的にドメ
+インに権限を与える設定を記述していくことで、設定を行っていきます。\\
+３行目は、実際にアプリケーションにドメインを付与する設定です。アプリケー
+ションの実行ファイル(/usr/sbin/httpd)を指定し、ドメインを付与します。
+これにより、/usr/sbin/httpdが実行されると同時にドメインhttpd\_tが割り当
+てられるようになります。
+\begin{itemize}
+ \item 上級者向けメモ\\
+       ドメインを付与するために、SELinuxのドメイン遷移が使われています。
+       2行目と3行目では、unconfinedドメインが、/usr/sbin/httpdを実行する
+       と、/usr/sbin/httpdにhttpd\_tドメインが割り当てられる、という設定
+       がされます。SELinuxのポリシーの書式で書くと次のようになります。
+\begin{verbatim}
+domain_auto_trans(unconfined_domain, /usr/sbin/httpdのタイプ, httpd_t)
+* unconfined_domainは、unconfinedドメインに付与される属性
+\end{verbatim}
+       unconfinedドメインじゃないドメインから
+       /usr/sbin/httpdが実行された場合は、/usr/sbin/httpdにドメインが割
+       り当てられないことに注意が必要です。
+\end{itemize}
+\subsubsection{典型的な設定を使いまわす:include文}
+4,5,6行目で、一般的なアプリケーションで共通して使う設定を挿入して
+います。include書式を使うと、他のファイルに記述された設定を挿入すること
+ができます。実際に、どんな設定が挿入されるかは、/etc/seedit/policy/includeディ
+レクトリ以下を見れば分かります。
+例えば、 {\it include include/nameservice.sp;}
+では、/etc/seedit/policy/include/nameservice.spに記述された設定が挿入さ
+れます。/etc/hostsへの読み込み権限などが許可されます。
+
+\subsubsection{ファイルへのアクセスを許可する:allow文}
+7から10行目では、ファイルへのアクセスを許可しています。
+allowという書式を使って、ファイル名とパーミッションが記述されています。
+ファイル名については、次のような一括指定記法が使えます。
+\begin{verbatim}
+ディレクトリ名/* :ディレクトリ以下のファイル全て。サブディレクトリは含まない。
+ディレクトリ名/**:  ディレクトリ以下のファイルをサブディレクトリも含め全て。
+例えば、/etc/*とした場合は、/etc直下のファイルが指定され、
+/etc/sysconfig/networkなど、サブディレクトリのファイルは含まれません。
+/etc/**とすると、サブディレクトリにあるファイルも含まれます。
+\end{verbatim}
+\textasciitilde ~ から始まるファイル名は、ホームディレクトリ（/root以外）
+を表します。
+\begin{verbatim}
+~/public_html/**
+\end{verbatim}
+は、各ユーザのホームディレクトリの下にあるpublic\_htmlディレクトリ以下の
+ファイル全てを表します。\\
+
+パーミッションとしては、以下のパーミッションを使うことができます。
+\begin{itemize}
+ \item 基本パーミッション
+       \begin{itemize}
+	\item s\\
+	      Searchの略です。ファイルツリーをサーチする、という意図
+	      で作られました。ディレクトリにあるファイル一覧を取得する権
+	      限、および、カレントディレクトリに設定する権限が設定されま
+	      す。ファイルに対してこのパーミッションを設定しても何も意味
+	      はありません。	      
+	\item  r\\
+	      Readの略です。ファイルを読み込む権限が設定されます。
+	\item x\\
+	      Executeの略です。ファイルを実行する権限が設定されます。
+	\item  w\\
+	      Writeの略です。ファイルを上書き、追記する権限や、ファイル・
+	      ディレクトリを生成消去する権限が設定されます。
+       \end{itemize}
+ \item 詳細設定パーミッション\\
+       wパーミッションは、多くの権限が設定されます。本当に必要最小限の権
+       限を設定するために、wを分割した５つのパーミッションを利用できます。
+       \begin{itemize}
+	\item a\\
+	      Appendの略です。ファイルを追記オープンする権限が設定されま
+	      す。
+	\item o\\
+	      Overwriteの略です。ファイルを上書き保存する権限が設定され
+	      ます。
+	\item c\\
+	      Createの略です。ファイルやディレクトリを新規作成する権限が
+	      設定されます。
+	\item e\\
+	      Eraseの略です。ファイルやディレクトリを消去する権限が設定
+	      されます。
+	\item t\\
+	      Setattrの略です。ファイルやディレクトリの属性を変更する権
+	      限が設定されます。属性とは、ファイルの所有者,最終更新時刻など，ファイルに関
+	      する情報のことです。ファイルのセキュリティ属性(SELinuxのラ
+	      ベル)の変更は許可されません。
+       \end{itemize}       
+\end{itemize}
+さて、これで、7-9行目の設定の意味が理解できます。
+\begin{itemize}
+ \item 7行目: http\_tドメインが、/var/www以下のファイル一覧取得可能、ファ
+       イル(サブ
+       ディレクトリにあるファイル含む)の読み込みを可能です
+ \item 8行目:
+       http\_tは、/var/log/httpd以下(サブディレクトリ含む)のファイル一覧取得可能、およびファイルを読み込み，追記可能です。
+ \item 9行目
+       httpd\_tは、/etcにあるファイル一覧のみを取得可能です。/etc以下の
+       ファイルに対しては何もできません。
+       /etc以下のファイルにアクセスさせたい場合は、例えば、/etc/*や
+       /etc/**などと記述する必要があります。
+\end{itemize}
+
+\subsubsection{ネットワークアクセス制御を設定:allownet}
+ネットワークに関連するアクセス制御も可能です。
+ポート番号を使ってサーバーとして振る舞う権限、クライアントとしてポートに
+接続する権限を設定可能です{\footnote ネットワークインターフェースやIPア
+ドレスの利用制御も可能ですが、これ
+らはcommon-relaxed.spでデフォルト許可されています}。
+10行目では、httpd\_tドメインがTCP80,443ポートを使ってサーバーとして振る
+舞う権限をあたえられています。
+もし、MySQLサーバー(TCP 3306)に接続したいなら、以下のように設定します。
+allownet -protocol tcp -port 3306 client;\\
+ポート番号の指定としては、 -1023, 1024-, * という表記が可能です。
+ -1023は全てのWellknownポートです。1024-は、1024以上のポート番号、*は全
+ てのポート番号を意味します。
+
+\subsubsection{他の特権を設定する:allowpriv}
+ファイルやネットワークに関連しない操作も、SELinuxによって制限されていま
+す。
+{\it allowpriv 特権名;}.という書式で、設定できます。
+例えば、11行目では、netlinkソケット(カーネルと通信するために使われる)の
+利用許可を与えてます。
+
+\subsubsection{Unconfinedドメインにする}
+allowpriv all;と設定することで、そのドメインがunconfinedドメインになりま
+す。
+\begin{verbatim}
+{
+domain httpd_t;
+program /usr/sbin/httpd;
+allowpriv all;
+}
+\end{verbatim}
+このようにすると、httpd\_tは、unconfinedドメインとして扱われます。\\
+/etc/selinux/seedit/policy/unconfined\_domains にも、httpd\_tが追加されて
+ます。
+
+\section{ポリシーを追加する}
+\subsection{audit2spdlコマンド}
+SELinuxのアクセス拒否によってアプリケーションが動作しないことが判明した
+ら、設定を追加しなければなりません。
+audit2spdlというコマンドを使うことで、この作業を簡単に行うことができます。
+使いかたは、以下のようになります。
+auditdサービスが起動していない場合(Fedora Core5のデフォルト),
+\begin{verbatim}
+# audit2spdl -dl
+\end{verbatim}
+When auditd is running(Fedora Core4 default)
+\begin{verbatim}
+# audit2spdl -al
+\end{verbatim}
+You can read log by specifying filename, 
+\begin{verbatim}
+# audit2spdl -l -i /var/log/messages 
+\end{verbatim}
+
+audit2spdlコマンドは、SELinuxのアクセス拒否ログを、Simplified Policyに変
+換するものです。これにより、アプリケーションを動作させるために必要な権限
+を簡単に追加できます。以下が、出力例です。
+
+\begin{verbatim}
+#audit2spdl -dl
+.... It takes some time...
+-------------------------
+#SELinux deny log:
+audit(1146162965.963:16): avc:  denied  { read } for  pid=6653 
+comm="vsftpd" name="vsftpd.conf" dev=hda3 ino=584775 
+scontext=user_u:system_r:ftpd_t 
+tcontext=system_u:object_r:default_t tclass=file
+#Suggested configuration
+File ftpd_t.sp:
+allow /etc/vsftpd/vsftpd.conf  r;
+-------------------------
+...
+\end{verbatim}
+これは、vsftpd.confにreadアクセス拒否をされたログが出ていますが、このア
+クセスを許可するには、
+\begin{verbatim}
+allow /etc/vsftpd/vsftpd.conf  r;	
+\end{verbatim}
+という設定をftpd\_t.spファイルに追加する必要がある、と言っています。
+
+\subsection{audit2spdlを効率よく使うために}
+auditdサービスを有効にしておいたほうが、効率よく作業ができます。
+auditdサービスはより詳細なログを取ってくれるからです。
+SELinuxのアクセス拒否ログには、フルパス情報が含まれていません。
+例えば/etc/vsftpd.confにアクセス拒否された場合、「vsftpd.conf」にアク
+セス拒否されたとしか記録されません。
+auditdサービスを使うと、フルパスも記録されます。
+アクセス拒否ログから、ポリシーを生成するには，フルパス情報が不可欠です。
+auditdサービスを有効にすることで、フルパス情報を得られ、正しいポリシーが
+生成できるわけです。\\
+Fedora Core5の場合、以下でauditdを有効にできます。
+\begin{verbatim}
+#yum install audit
+#chkconfig auditd on
+#/etc/init.d/auditd start
+\end{verbatim}
+auditdを有効にしたら、通常は「audit2spdl -al」で事足ります。audit2spdl
+-dlは意味がなくなるので注意が必要です。\\
+auditdを使わない場合、audit2spdlは、フルパス情報を「locateコマンド」と組
+み合わせて推測します。ただし、locateコマンドを使う前に定期的に「updatedb」
+コマンドを走らせる必要があります（デフォルトではcronジョブで走っていま
+す）。
+
+
+\subsection{提示されたポリシーを追加して設定反映}
+上の例では、必要なポリシーが提示されただけで、設定が反映されていません。
+/etc/seedit/policy/vsftpd.sp.を開き、
+「allow /etc/vsftpd/vsftpd.conf  r;」という行を${}$の間に記述します。次
+のようになります。
+\begin{verbatim}
+{
+domain vsftpd\_t
+program /usr/sbin/program;
+allow ....
+<ここに追加！>
+}
+\end{verbatim}
+ポリシーを追加したら、その変更内容を反映する必要があります。
+「seedit-load」とタイプします。
+\begin{verbatim}
+#seedit-load
+seedit-load: Success
+\end{verbatim}
+このコマンドは、Simplified PolicyをSELinuxのポリシの形式に変換し、
+/etc/selinux/seedit以下に生成されたポリシーをインストールします。
+そして、そのポリシーをカーネルに読み込ませ、必要次第でファイルのラベル付
+けもします。\\
+seedit-loadコマンドの詳細な進行具合を「-v」オプションを付与することで見
+ることができます。
+\begin{verbatim}
+# seedit-load -v
+mkdir -p ./sepolicy;
+m4 -s ./simplified_policy/*.sp >./simplified_policy/all.sp;
+/usr/bin/seedit-converter -i ./simplified_policy/all.sp -o 
+./sepolicy -b ./base_policy -I ./simplified_policy/include ;
+.................
+
+cp /etc/selinux/seedit/contexts/files/file_contexts.all 
+/etc/selinux/seedit/contexts/files/file_contexts.all.old
+seedit-load: Success	
+\end{verbatim}
+
+なお、上の例では、
+\begin{verbatim}
+allow /etc/vsftpd/* r;.	
+\end{verbatim}
+という設定を追加してもよいです。これは、ファイル名が、audit2spdlに提示さ
+れたものとは異なります。が、システム管理者は、/etc/vsftpdディレクトリが
+vsftpdの設定ファイルであることを知っていますので、このディレクトリ全体の
+読み込み権限を与えてしまったほうが効率がよいです。
+
+\subsection{audit2spdlについての諸注意}
+\begin{enumerate}
+ \item セキュリティ上最適とは限らない\\
+audit2spdlによって提示される設定は、最適なものとは限りません。
+提示された設定を追加する前に、注意深く見直す必要があります。
+例えば、audit2spdlのデフォルトは、詳細設定パーミッション(o,a,c,e,t))を提示しません。
+代わりにwを提示しますので、設定が粗くなります。ちなみに、詳細設定パーミッ
+       ションを提示するには、sオプションを例えばaudit2spdl -alsのように
+       使います。
+
+\item 設定の提示に失敗することがある\\
+ ログからファイルのフルパスを得ることを失敗すると、以下のようなメッセー
+       ジが現れます。
+\begin{verbatim}
+#Failed to generate, because failed to obtain fullpath.	
+\end{verbatim} 
+SELinuxのログにはフルパス情報は含まれてませんが、audit2spdlはフルパスを
+       得るため様々な作業を行っています。それにも関らず失敗することもあ
+       ります。auditdサービスを起動しておくことで、フルパスを得る可能性
+       を高めることができます。
+
+
+\end{enumerate}
+
+
+\section{新たにドメインを作成する}
+seeditでのポリシーの書き方を覚える最も良い方法は、新たなドメインを作成す
+る設定を試すことです。vsftp FTPサーバにftpd\_tドメインを付与する実例を元
+に、見ていきましょう。\\
+新たなドメインを作成、設定する場合の手順は一般的に次のようになります。
+\begin{enumerate}
+ \item テンプレートとなる設定を作成
+ \item ドメインが正しく付与されることを確認
+ \item テスト動作とポリシーの追加
+\end{enumerate}
+
+\subsection{テンプレートとなる設定を作成}
+seedit-templateコマンドを使うことで、テンプレートとなる設定を作成できま
+す。書式は以下です。
+\begin{verbatim}
+seedit-template -d <ドメインの名前> -e <実行ファイル名> -o <出力>
+\end{verbatim}
+今回は、ドメインの名前は「ftpd\_t」で、実行ファイルは「/usr/sbin/vsftpd」
+ですので、
+以下のように実行します。コマンドと実行結果を示します。
+\begin{verbatim}
+# seedit-template -d vsftpd_t -e /usr/sbin/vsftpd
+{
+domain ftpd_t;
+program /usr/sbin/vsftpd;
+include common-relaxed.sp;
+include daemon.sp;
+include nameservice.sp;
+}
+\end{verbatim}
+テンプレートとなる設定が生成されています。/usr/sbin/vsftpdにftpd\_tを付
+与しています。
+ {\it include }から始まる行で、一般的なデーモンプログラムに必要な権限が
+ 与えられます。
+この設定を、
+/etc/seedit/policy/ftpd\_t.spに保存します。
+ファイル名は、必ず「ドメイン名.sp」である必要があります。さもないと、設
+定反映時にエラーが出ます。
+
+
+\subsection{ドメインが正しく付与されることを確認}
+設定の反映には、次のコマンドを使います。
+\begin{verbatim}
+#seedit-load
+\end{verbatim}
+なお「-v」をつけると詳細な経過を見ることができます。\\
+また、permissiveモードに切り替える必要があります。
+ftpd\_tにアクセス許可する設定をしていませんので、vsftpdが起動しようとし
+てもenforcingモードではアクセス拒否のため失敗するからです。
+\begin{verbatim}
+#setenforce 0
+#getenforce
+Permissive
+\end{verbatim}
+vftpdを起動して、seedit-unconfinedコマンドでvsftpdのドメインを確認します。
+\begin{verbatim}
+# /etc/init.d/vsftpd restart
+# seedit-unconfined -e
+10530   vsftpd  Confined by ftpd_t
+\end{verbatim}
+上のようにvsftpdにftpd\_tドメインが付与されていることと思います。
+
+\subsection{テスト動作とポリシーの追加}
+ さて、次はpermissiveモードでアプリケーションをテスト動作させます。
+そして、audit2spdlでどんな権限が足りないのかを洗い出します。
+ここでは、vsftpdがAnonymous FTPサーバとして動作するのに必要な権限を洗い
+出すことにします。\\
+テストのために、以下のようにftpサーバにAnonymousとしてログインします。
+\begin{verbatim}
+
+# touch /var/ftp/pub/test.txt
+↑　テスト用のファイルを作成
+$ ftp localhost
+Name (localhost:ynakam): Anonymous
+Password: <anything is OK>
+#以下、pub/test.txtをダウンロードしている
+ftp> ls
+ftp > cd pub
+ftp > get test.txt
+ftp > quit
+\end{verbatim}
+
+ログを閲覧します。
+以下、auditdサービスが起動しているという前提で話を進めます。
+auditdサービスが起動していない場合は、audit2spdl -alを-dlに置き換えて読
+んでください。
+
+\begin{verbatim}
+#auserch -m AVC 
+↑/var/log/audit/audit.logのログを閲覧するコマンドです。
+\end{verbatim}
+様々なアクセス拒否が出ていると思います。\\
+audit2spdlを使ってみましょう。
+
+\begin{verbatim}
+#audit2spdl -al
+-------------------------
+#SELinux deny log:
+audit(1146179470.043:86): avc:  denied  { search } for  
+pid=10904 comm="vsftpd" name="vsftpd" dev=hda3 ino=584772 
+scontext=user_u:system_r:ftpd_t 
+tcontext=system_u:object_r:etc_t tclass=dir
+#Suggested configuration
+File ftpd_t.sp:
+allow /etc/vsftpd  s;
+-------------------------
+-------------------------
+
+#SELinux deny log:
+type=AVC msg=audit(1148486747.277:30): avc:  denied  { append } for  pid=11761 comm="vsftpd" name="xferlog" dev=hda3 ino=163412 scontext=user_u:system_r:ftpd_t
+tcontext=system_u:object_r:var_log_t tclass=file
+#Suggested configuration
+File ftpd_t.sp:
+allow /var/log/xferlog  w,r,s;
+-------------------------
+.....
+\end{verbatim}
+様々な設定を追加しなければならないことが分かると思います。
+なお、以下のように「\#」から始まる行が提示されることがあります。
+\begin{verbatim}
+-------------------------
+#SELinux deny log:
+type=AVC msg=audit(1148486754.718:36): avc:  denied  { lock } for  
+pid=11763 comm="vsftpd" name="test.txt" dev=hda3 ino=163311 
+scontext=user_u:system_r:ftpd_t tcontext=system_u:object_r:default_t
+ tclass=file
+#Suggested configuration
+File ftpd_t.sp:
+#Failed to generate, because failed to obtain fullpath.
+#allow test.txt  r,s;
+-------------------------
+\end{verbatim}
+これは、audit2spdlがtest.txtのフルパスを発見することに失敗したため、先頭
+に\#がついています。しかし、test.txtのフルパスは、/var/ftp/pub/test.txtで
+あることを読者は知っているので、
+\begin{verbatim}
+allow /var/ftp/pub/test.txt  r,s;	
+\end{verbatim}
+を追加すればいいことが分かります。
+筆者の環境では、以下のような設定が提示されました。
+\begin{verbatim}
+allow /etc/vsftpd  s;
+allow /var/log/xferlog  w,r,s;
+allow /var/ftp/pub  s;
+allow /var/ftp/pub/test.txt  r,s;
+allownet -protocol tcp -port 21 server;
+allow /etc/vsftpd/vsftpd.conf  r,s;
+allowpriv cap_sys_chroot;
+allow /var/ftp  s;
+allow /var/log/xferlog  r,s;
+\end{verbatim}
+これをそのまま追加してもいいのですが、冗長な設定があります。
+例えば、/var/ftp、/etc/vsftpdはディレクトリ全体を読み込み許可すれば冗長
+な設定を削れます。冗長な設定を削ると、ftpd\_t.spは結局以下のようになりま
+す。
+
+\begin{verbatim}
+{
+domain ftpd_t;
+program /usr/sbin/vsftpd;
+include common-relaxed.sp;
+include daemon.sp;
+include nameservice.sp;
+# added by audit2spdl suggestion
+allow /etc/vsftpd/**  r,s;
+allow /var/ftp/**  r,s;
+allow /var/log/xferlog  r,w,s;
+allownet -protocol tcp -port 21 server;
+allowpriv cap_sys_chroot;
+}
+\end{verbatim}
+さて、seedit-loadコマンドで設定を反映し、vsftpdを再起動して、再度動作テ
+ストをしてみましょう。audit2spdl -alすると、
+さらに以下のような設定が提示されるかもしれません。
+\begin{verbatim}
+allownet -protocol tcp -port 6353 server;	
+\end{verbatim}
+これは、vsftpdがTCP 6553ポートを使ってサーバーとして振る舞おうとしている
+ことを言っています。が、ポート番号は毎回変わります。なので、以下のように
+1024以上のポートを使えるよう設定します。
+\begin{verbatim}
+allownet -protocol tcp -port 1024- server;	
+\end{verbatim}
+設定を反映し、さらにテスト動作を、アクセス拒否がでなくなるまで繰り返しま
+す。最後にenforcingモードにして、テストをして正しく動作することを確かめ
+ます。
+\begin{verbatim}
+#setenforce 1
+\end{verbatim}
+%%%enforcingモードでテスト
+%コンパイルエラーの見方
+さて、ここまでの加方法で、概ね設定できるかと思います。
+ログインユーザのセキュリティを高めるための機能として、SPDLはRBACもサポー
+トしています。RBACについては、「RBACガイド」を参照
+してください。
+
+\section{その他の注意点}
+\begin{enumerate}
+ \item ファイルの移動\\
+       ファイルAを別のディレクトリBに移動した場合，ディレクトリBにアクセスできるドメ
+       インが、移動後のAにアクセスできなくなることがあります。
+       ファイル移動時、「ファイルAに対するアクセス権限」を引き継ぐからで
+       す（詳しくは後述)。このようなトラブルを解決するにはrestoreconコマ
+       ンドを使う必要があります。
+\begin{verbatim}
+* 具体例：ホームページのアップロードの場合
+Apacheが移動したファイルにアクセスできないことがあります
+# pwd
+/root/homepage/index.html
+# mv index.html /var/www/html
+# restorecon /var/www/html/index.html
+\end{verbatim}
+ここで、最後のrestoreconコマンドを忘れると、Apacheは/var/www以下にアクセ
+       スできるように設定されてたとしても、index.htmlにアクセスできませ
+       ん。
+       なぜなら、httpd\_tは、/root/index.htmlにアクセスできませんが、こ
+       れがファイル移動後も継承されているからです。
+       これを修正するにはrestoreconコマンドをする必要があります。
+       これでも問題が解決できない場合は特殊な場合です。audit2spdlで設定
+       を追加する必要があります。
+ \item ファイルの新規作成\\
+       新規作成されたファイルのアクセス権限は、ディレクトリから引き継が
+       れます。次の例を見てください。以下の設定が存在したとします。
+       \begin{verbatim}
+domain foo_t;
+allow /foo/bar/** r,s;
+allow /foo/bar/test.txt r,w,s;
+       \end{verbatim}
+foo\_t は、/foo/bar以下に読み込み可能で、/foo/bar/test.txtに書き込み可能
+       です。\\
+/foo/bar/test.txtが、設定時に存在しなかったとし、設定後にtest.txtに新規
+       作成されたとします。
+foo\_tは、/foo/bar/test.txtに読み込みアクセスしかできません。/foo/barの
+       アクセス権を引き継ぐからです。
+この状況を直すには、
+\begin{verbatim}
+restorecon -R /foo/bar	
+\end{verbatim}
+をする必要があります。
+ \item restoreconはなぜ必要?\\
+       SELinuxは、ファイルなどのリソースを「タイプ」を呼ばれるラベルで識
+       別しています。
+       タイプの名前は、ファイル名の「\slash」を「\_」に置換した名前になってい
+       ます。
+       mvコマンドをするときは、ラベルは保存されます。ファイルが新規作成
+       された時は、タイプはディレクトリのものを引き継ぎます。ファイルと
+       タイプの関連付けをrestoreconコマンドを使うことで直す必要があるの
+       です。
+
+ \item cron ジョブ\\
+       Cronジョブは、unconfinedなドメインで動きます。cron jobのアクセス
+       制御を行いたい場合は、system\_crond\_t.spを編集し、
+ {\it allowpriv all;}を削る必要があります。ただし、cronジョブを正しくア
+       クセス制御するのは難しいことに注意が必要です。
+
+ \item 消去、生成が繰り返されるファイル\\
+       消去、生成が繰り返されるファイルについては、アクセス制御が思った
+       ようにいかない場合があります。次の例を見てください。
+\begin{verbatim}
+domain foo_t;
+allow /foo/bar/** r,s;
+allow /foo/bar/test.txt r,w,s;
+\end{verbatim}
+こう設定したとすると、test.txtが消去され、再度test.txtが生成された場合、
+       test.txtのアクセス権限は所属ディレクトリのものを継承しますから、
+foo\_tは、test.txtを読み込みしかできません。
+restoreconコマンドでこれを直すことができるのですが、またtest.txtが消去、
+       生成されると、さらにrestoreconをしなければなりません。\\
+ディレクトリに対するアクセス権限と違うファイル、かつそれが消去、生成が繰
+       り返される場合は、アクセス制御がうまく設定できないことになります。\\
+これを解決するには以下のような方法があります。
+\begin{enumerate}
+ \item ファイル毎のアクセス制御をあきらめ、ディレクトリ単位のアクセス制
+       御をする\\
+つまり、
+allow /foo/var/** r,s,{\it w}.
+のように、/foo/var全体に書き込み権限を与えてやれば問題ありません。
+しかし、書き込み可能な範囲が広がってしまいます。
+ \item allowtmpを利用\\
+      このような、生成消去を繰り返すファイルのアクセス制御をするために、
+       SPDLにはallowtmpという設定要素が用意されています。今回の場合は次
+       のように設定することになります。
+\begin{verbatim}
+       allowtmp /foo/bar -name auto  r,w,s;	
+\end{verbatim}
+       allowtmpを使うことで、ファイルを「ラベル」を使って識別できるよう
+       になります。
+       上の文にて、foo\_tが、/foo/bar以下に作成したファイルは、
+       foo\_foo\_bar\_tという名前のラベル(-name autoで命名がされます。
+       foo\_t + /foo/bar = foo\_foo\_bar\_t という規則です)が付与され、
+       そして、foo\_tは、このラベルに対し、r,w,sアクセス可能、ということ
+       になります。\\
+       このようにすることによって、test.txtが/foo/barディレクトリに消去、
+       生成を繰り返されたとすると、test.txtには、foo\_foo\_bar\_tという
+       ラベルが常に付与されます。そして、このラベルを使ってSPDLから設定
+       することができます。\\
+       例えば、他のドメインから、このラベルが付いたファイルにアクセスし
+       たい場合は、
+       \begin{verbatim}
+	allow foo_foo_bar_t r;
+       \end{verbatim} 
+のように書きます。
+       ちなみに、allowtmpでは、SELinuxのファイルタイプ遷移が使われてます。\\
+       デフォルトで用意されているポリシーでは、allowtmpは、/etc/mtabのア
+       クセス制御や、/tmp,/var/tmp以下の一時ファイルのアクセス制御に使わ
+       れています。
+\end{enumerate}
+ \item /devディレクトリ以外のデバイスを使う\\
+       デバイスファイルは、システムに対して致命的な影響を及ぼすため、
+       SPDLでも特に注意深く取り扱われています。
+       デフォルトで用意されているポリシでは、デバイスは、/devディレクト
+       リに存在すると設定されています。つまり、/devディレクトリ以外のデ
+       バイスに対して、allowでアクセス許可を設定しても、無視されてしまい
+       ます。\\
+       /devディレクトリ以外のデバイスを使いたい場合は、allowdev文を使う
+       必要があります。例えば、/var/chroot/dev/nullにアクセスしたい場合
+       は、/var/chroot/dev/nullにアクセスする設定を記述する前に、
+       \begin{verbatim}
+	allowdev -root /var/chroot/dev;	
+       \end{verbatim}
+       のように、デバイスの格納されるディレクトリを指定しておhく必要があ
+       ります。
+ \item シンボリックリンクを含むファイル名\\
+       シンボリックリンクを含むファイル名は無視されます。
+例えば、\\
+      allow /etc/init.d/httpd r;\\
+は無視されます。init.d は、 rc.d/init.dのシンボリックリンクだからです。
+ \item ハードリンクの扱い\\
+       Linuxシステムでは、ハードリンクを使うことで、ファイルの中身を複数
+       のファイル名で参照することができます。ハードリンクは、デフォルト
+       ではほとんど使われていないため、以下の内容を気にする場面はほとん
+       ど現れませんが、セキュリティ上知っておいたほうがいいでしょう。\\
+       SPDLでは、ハードリンクは以下のルールで処理されます。\\
+       {\it ファイルの中身が複数のハードリンクで参照される場合、元々存在
+       したファイル名を記述する必要がある。それ以外のファイル名が指定さ
+       れた場合は無視される。}\\
+       例えば、/etc/shadow と/var/chroot/etc/shadowがハードリンクされて
+       いたとします。/etc/shadowが元々存在していたとすると、/etc/shadow
+       (と/var/chroot/etc/shadow)の中身を見るためには、allow
+       /etc/shadow rと記述する必要があります。allow /var/chroot/etc/shadow r
+       と記述しても無視されます。\\
+       ハードリンクが複数存在する場合、どのファイル名を「元々存在するファ
+       イル名」とするかの基準が気になるところです。以下の基準で
+       「元々存在するファイル名」が判定されます。以下で出てくる例では、
+       /etc/shadow, /var/shadowがハードリンクされたファイルだと仮定しま
+       す。\\
+       \begin{enumerate}
+	\item 全ポリシ中で、一つのファイル名に対する設定しか書かれていな
+	      い場合、そのファイル名が「元々存在するファイル名」になりま
+	      す\\
+	      例: allow /etc/shadow rがある場所で記述されているとします。
+	      そして、/var/shadowを使った設定はどこにも記述されていない
+	      とします。この場合は、/etc/shadowが、元々存在するファイル
+	      名として取り扱われます。
+	\item 複数のファイル名に対する設定が記述されていた場合、名前が一
+	      番若いものが、「元々存在するファイル名」になります。\\
+	      例: allow /etc/shadow r,allow /var/shadow r; という設定が
+	      記述されていたとします。この場合、「/etc/shadow」が、「元々
+	      存在するファイル名」になります。なぜなら、/etc/shadowのほ
+	      うが名前が若いからです。
+	\item ハードリンクされたファイル名を使った設定がどこにも記述され
+	     てないときは、所属ディレクトリ名を比較して、所属ディレクト
+	      リ名が最も大きいものが「元々存在するファイル名」となります。\\
+	      例: /etc/shadow, /var/shadowを使った設定がどこにも記述され
+	      ていない場合、/var/shadowが「元々あるファイル名」となりま
+	      す。なぜなら、/var/ $>$  /etcだからです。
+       \end{enumerate}
+       しかし、どのハードリンク名が「元々存在するファイル名」か分からな
+       い場合は、全ての名前を使う手もあります。例えば、
+\begin{verbatim}
+allow /etc/shadow r;
+allow /var/shadow r;
+\end{verbatim}
+のように記述した場合、どちらかの設定は無視されるだけで、無害です。\\
+       以上のハードリンクの取り扱いは、パス名ベースのセキュリティの「抜
+       け穴」を防ぐために必要なものです。
+       この取り扱いがなかったとすると、
+       例えば、/etc/shadowのハードリンクが、なんらかの手で
+       /var/www/html/shadowに作られてしまうと、Webサーバーから
+       /etc/shadowの中身を覗けてしまうことになります。これを防ぐために、
+       ハードリンクされたファイルの中身にアクセスするには、「一つのファ
+       イル名」しか使えないようにする必要があるわけです。パス名ベースの
+      セキュリティの問題点については、\\
+       http://securityblog.org/brindle/2006/04/19 \\
+       に詳しいです。
+
+\end{enumerate}
+
+\section{Tips}
+\subsection{Webアプリケーション(CGI)を安全に設定する}
+デフォルトでは、CGIは、httpd\_tドメイン(Apache Webサーバのドメイン)で動
+作します。これは、サブプログラムのドメインは、親プログラムのドメインと同
+じになるというSELinuxの仕様によるものです。
+CGIのドメインを変えたい場合は、「domain\_trans」というものを使って設定を記述する必要があります。
+具体例を解説します。\\
+CGIスクリプトが、/var/www/cgi-binにあると仮定し、cgi\_tドメインで走らせ
+たいとします。
+cgi\_t.spを以下のように作ります。
+\begin{verbatim}
+{
+domain cgi_t;
+domain_trans  httpd_t /var/www/cgi-bin/**;
+include common-relaxed.sp;
+##### allowxxx will be here...
+}
+\end{verbatim}
+
+program文は、unconfinedドメインから起動したプログラムにドメインを割り当
+てるものでした。domain\_trans文は任意のドメインから起動されたプログラム
+にドメインを割り当てるものです。
+\begin{verbatim}
+domain cgi_t;
+domain_trans  httpd_t /var/www/cgi-bin/**;	
+\end{verbatim}
+は、httpd\_tドメインで動いているプログラムが、/var/www/cgi-bin以下のプロ
+グラムを実行した場合、cgi\_tドメインを割り当てる、という意味になります。
+\\
+なお、PHPについては、httpd\_tドメイン以外で動作させることはできません。
+PHPは、通常の実行とは異なる方法で処理されているからです。
+
+\subsection{deny}
+{\it deny}という設定要素を使うことで、重要なファイルをブラックリストに登
+録し、設定ミスの防止に利用することができます。以下の例を見てみましょう。
+\begin{verbatim}
+{
+domain foo_t;
+deny /etc/shadow;
+allow /etc/** r,s;
+}
+\end{verbatim}
+foo\_tが、/etc以下の全ファイルに読み込みできるように設定されていますが、
+/etc/shadowにアクセスすることができません。
+/etc/shadowにアクセスするには、 {\it allow /etc/shadow}と明示的に記述す
+る必要があります。なお、デフォルトではinclude/common-relaxed.spにいくつ
+かのファイルがdenyが登録されています。
+\end{document}
+
+

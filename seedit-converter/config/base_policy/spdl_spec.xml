@@ -1442,6 +1442,12 @@
 	  <permission value="read"/>
 	  <permission value="write"/>
 	  <permission value="append"/>
+	  </rule>	 
+  <rule value="allow">
+	  <domain value="domain"/>
+	  <type value="self"/>
+	  <secclass value="capability"/>
+	  <permission value="net_raw"/>
 	  </rule>
 	  </rules>  
     </option>

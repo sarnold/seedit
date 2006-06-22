@@ -1,4 +1,6 @@
 \documentclass{article}
+\usepackage[dvipdfm]{graphicx}
+
 \title{SELinux Policy Editor(seedit)チュートリアル(for Ver 2.0)}
 \author{中村　雄一\thanks{himainu-ynakam@miomio.jp}}
 \begin{document}
@@ -1231,6 +1233,8 @@ foo\_tが、/etc以下の全ファイルに読み込みできるように設定されていますが、
 /etc/shadowにアクセスするには、 {\it allow /etc/shadow}と明示的に記述す
 る必要があります。なお、デフォルトではinclude/common-relaxed.spにいくつ
 かのファイルがdenyが登録されています。
+
+
 \end{document}
 
 

@@ -12,9 +12,9 @@ html: tutorial.dvi
 	mv tutorial tutorial_jp
 
 tutorial_jp.pdf: tutorial.dvi 
-	pdvips tutorial.dvi
-	ps2pdf13 tutorial.ps
-	mv tutorial.pdf tutorial_jp.pdf	
+	dvipdfmx tutorial.dvi
+	mv tutorial.pdf tutorial_jp.pdf
+
 bb:
 	ebb images/*.png
 	mv *.bb images
@@ -24,10 +24,11 @@ tutorial.dvi: *.tex bb
 	platex tutorial.tex
 	platex tutorial.tex
 
-dvi: tutorial.dvi
-	pxdvi tutorial.dvi
-view:	tutorial.pdf
-	xpdf tutorial.pdf
+pdf: tutorial.dvi
+	pvipdfmx tutorial.dvi
+
+view:	tutorial_jp.pdf
+	xpdf tutorial_jp.pdf
 
 clean:
 	rm *.pdf *.dvi *.aux *.toc

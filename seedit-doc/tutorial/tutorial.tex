@@ -1,4 +1,5 @@
 \documentclass{article}
+\usepackage[dvipdfm]{graphicx}
 \title{Tutorial of SELinux Policy Editor(seedit)(for Ver 2.0))}
 \author{Yuichi Nakamura \thanks{ynakam@gwu.edu}}
 \begin{document}
@@ -186,9 +187,30 @@ except that.
  
 \end{itemize}
 
-\section{About GUI}
-You can use GUI on X window system, by typing seedit-gui.
-You can also do following operations from GUI.
+\section{Overview of GUI}
+You can manage SELinux from SELinux Policy Editor's GUI.
+GUI is X Window based. 
+In this tutorial, how to use GUI is shown first. You can also manage
+from command line, it is shown later.\\
+You can launch GUI from Gnome menu. Choose Desktop $\rightarrow$ Manage $\rightarrow$ SELinux
+Policy Editor.
+You can also launch  GUI, by typing seedit-gui.\\
+You will see window {\it SELinux Policy Editor Control Panel}.
+In the control panel, you see icons(you will see buttons instead of
+icons in CentOS 4) like figure \ref{fig:controlpanel}.\\
+
+\begin{figure}
+\caption{SELinux Policy Editor Control Panel}\label{fig:controlpanel}
+\includegraphics*{images/controlpanel.png}
+\end{figure}
+
+By double-clicking icon, you can manage SELinux. 
+
+
+
+
+
+
 
 
 \section{See what's happening on your system}

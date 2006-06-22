@@ -306,9 +306,14 @@ def findFilePermission(doc,rule,allowtype):
 
     if security=="high":
         if rule["secclass"]=="dir" and "write" in rule["permission"]:
-            result = appendResult(result, "c")
-            result = appendResult(result, "r")
-            result = appendResult(result, "s")
+            if securtiy=="high":
+                result = appendResult(result, "c")
+                result = appendResult(result, "r")
+                result = appendResult(result, "s")
+            else:
+                result = appendResult(result, "w")
+                result = appendResult(result, "r")
+                result = appendResult(result, "s")
             return result
         elif rule["secclass"]=="dir" and "remove_name" in rule["permission"]:
             result = appendResult(result, "dummy")

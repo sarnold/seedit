@@ -211,10 +211,20 @@ class seeditGeneratePolicyWindow(seeditCommon):
 		if widget.get_active() == 1:
 			self.mInput= data
 	def checkButtonCallBack(self,widget,data):
-		if widget.get_active():
-			self.mReadAllLogFlag=True
-		else:
-			self.mReadAllLogFlag=False
+		if data == "allLog":
+			if widget.get_active():
+				self.mReadAllLogFlag=True
+			else:
+				self.mReadAllLogFlag=False
+
+		elif data =="secure":
+			if widget.get_active():
+				seedit.audit2spdl.gHighSecurityFlag=True
+			else:
+				self.mSecureFlag=False
+				seedit.audit2spdl.gHighSecurityFlag=False
+
+	
 	def deleteRowCallBack(self,button, treeview):
 		selection = treeview.get_selection()
 		model, iter = selection.get_selected()
@@ -359,9 +369,16 @@ class seeditGeneratePolicyWindow(seeditCommon):
 		vbox.pack_start(hbox, False, False, 5)
 
 		hbox = gtk.HBox()
+		button = gtk.CheckButton(_("Generate more secure policy"))
+		seedit.audit2spdl.gHighSecurityFlag=False
+		button.connect("toggled", self.checkButtonCallBack, "secure")
+		hbox.pack_start(button, False, False,0)
+		vbox.pack_start(hbox, False, False, 5)
+		
+		hbox = gtk.HBox()
 		button = gtk.CheckButton(_("Read All log"))
 		self.mReadAllLogFlag=False
-		button.connect("toggled", self.checkButtonCallBack, "")
+		button.connect("toggled", self.checkButtonCallBack, "allLog")
 		hbox.pack_start(button, False, False,0)
 		vbox.pack_start(hbox, False, False, 5)
 

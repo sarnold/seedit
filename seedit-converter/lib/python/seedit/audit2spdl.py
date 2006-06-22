@@ -981,6 +981,8 @@ def restoreconStr(spRule,allowFileStr):
     if path[0]!='/':
         return ""
 
+    path = re.sub("\*","",path)
+    
     command = gMatchpathcon + " " +path
     input=os.popen(command, "r")
     lines = input.readlines()

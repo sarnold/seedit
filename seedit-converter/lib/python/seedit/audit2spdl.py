@@ -15,6 +15,9 @@ from stat import *
 gMatchpathcon = "/usr/sbin/matchpathcon -n"
 gAusearch = "/sbin/ausearch"
 
+#key: inode, value:path
+gInoPathDir = dict()
+
 def errorExit(msg):
     sys.stderr.write(msg)
     sys.exit(1)
@@ -247,6 +250,23 @@ def makePathFromType(type):
     return path
     
 
+
+def updateInoPath(path,line):
+    if path=="":
+        return
+    ino = getInode(line)
+    if ino:
+        gInoPathDir[ino]=path
+def guessPathByInoDir(line):
+    ino = getInode(line)
+
+    if ino:
+        if gInoPathDir.has_key(ino):
+            return gInoPathDir[ino]
+                
+    return ""
+    
+    
 def guessFilePath(rule,line):
     """
     guess full path information
@@ -254,17 +274,16 @@ def guessFilePath(rule,line):
 
     if rule["type"] in gExcLabelList:
         return rule["type"]
-    
-    path= guessPathByAusearch(line)
-    if path =="":
-        #print "#Path can not be guessed from ausearch"
-        path = guessPathByLocate(line)
-#        if path =="":
-#            path=makePathFromType(rule["type"])
 
-        return path
-    else:
-        return path
+    path= guessPathByAusearch(line)
+    if path == "":
+        path = guessPathByInoDir(line)
+    if path =="":
+        path = guessPathByLocate(line)
+
+        
+    updateInoPath(path,line)
+    return path
     
 
 

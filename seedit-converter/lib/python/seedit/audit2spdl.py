@@ -275,9 +275,9 @@ def guessFilePath(rule,line):
     if rule["type"] in gExcLabelList:
         return rule["type"]
 
-    path= guessPathByAusearch(line)
-    if path == "":
-        path = guessPathByInoDir(line)
+    path = guessPathByInoDir(line)
+    if path=="":
+        path= guessPathByAusearch(line)    
     if path =="":
         path = guessPathByLocate(line)
 

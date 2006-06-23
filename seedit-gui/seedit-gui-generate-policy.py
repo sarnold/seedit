@@ -146,21 +146,42 @@ class seeditGeneratePolicyWindow(seeditCommon):
 
 		return
 
+	def displayToBeAppendedPolicy(self,model):
+		appendExistsFlag=False
+		toBeAppendedPolicy = dict()
+		appendExistsFlag = self.makeToBeAppendedPolicy(model, toBeAppendedPolicy)
+		self.mTextBuffer.delete(self.mTextBuffer.get_start_iter(),self.mTextBuffer.get_end_iter())
+
+		if appendExistsFlag:
+			lines=[]
+			for domain in toBeAppendedPolicy.keys():
+				for rule in toBeAppendedPolicy[domain]:
+					line = domain+":"+rule+"\n"
+					lines.append(line)
+				
+			for line in lines:
+				self.mTextBuffer.insert(self.mTextBuffer.get_end_iter(),line)
+
+		toBeAppendedPolicy.clear()
+		del toBeAppendedPolicy
+		
 	def buttonToggled(self, cell, path, model):
 		iter = model.get_iter((int(path),))
 		value = model.get_value(iter, 0)
 		value = not value
 		model.set(iter, 0, value)
-
+		self.displayToBeAppendedPolicy(model)
 	
 	def allowEditedCallBack( self, cell, path, new_text, model ):
 		model[path][2] = new_text
+		self.displayToBeAppendedPolicy(model)
 		return
+	
 	def addColumns(self, treeview, header):
 		model = treeview.get_model()
 		renderer = gtk.CellRendererToggle()
 		renderer.connect('toggled', self.buttonToggled, model)
-		column = gtk.TreeViewColumn('Save', renderer, active=0)
+		column = gtk.TreeViewColumn(_("Save"), renderer, active=0)
 		column.set_sizing(gtk.TREE_VIEW_COLUMN_FIXED)
 		column.set_fixed_width(40)
 		treeview.append_column(column)
@@ -224,6 +245,8 @@ class seeditGeneratePolicyWindow(seeditCommon):
 				self.mSecureFlag=False
 				seedit.audit2spdl.gHighSecurityFlag=False
 
+
+
 	
 	def deleteRowCallBack(self,button, treeview):
 		selection = treeview.get_selection()
@@ -231,6 +254,8 @@ class seeditGeneratePolicyWindow(seeditCommon):
 		if iter:
 			path = model.get_path(iter)[0]
 			model.remove(iter)
+		self.displayToBeAppendedPolicy(model)
+
 
 	def removeCheckedRows(self, treeview):
 		model = treeview.get_model()
@@ -252,15 +277,10 @@ class seeditGeneratePolicyWindow(seeditCommon):
 		input = os.popen(command,'r')
 		print command
 		input.close()
-		
-		
-	def saveButtonCallBack(self, button, treeview):
-		model = treeview.get_model()
-		iter = model.get_iter_first()
-		#key: domain, value: list of policy to be allowed
-		toBeAppendedPolicy = dict()
-		appendExistsFlag=False
-                #make to be added policy
+
+	def makeToBeAppendedPolicy(self, model,toBeAppendedPolicy):
+		appendExistsFlag = False
+		iter = model.get_iter_first()     
 		if iter:
 			while iter:
 				flag = model.get_value(iter,0)
@@ -276,6 +296,18 @@ class seeditGeneratePolicyWindow(seeditCommon):
 					else:
 						toBeAppendedPolicy[domain].append(policy)
 				iter = next
+
+		return appendExistsFlag
+	
+		
+	def saveButtonCallBack(self, button, treeview):
+		model = treeview.get_model()
+	
+		#key: domain, value: list of policy to be allowed
+		toBeAppendedPolicy = dict()
+		appendExistsFlag=False
+		appendExistsFlag = self.makeToBeAppendedPolicy(model, toBeAppendedPolicy)	
+           
 		if not appendExistsFlag:
 			return
 
@@ -292,6 +324,8 @@ class seeditGeneratePolicyWindow(seeditCommon):
 			return
 	        #remove saved rows
 		self.removeCheckedRows(treeview)
+		toBeAppendedPolicy.clear()
+		
 					
 
 
@@ -322,7 +356,8 @@ class seeditGeneratePolicyWindow(seeditCommon):
 				if num >= 1024:
 					value = re.sub("-port[\s\t]+\d+[\s\t]","-port 1024- ",value)
 					model.set_value(iter,2,value)
-				
+		self.displayToBeAppendedPolicy(model)
+
 	
         def __init__(self):
 		self.mGeneratedPolicyListStore = gtk.ListStore(
@@ -389,11 +424,9 @@ class seeditGeneratePolicyWindow(seeditCommon):
 		self.mGenerateButton=button
 		vbox.pack_start(hbox, False, False, 5)
 
+		frame=gtk.Frame(_("Result"))
+		vboxFrame.pack_start(frame, True, True,5)
 		vbox = gtk.VBox()
-		frame = gtk.Frame(_("Result"))
-		frame.add(vbox)
-		vboxFrame.pack_start(frame, False, False,5)
-
 		header = (_("Domain"),_("Policy"),_("Log"))
 		(sw,tv) = self.initTreeView(self.mGeneratedPolicyListStore,header)
 		self.mGeneratedPolicyTreeView=tv
@@ -401,19 +434,39 @@ class seeditGeneratePolicyWindow(seeditCommon):
 		appended=(False,"","","")
 		self.mGeneratedPolicyListStore.append(appended)
 
-		vbox.pack_start(sw,False,False,5)
 		
 
+		frame.add(vbox)
+		vbox.pack_start(sw,True,True,5)
+
 		hbox=gtk.HBox()
+		vbox.pack_start(hbox,False,False,5)
 		button = gtk.Button(_("Glob"))
 		button.connect("clicked", self.globCallBack, self.mGeneratedPolicyTreeView)
-	
 		hbox.pack_start(button, False, False, 5)
 		button = gtk.Button(_("Delete"))
 		button.connect("clicked", self.deleteRowCallBack, self.mGeneratedPolicyTreeView)
 		hbox.pack_start(button, False, False, 5)
 
+		frame=gtk.Frame(_("Following will be saved"))
+		vboxFrame.pack_start(frame,False, False,5)
+		vbox = gtk.VBox()
+		frame.add(vbox)
+		
 
+		sw = gtk.ScrolledWindow()
+		sw.set_shadow_type(gtk.SHADOW_ETCHED_IN)
+		sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+		sw.set_size_request(400,100)
+		textview = gtk.TextView()
+		textview.set_editable(False)
+		textbuffer = textview.get_buffer()		
+		self.mTextBuffer= textbuffer
+		sw.add(textview)
+		vbox.pack_start(sw,False,False,5)
+
+	
+		hbox=gtk.HBox()
 		button = gtk.Button(_("Save and Apply"))
 		button.connect("clicked", self.saveButtonCallBack, self.mGeneratedPolicyTreeView)
 		hbox.pack_start(button, False, False, 5)

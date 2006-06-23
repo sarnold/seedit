@@ -605,4 +605,10 @@ msgstr "デスクトップで動作するアプリケーションですか?"
 msgid "Generate more secure policy"
 msgstr "セキュリティの高い設定を生成（設定工数は増えます）"
 
+msgid "Save"
+msgstr "保存"
+
+#: seedit-gui-generate-policy.py:451
+msgid "Following will be saved"
+msgstr "以下の設定が保存されます"
 

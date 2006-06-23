@@ -42,13 +42,22 @@ policy:
 	else \
 		cp src/Makefile policy/Makefile;\
 	fi
+
+
 	cd policy ;make 
 	if [ -e $(FCFILE) ] ; then cat $(FCFILE) >> policy/sepolicy/file_contexts; fi
 install: policy dir
 	cp policy/Makefile  $(SEEDITCONFROOT)/converter/
 	cp -r policy/simplified_policy/*  $(SEEDITCONFROOT)/policy
+
+	if [ -e $(POLICYROOT)/contexts/files/file_contexts ]; then \
+		cp $(POLICYROOT)/contexts/files/file_contexts $(POLICYROOT)/contexts/files/file_contexts.old;\
+	fi
 	cd policy;make install 
-	cp $(POLICYROOT)/contexts/files/file_contexts $(POLICYROOT)/contexts/files/file_contexts.old
+
+	if [ ! -e $(POLICYROOT)/contexts/files/file_contexts.old ]; then \
+		cp $(POLICYROOT)/contexts/files/file_contexts $(POLICYROOT)/contexts/files/file_contexts.old;\
+	fi
 	touch $(POLICYROOT)/users/system.users
 	touch $(POLICYROOT)/users/local.users
 

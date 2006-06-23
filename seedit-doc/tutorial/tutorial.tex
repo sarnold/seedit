@@ -419,14 +419,29 @@ Restart Apache and check domain by {\it Status} GUI, you will see {\it
 Unconfined(initrc\_t)} is shown in domain.\\
 To confine it again, select domain from {\it Enable temporally disabled
 domain}, and press  {\it Apply} button.\\
-This behavior is using boolean of SELinux, you can see detail by command line.
+This behavior is using boolean of SELinux, you can see detail by command
+line.\\
+
 
 \subsubsection{Remove domain}
-In above, 
-
+Another way to unconfine apolication is to remove configuration file for
+domain. The procedure is following.
+\begin{enumerate}
+ \item Select domain which you want to disable
+ \item Select radio button {\it Permanentlly}
+ \item Press  Apply button
+\end{enumerate}
+To  confine application again,  you have to do it by hand.
+\begin{enumerate}
+ \item cd /etc/seedit/policy
+ \item mv /etc/seedit/policy/extras/{\it name of domain}.sp
+       /etc/seedit/policy/{\it name of domain}.sp
+ \item seedit-load
+\end{enumerate}
+File size of generated policy will be smaller than previous method.
 
 \subsection{Command line}
-
+You can  also do it from command line.
 \subsubsection{Use boolean}
 If you know SELinux boolean, it's very easy.
 For example, confined domain name is httpd\_t, then turn on
@@ -612,9 +627,47 @@ For example, usage of netlink socket(it is used to communicate with
 kernel) is allowed in line 11.
 
 \subsection{GUI Editor}
-xxxx
+By selecting {\it Edit Policy} from control panel, you can launch policy Editor.
+From {\it Open} icon, you can select domain.
+For example, when you open httpd\_t domain, you can see like figure \ref{fig:edit}.
+You can  edit policy like text editor.\\
+By {\it Save} button, you can save it and apply editted policy, policy
+load is automatically done.\\
+{\it Reload }  button read configuration file for domain  again, it is
+useful when you edit policy from another tool(such as generator).\\
+By {\it Add} button, you can insert policy at cursor point from GUI selection window.
+You can see window like Figure \ref{fig:edit-file} and  \ref{fig:edit-network}.
+From file tab, you can insert configuration related to file,  in  the
+example of e Figure \ref{fig:edit-file}, after pressing  {\it Add},
+\begin{verbatim}
+allow /var/www/** r,s;
+\end{verbatim}
+will be inserted.
+From network tab, you can insert configuration related to file,  in  the
+example of e Figure \ref{fig:edit-network}, after pressing  {\it Add},
+\begin{verbatim}
+allownet -protocol tcp -port 80 server;
+\end{verbatim}
+will be inserted.
 
 
+\begin{figure}
+\caption{GUI Editor}\label{fig:edit}
+\includegraphics*{images/edit.png}
+\end{figure}
+
+\begin{figure}
+\caption{}\label{fig:edit-file}
+\includegraphics*{images/edit-file.png}
+\end{figure}
+
+\begin{figure}
+\caption{}\label{fig:edit-network}
+\includegraphics*{images/edit-network.png}
+\end{figure}
+
+
+\clearpage
 \section{Adding policy}
 \subsection{GUI}
 \subsection{Command line(audit2spdl)}

@@ -325,7 +325,7 @@ def findFilePermission(doc,rule,allowtype):
 
     if security=="high":
         if rule["secclass"]=="dir" and "write" in rule["permission"]:
-            if securtiy=="high":
+            if security=="high":
                 result = appendResult(result, "c")
                 result = appendResult(result, "r")
                 result = appendResult(result, "s")

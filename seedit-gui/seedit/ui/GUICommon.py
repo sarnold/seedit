@@ -489,10 +489,13 @@ class insertPolicyWindow(seeditCommon):
         def getInsertPoint(self,textBuffer):
             buf = textBuffer
             iter = buf.get_start_iter()
-            lineno=0
+            
             while not iter.is_end():
-                iter.set_line(lineno)
-                lineno=lineno+1
+                iter.forward_char()
+                char = iter.get_char()
+                if char == '}':
+                    return iter
+            return None
                 
                            
 	def addCallBack(self,widget,data):
@@ -511,7 +514,11 @@ class insertPolicyWindow(seeditCommon):
 			return
 		else:
 			buf = self.mTextBuffer
-			buf.insert_at_cursor(str)
+                        iter = self.getInsertPoint(buf)
+                        if iter:
+                            buf.insert(iter,str)
+                        else:
+                            buf.insert_at_cursor(str)
 			self.mWindow.destroy()
 	
 	def __init__(self,parent,textBuffer):

@@ -327,13 +327,26 @@ class seeditGeneratePolicyWindow(seeditCommon):
 		toBeAppendedPolicy.clear()
 		
 					
-
+	def undoGlobCallBack(self,button,treeview):
+		selection = treeview.get_selection()
+		model, iter = selection.get_selected()
+		if iter:
+			value = model.get_value(iter,2)
+			log = model.get_value(iter,3)
+			if self.mUndoGlobDict.has_key(log):
+				history = self.mUndoGlobDict[log]
+				undoValue = history.pop()
+				if len(history)==0:
+					del self.mUndoGlobDict[log]
+				model.set_value(iter,2,undoValue)
 
 	def globCallBack(self,button,treeview):
 		selection = treeview.get_selection()
 		model, iter = selection.get_selected()
 		if iter:
 			value = model.get_value(iter,2)
+			prevValue = value
+			log = model.get_value(iter,3)
 			if re.search("^allow[\s\t]+",value):
 				path = value.split()[1]
 				dirFlag=False
@@ -350,21 +363,36 @@ class seeditGeneratePolicyWindow(seeditCommon):
 
 				
 				model.set_value(iter,2,value)
+				if value!=prevValue:
+					if not self.mUndoGlobDict.has_key(log):
+						self.mUndoGlobDict[log]=[]
+					self.mUndoGlobDict[log].append(prevValue)
+					
 			if re.search("^allownet[\s\t]+",value):
 				m = re.search("-port[\s\t]+\d+",value)
 				num = int((m.group().split())[1])
 				if num >= 1024:
 					value = re.sub("-port[\s\t]+\d+[\s\t]","-port 1024- ",value)
 					model.set_value(iter,2,value)
+					if value!=prevValue:
+						if not self.mUndoGlobDict.has_key(log):
+							self.mUndoGlobDict[log]=[]
+						self.mUndoGlobDict[log].append(prevValue)
+					
 		self.displayToBeAppendedPolicy(model)
 
 	
         def __init__(self):
+		#Model for result
 		self.mGeneratedPolicyListStore = gtk.ListStore(
 			gobject.TYPE_BOOLEAN,
 			gobject.TYPE_STRING,				
 			gobject.TYPE_STRING,
 			gobject.TYPE_STRING)
+
+		#Dict for undoGlob
+		#key:log, value:list of glob history
+		self.mUndoGlobDict=dict()
 		
 		gobject.signal_new("done", gtk.Window,
 				   gobject.SIGNAL_RUN_LAST,
@@ -378,10 +406,16 @@ class seeditGeneratePolicyWindow(seeditCommon):
 		vboxFrame = gtk.VBox()
 		window.add(vboxFrame)
 
+		notebook = gtk.Notebook()
+		notebook.set_tab_pos(gtk.POS_TOP)
+		label = gtk.Label(_("Configuration"))
+		vboxFrame.pack_start(notebook, False, False,5)
+	
 		vbox = gtk.VBox()
 		frame = gtk.Frame()
 		frame.add(vbox)
-		vboxFrame.pack_start(frame, False, False,5)
+		notebook.append_page(frame, label)
+#		vboxFrame.pack_start(frame, False, False,5)
 
 		hbox = gtk.HBox()
 		label = gtk.Label(_("Input:"))
@@ -424,8 +458,12 @@ class seeditGeneratePolicyWindow(seeditCommon):
 		self.mGenerateButton=button
 		vbox.pack_start(hbox, False, False, 5)
 
+		resultTabVBox = gtk.VBox()
+		label = gtk.Label(_("Result"))
+		notebook.append_page(resultTabVBox, label)
+
 		frame=gtk.Frame(_("Result"))
-		vboxFrame.pack_start(frame, True, True,5)
+		resultTabVBox.pack_start(frame, True, True,5)
 		vbox = gtk.VBox()
 		header = (_("Domain"),_("Policy"),_("Log"))
 		(sw,tv) = self.initTreeView(self.mGeneratedPolicyListStore,header)
@@ -444,12 +482,16 @@ class seeditGeneratePolicyWindow(seeditCommon):
 		button = gtk.Button(_("Glob"))
 		button.connect("clicked", self.globCallBack, self.mGeneratedPolicyTreeView)
 		hbox.pack_start(button, False, False, 5)
+		button = gtk.Button(_("Undo Glob"))
+		button.connect("clicked", self.undoGlobCallBack, self.mGeneratedPolicyTreeView)
+		hbox.pack_start(button, False, False, 5)
+		
 		button = gtk.Button(_("Delete"))
 		button.connect("clicked", self.deleteRowCallBack, self.mGeneratedPolicyTreeView)
 		hbox.pack_start(button, False, False, 5)
 
 		frame=gtk.Frame(_("Following will be saved"))
-		vboxFrame.pack_start(frame,False, False,5)
+		resultTabVBox.pack_start(frame,False, False,5)
 		vbox = gtk.VBox()
 		frame.add(vbox)
 		

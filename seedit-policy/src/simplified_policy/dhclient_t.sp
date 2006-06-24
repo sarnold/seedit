@@ -23,8 +23,9 @@ allow /var/lock/subsys/** s,r;
 allow /etc/sysconfig/** r,s;
 allow /etc/selinux/config  s,r;
 
-allownet -protocol udp -port 68 server;
 
+allownet -protocol udp,tcp -port 68 server;
+allownet -protocol udp,tcp -port 67 client;
 
 allowpriv getsecurity;
 allowpriv netlink;

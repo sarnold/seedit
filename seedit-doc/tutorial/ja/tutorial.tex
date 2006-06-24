@@ -137,6 +137,13 @@ checkpolicyパッケージが必要です。以下でインストールしておきます。
 \begin{verbatim}
 # yum install checkpolicy	
 \end{verbatim}
+必須ではありませんが、auditパッケージをインストールして、auditdを有効にしておく
+	ことを強く薦めます。
+\begin{verbatim}
+#yum install audit
+#chkconfig auditd on
+#/etc/init.d/auditd start
+\end{verbatim}
 
     \item ファイルを入手\\
 seedit-converter-2.0.(ディストリビューション

@@ -144,6 +144,8 @@ class seeditGeneratePolicyWindow(seeditCommon):
 			appended=(False,domain,allow,log)
 			self.mGeneratedPolicyListStore.append(appended)
 
+
+		self.mNotebook.set_current_page(1)
 		return
 
 	def displayToBeAppendedPolicy(self,model):
@@ -195,13 +197,14 @@ class seeditGeneratePolicyWindow(seeditCommon):
 		renderer=  gtk.CellRendererText()
 		renderer.set_property('editable', True)
 		renderer.connect( 'edited', self.allowEditedCallBack, model )
-#		renderer.set_property('ellipsize', pango.ELLIPSIZE_END)
+		renderer.set_property('ellipsize', pango.ELLIPSIZE_END)
+
 
 		
 		column = gtk.TreeViewColumn(header[1],renderer,text=2)
 		column.set_sort_column_id(2)
 		column.set_resizable(True)
-#		column.set_min_width(200)
+		column.set_min_width(240)
 		treeview.append_column(column)
 
 		renderer=  gtk.CellRendererText()
@@ -408,6 +411,7 @@ class seeditGeneratePolicyWindow(seeditCommon):
 
 		notebook = gtk.Notebook()
 		notebook.set_tab_pos(gtk.POS_TOP)
+		self.mNotebook=notebook
 		label = gtk.Label(_("Generation configuration"))
 		vboxFrame.pack_start(notebook, False, False,5)
 	

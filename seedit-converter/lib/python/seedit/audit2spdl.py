@@ -191,7 +191,9 @@ def guessPathByAusearch(line):
                     if path!="":
                         if path[0]!="/":
                             path = cwd + "/"+path
+                         
                             path = os.path.normpath(path)
+                         
                             return path
 
                         
@@ -213,7 +215,9 @@ def guessPathByAusearch(line):
                         except:
                             if cwd!="":
                                  path = cwd + "/"+path
+                                 
                                  path = os.path.normpath(path)
+                                 
                                  return path  
 
                     else:                        

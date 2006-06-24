@@ -80,6 +80,15 @@ You can easily install from RPM
 \begin{verbatim}
 # yum install checkpolicy		
 \end{verbatim}
+And it is highly recommended to install audit package, and enable
+       auditd.
+\begin{verbatim}
+#yum install audit
+#chkconfig auditd on
+#/etc/init.d/auditd start
+\end{verbatim}
+
+
     \item Obtain files\\
 Download seedit-converter-2.0.x.rpm and seedit-policy-2.0.x-(your
 	  distro).rpm
@@ -669,16 +678,21 @@ will be inserted.
 
 \clearpage
 \section{Adding policy}
-\subsection{GUI}
-\subsection{Command line(audit2spdl)}
 If you find confined application run due to SELinux denial, you have to
-add policy. We have utility called audit2spdl to help you.
+add policy. We have GUI and command line utility.
+
+\subsection{GUI(policy generator)}
+xxxxx
+
+
+\subsection{Command line(audit2spdl)}
+
 The usage is easy.
 When auditd is not running(Fedora Core5 default),
 \begin{verbatim}
 # audit2spdl -dl
 \end{verbatim}
-When auditd is running(Fedora Core4 default)
+When auditd is running(Fedora Core4,CentOS default)
 \begin{verbatim}
 # audit2spdl -al
 \end{verbatim}
@@ -804,7 +818,18 @@ Generally, process of creating domain is following.
  \item Test run and add policy\\
 \end{enumerate}
 
-\subsection{Create template}
+\subsection{Create domain from GUI}
+\subsubsection{Create template}
+
+
+
+\subsubsection{Check domain}
+
+\subsubsection{Test run and add policy}
+
+\subsection{Create domain from command line}
+
+\subsubsection{Create template}
 You can create template configuration by seedit-template command.
 Usage is following.
 \begin{verbatim}
@@ -831,7 +856,7 @@ fails. \\
 Save above configuration to /etc/seedit/policy/ftpd\_t.sp.\\
 
 
-\subsection{Check domain}
+\subsubsection{Check domain}
 Load simplified policy by following.
 \begin{verbatim}
 #seedit-load
@@ -851,7 +876,7 @@ Start vsftpd and check domain of vsftpd by seedit-unconfined.
 \end{verbatim}
 You will see vsftpd is running as ftpd\_t as above.
 
-\subsection{Test run and add policy}
+\subsubsection{Test run and add policy}
 Let's  run application in permissive mode, and find out what access is
 denied, and allow such access by audit2spdl.
 In this article, we aim to develop policy for vsftpd to work as

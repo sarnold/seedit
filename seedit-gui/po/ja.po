@@ -612,3 +612,10 @@ msgstr "保存"
 msgid "Following will be saved"
 msgstr "以下の設定が保存されます"
 
+#: seedit-gui-generate-policy.py:411
+msgid "Generation configuration"
+msgstr "ポリシ生成設定"
+
+#: seedit-gui-generate-policy.py:485
+msgid "Undo Glob"
+msgstr "まとめて指定を戻す"

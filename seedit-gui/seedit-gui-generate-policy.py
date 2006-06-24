@@ -408,7 +408,7 @@ class seeditGeneratePolicyWindow(seeditCommon):
 
 		notebook = gtk.Notebook()
 		notebook.set_tab_pos(gtk.POS_TOP)
-		label = gtk.Label(_("Configuration"))
+		label = gtk.Label(_("Generation configuration"))
 		vboxFrame.pack_start(notebook, False, False,5)
 	
 		vbox = gtk.VBox()

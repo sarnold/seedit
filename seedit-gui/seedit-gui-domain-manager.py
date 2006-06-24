@@ -240,6 +240,10 @@ class createDomainTab(seeditCommon):
             
             self.mToBeSavedFile= gSPPath+domain+".sp"
             self.mToBeSavedFileLabel.set_label(self.mToBeSavedFile)
+
+    def addButtonCallBack(self,data=None):
+        window = insertPolicyWindow(self,self.mTextBuffer)
+
         
     def saveButtonCallBack(self, data=None):
         filename = self.mToBeSavedFile
@@ -382,6 +386,9 @@ class createDomainTab(seeditCommon):
         vbox.pack_start(sw, True, True, 5)
         
         hbox = gtk.HBox()
+        button = gtk.Button(_("Add policy"))
+        hbox.pack_start(button, False, False, 5)
+        button.connect("clicked", self.addButtonCallBack)
         button = gtk.Button(_("Save and Apply"))
         hbox.pack_start(button, False, False, 5)
         button.connect("clicked", self.saveButtonCallBack)

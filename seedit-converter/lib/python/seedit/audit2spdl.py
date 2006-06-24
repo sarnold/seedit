@@ -205,6 +205,8 @@ def guessPathByAusearch(line):
                     
                     if m:
                         path = string.split(m.group(),"=").pop()
+                        if path.find("\"") == -1: #It is but of audit
+                            path = ""
                         path = string.replace(path,"\"","")
                         #path is got from type=PATH/AVC_PATH entry now..
                         #Let's check file exist..

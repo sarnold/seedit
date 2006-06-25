@@ -191,9 +191,9 @@ def guessPathByAusearch(line):
                     if path!="":
                         if path[0]!="/":
                             path = cwd + "/"+path
-                         
                             path = os.path.normpath(path)
-                         
+                            if path=="//":
+                                return ""
                             return path
 
                         
@@ -208,9 +208,19 @@ def guessPathByAusearch(line):
                         if path.find("\"") == -1: #It is but of audit
                             path = ""
                         path = string.replace(path,"\"","")
-                        #path is got from type=PATH/AVC_PATH entry now..
-                        #Let's check file exist..
-                      
+                        
+                        
+                        if path==".":
+                            if cwd!="":
+                                 path = cwd + "/"+path
+                                 
+                                 path = os.path.normpath(path)
+                                 
+                                 return path
+                            else:
+                                l=result.readline()
+                                continue
+                            
                         try:
                             os.stat(path)
                             return path                            

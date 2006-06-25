@@ -873,8 +873,34 @@ After adding configuration, press {\it Save and Apply} button.
 %% chroot環境でのパス提示の注意
 
 \subsubsection{Check domain}
+Switch to permissive mode(you can do by setenforce 0 or status GUI).
+Start vsftpd and make sure its domain is vsftpd\_t(You can do it by
+status 
 
 \subsubsection{Test run and add policy}
+Test run vsftpd in permissive mode.
+
+Let's test ftp like following.
+\begin{verbatim}
+$ ftp localhost
+Name (localhost:ynakam): Anonymous
+Password: <anything is OK>
+...
+and do something..	
+\end{verbatim}
+And see log.
+\begin{verbatim}
+#auserch -m AVC
+\end{verbatim}
+Various accesses are denied. So you have to add policy that allows
+denied access.
+You can do it easily  by policy generation tool.
+
+%%%Example will here...
+
+
+
+
 
 \subsection{Create domain from command line}
 

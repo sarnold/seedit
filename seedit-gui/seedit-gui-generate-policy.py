@@ -73,12 +73,17 @@ class generatePolicyThread(threading.Thread):
 			data = (i,size)
 			gobject.idle_add(self.updateLabel, data)
 			rule = parseLine(line)
+			i = i+1
+			if self.mDialog.mSkipSearchFlag:
+				if rule and rule.has_key("secclass") and rule.has_key("permission"):
+					if rule["secclass"]=="dir" and "search" in rule["permission"]:
+						continue
 			if(rule):
 				spRuleList=genSPDL(rule,line,domdoc)
 				
 				list=SPDLstr(spRuleList,line)
 				result.append(list)
-			i = i+1				     
+
 		data = (i,size)
 		gobject.idle_add(self.updateLabel, data)
 		gobject.idle_add(self.mDialog.mProgressLabel.set_text,_("Done"))
@@ -247,7 +252,11 @@ class seeditGeneratePolicyWindow(seeditCommon):
 			else:
 				self.mSecureFlag=False
 				seedit.audit2spdl.gHighSecurityFlag=False
-
+		elif data =="skip":
+			if widget.get_active():
+				self.mSkipSearchFlag=True
+			else:
+				self.mSkipSearchFlag=False
 
 
 	
@@ -452,6 +461,14 @@ class seeditGeneratePolicyWindow(seeditCommon):
 		button = gtk.CheckButton(_("Read All log"))
 		self.mReadAllLogFlag=False
 		button.connect("toggled", self.checkButtonCallBack, "allLog")
+		hbox.pack_start(button, False, False,0)
+		vbox.pack_start(hbox, False, False, 5)
+
+		hbox = gtk.HBox()
+		button = gtk.CheckButton(_("Skip search log"))
+		button.set_active(True)
+		self.mSkipSearchFlag=True
+		button.connect("toggled", self.checkButtonCallBack, "skip")
 		hbox.pack_start(button, False, False,0)
 		vbox.pack_start(hbox, False, False, 5)
 

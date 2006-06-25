@@ -226,7 +226,7 @@ msgstr "ポート"
 
 #: seedit-gui-edit.py:189
 msgid "Specific Number:"
-msgstr ""
+msgstr "ポート番号"
 
 #: seedit-gui-edit.py:199
 msgid "All unreserved wellknown ports"

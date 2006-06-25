@@ -819,10 +819,57 @@ Generally, process of creating domain is following.
 \end{enumerate}
 
 \subsection{Create domain from GUI}
+We will create vsftp\_t domain, and configure the domain to work as
+Anonymous FTP server. 
+
 \subsubsection{Create template}
+By Domain manager GUI you can create template configuration.
+From control panel, select {\it Manage Domain}.
+Let's assign vsftpd vsftpd\_t domain. 
+
+You can do it like  fig \ref{fig:template}.
+First, specify name of executable file. Enter {\it /usr/sbin/vsftpd}.\\
+Next, specify domain name. Enter {\it vsftpd\_t}.\\
+There are some questions you have to answer. \\
+Then  press {\it Create Template} button. You will see created
+configuration is shown in {\it Created template}.\\
 
 
-%% わかっている限りのアクセス制御を手で追加add policy that you know
+\begin{figure}
+\caption{Create new domain}\label{fig:template}
+\includegraphics*{images/template.png}
+\end{figure}
+
+If you know about application, you already know what kind of access
+rights are necessary. You can add it now. If you do not know, do not
+worry. You can generate policy later.\\
+You will prepare anonymous FTP server,so read access to /var/ftp is
+necessary. And you need access right to TCP 21 port to behave as FTP
+server.\\
+You can add configuration from GUI. Press {\it Add policy} button.
+Figure \ref{fig:add-file}, you are configuring to allow read access
+under /var/ftp.
+Figure \ref{fig:add-network}, you are configuring to allow usage of tcp
+port 21. By pressing {\it Add} button, configuration 
+\begin{verbatim}
+allow  /var/ftp/** r,s;
+allownet -protocol tcp -port 21 server;
+\end{verbatim}
+is added.
+After adding configuration, press {\it Save and Apply} button.
+
+\begin{figure}
+\caption{Insert file access control policy}\label{fig:add-file}
+\includegraphics*{images/add-file.png}
+\end{figure}
+
+
+\begin{figure}
+\caption{Insert network access control policy}\label{fig:add-network}
+\includegraphics*{images/add-network.png}
+\end{figure}
+
+
 %% chroot環境でのパス提示の注意
 
 \subsubsection{Check domain}

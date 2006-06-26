@@ -1,7 +1,7 @@
 \documentclass{article}
 \usepackage[dvipdfm]{graphicx}
 
-\title{SELinux Policy Editor(seedit)チュートリアル(for Ver 2.0)}
+\title{SELinux Policy Editor(seedit)管理ガイド（マニュアル) 2.0}
 \author{中村　雄一\thanks{himainu-ynakam@miomio.jp}}
 \begin{document}
 \def\labelenumi{(\theenumi)}
@@ -9,8 +9,8 @@
 \tableofcontents
 \newpage
  
-この文書は、SELinux Policy Editor 2.0のマニュアルです。インストール方法
-と、設定方法を紹介しています。
+この文書は、SELinux Policy Editor 2.0のマニュアルです。設定方法を紹介しています。
+インストール方法については、インストールガイドを参照してください。
 
 \section{背景：SELinuxの難しさ}
 SELinuxは既に多くのディストリビューションに取り込まれています。しかし、
@@ -128,149 +128,11 @@ SELinuxのstrictポリシーを頑張って使ってください。
        /var/log/audit/audit.logにログが出力されることに気を付けます。
 \end{enumerate}
 
-\section{インストール方法}
-\subsection{RPMから導入}  \label{sec:rpm}
-RPMパッケージを使うことで簡単にインストールできます
-\begin{enumerate}
- \item  必要なパッケージ\\
-checkpolicyパッケージが必要です。以下でインストールしておきます。
-\begin{verbatim}
-# yum install checkpolicy	
-\end{verbatim}
-必須ではありませんが、auditパッケージをインストールして、auditdを有効にしておく
-	ことを強く薦めます。
-\begin{verbatim}
-#yum install audit
-#chkconfig auditd on
-#/etc/init.d/auditd start
-\end{verbatim}
 
-    \item ファイルを入手\\
-seedit-converter-2.0.(ディストリビューション
-	  名).rpm, seedit-policy-2.0.x-(ディストリビューション
-	  名).rpmを以下のURLより入手します。
-\begin{verbatim}
-http://sourceforge.net/project/showfiles.php?group_id=135756	
-\end{verbatim}
-
-オプションとして、GUIも用意されています。ファイル名は、
-	seedit-gui-2.0.x-noarch.rpmです。\\
-
-seedit-converterには、Simplified PolicyをSELinuxのポリシに変換するツールと、Simplified
-	  Policy管理ツールが同梱されています。seedit-policyには、
-	  simplified policyが格納されています。seedit-guiは、GUIです。
-
-
-Fedora Core5かつ最新版が2.0.0ならば、
-seedit-converter-2.0.0-FC5.i386.rpm, seedit-policy-2.0.0-FC5.noarch.rpm
-	  の２つのファイルをダウンロードします。
- \item rpmをインストール\\
-入手したrpmを以下のようにインストールし,リブートします。
-\begin{verbatim}
-$ su 
-# rpm -ivh seedit-*.rpm
-# reboot
-\end{verbatim}
- \item 初期化\\ \label{item:init}
-再起動時、ファイルのラベルが付与され直しされます。数分かかります。無事ログイン
-	  できたら、以下のコマンドで初期化作業をして下さい。
-\begin{verbatim}
-# seedit-load
-# reboot
-\end{verbatim}
-seedit-loadコマンドは、SPDLで書かれたポリシ(Simplified Policy)を、
-	  SELinuxのポリシに変換し、カーネルに読み込ませたり、ファイルと
-	  タイプの関連付けを直したりするコマンドです。このコマンドを入力
-	  することで、自分
-	  のシステムに合わせたポリシを生成してくれます（このコマンドを入
-	  力する前は、rpmパッケージ開発者の環境に適したポリシが生成され
-	  てます。）。
-
- \item インストールは終わりです\\
-seeditが正しくインストールされているか否かは、sestatusコマンドで確認可能です。
-次のような出力になれば成功です。
-\begin{verbatim}
-# sestatus
-SELinux status:                 enabled
-Current mode:                   permissive
-Mode from config file:          permissive
-...
-Policy from config file:        seedit
-\end{verbatim}
-「Policy from config file:        seedit」となってます。
-また、インストール直後は、Permissiveモードになっていることに気を付けます。
-Permissiveモードでは、SELinuxはシステムを守ってくれません。
-enforcingモードの切り替え方法は、 \ref{sec:mode}にあります。
-
-\item アンインストール方法\\
-アンインストールは簡単です。
-\begin{verbatim}
-# rpm -e seedit-policy seedit-converter	
-# reboot
-\end{verbatim}
-再起動時、SELinuxのtargeted policy(Fedora Coreデフォルト)の、permissive
-	  モードで起動します。
-\end{enumerate}
-
-\subsection{ソースからのインストール方法}
-\begin{enumerate}
- \item Obtain files\\
- seedit-converter-2.0.x.tgz and seedit-policy-2.0.x.tgzを以下からダウン
-       ロードします。
-\begin{verbatim}
-http://sourceforge.net/project/showfiles.php?group_id=135756	
-\end{verbatim}
- \item コンパイルとインストール\\
-\begin{verbatim}
-# tar czvf seedit-*.tgz
-# cd seedit-converter
-# make install
-# cd .. 
-# cd seedit-policy
-# make install
-# touch /.autorelabel
-# reboot
-\end{verbatim}
-次の作業は、 \ref{sec:rpm} (\ref{item:init})と同じです。\\
- \item アンインストール\\
-次のようにして、Fedora Coreデフォルトの状態に戻ることができます。
-/etc/selinux/configを以下のように編集します。
-\begin{verbatim}
-SELINUXTYPE=seedit
--->
-SELINUXTYPE=targeted
-\end{verbatim}
-次のコマンドを入力し、再起動します。 
-\begin{verbatim}
-#touch /.autorelabel
-#reboot	
-\end{verbatim}
-\end{enumerate}
-
-\subsection{何が影響されるか？}
-インストールによって、
-/etc/selinux/configが以下のように編集されます。
-\begin{verbatim}
-SELINUX=permissive	
-SELINUXTYPE=seedit
-\end{verbatim}
-それ以外は、既存のシステムに影響を及ぼしません。
-
-
-\subsection{旧バージョンユーザーへの注意}
-\begin{itemize}
- \item Simplified Policyは古いバージョン(1.0,1.2)と互換性はありません。
- \item 古いバージョンからアップグレードする場合は、以下のようにして完全
-       に削除します。
-       \begin{verbatim}
-	# rpm -e seedit-converter seedit-policy
-	# rm -rf /etc/selinux/seedit
-       \end{verbatim}
-\end{itemize}
 
 \section{GUIについて}
 X Window Systemから、「seedit-gui」または「デスクトップ→管理→
-SELinux Policy Editor」にてGUIが起動
+SELinux Policy Editor」または、コンソールから「seedit-gui」とすることでGUIが起動
 します。以下で紹介するコマンドラインの操作も、GUIで行えます。\\
 
 

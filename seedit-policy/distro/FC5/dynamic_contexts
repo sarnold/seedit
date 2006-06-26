@@ -7,7 +7,7 @@
 /etc/issue.net	system_u:object_r:etc_runtime_t
 /etc/motd	system_u:object_r:etc_runtime_t
 /etc/mtab	system_u:object_r:etc_runtime_t
-/etc/resolv.conf.predhclient    system_u:object_r:etc_runtime_t
+/etc/resolv.conf.predhclient    system_u:object_r:dhclient_etc_t
 /etc/ld.so.cache	system_u:object_r:ldconfig_cache_t
 /var/run/atd.pid        system_u:object_r:crond_var_run_t
 /var/run/crond.pid      system_u:object_r:crond_var_run_t

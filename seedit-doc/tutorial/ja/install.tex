@@ -1,0 +1,175 @@
+\documentclass{article}
+\usepackage[dvipdfm]{graphicx}
+\title{SELinux Policy Editor(seedit)インストールガイド 2.0}
+\author{中村　雄一\thanks{himainu-ynakam@miomio.jp}}
+\begin{document}
+\def\labelenumi{(\theenumi)}
+\maketitle
+\tableofcontents
+\newpage
+
+このドキュメントは、SELinux Policy Editorのインストール方法を解説してい
+ます。
+
+\section{RPMから導入}  \label{sec:rpm}
+RPMパッケージを使うことで簡単にインストールできます
+\begin{enumerate}
+ \item  必要なパッケージ\\
+checkpolicyパッケージが必要です。以下でインストールしておきます。
+\begin{verbatim}
+# yum install checkpolicy	
+\end{verbatim}
+
+auditパッケージをインストールして、auditdを有効にしておくことを強く薦めます。
+\begin{verbatim}
+#yum install audit
+#chkconfig auditd on
+#/etc/init.d/auditd start
+\end{verbatim}
+
+    \item ファイルを入手\\
+seedit-converter-2.0.(ディストリビューション
+	  名).rpm, seedit-policy-2.0.x-(ディストリビューション
+	  名).rpmを以下のURLより入手します。
+\begin{verbatim}
+http://sourceforge.net/project/showfiles.php?group_id=135756	
+\end{verbatim}
+
+オプションとして、GUIも用意されています。ファイル名は、
+	seedit-gui-2.0.x-noarch.rpmです。\\
+
+seedit-converterには、Simplified PolicyをSELinuxのポリシに変換するツールと、Simplified
+	  Policy管理ツールが同梱されています。seedit-policyには、
+	  simplified policyが格納されています。seedit-guiは、GUIです。
+
+
+Fedora Core5かつ最新版が2.0.0ならば、
+seedit-converter-2.0.0-FC5.i386.rpm, seedit-policy-2.0.0-FC5.noarch.rpm
+	  の２つのファイルをダウンロードします。
+ \item rpmをインストール\\
+入手したrpmを以下のようにインストールし,リブートします。
+\begin{verbatim}
+$ su 
+# rpm -ivh seedit-*.rpm
+# reboot
+\end{verbatim}
+ \item 初期化\\ \label{item:init}
+再起動時、ファイルのラベルが付与され直しされます。数分かかります。無事ログイン
+	  できたら、以下のコマンドで初期化作業をして下さい。
+\begin{verbatim}
+# seedit-load
+# reboot
+\end{verbatim}
+seedit-loadコマンドは、SPDLで書かれたポリシ(Simplified Policy)を、
+	  SELinuxのポリシに変換し、カーネルに読み込ませたり、ファイルと
+	  タイプの関連付けを直したりするコマンドです。このコマンドを入力
+	  することで、自分
+	  のシステムに合わせたポリシを生成してくれます（このコマンドを入
+	  力する前は、rpmパッケージ開発者の環境に適したポリシが生成され
+	  てます。）。
+
+ \item インストールは終わりです\\
+インストールされているか確認するには、\ref{sec:makesure}章を参照してくだ
+	さい。
+
+
+
+\item アンインストール方法\\
+アンインストールは簡単です。
+\begin{verbatim}
+# rpm -e seedit-policy seedit-converter	
+# reboot
+\end{verbatim}
+再起動時、SELinuxのtargeted policy(Fedora Coreデフォルト)の、permissive
+	  モードで起動します。
+\end{enumerate}
+
+\subsection{ソースからのインストール方法}
+\begin{enumerate}
+ \item Obtain files\\
+ seedit-converter-2.0.x.tgz and seedit-policy-2.0.x.tgzを以下からダウン
+       ロードします。
+\begin{verbatim}
+http://sourceforge.net/project/showfiles.php?group_id=135756	
+\end{verbatim}
+ \item コンパイルとインストール\\
+\begin{verbatim}
+# tar czvf seedit-*.tgz
+# cd seedit-converter
+# make install
+# cd .. 
+# cd seedit-policy
+# make install
+# touch /.autorelabel
+# reboot
+\end{verbatim}
+次の作業は、 \ref{sec:rpm} (\ref{item:init})と同じです。\\
+ \item アンインストール\\
+次のようにして、Fedora Coreデフォルトの状態に戻ることができます。
+/etc/selinux/configを以下のように編集します。
+\begin{verbatim}
+SELINUXTYPE=seedit
+-->
+SELINUXTYPE=targeted
+\end{verbatim}
+次のコマンドを入力し、再起動します。 
+\begin{verbatim}
+#touch /.autorelabel
+#reboot	
+\end{verbatim}
+\end{enumerate}
+
+\subsection{何が影響されるか？}
+インストールによって、
+/etc/selinux/configが以下のように編集されます。
+\begin{verbatim}
+SELINUX=permissive	
+SELINUXTYPE=seedit
+\end{verbatim}
+それ以外は、既存のシステムに影響を及ぼしません。
+
+\section{動作確認}\label{sec:makesure}
+seeditが正しくインストールされているか否かは、GUIおよびコマンドラインか
+ら確認可能です。
+
+\subsection{GUIで動作確認}
+Gnomeのメニューから、デスクトップ $\rightarrow$ 管理 $\rightarrow$ SELinux
+Policy Editor、を選択します。rootユーザーのパスワードを入力すると、図 \ref{fig:controlpanel}のような画面が現れます。
+\begin{figure}
+\caption{SELinux Policy Editor コントロールパネル}\label{fig:controlpanel}
+\includegraphics*{images/controlpanel.png}
+\end{figure}
+ここから、
+ {\it ステータス}を選択すると、図 \ref{fig:status-selinux}のような画面が
+ 現れます。{\it seeditがインストールされている？　はい}と表示されればイ
+ ンストールは成功です。
+
+\begin{figure}
+\caption{Status}\label{fig:status-selinux}
+\includegraphics{images/status-selinux.png}
+\end{figure}
+
+
+
+
+\subsection{コマンドラインで動作確認}
+次のような出力になれば成功です。
+\begin{verbatim}
+# sestatus
+SELinux status:                 enabled
+Current mode:                   permissive
+Mode from config file:          permissive
+...
+Policy from config file:        seedit
+\end{verbatim}
+「Policy from config file:        seedit」となってます。
+
+\subsection{次は何をする？}
+
+どうやって設定をしていくかの詳細は「SELinux Policy Editor管理ガイ
+ド（マニュアル）」を参照してください。
+また、インストール直後は、Permissiveモードになっていることに気を付けます。
+Permissiveモードでは、SELinuxはシステムを守ってくれません。実運用時はど
+うするかについても、管理ガイドに載っています(Enforcingモードに切り替えま
+す)。
+\end{document}

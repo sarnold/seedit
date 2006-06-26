@@ -1,5 +1,7 @@
 \documentclass{article}
 \usepackage[dvipdfm]{graphicx}
+\usepackage[dvipdfm]{hyperref}
+
 \title{Tutorial of SELinux Policy Editor(seedit)(for Ver 2.0))}
 \author{Yuichi Nakamura \thanks{ynakam@gwu.edu}}
 \begin{document}
@@ -688,14 +690,15 @@ xxxxx
 \subsection{Command line(audit2spdl)}
 
 The usage is easy.
-When auditd is not running(Fedora Core5 default),
-\begin{verbatim}
-# audit2spdl -dl
-\end{verbatim}
-When auditd is running(Fedora Core4,CentOS default)
+When auditd is running
 \begin{verbatim}
 # audit2spdl -al
 \end{verbatim}
+When auditd is not running,
+\begin{verbatim}
+# audit2spdl -dl
+\end{verbatim}
+
 You can read log by specifying filename, 
 \begin{verbatim}
 # audit2spdl -l -i /var/log/messages 
@@ -733,9 +736,7 @@ allow /etc/vsftpd/vsftpd.conf  r;
 \end{verbatim}
 to ftpd\_t.sp to resolve SELinux access denial.
 
-
-\subsection{Add policy}
-In above example, 
+To add generated policy, in above example, 
 open /etc/seedit/policy/vsftpd.sp.
 and add allow /etc/vsftpd/vsftpd.conf  r;	
 between ${}$, like below

@@ -875,7 +875,7 @@ After adding configuration, press {\it Save and Apply} button.
 \subsubsection{Check domain}
 Switch to permissive mode(you can do by setenforce 0 or status GUI).
 Start vsftpd and make sure its domain is vsftpd\_t(You can do it by
-status 
+status GUI)
 
 \subsubsection{Test run and add policy}
 Test run vsftpd in permissive mode.
@@ -895,10 +895,40 @@ And see log.
 Various accesses are denied. So you have to add policy that allows
 denied access.
 You can do it easily  by policy generation tool.
+Select {\it Generate Policy} from control panel, window like  figure
+\ref{fig:vsftpd-generate} will open. Usually, you do not have to change
+configuration, if you want more secure configuration, check {\it
+Generate more secure policy}, it will generate policy that uses detailed
+write permission, but you will need more time to complete configuration.
+To generate policy press {\it generate} button. Then result is  shown
+like figure \ref{fig:vsftpd-generate-result}. 
+If you want to add generated  policy, check check boxes, and if you want
+to allow to directory, use Glob button.
+In this case,  it is more efficient to allow access to /etc/vsftpd
+directory, so click Glob button twice.\\
+Filename  changes  /etc/vsftpd/vsftpd.conf  $\rightarrow$ /etc/vsftpd/*
+$\rightarrow$ /etc/vsftpd/**.\\
+In this case, configuration like \ref{fig:vsftpd-generate-save} will be
+saved. Click {\it Save and Apply} button.\\
+Test vsftpd again and use Policy Generation tool again, if you see
+nothing, then test in Enforcing mode. If it works, all done!. If not,
+add configuration by Policy Generation tool until it works.
 
-%%%Example will here...
 
+\begin{figure}
+\caption{Policy Generate tool}\label{fig:vsftpd-generate}
+\includegraphics*{images/vsftpd-generate.png}
+\end{figure}
 
+\begin{figure}
+\caption{Policy Generate result}\label{fig:vsftpd-generate-result}
+\includegraphics*{images/vsftpd-generate-result.png}
+\end{figure}
+
+\begin{figure}
+\caption{Before save}\label{fig:vsftpd-generate-save}
+\includegraphics*{images/vsftpd-generate-save.png}
+\end{figure}
 
 
 

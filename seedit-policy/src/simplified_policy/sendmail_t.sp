@@ -3,6 +3,7 @@ domain sendmail_t;
 program /usr/sbin/sendmail.sendmail;
 include common-relaxed.sp;
 include daemon.sp;
+include logfile.sp;
 include nameservice.sp;
 
 allownet -protocol  tcp -port 25 server,client;

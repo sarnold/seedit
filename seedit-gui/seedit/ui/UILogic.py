@@ -177,6 +177,7 @@ def createDomainTemplate(program, domain , parentDomain, daemonFlag, authFlag,de
 
     if daemonFlag:
         result = result + "include daemon.sp;\n"
+        result = result + "include logfile.sp;\n"
         result = result + "include nameservice.sp;\n"
     if authFlag:
         result = result + "include authentication.sp;\n"

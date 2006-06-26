@@ -1158,6 +1158,8 @@ def allownetStr(spRule):
             port = "1024-"
     if suboption =="server":
         port =src
+        if string.atoi(port) > 10000:
+            port = "1024-"
 
     if spRule["option"] == "tcp":
         if suboption in ("server","client"):         

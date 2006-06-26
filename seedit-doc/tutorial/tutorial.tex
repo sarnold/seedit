@@ -561,17 +561,95 @@ will be inserted.
 
 
 \clearpage
-\section{Adding policy}
+\section{Add policy by policy generation tool}
 If you find confined application run due to SELinux denial, you have to
-add policy. We have GUI and command line utility.
+add policy. 
+If application run in permissive mode, but does not run in enforcing
+mode, it is highly possible that SELinux is denying some access. You
+have to add policy. We have GUI and command line utility.
+
 
 \subsection{GUI(policy generator)}
-xxxxx
+\subsubsection{Launch tool}
+Select {\it Generate Policy} from control panel, window like  figure
+\ref{fig:vsftpd-generate-1} will open.
+
+\begin{figure}
+\caption{Policy Generate tool}\label{fig:vsftpd-generate-1}
+\includegraphics*{images/vsftpd-generate.png}
+\end{figure}
+Usually, you do not have to configure nothing.
+Press {\it Generate policy } button.
+
+
+What can be configured is shown below for reference.
+\begin{itemize}
+ \item Input\\
+       This is input source of SELinux access log. If auditd service is
+       running, choose audit.log. auditd service is not running choose
+       dmesg. dmesg contains less information than audit.log, so
+       accuracy of genarated policy is reduced. Therefore it is
+       recommended to enabled auditd service and select audit.log.
+ \item Generate more secure policy\\
+       If checked, generator trys to generate more secure policy. In
+       current version, it trys to use detailed file write
+       permission(a,o,c,e,t). If not checked, those permissions are not
+       used, instead w permission is used in generated policy.
+ \item Read All log\\ 
+  When checked, read all message from log input. If not input is read
+       only from last policy load(the place where load\_policy
+       permission is granted).
+ \item Skip search log\\
+       When checked, access denial for dir:search permission is
+       skipped. dir:search  often lead to unwanted output.
+\end{itemize}
+
+
+\subsubsection{Examine result and add policy}
+
+After pressing {\it Generate policy } button,  policy is generated.
+It takes  some time. When finished, result is outputted in Result tab.
+Figure \ref{fig:vsftpd-generate-result-1} is example output.
+
+\begin{figure}
+\caption{Policy Generate result}\label{fig:vsftpd-generate-result-1}
+\includegraphics*{images/vsftpd-generate-result.png}
+\end{figure}
+
+First row is asking, do you want to add {\it allownet -protocol tcp -port
+1024- server;} to vsftpd\_t domain? And Log is access denial of SELinux,
+from that log policy is generated.
+If you want to  add policy, check check box.\\
+{\it Glob} button is very useful.You can allow access to all files in directories.
+For example, select row {\it allow /etc/vsftpd/vsftpd.conf r,s;}
+After clicking {\it Glob} button, the filename changes  like below.
+\begin{verbatim}
+/etc/vsftpd/vsftpd.conf ->
+/etc/vsftpd/* ->
+/etc/vsftpd/** ->
+/etc/* ->
+/etc/** ->
+/* ->
+/** ->
+\end{verbatim}
+By {\it Undo Glob}, filename get back to previous one.\\
+Policy that is going to be added is displayed in {\it Following will
+be saved}, like figure \ref{fig:vsftpd-generate-save-1}.
+If it looks good, press {\it Save and Apply} button.
+The policy is added to domain, and policy is loaded to kernel.
+
+\begin{figure}
+\caption{Before save}\label{fig:vsftpd-generate-save-1}
+\includegraphics*{images/vsftpd-generate-save.png}
+\end{figure}
+
+
+\subsection{How policy generator works?}
+xxxxxxxxxx
 
 
 \subsection{Command line(audit2spdl)}
-
-The usage is easy.
+You can add policy by audit2spdl command. The usage is easy.
 When auditd is running
 \begin{verbatim}
 # audit2spdl -al

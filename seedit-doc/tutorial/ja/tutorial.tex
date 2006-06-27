@@ -1,6 +1,7 @@
 \documentclass{article}
 \usepackage[dvipdfm]{graphicx}
-
+\usepackage[dvipdfm]{hyperref}
+\AtBeginDvi{\special{pdf:tounicode EUC-UCS2}}
 \title{SELinux Policy Editor(seedit)管理ガイド（マニュアル) 2.0}
 \author{中村　雄一\thanks{himainu-ynakam@miomio.jp}}
 \begin{document}
@@ -70,8 +71,8 @@ SELinux Policy Editorの元となるバージョンは、日立ソフトウェアエンジニア
 リング(http://www.selinux.hitachi-sk.co.jp/)により開発され、2003年2月にGPLにて公開さ
 れました。このバージョンをアップデートしたものが、バージョン1.0として2005年7月に公
 開されました。\\
-現バージョン(2.0)は、中村が再設計し、日立ソフトの実装を一部使いながら，
-再実装したものです。
+現バージョン(2.0)は、中村がThe George Washington Universityにて再設計し、
+日立ソフトの実装を一部使いながら，再実装、新規開発したものです。
 
 \subsection{seeditの限界}
 seeditは、到達できるセキュリティレベルに限界があります。
@@ -130,10 +131,53 @@ SELinuxのstrictポリシーを頑張って使ってください。
 
 
 
-\section{GUIについて}
+\section{GUIの概要}
+GUIを使うことで、より簡単にSELinuxを使うことができます。
 X Window Systemから、「seedit-gui」または「デスクトップ→管理→
 SELinux Policy Editor」または、コンソールから「seedit-gui」とすることでGUIが起動
 します。以下で紹介するコマンドラインの操作も、GUIで行えます。\\
+You will see window {\it SELinux Policy Editor Control Panel}.
+In the control panel, you will see icons(you will see buttons instead of
+icons in CentOS 4) like figure \ref{fig:controlpanel}.\\
+
+\begin{figure}[h]
+\caption{SELinux Policy Editor Control Panel}\label{fig:controlpanel}
+\includegraphics*{images/controlpanel.png}
+\end{figure}
+
+By double-clicking icon, management windows  open. 
+What you can do by double-cliking icons is summarized in following.
+\begin{itemize}
+ \item Status\\
+       The usage is shonw in section \ref{sec:seedit-status}.
+       \begin{itemize}
+	\item See status of SELinux, such as SELinux mode, domains for
+	      runnning  process, domains for network process.
+	\item Change SELinux mode
+       \end{itemize}
+ \item Manage Domain
+       \begin{itemize}
+	\item Create new domain(section \ref{sec:createdomainGUI})
+	\item Remove domain, disable domain(section \ref{sec:unconfine:gui})
+       \end{itemize}
+ \item Generate Policy(section \ref{sec:addpolicy})
+       \begin{itemize}
+	\item Generate policy from access log
+       \end{itemize}
+ \item Edit policy(section \ref{sec:guieditor})
+       \begin{itemize}
+	\item Edit policy by text editor. The text editor has some
+	      useful features.
+       \end{itemize}
+ \item Apply policy,Relabel
+       \begin{itemize}
+	\item Load policy manually\\
+	      Policy is load automatically in GUI, but you can do it manually.
+	\item Initialize all file labels\\
+	\item Run restorecon command\\
+       \end{itemize}
+\end{itemize}
+
 
 
 \section{システムの状況を把握する}
@@ -163,9 +207,8 @@ file\_contextsファイル)に変換されます。変換後のポリシーは
 SPDLは、原理的にはRBACも設定可能ですし、strictポリシー相当のものも記述可
 能です。RBACについては、「RBACガイド」を参照してください。
 
-\subsection{seedit-unconfinedコマンド}
-\subsubsection{unconfinedドメイン}
-  デフォルトでは、SELinuxで制限されていないプロセスが存在します。
+\subsection{unconfinedドメイン}
+  このように、デフォルトでは、SELinuxで制限されていないプロセスが存在します。
 これらのプロセスには、「SELinuxによって制限されないドメイン(以下
 unconfinedドメインと呼びます)」が割り当てられています。
 unconfinedドメインは、全てのアクセスを許可するように設定されています。
@@ -176,7 +219,64 @@ unconfinedドメインが割り当てられたアプリケー
 メインが割り当てられています。\\
 どのプロセスにunconfinedドメインが割り当てられているのかを把握することがセキュリ
 ティ上重要になってきます。
-そのために、「seedit-unconfinedコマンド」が用意されています。
+
+\subsection{システムの状況把握(GUI)}\label{sec:seedit-status}
+To check status of SELinux, select {\it Status} from control panel, then
+window named{\it seedit Status} opens.
+
+\subsubsection{Check/Switch enforcing/permissive mode}\label{sec:mode}
+From {\it SELinux} tab, you can check/change mode of SELinux.
+Figure \ref{fig:status-selinux} is screenshot.
+
+\begin{figure}[h]
+\caption{Check/change SELinux mode}\label{fig:status-selinux}
+\includegraphics{images/status-selinux.png}
+\end{figure}
+
+By {\it seedit Installed? Yes}, you can know seedit is sucessfully
+installed.
+From {\it Current mode}, you can see current mode is permissive mode.
+You can change current mode from this box, select {\it Enforcing} and
+press {\it Apply} button.\\
+{\it Mode at boot} is mode at system boot, if it is {\it Permissive},
+after reboot, system will run as permissive mode.   It is strongly
+recommended to configure as Enforcing when you use real system.
+
+\subsubsection{See running process}
+Some processes are given domain and behavior is confined.
+
+From process$\rightarrow$Working Process, you can see domain of running
+process.
+Fig \ref{fig:status-working} is example output.
+
+\begin{figure}[h]
+\caption{Check domain of running processes}\label{fig:status-working}
+\includegraphics*{images/status-working.png}
+\end{figure}
+You can see such process as bash is unconfined,  and httpd is  confined
+by httpd\_t domain.
+
+You can also sort  result by selecting PID, Process, Domain.
+And by {\it Refresh} button, result is updated.
+
+
+\subsubsection{See network process}
+You can see status of network process(that is waiting network
+connection) from   process$\rightarrow$Network Process
+It is important to know status of network process. Because attackers use
+network process to intrude. 
+
+Fig \ref{fig:status-network} is example output.
+\begin{figure}[h]
+\caption{Check domain of network processes}\label{fig:status-network}
+\includegraphics*{images/status-network.png}
+\end{figure}
+From above, You have to be especially careful to service whose domamin
+is  unconfined.
+If you create domain, you can confine it, or you may decide not to run
+the service.
+
+\subsection{ステータス確認(seedit-unconfinedコマンド)}
 seedit-unconfinedコマンドは、rootユーザーになってから使います。
 \subsubsection{動作中のプロセスのポリシー適用状況を確認}
 
@@ -247,7 +347,7 @@ Current SELinux mode: permissive ----(1)
 \end{itemize}
 この場合、smbdに対して何らかの対処をしないとセキュリティを保てません。
 
-\subsection{Enforcing/Permissiveモードを切り換える}\label{sec:mode}
+\subsubsection{Enforcing/Permissiveモードを切り換える}\label{sec:mode2}
 インストール直後は、permissiveモードですが、以下のコマンドでEnforcingモードに切り換え可能です。
 \begin{verbatim}
 # setenforce 1
@@ -291,7 +391,56 @@ booleanパラメータを使う方法と、ポリシーファイルを移動する方法です。
 が、
 前述のunconfinedドメインを割り当てることにより、SELinuxのアクセス制御が
 全部許可されるようにする、という意味です。
-\subsection{方法１：booleanパラメータを使う}
+GUIおよびコマンドから作業することができます。
+
+\subsection{GUI}
+\subsection{GUI}\label{sec:unconfine:gui}
+You can do it from GUI. Select {\it Manage Domain}, then {\it seedit
+Domain/Role Manager} window opens. Select {\it Delete Domain} tab.
+
+\begin{figure}[h]
+\caption{Unconfine application}\label{fig:manage-delete}
+\includegraphics*{images/manage-delete.png}
+\end{figure}
+
+\subsubsection{Temporally disable}
+The easiest way to unconfine application is to disable domain temporally.
+\begin{enumerate}
+ \item Select domain which you want to disable
+ \item Select radio button {\it Temporally}
+ \item Press  Apply button
+\end{enumerate}
+For example, Apache is confined by httpd\_t domain  and you want to
+unconfine Apache. Select httpd\_t, and press apply button.
+Restart Apache and check domain by {\it Status} GUI, you will see {\it
+Unconfined(initrc\_t)} is shown in domain.\\
+To confine it again, select domain from {\it Enable temporally disabled
+domain}, and press  {\it Apply} button.\\
+This behavior is using boolean of SELinux, you can see detail by command
+line.\\
+
+
+\subsubsection{Remove domain}
+Another way to unconfine apolication is to remove configuration file for
+domain. The procedure is following.
+\begin{enumerate}
+ \item Select domain which you want to disable
+ \item Select radio button {\it Permanentlly}
+ \item Press  Apply button
+\end{enumerate}
+To  confine application again,  you have to do it by hand.
+\begin{enumerate}
+ \item cd /etc/seedit/policy
+ \item mv /etc/seedit/policy/extras/{\it name of domain}.sp
+       /etc/seedit/policy/{\it name of domain}.sp
+ \item seedit-load
+\end{enumerate}
+File size of generated policy will be smaller than previous method.
+
+
+\subsection{コマンドライン}
+
+\subsubsection{方法１：booleanパラメータを使う}
 SELinuxのbooleanパラメータ(条件変数とも呼ばれます)を知っているのならば、
 簡単にできます。
 例えば、Apacheの場合、
@@ -321,7 +470,7 @@ Current SELinux mode: enforcing
 PID     Comm    Domain
 1111     httpd   Confined by httpd_t domain
 \end{verbatim}
-\subsection{方法２：ポリシーファイルを移動する}
+\subsubsection{方法２：ポリシーファイルを移動する}
 ドメインが設定されているファイルは、
 /etc/seedit/policy/{\it ドメイン名}.sp.
 というファイルです。/etc/seedit/policyディレクトリ以外にある設定は無効に
@@ -526,11 +675,166 @@ allowpriv all;
 /etc/selinux/seedit/policy/unconfined\_domains にも、httpd\_tが追加されて
 ます。
 
+\subsection{GUI Editor}\label{sec:guieditor}
+By selecting {\it Edit Policy} from control panel, you can launch policy Editor.
+From {\it Open} icon, you can select domain.
+For example, when you open httpd\_t domain, you can see like figure \ref{fig:edit}.
+You can  edit policy like text editor.\\
+By {\it Save} button, you can save it and apply editted policy, policy
+load is automatically done.\\
+{\it Reload }  button read configuration file for domain  again, it is
+useful when you edit policy from another tool(such as generator).\\
+By {\it Add} button, you can insert policy at cursor point from GUI selection window.
+You can see window like Figure \ref{fig:edit-file} and  \ref{fig:edit-network}.
+From file tab, you can insert configuration related to file,  in  the
+example of e Figure \ref{fig:edit-file}, after pressing  {\it Add},
+\begin{verbatim}
+allow /var/www/** r,s;
+\end{verbatim}
+will be inserted.
+From network tab, you can insert configuration related to file,  in  the
+example of e Figure \ref{fig:edit-network}, after pressing  {\it Add},
+\begin{verbatim}
+allownet -protocol tcp -port 80 server;
+\end{verbatim}
+will be inserted.
+
+
+
 \section{ポリシーを追加する}
-\subsection{audit2spdlコマンド}
-SELinuxのアクセス拒否によってアプリケーションが動作しないことが判明した
-ら、設定を追加しなければなりません。
-audit2spdlというコマンドを使うことで、この作業を簡単に行うことができます。
+\subsection{Test in permissive mode}
+If you find confined application run due to SELinux denial, you have to
+add policy. \\
+Before trying to add policy, test in permissive mode.
+If application run in permissive mode, it is highly possible that SELinux is denying some access. You
+have to add policy. We have GUI and command line utility.
+
+\subsection{GUI(ポリシ生成ツール)}
+
+\subsubsection{Launch tool}
+
+Select {\it Generate Policy} from control panel, window like  figure
+\ref{fig:vsftpd-generate-1} will open.
+
+\begin{figure}
+\caption{Policy Generate tool}\label{fig:vsftpd-generate-1}
+\includegraphics*{images/vsftpd-generate.png}
+\end{figure}
+Usually, you do not have to configure nothing.
+Press {\it Generate policy } button.
+
+
+What can be configured is shown below for reference.
+\begin{itemize}
+ \item Input\\
+       This is input source of SELinux access log. If auditd service is
+       running, choose audit.log. auditd service is not running choose
+       dmesg. dmesg contains less information than audit.log, so
+       accuracy of genarated policy is reduced. Therefore it is
+       recommended to enabled auditd service and select audit.log.
+ \item Generate more secure policy\\
+       If checked, generator trys to generate more secure policy. In
+       current version, it trys to use detailed file write
+       permission(a,o,c,e,t). If not checked, those permissions are not
+       used, instead w permission is used in generated policy.
+ \item Read All log\\ 
+  When checked, read all message from log input. If not input is read
+       only from last policy load(the place where load\_policy
+       permission is granted).
+ \item Skip search log\\
+       When checked, access denial for dir:search permission is
+       skipped. dir:search  often lead to unwanted output.
+\end{itemize}
+
+
+\subsubsection{Examine result and add policy}
+
+After pressing {\it Generate policy } button,  policy is generated.
+It takes  some time. When finished, result is outputted in Result tab.
+Figure \ref{fig:vsftpd-generate-result-1} is example output.
+
+\begin{figure}
+\caption{Policy Generate result}\label{fig:vsftpd-generate-result-1}
+\includegraphics*{images/vsftpd-generate-result.png}
+\end{figure}
+
+First row is asking, do you want to add {\it allownet -protocol tcp -port
+1024- server;} to vsftpd\_t domain? And Log is access denial of SELinux,
+from that log policy is generated.
+If you want to  add policy, check check box.\\
+{\it Glob} button is very useful.You can allow access to all files in directories.
+For example, select row {\it allow /etc/vsftpd/vsftpd.conf r,s;}
+After clicking {\it Glob} button, the filename changes  like below.
+\begin{verbatim}
+/etc/vsftpd/vsftpd.conf ->
+/etc/vsftpd/* ->
+/etc/vsftpd/** ->
+/etc/* ->
+/etc/** ->
+/* ->
+/** ->
+\end{verbatim}
+By {\it Undo Glob}, filename get back to previous one.\\
+Policy that is going to be added is displayed in {\it Following will
+be saved}, like figure \ref{fig:vsftpd-generate-save-1}.
+If it looks good, press {\it Save and Apply} button.
+The policy is added to domain, and policy is loaded to kernel.
+
+\begin{figure}
+\caption{Before save}\label{fig:vsftpd-generate-save-1}
+\includegraphics*{images/vsftpd-generate-save.png}
+\end{figure}
+
+
+\subsection{How policy generator works?}
+Policy is generated from SELinux access log.
+In test in permissive mode, access log is obtained.
+In permissive mode, if access is denied by policy, it only takes log. To
+make application work, you have to allow denied access. \\
+
+Following is example of access denial log in audit.log.
+\begin{verbatim}
+----
+time->Wed Apr 26 18:34:32 2006
+1: type=PATH msg=audit(1146090872.442:29): item=0 
+name="/etc/vsftpd/vsftpd.conf" flags=101  inode=584775 dev=03:03 
+mode=0100600 ouid=0 ogid=0 rdev=00:00
+type=CWD msg=audit(1146090872.442:29):  
+cwd="/etc/selinux/seedit/src/policy/simplified_policy"
+2: type=SYSCALL msg=audit(1146090872.442:29): arch=40000003 
+syscall=5 success=yes exit=3 a0=bfb04c52 a1=8800 a2=0 a3=8800 
+items=1 pid=13151 auid=4294967295 uid=0 gid=0 euid=0 suid=0 
+fsuid=0 egid=0 sgid=0 fsgid=0 comm="vsftpd" exe="/usr/sbin/vsftpd"
+3: type=AVC msg=audit(1146090872.442:29): avc:  denied  { read } 
+for  pid=13151 comm="vsftpd" name="vsftpd.conf" dev=hda3 
+ino=584775 scontext=user_u:system_r:ftpd_t 
+tcontext=system_u:object_r:default_t tclass=file
+----	
+\end{verbatim}
+Line 3 means, {\it read access by ftpd\_t domain to filename vsftpd.conf is denied}.
+From line 3,  we can say that following should be added.\\\
+\begin{verbatim}
+allow vsftpd.conf r;
+\end{verbatim}
+
+However, full path for vsftpd.conf is not known. To obtain full path we
+use log in line 1. It says full path for vsftpd.conf is
+/etc/vsftpd/vsftpd.conf.
+By combining line 1 and 3 we can conclude that following should be
+added.
+\begin{verbatim}
+allow /etc/vsftpd/vsftpd.conf r;	
+\end{verbatim}
+If you are not running auditd service log in line 1 is not obtained. In
+other words, full path information is not included in log. That is why
+we recommend to run auditd in using SELinux Policy Editor.\\
+When  auditd is not running policy generator tries to obtain full path
+by locate command, but it often fails.
+
+
+
+\subsection{コマンドライン(audit2spdlコマンド)}
+audit2spdlというコマンドを使うことでも、ポリシー生成を行うことができます。
 使いかたは、以下のようになります。
 auditdサービスが起動していない場合(Fedora Core5のデフォルト),
 \begin{verbatim}
@@ -571,7 +875,7 @@ allow /etc/vsftpd/vsftpd.conf  r;
 \end{verbatim}
 という設定をftpd\_t.spファイルに追加する必要がある、と言っています。
 
-\subsection{audit2spdlを効率よく使うために}
+\subsubsection{audit2spdlを効率よく使うために}
 auditdサービスを有効にしておいたほうが、効率よく作業ができます。
 auditdサービスはより詳細なログを取ってくれるからです。
 SELinuxのアクセス拒否ログには、フルパス情報が含まれていません。
@@ -595,7 +899,7 @@ auditdを使わない場合、audit2spdlは、フルパス情報を「locateコマンド」と組
 す）。
 
 
-\subsection{提示されたポリシーを追加して設定反映}
+\subsubsection{提示されたポリシーを追加して設定反映}
 上の例では、必要なポリシーが提示されただけで、設定が反映されていません。
 /etc/seedit/policy/vsftpd.sp.を開き、
 「allow /etc/vsftpd/vsftpd.conf  r;」という行を${}$の間に記述します。次
@@ -642,7 +946,7 @@ allow /etc/vsftpd/* r;.
 vsftpdの設定ファイルであることを知っていますので、このディレクトリ全体の
 読み込み権限を与えてしまったほうが効率がよいです。
 
-\subsection{audit2spdlについての諸注意}
+\subsubsection{audit2spdlについての諸注意}
 \begin{enumerate}
  \item セキュリティ上最適とは限らない\\
 audit2spdlによって提示される設定は、最適なものとは限りません。
@@ -678,7 +982,121 @@ seeditでのポリシーの書き方を覚える最も良い方法は、新たなドメインを作成す
  \item テスト動作とポリシーの追加
 \end{enumerate}
 
-\subsection{テンプレートとなる設定を作成}
+
+\subsection{Create domain from GUI}
+We will create vsftp\_t domain, and configure the domain to work as
+Anonymous FTP server. 
+
+\subsubsection{Create template}
+By Domain manager GUI you can create template configuration.
+From control panel, select {\it Manage Domain}.
+Let's assign vsftpd vsftpd\_t domain. 
+
+You can do it like  fig \ref{fig:template}.
+First, specify name of executable file. Enter {\it /usr/sbin/vsftpd}.\\
+Next, specify domain name. Enter {\it vsftpd\_t}.\\
+There are some questions you have to answer. \\
+Then  press {\it Create Template} button. You will see created
+configuration is shown in {\it Created template}.\\
+
+
+\begin{figure}
+\caption{Create new domain}\label{fig:template}
+\includegraphics*{images/template.png}
+\end{figure}
+
+If you know about application, you already know what kind of access
+rights are necessary. You can add it now. If you do not know, do not
+worry. You can generate policy later.\\
+You will prepare anonymous FTP server,so read access to /var/ftp is
+necessary. And you need access right to TCP 21 port to behave as FTP
+server.\\
+You can add configuration from GUI. Press {\it Add policy} button.
+Figure \ref{fig:add-file}, you are configuring to allow read access
+under /var/ftp.
+Figure \ref{fig:add-network}, you are configuring to allow usage of tcp
+port 21. By pressing {\it Add} button, configuration 
+\begin{verbatim}
+allow  /var/ftp/** r,s;
+allownet -protocol tcp -port 21 server;
+\end{verbatim}
+is added.
+After adding configuration, press {\it Save and Apply} button.
+
+\begin{figure}
+\caption{Insert file access control policy}\label{fig:add-file}
+\includegraphics*{images/add-file.png}
+\end{figure}
+
+
+\begin{figure}
+\caption{Insert network access control policy}\label{fig:add-network}
+\includegraphics*{images/add-network.png}
+\end{figure}
+
+
+%% chroot環境でのパス提示の注意
+
+\subsubsection{Check domain}
+Switch to permissive mode(you can do by setenforce 0 or status GUI).
+Start vsftpd and make sure its domain is vsftpd\_t(You can do it by
+status GUI)
+
+\subsubsection{Test run and add policy}
+Test run vsftpd in permissive mode.
+
+Let's test ftp like following.
+\begin{verbatim}
+$ ftp localhost
+Name (localhost:ynakam): Anonymous
+Password: <anything is OK>
+...
+and do something..	
+\end{verbatim}
+And see log.
+\begin{verbatim}
+#auserch -m AVC
+\end{verbatim}
+Various accesses are denied. So you have to add policy that allows
+denied access.
+You can do it easily  by policy generation tool.
+Select {\it Generate Policy} from control panel, window like  figure
+\ref{fig:vsftpd-generate} will open. Usually, you do not have to change
+configuration, if you want more secure configuration, check {\it
+Generate more secure policy}, it will generate policy that uses detailed
+write permission, but you will need more time to complete configuration.
+To generate policy press {\it generate} button. Then result is  shown
+like figure \ref{fig:vsftpd-generate-result}. 
+If you want to add generated  policy, check check boxes, and if you want
+to allow to directory, use Glob button.
+In this case,  it is more efficient to allow access to /etc/vsftpd
+directory, so click Glob button twice.\\
+Filename  changes  /etc/vsftpd/vsftpd.conf  $\rightarrow$ /etc/vsftpd/*
+$\rightarrow$ /etc/vsftpd/**.\\
+In this case, configuration like \ref{fig:vsftpd-generate-save} will be
+saved. Click {\it Save and Apply} button.\\
+Test vsftpd again and use Policy Generation tool again, if you see
+nothing, then test in Enforcing mode. If it works, all done!. If not,
+add configuration by Policy Generation tool until it works.
+
+
+\begin{figure}
+\caption{Policy Generate tool}\label{fig:vsftpd-generate}
+\includegraphics*{images/vsftpd-generate.png}
+\end{figure}
+
+\begin{figure}
+\caption{Policy Generate result}\label{fig:vsftpd-generate-result}
+\includegraphics*{images/vsftpd-generate-result.png}
+\end{figure}
+
+\begin{figure}
+\caption{Before save}\label{fig:vsftpd-generate-save}
+\includegraphics*{images/vsftpd-generate-save.png}
+\end{figure}
+
+\subsection{コマンドラインからドメイン作成}
+\subsubsection{テンプレートとなる設定を作成}
 seedit-templateコマンドを使うことで、テンプレートとなる設定を作成できま
 す。書式は以下です。
 \begin{verbatim}
@@ -707,7 +1125,7 @@ include nameservice.sp;
 定反映時にエラーが出ます。
 
 
-\subsection{ドメインが正しく付与されることを確認}
+\subsubsection{ドメインが正しく付与されることを確認}
 設定の反映には、次のコマンドを使います。
 \begin{verbatim}
 #seedit-load
@@ -729,7 +1147,7 @@ vftpdを起動して、seedit-unconfinedコマンドでvsftpdのドメインを確認します。
 \end{verbatim}
 上のようにvsftpdにftpd\_tドメインが付与されていることと思います。
 
-\subsection{テスト動作とポリシーの追加}
+\subsubsection{テスト動作とポリシーの追加}
  さて、次はpermissiveモードでアプリケーションをテスト動作させます。
 そして、audit2spdlでどんな権限が足りないのかを洗い出します。
 ここでは、vsftpdがAnonymous FTPサーバとして動作するのに必要な権限を洗い
@@ -1056,7 +1474,9 @@ allow /var/shadow r;
 \end{enumerate}
 
 \section{Tips}
-\subsection{Webアプリケーション(CGI)を安全に設定する}
+\begin{enumerate}
+ \item Webアプリケーション(CGI)を安全に設定する\\
+
 デフォルトでは、CGIは、httpd\_tドメイン(Apache Webサーバのドメイン)で動
 作します。これは、サブプログラムのドメインは、親プログラムのドメインと同
 じになるというSELinuxの仕様によるものです。
@@ -1087,7 +1507,7 @@ domain_trans  httpd_t /var/www/cgi-bin/**;
 なお、PHPについては、httpd\_tドメイン以外で動作させることはできません。
 PHPは、通常の実行とは異なる方法で処理されているからです。
 
-\subsection{deny}
+\item deny\\
 {\it deny}という設定要素を使うことで、重要なファイルをブラックリストに登
 録し、設定ミスの防止に利用することができます。以下の例を見てみましょう。
 \begin{verbatim}
@@ -1102,7 +1522,7 @@ foo\_tが、/etc以下の全ファイルに読み込みできるように設定されていますが、
 /etc/shadowにアクセスするには、 {\it allow /etc/shadow}と明示的に記述す
 る必要があります。なお、デフォルトではinclude/common-relaxed.spにいくつ
 かのファイルがdenyが登録されています。
-
+\end{enumerate}
 
 \end{document}
 

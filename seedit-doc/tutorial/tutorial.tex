@@ -109,14 +109,14 @@ What you can do by double-cliking icons is summarized in following.
        \end{itemize}
  \item Manage Domain
        \begin{itemize}
-	\item Create new domain
+	\item Create new domain(section \ref{sec:createdomainGUI})
 	\item Remove domain, disable domain(section \ref{sec:unconfine:gui})
        \end{itemize}
- \item Generate Policy
+ \item Generate Policy(section \ref{sec:addpolicy})
        \begin{itemize}
-	\item Generate policy from access log.
+	\item Generate policy from access log
        \end{itemize}
- \item Edit policy
+ \item Edit policy(section \ref{sec:guieditor})
        \begin{itemize}
 	\item Edit policy by text editor. The text editor has some
 	      useful features.
@@ -289,7 +289,7 @@ confined,unconfined). What you have to do after that can be summarized like belo
 \end{enumerate}
 
 \section{Unconfine applications}\label{sec:unconfine}
-You can unconfine application by 2ways. Use boolean or remove config file.
+You can unconfine application by 2 ways. Use boolean or remove config file.
 \subsection{GUI}\label{sec:unconfine:gui}
 You can do it from GUI. Select {\it Manage Domain}, then {\it seedit
 Domain/Role Manager} window opens. Select {\it Delete Domain} tab.
@@ -519,7 +519,7 @@ SELinux. You can use {\it allowpriv name\_of\_privilege;}.
 For example, usage of netlink socket(it is used to communicate with
 kernel) is allowed in line 11.
 
-\subsection{GUI Editor}
+\subsection{GUI Editor}\label{sec:guieditor}
 By selecting {\it Edit Policy} from control panel, you can launch policy Editor.
 From {\it Open} icon, you can select domain.
 For example, when you open httpd\_t domain, you can see like figure \ref{fig:edit}.
@@ -561,16 +561,18 @@ will be inserted.
 
 
 \clearpage
-\section{Add policy by policy generation tool}
+\section{Add policy by policy generation tool}\label{sec:addpolicy}
+\subsection{Test in permissive mode}
 If you find confined application run due to SELinux denial, you have to
-add policy. 
-If application run in permissive mode, but does not run in enforcing
-mode, it is highly possible that SELinux is denying some access. You
+add policy. \\
+Before trying to add policy, test in permissive mode.
+If application run in permissive mode, it is highly possible that SELinux is denying some access. You
 have to add policy. We have GUI and command line utility.
 
-
 \subsection{GUI(policy generator)}
+
 \subsubsection{Launch tool}
+
 Select {\it Generate Policy} from control panel, window like  figure
 \ref{fig:vsftpd-generate-1} will open.
 
@@ -645,7 +647,49 @@ The policy is added to domain, and policy is loaded to kernel.
 
 
 \subsection{How policy generator works?}
-xxxxxxxxxx
+Policy is generated from SELinux access log.
+In test in permissive mode, access log is obtained.
+In permissive mode, if access is denied by policy, it only takes log. To
+make application work, you have to allow denied access. \\
+
+Following is example of access denial log in audit.log.
+\begin{verbatim}
+----
+time->Wed Apr 26 18:34:32 2006
+1: type=PATH msg=audit(1146090872.442:29): item=0 
+name="/etc/vsftpd/vsftpd.conf" flags=101  inode=584775 dev=03:03 
+mode=0100600 ouid=0 ogid=0 rdev=00:00
+type=CWD msg=audit(1146090872.442:29):  
+cwd="/etc/selinux/seedit/src/policy/simplified_policy"
+2: type=SYSCALL msg=audit(1146090872.442:29): arch=40000003 
+syscall=5 success=yes exit=3 a0=bfb04c52 a1=8800 a2=0 a3=8800 
+items=1 pid=13151 auid=4294967295 uid=0 gid=0 euid=0 suid=0 
+fsuid=0 egid=0 sgid=0 fsgid=0 comm="vsftpd" exe="/usr/sbin/vsftpd"
+3: type=AVC msg=audit(1146090872.442:29): avc:  denied  { read } 
+for  pid=13151 comm="vsftpd" name="vsftpd.conf" dev=hda3 
+ino=584775 scontext=user_u:system_r:ftpd_t 
+tcontext=system_u:object_r:default_t tclass=file
+----	
+\end{verbatim}
+Line 3 means, {\it read access by ftpd\_t domain to filename vsftpd.conf is denied}.
+From line 3,  we can say that following should be added.\\\
+\begin{verbatim}
+allow vsftpd.conf r;
+\end{verbatim}
+
+However, full path for vsftpd.conf is not known. To obtain full path we
+use log in line 1. It says full path for vsftpd.conf is
+/etc/vsftpd/vsftpd.conf.
+By combining line 1 and 3 we can conclude that following should be
+added.
+\begin{verbatim}
+allow /etc/vsftpd/vsftpd.conf r;	
+\end{verbatim}
+If you are not running auditd service log in line 1 is not obtained. In
+other words, full path information is not included in log. That is why
+we recommend to run auditd in using SELinux Policy Editor.\\
+When  auditd is not running policy generator tries to obtain full path
+by locate command, but it often fails.
 
 
 \subsection{Command line(audit2spdl)}
@@ -735,7 +779,7 @@ It is a little different from that suggested by audit2spdl.
 Because system administrate knows /etc/vsftpd is vsftp's configuration
 directory, so it is more effective to allow access whole /etc/vsftpd directory.
 
-\subsection{Advanced topic:Notice about audit2spdl}
+\subsubsection{Advanced topic:Notice about audit2spdl}
 \begin{enumerate}
  \item Not best security\\
 audit2spdl not always suggest best solution.
@@ -768,7 +812,7 @@ It is also faster than audit2spdl -dl.
 \end{enumerate}
 
 
-\section{Creating domain}
+\section{Creating domain}\label{sec:createdomainGUI}
 Let's see by example to create domain ftpd\_t for vsftpd, and confine behavior
 of vsftpd. By following this example you'll be able to prepare domain
 for other programs.
@@ -1085,7 +1129,8 @@ In this example, httpd\_t domain can not access under /root, but can
        read under /var/www.     After mv command, access rights to
        /var/www/html/index.html is the same as
        /root/homepage/index.html.
-       To fix this situation you have to use restorecon command.
+       To fix this situation you have to use restorecon command.\\
+       GUI policy generator sometimes suggests restorecon.
  \item File creation\\
        Newly created file inherits access rights from directory. See
        example below.\\
@@ -1239,7 +1284,9 @@ allow /var/shadow r;
 
 
 \section{Tips}
-\subsection{Confining Web applications}
+\begin{enumerate}
+ \item Confining Web applications\\
+
 By default, CGI will run as httpd\_t domain. httpd\_t domain is a domain
 for Apache Web Server, but domain is inherited to child programs by default.
 If you want to change domain for CGI, you have to use domain\_trans element.
@@ -1260,8 +1307,7 @@ For PHP, you {\it can not } change domain from httpd\_t. It is because
 		PHP is internally executed not using exec system
 		call. SELinux can not give domain for such case, unless
 		PHP is extended to use SELinux system call.
-
-\subsection{deny}
+\item deny\\
 You can register important files in black list by {\it deny} element.
 Following is example.
 \begin{verbatim}
@@ -1276,4 +1322,5 @@ access /etc/shadow.
 To access /etc/shadow, you have to write {\it allow /etc/shadow}
 explicitly.
 Some deny elements are written by default in include/common-relaxed.xp
+\end{enumerate}
 \end{document}

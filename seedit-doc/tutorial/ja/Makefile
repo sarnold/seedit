@@ -24,12 +24,12 @@ bb:
 	mv *.bb images
 
 dvi: *.tex bb
-	latex tutorial.tex
-	latex tutorial.tex
-	latex tutorial.tex
-	latex install.tex
-	latex install.tex
-	latex install.tex
+	platex tutorial.tex
+	platex tutorial.tex
+	platex tutorial.tex
+	platex install.tex
+	platex install.tex
+	platex install.tex
 
 view:	pdf
 	xpdf tutorial_jp.pdf

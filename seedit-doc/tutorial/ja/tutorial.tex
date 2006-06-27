@@ -135,46 +135,47 @@ SELinuxのstrictポリシーを頑張って使ってください。
 GUIを使うことで、より簡単にSELinuxを使うことができます。
 X Window Systemから、「seedit-gui」または「デスクトップ→管理→
 SELinux Policy Editor」または、コンソールから「seedit-gui」とすることでGUIが起動
-します。以下で紹介するコマンドラインの操作も、GUIで行えます。\\
-You will see window {\it SELinux Policy Editor Control Panel}.
-In the control panel, you will see icons(you will see buttons instead of
-icons in CentOS 4) like figure \ref{fig:controlpanel}.\\
+します。
+すると、
+ {\it SELinux Policy Editor コントロールパネル}という画面が開きます。
+このコントロールパネルには、アイコンが 図\ref{fig:controlpanel}のように
+並んでいます(CentOS 4では、アイコンの代わりにボタンが表示されます)。 \\
 
-\begin{figure}[h]
-\caption{SELinux Policy Editor Control Panel}\label{fig:controlpanel}
+\begin{figure}
+\caption{SELinux Policy Editorコントロールパネル}\label{fig:controlpanel}
 \includegraphics*{images/controlpanel.png}
 \end{figure}
-
-By double-clicking icon, management windows  open. 
-What you can do by double-cliking icons is summarized in following.
+アイコンをダブルクリック（またはクリックしてリターン押下)すると、対応し
+た管理ツールが起動します。
+それぞれのアイコンから設定できる設定内容は以下のようになります。
 \begin{itemize}
- \item Status\\
-       The usage is shonw in section \ref{sec:seedit-status}.
+ \item ステータス\\
+       使い方は\ref{sec:seedit-status}節で。
        \begin{itemize}
-	\item See status of SELinux, such as SELinux mode, domains for
-	      runnning  process, domains for network process.
-	\item Change SELinux mode
+	\item SELinuxのステータスを確認。SELinuxのモード、アプリケー
+	      ションに割り当てられたドメインを確認できます。
+	\item SELinuxのモードを変更
        \end{itemize}
- \item Manage Domain
+ \item ドメインを管理
        \begin{itemize}
-	\item Create new domain(section \ref{sec:createdomainGUI})
-	\item Remove domain, disable domain(section \ref{sec:unconfine:gui})
+	\item 新規ドメインを作成(\ref{sec:createdomainGUI}節)
+	\item ドメインの削除、無効化(\ref{sec:unconfine:gui}節)
        \end{itemize}
- \item Generate Policy(section \ref{sec:addpolicy})
+ \item ポリシーを生成(\ref{sec:addpolicy}節)
        \begin{itemize}
-	\item Generate policy from access log
+	\item SELinuxのアクセスログからポリシーを生成
        \end{itemize}
- \item Edit policy(section \ref{sec:guieditor})
+ \item ポリシーを編集(section \ref{sec:guieditor})
        \begin{itemize}
-	\item Edit policy by text editor. The text editor has some
-	      useful features.
+	\item テキストベースのエディタからポリシーを編集。
        \end{itemize}
- \item Apply policy,Relabel
+ \item ポリシーのロード、ラベル付け
        \begin{itemize}
-	\item Load policy manually\\
-	      Policy is load automatically in GUI, but you can do it manually.
-	\item Initialize all file labels\\
-	\item Run restorecon command\\
+	\item　手動でポリシーをロード\\
+	      GUIツールの中では、必要な時に自動的にポリシーはロードされ
+	     ますが、手作業で行うこともできます。
+	\item 全ファイルのラベルを初期化\\
+	\item restoreconコマンドを実行\\
        \end{itemize}
 \end{itemize}
 
@@ -221,62 +222,77 @@ unconfinedドメインが割り当てられたアプリケー
 ティ上重要になってきます。
 
 \subsection{システムの状況把握(GUI)}\label{sec:seedit-status}
-To check status of SELinux, select {\it Status} from control panel, then
-window named{\it seedit Status} opens.
+システムの状況を把握するために、 {\i ステータス} をコントロールパネルか
+ら選択します。{\it seedit ステータスビューア} というウィンドウが開きます。
 
-\subsubsection{Check/Switch enforcing/permissive mode}\label{sec:mode}
-From {\it SELinux} tab, you can check/change mode of SELinux.
-Figure \ref{fig:status-selinux} is screenshot.
+
+\subsubsection{モードの確認と切り替え}\label{sec:mode}
+ {\it SELinux} タブから、SELinuxのモードを確認したり切り替えたりできます
+ (図 \ref{fig:status-selinux})。
 
 \begin{figure}[h]
-\caption{Check/change SELinux mode}\label{fig:status-selinux}
+\caption{SELinuxのモードの確認と切り替え}\label{fig:status-selinux}
 \includegraphics{images/status-selinux.png}
 \end{figure}
 
-By {\it seedit Installed? Yes}, you can know seedit is sucessfully
-installed.
-From {\it Current mode}, you can see current mode is permissive mode.
-You can change current mode from this box, select {\it Enforcing} and
-press {\it Apply} button.\\
-{\it Mode at boot} is mode at system boot, if it is {\it Permissive},
-after reboot, system will run as permissive mode.   It is strongly
-recommended to configure as Enforcing when you use real system.
+{\it seeditがインストールされている？ はい}, という表示は、seeditが無事
+にインストールされていることを示しています。\\
+{\it 現在のモード}より、現在のモードがpermissiveモードであることが分か
+ります。現在のモードの変更も、ここで行えます。
+例えば、Enforcingモードに変えるには、 {\it Enforcingモード}を選択し、 {\it 適用} ボタンを押します。\\
+{\it ブート時のモード} は、システム起動時のモードです。 {\it Permissive
+モード}と表示されている時は、再起動時、システムがPermissiveモードで起動
+します。実運用時には、両方ともEnforcingモードに切り替えるべきです。
 
-\subsubsection{See running process}
-Some processes are given domain and behavior is confined.
 
-From process$\rightarrow$Working Process, you can see domain of running
-process.
-Fig \ref{fig:status-working} is example output.
+\subsubsection{動作中のプロセスのドメインを確認}
+プロセスタブ$\rightarrow$動作中のプロセス, より、動作中のプロセスのドメ
+インを確認できます。
+図は \ref{fig:status-working}実行例です。
 
-\begin{figure}[h]
-\caption{Check domain of running processes}\label{fig:status-working}
+\begin{figure}
+\caption{動作中のプロセスのドメインを確認}\label{fig:status-working}
 \includegraphics*{images/status-working.png}
 \end{figure}
-You can see such process as bash is unconfined,  and httpd is  confined
-by httpd\_t domain.
+Unconfinedドメインで動作しているプロセスには「Unconfined」と表示されてい
+ます。例えば、bashはUnconfinedドメインで動作しています。一方、httpdには、
+httpd\_tドメインという通常のドメインが付与されていることが分かります。\\
+PID, プロセス, ドメイン、をクリックすることで、それぞれの項目で結果をソー
+トすることができます。\\
+{\it 更新} ボタンを押すと、表示が更新されます。
 
-You can also sort  result by selecting PID, Process, Domain.
-And by {\it Refresh} button, result is updated.
+\subsubsection{ネットワークプロセスのドメインを確認}
 
+ネットワークプロセス(ネットワーク接続を外部から受け付けるプロセス)は、攻撃者が侵入する際の入口として使われます。ここを
+しっかりと守ることが、外部からの不正侵入による被害を無くすために重要になります。
+以下のような状況が理想です。
+\begin{itemize}
+ \item 全てのネットワークプロセスに適切なドメインが割り当てられている
+ \item Unconfinedドメインが割り当てられた（SELinuxによって制限されない)プロセスがある場合\\
+       以下のような選択肢があります。
+\begin{itemize}
+ \item 適切なドメインを割り当てる設定をする\\
+       設定方法は、後ほど紹介します。
+ \item SELinux以外の対策を強化する\\
+       ファイアウォール(iptables)によって、接続できるアドレスを制限した
+       り、パッチ当ての優先度を上げるなどする
+ \item そのようなプロセスを立ち上げない（サービスを止める)
+ \item リスクを許容する
+\end{itemize}
+\end{itemize}
 
-\subsubsection{See network process}
-You can see status of network process(that is waiting network
-connection) from   process$\rightarrow$Network Process
-It is important to know status of network process. Because attackers use
-network process to intrude. 
-
-Fig \ref{fig:status-network} is example output.
+ネットワークプロセスのドメ
+ インは、プロセス$\rightarrow$ネットワークプロセスより確認できます。
+実行例を図 \ref{fig:status-network}に示します。
 \begin{figure}[h]
-\caption{Check domain of network processes}\label{fig:status-network}
+\caption{ネットワークプロセスのドメインを確認}\label{fig:status-network}
 \includegraphics*{images/status-network.png}
 \end{figure}
-From above, You have to be especially careful to service whose domamin
-is  unconfined.
-If you create domain, you can confine it, or you may decide not to run
-the service.
+avahi-daemon, rpc.statdなどにUnconfinedドメインが割り当てられていること
+が分かります。これらのサービスは使わないならば、停止すべきでしょう。使う
+ならば、ドメインを割り当てるべきです。
 
-\subsection{ステータス確認(seedit-unconfinedコマンド)}
+\subsection{システムの状況把握(seedit-unconfinedコマンド)}
 seedit-unconfinedコマンドは、rootユーザーになってから使います。
 \subsubsection{動作中のプロセスのポリシー適用状況を確認}
 
@@ -313,22 +329,7 @@ PID     Comm    Domain
 ネットワークプロセス（外部からネットワーク接続を待ち受けているプロセス）
 の状況をseedit-unconfined -nコマンドで確認できます（AppArmorの
 unconfined`コマンドみたいなものです）。
-ネットワークプロセスは、攻撃者が侵入する際の入口として使われます。ここを
-しっかりと守ることが、外部からの不正侵入による被害を無くすために重要になります。
-以下のような状況が理想です。
-\begin{itemize}
- \item 全てのネットワークプロセスに適切なドメインが割り当てられている
- \item SELinuxによって制限されないプロセスがある場合\\
-       以下のような選択肢があります。
-\begin{itemize}
- \item 適切なドメインを割り当てる設定をする\\
-       設定方法は、後ほど紹介します。
- \item SELinux以外の対策を強化する\\
-       ファイアウォール(iptables)によって、接続できるアドレスを制限した
-       り、当ての優先度を上げるなどする
- \item そのようなプロセスを立ち上げない（サービスを止める)
-\end{itemize}
-\end{itemize}
+
 さて、実際に確認してみましょう。seedit-unconfined -nの実行例を以下に示し
 ます。
 \begin{verbatim}
@@ -370,18 +371,18 @@ SELINUX=enforcing
 \begin{enumerate}
  \item アプリケーションのSELinux保護を無効に\\
        アプリケーションが、SELinuxのアクセス拒否のため動作しなかった場合、
-       もっとも簡単な解決方法は、そのアプリケーションにたいしてのみ、
+       もっとも簡単な解決方法は、そのアプリケーションに対してのみ、
        SELinuxのアクセス制御が働かないようにすることです。
        セキュリティはもちろん落ちますが、SELinux全部を無効にするよりはマ
        シといえます。 \ref{sec:unconfine}で紹介します。
        
  \item ポリシーを修正する\\
        アプリケーションが、SELinuxのアクセス拒否のため動作しなかった場合、
-       本来は、ポリシーを編集すべきです。 \ref{sec:policy}で紹介します。
+       本来は、ポリシーを編集すべきです。 \ref{sec:addpolicy}で紹介します。
  \item ドメインを新たに設定する\\
        SELinuxによって動作が制限されていないアプリケーションの安全性を高
        めるには、自分でドメインを設定し、アプリケーションにドメインを割
-       り当てる必要があります。 \ref{sec:policy}で紹介します。
+       り当てる必要があります。 \ref{sec:createdomainGUI}で紹介します。
 \end{enumerate}
 
 \section{アプリケーションに対するSELinux保護を無効に}\label{sec:unconfine}
@@ -393,50 +394,56 @@ booleanパラメータを使う方法と、ポリシーファイルを移動する方法です。
 全部許可されるようにする、という意味です。
 GUIおよびコマンドから作業することができます。
 
-\subsection{GUI}
-\subsection{GUI}\label{sec:unconfine:gui}
-You can do it from GUI. Select {\it Manage Domain}, then {\it seedit
-Domain/Role Manager} window opens. Select {\it Delete Domain} tab.
+\subsection{GUI(ドメイン管理ツール)}\label{sec:unconfine:gui}
+GUIから作業するには、 コントロールパネルから{\it ドメインを管理}を選択し
+ます。\\
+ {\it seedit
+ドメイン・ロール管理}というウィンドウが開きます。 {\it ドメインを削除}タ
+ブを選択します。
 
-\begin{figure}[h]
+\begin{figure}
 \caption{Unconfine application}\label{fig:manage-delete}
 \includegraphics*{images/manage-delete.png}
 \end{figure}
 
-\subsubsection{Temporally disable}
-The easiest way to unconfine application is to disable domain temporally.
+\subsubsection{方法１：一時的に無効に}
+アプリケーションのSELinux保護を無効にする最も簡単な方法は、以下のステッ
+プでドメインを一時的に無効にすることです。
 \begin{enumerate}
- \item Select domain which you want to disable
- \item Select radio button {\it Temporally}
- \item Press  Apply button
+ \item 無効にしたいドメインを選択
+ \item {\it 一時的に無効} ラジオボタンを選択
+ \item {\it 適用}　ボタンを押す
 \end{enumerate}
-For example, Apache is confined by httpd\_t domain  and you want to
-unconfine Apache. Select httpd\_t, and press apply button.
-Restart Apache and check domain by {\it Status} GUI, you will see {\it
-Unconfined(initrc\_t)} is shown in domain.\\
-To confine it again, select domain from {\it Enable temporally disabled
-domain}, and press  {\it Apply} button.\\
-This behavior is using boolean of SELinux, you can see detail by command
-line.\\
+ Apache Webサーバにunconfineドメインを割り当てたい場合を見てみま
+す。
+Apacheにはhttpd\_tドメインが割り当てられていますので、 httpd\_tを
+選択し、 適用ボタンを押します。
+Apacheを再起動し、 {\it ステータス} GUIから確認すると、ドメインとして{\it
+Unconfined(initrc\_t)} が表示されます。\\
+もう一度動作を制限するには、 {\it 一時的に無効にされたドメインを有効にす
+る}からドメインを選択し、 {\it　適用} ボタンを押します。\\
+ちなみに、これらの操作は内部的にはSELinuxのbooleanを使っています。詳細を
+知りたい人はコマンドラインから操作してみるといいでしょう。
 
 
-\subsubsection{Remove domain}
-Another way to unconfine apolication is to remove configuration file for
-domain. The procedure is following.
+\subsubsection{方法2：ドメインを削除}
+アプリケーションのSELinux保護を無効にするもう一つの方法は、次の手順のよ
+うにドメインの設
+定ファイルを除去することです。
 \begin{enumerate}
- \item Select domain which you want to disable
- \item Select radio button {\it Permanentlly}
- \item Press  Apply button
+ \item 無効にしたいドメインを選択
+ \item  {\it 完全に削除} を選択
+ \item 適用ボタンを押す
 \end{enumerate}
-To  confine application again,  you have to do it by hand.
+しかし、元に戻したい場合は、手作業でやらなくてはなりません。
 \begin{enumerate}
  \item cd /etc/seedit/policy
- \item mv /etc/seedit/policy/extras/{\it name of domain}.sp
-       /etc/seedit/policy/{\it name of domain}.sp
+ \item mv /etc/seedit/policy/extras/{\it ドメインの名前}.sp
+       /etc/seedit/policy/{\it ドメインの名前}.sp
  \item seedit-load
 \end{enumerate}
-File size of generated policy will be smaller than previous method.
-
+この方法の良い点は，変換後のSELinuxのポリシーのサイズが小さくなることぐ
+らいです。
 
 \subsection{コマンドライン}
 
@@ -500,12 +507,14 @@ Example:
 # seedit-unconfined -e
 ...
 \end{verbatim}
-\section{ポリシー(Simplified Policy)を編集してみよう}\label{sec:policy}
-\subsection{ポリシーはどこに？}
+\section{Simplified Policyの基礎知識}\label{sec:policy}
+Simplified Policyを扱う前に、基本的な知識をおさえておきましょう。
+
+\subsection{どこに？}
 Simplified Policyは、/etc/seedit/policyディレクトリに配置されています。
 このディレクトリの下には、 {\it ドメイン名}.spというファイルが配置されて
 います。
-\subsection{ポリシーの書式概要}
+\subsection{書式概要}
  Simplified Policyは、Simplified Policy Description Language(SPDL)という
  書式で書かれています。詳細は、別のドキュメント(Specification of SPDL)に
  書かれていますが、全てを理解する必要はありません。書式を知らなくとも、
@@ -675,49 +684,53 @@ allowpriv all;
 /etc/selinux/seedit/policy/unconfined\_domains にも、httpd\_tが追加されて
 ます。
 
-\subsection{GUI Editor}\label{sec:guieditor}
-By selecting {\it Edit Policy} from control panel, you can launch policy Editor.
-From {\it Open} icon, you can select domain.
-For example, when you open httpd\_t domain, you can see like figure \ref{fig:edit}.
-You can  edit policy like text editor.\\
-By {\it Save} button, you can save it and apply editted policy, policy
-load is automatically done.\\
-{\it Reload }  button read configuration file for domain  again, it is
-useful when you edit policy from another tool(such as generator).\\
-By {\it Add} button, you can insert policy at cursor point from GUI selection window.
-You can see window like Figure \ref{fig:edit-file} and  \ref{fig:edit-network}.
-From file tab, you can insert configuration related to file,  in  the
-example of e Figure \ref{fig:edit-file}, after pressing  {\it Add},
+\subsection{GUIエディタ}\label{sec:guieditor}
+コントロールパネルから {\it ポリシーを編集} を選択すると、エディタが開き
+ます。
+ {\it 開く} を選択し、ドメインを選択します。
+例えば、httpd\_t ドメインを選択すると、図\ref{fig:edit}のような画面にな
+ります。テキストエディタのように、ポリシーを編集できます。\\
+ {\it 保存} ボタンを押すと、編集内容を保存し、設定を反映します。\\
+{\it Reload }ボタンを押すと、再度ファイルからの設定内容を読み出します。
+これは、他のツール（ポリシ生成ツール等）で、設定内容が変更された場合に便
+利です。\\
+{\it 追加} ボタンを押すと、ポリシーを挿入するためのウィンドウが開きます
+(図\ref{fig:edit-file}, \ref{fig:edit-network})。
+{\it ファイル} タブから、ファイルアクセス制御設定を挿入できます。図
+\ref{fig:edit-file}の例では、  {\it 追加}ボタンを押すと、
 \begin{verbatim}
 allow /var/www/** r,s;
 \end{verbatim}
-will be inserted.
-From network tab, you can insert configuration related to file,  in  the
-example of e Figure \ref{fig:edit-network}, after pressing  {\it Add},
+という設定が末尾に追加されます。\\
+{\it ネットワーク}タブからは、ネットワークに関する設定を挿入できます。図
+\ref{fig:edit-network}では、  {\it 追加}ボタンを押すと
 \begin{verbatim}
 allownet -protocol tcp -port 80 server;
 \end{verbatim}
-will be inserted.
+が挿入されます。
 
 
-
-\section{ポリシーを追加する}
-\subsection{Test in permissive mode}
-If you find confined application run due to SELinux denial, you have to
-add policy. \\
-Before trying to add policy, test in permissive mode.
-If application run in permissive mode, it is highly possible that SELinux is denying some access. You
-have to add policy. We have GUI and command line utility.
+\section{ポリシーを追加する}\label{sec:addpolicy}
+\subsection{Permissiveモードで問題切り分け}
+SELinuxのアクセス拒否のためにアプリケーションが動作しない、と判明したら
+ポリシーを追加する必要があります。\\
+ポリシーを追加する前に、permissiveモードで動作確認を行います。
+もし、permissiveモードでアプリケーションが動作したならば、SELinuxが原因
+でアプリケーションが動作しないことになります。この場合は、ポリシーを追加
+してやる必要があります。
+SELinux Policy Editorでは、
+このような場合にポリシーを生成するためのツールがGUIおよびコマンドライン
+で用意されています。
 
 \subsection{GUI(ポリシ生成ツール)}
 
-\subsubsection{Launch tool}
+\subsubsection{ツールを起動}
 
-Select {\it Generate Policy} from control panel, window like  figure
-\ref{fig:vsftpd-generate-1} will open.
+コントロールパネルより {\it ポリシーを生成}をクリックします。図
+\ref{fig:vsftpd-generate-1}のような画面が開きます。
 
 \begin{figure}
-\caption{Policy Generate tool}\label{fig:vsftpd-generate-1}
+\caption{ポリシ生成ツール}\label{fig:vsftpd-generate-1}
 \includegraphics*{images/vsftpd-generate.png}
 \end{figure}
 Usually, you do not have to configure nothing.
@@ -971,7 +984,7 @@ SELinuxのログにはフルパス情報は含まれてませんが、audit2spdlはフルパスを
 \end{enumerate}
 
 
-\section{新たにドメインを作成する}
+\section{新たにドメインを作成する}\label{sec:createdomainGUI}
 seeditでのポリシーの書き方を覚える最も良い方法は、新たなドメインを作成す
 る設定を試すことです。vsftp FTPサーバにftpd\_tドメインを付与する実例を元
 に、見ていきましょう。\\
@@ -983,7 +996,7 @@ seeditでのポリシーの書き方を覚える最も良い方法は、新たなドメインを作成す
 \end{enumerate}
 
 
-\subsection{Create domain from GUI}
+\subsection{Create domain from GUI}\label{sec:createdomainGUI}
 We will create vsftp\_t domain, and configure the domain to work as
 Anonymous FTP server. 
 

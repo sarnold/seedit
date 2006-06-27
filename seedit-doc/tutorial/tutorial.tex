@@ -282,10 +282,10 @@ confined,unconfined). What you have to do after that can be summarized like belo
  \item Modify policy\\
        If you find application does not run due to SELinux access
        denial, but still want to confine application, you can modify
-       policy.  See section \ref{sec:policy}.
+       policy.  See section \ref{sec:addpolicy}.
  \item Confine more applications by creating domains\\
        If you want to confine unconfined applications, you can prepare
-       domain for them. See section \ref{sec:policy}.
+       domain for them. See section \ref{sec:createdomainGUI}.
 \end{enumerate}
 
 \section{Unconfine applications}\label{sec:unconfine}
@@ -385,8 +385,8 @@ Example:
 # seedit-unconfined -e
 ...
 \end{verbatim}
-\section{Lets' edit policy}\label{sec:policy}
-\subsection{Where is policy?}
+\section{Simplified Policy basics}\label{sec:policy}
+\subsection{Where is simplified policy?}
 Our simplified policy is located at /etc/seedit/policy
 directory. In the directory, files named {\it domain name}.sp are
 located. 
@@ -528,7 +528,7 @@ By {\it Save} button, you can save it and apply editted policy, policy
 load is automatically done.\\
 {\it Reload }  button read configuration file for domain  again, it is
 useful when you edit policy from another tool(such as generator).\\
-By {\it Add} button, you can insert policy at cursor point from GUI selection window.
+By {\it Add} button, you can insert policy at the end of file from GUI selection window.
 You can see window like Figure \ref{fig:edit-file} and  \ref{fig:edit-network}.
 From file tab, you can insert configuration related to file,  in  the
 example of e Figure \ref{fig:edit-file}, after pressing  {\it Add},
@@ -569,7 +569,7 @@ Before trying to add policy, test in permissive mode.
 If application run in permissive mode, it is highly possible that SELinux is denying some access. You
 have to add policy. We have GUI and command line utility.
 
-\subsection{GUI(policy generator)}
+\subsection{GUI(policy generator)}\label{sec:addpolicy}
 
 \subsubsection{Launch tool}
 

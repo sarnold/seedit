@@ -36,8 +36,8 @@ view:	pdf
 	acroread install_jp.pdf
 
 clean:
-	rm *.pdf *.dvi *.aux *.toc 
-	rm -rf tutorial_jp install_jp
+	rm -rf *.pdf *.dvi *.aux *.toc 
+	rm -rf tutorial_jp install_jp tutorial install
 
 
 

@@ -707,7 +707,20 @@ allow /var/www/** r,s;
 allownet -protocol tcp -port 80 server;
 \end{verbatim}
 が挿入されます。
+\begin{figure}
+\caption{Simplified Policy用エディタ}\label{fig:edit}
+\includegraphics*{images/edit.png}
+\end{figure}
 
+\begin{figure}
+\caption{ファイルアクセス制御設定を追加}\label{fig:edit-file}
+\includegraphics*{images/edit-file.png}
+\end{figure}
+
+\begin{figure}
+\caption{ネットワークアクセス制御を追加}\label{fig:edit-network}
+\includegraphics*{images/edit-network.png}
+\end{figure}
 
 \section{ポリシーを追加する}\label{sec:addpolicy}
 \subsection{Permissiveモードで問題切り分け}
@@ -1050,13 +1063,13 @@ allownet -protocol tcp -port 21 server;
  設定を適用」ボタンを押します。
  
 \begin{figure}
- \caption{Insert file access control policy}\label{fig:add-file}
+ \caption{ファイルアクセス制御の設定追加}\label{fig:add-file}
  \includegraphics*{images/add-file.png}
 \end{figure}
 
 
 \begin{figure}
-\caption{Insert network access control policy}\label{fig:add-network}
+\caption{ネットワークアクセス制御設定追加}\label{fig:add-network}
 \includegraphics*{images/add-network.png}
 \end{figure}
 

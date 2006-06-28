@@ -314,7 +314,7 @@ class fileTab(tabCommon):
 		frame.add(vbox)
 		hbox = gtk.HBox()
 		vbox.pack_start(hbox,False)
-		label=gtk.Label("File/Dir name:")
+		label=gtk.Label(_("File/Dir name:"))
 		hbox.pack_start(label,False)		
 		entry = gtk.Entry()
 #		entry.set_max_length(200)
@@ -326,20 +326,20 @@ class fileTab(tabCommon):
 
 		#Radios
 		self.mDir="itself" 
-		hbox=gtk.HBox()
+		hbox=gtk.VBox()
 		vbox.pack_start(hbox,False)
 		radio = gtk.RadioButton(None, _("Itself"))
 		radio.connect("toggled", self.dirRadioCallBack, "itself")
 		radio.set_active(True)
-		hbox.pack_start(radio, False, False, 5)
+		hbox.pack_start(radio, False, False)
 
 		radio = gtk.RadioButton(radio, _("All files in directory"))
 		radio.connect("toggled", self.dirRadioCallBack, "direct")
-		hbox.pack_start(radio, False, False, 5)
+		hbox.pack_start(radio, False, False)
 
 		radio = gtk.RadioButton(radio, _("All files in directory,subdirectories"))
 		radio.connect("toggled", self.dirRadioCallBack, "all")
-		hbox.pack_start(radio, False, False, 5)
+		hbox.pack_start(radio, False, False)
 		
 		#Permissions
 		self.mPermission = {'s':False, 'r':False, 'x':False, 'w':False, 'a':False, 'o':False, 'c':False, 'e':False, 't':False}
@@ -429,7 +429,7 @@ class networkTab(tabCommon):
 		self.mPortEntry = entry
 		hbox.pack_start(entry,False)
 		
-		hbox=gtk.HBox()
+		hbox=gtk.VBox()
 		vbox.pack_start(hbox,False)
 		radio = gtk.RadioButton(radio, _("All unreserved wellknown ports"))
 		radio.connect("toggled", self.portRadioCallBack, "wellknown")

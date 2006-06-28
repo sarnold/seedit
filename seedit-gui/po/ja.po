@@ -619,3 +619,7 @@ msgstr "ポリシ生成設定"
 #: seedit-gui-generate-policy.py:485
 msgid "Undo Glob"
 msgstr "まとめて指定を戻す"
+
+#: seedit/ui/GUICommon.py:317
+msgid "File/Dir name:"
+msgstr "ファイル・ディレクトリ名"

@@ -836,14 +836,17 @@ Editorを使うときはauditdを使うことをお薦めします。\\
 /* ->
 /** ->
 \end{verbatim}
-By {\it Undo Glob}, filename get back to previous one.\\
-Policy that is going to be added is displayed in {\it Following will
-be saved}, like figure \ref{fig:vsftpd-generate-save-1}.
-If it looks good, press {\it Save and Apply} button.
-The policy is added to domain, and policy is loaded to kernel.
+{\it まとめて指定を戻す}ボタンを押すと、上と逆の順番でファイル名が変わっ
+ていきます。\\
+チェックされたポリシーは、 {\it 以下の設定が保存されます}の部分に表示さ
+れます(図\ref{fig:vsftpd-generate-save-1})。
+設定を追加する前に、権限を与えすぎでないか今一度見直します。大丈夫そうな
+らば、 {\it セーブし、設定を適用}ボタンを押します。
+これらのポリシーがファイルに記述されるだけでなく、設定内容もSELinux側に
+反映されます。
 
 \begin{figure}
-\caption{Before save}\label{fig:vsftpd-generate-save-1}
+\caption{保存する前の画面}\label{fig:vsftpd-generate-save-1}
 \includegraphics*{images/vsftpd-generate-save.png}
 \end{figure}
 
@@ -1003,49 +1006,52 @@ seeditでのポリシーの書き方を覚える最も良い方法は、新たなドメインを作成す
 \end{enumerate}
 
 
-\subsection{Create domain from GUI}\label{sec:createdomainGUI}
-We will create vsftp\_t domain, and configure the domain to work as
-Anonymous FTP server. 
+\subsection{GUIから新規ドメインを設定}\label{sec:createdomainGUI}
+vsftp\_t ドメインを作成し、Anonymous FTPサーバとして動作するのに必要な設
+定をします。
 
-\subsubsection{Create template}
-By Domain manager GUI you can create template configuration.
-From control panel, select {\it Manage Domain}.
-Let's assign vsftpd vsftpd\_t domain. 
+\subsubsection{テンプレートを作成}
+ドメイン管理GUIを使うことで、新規ドメインを設定できます。コントロールパ
+ネルから、ドメインを管理を選択します。\\
+vsftpdにvsftpd\_tドメインを割り当てます。
+図\ref{fig:template}のように設定します。\\
+まず、実行ファイルの名前を指定します。「/usr/sbin/vsftpd」を入力します。
+\\
+ドメイン名として、「vsftpd\_t」を入力します。\\
+あとは、いくつかの質問に答えます。デーモン用のドメインを作成するには、
+「デーモンプログラムですか？」の「はい」を忘れないようにします。\\
 
-You can do it like  fig \ref{fig:template}.
-First, specify name of executable file. Enter {\it /usr/sbin/vsftpd}.\\
-Next, specify domain name. Enter {\it vsftpd\_t}.\\
-There are some questions you have to answer. \\
-Then  press {\it Create Template} button. You will see created
-configuration is shown in {\it Created template}.\\
+{\it　テンプレートを作成}ボタンを押すと、{\it 作成されたテンプレート}に
+設定が生成されます。\\
 
 
 \begin{figure}
-\caption{Create new domain}\label{fig:template}
+\caption{新規ドメイン作成画面}\label{fig:template}
 \includegraphics*{images/template.png}
 \end{figure}
 
-If you know about application, you already know what kind of access
-rights are necessary. You can add it now. If you do not know, do not
-worry. You can generate policy later.\\
-You will prepare anonymous FTP server,so read access to /var/ftp is
-necessary. And you need access right to TCP 21 port to behave as FTP
-server.\\
-You can add configuration from GUI. Press {\it Add policy} button.
-Figure \ref{fig:add-file}, you are configuring to allow read access
-under /var/ftp.
-Figure \ref{fig:add-network}, you are configuring to allow usage of tcp
-port 21. By pressing {\it Add} button, configuration 
-\begin{verbatim}
+\subsubsection{アクセスすると分かっている設定を追加} 
+ アプリケーションについての知識がある場合、あらかじめどんなアクセス権限
+ が必要か分かっていることも多いです(分かってない場合は、後からポリシ生成
+ ツールで追加できます)。その場合、この画面から追加可能です。\\
+ 
+今回は、 Anonymous FTPサーバを構築しますので、公開ディレクトリ（/var/ftp
+ 以下）への読み込み権
+ 限が必要ですし、21番ポートを使う権限が必要です。\\
+ これらの設定は「ポリシーを追加」ボタンを使って追加できます。
+ 図\ref{fig:add-file}では、/var/ftpディレクトリ以下への読み込みアクセス
+ を設定してます。図\ref{fig:add-network}では,TCP21番ポートを使ってサーバー
+ として振る舞うことを許可しています。{\it 追加} ボタンを押すと、
+ \begin{verbatim}
 allow  /var/ftp/** r,s;
 allownet -protocol tcp -port 21 server;
-\end{verbatim}
-is added.
-After adding configuration, press {\it Save and Apply} button.
-
+ \end{verbatim}
+ のような設定が追加されます。追加したい設定を全て追加したら、「セーブし、
+ 設定を適用」ボタンを押します。
+ 
 \begin{figure}
-\caption{Insert file access control policy}\label{fig:add-file}
-\includegraphics*{images/add-file.png}
+ \caption{Insert file access control policy}\label{fig:add-file}
+ \includegraphics*{images/add-file.png}
 \end{figure}
 
 
@@ -1057,47 +1063,49 @@ After adding configuration, press {\it Save and Apply} button.
 
 %% chroot環境でのパス提示の注意
 
-\subsubsection{Check domain}
-Switch to permissive mode(you can do by setenforce 0 or status GUI).
-Start vsftpd and make sure its domain is vsftpd\_t(You can do it by
-status GUI)
+\subsubsection{ドメインの確認}
+Permissiveモードに切り替え、vsftpdを起動し、そのドメインが「vsftpd\_t」
+であることをステータスツールなどで確認します。
 
-\subsubsection{Test run and add policy}
-Test run vsftpd in permissive mode.
+\subsubsection{テスト動作とポリシーの追加}
+vsftpdをpermissiveモードでテスト動作させます。テスト動作を通じて、必要な権限を洗い出すため
+です。
 
-Let's test ftp like following.
+以下のコマンドでは, Anonymous ftpでファイル転送できることを確認してます。
+
 \begin{verbatim}
+#echo "test">/var/ftp/pub/test.txt
+(テスト用のファイル作成)
+
 $ ftp localhost
 Name (localhost:ynakam): Anonymous
-Password: <anything is OK>
-...
-and do something..	
+Password: <なんでもOK>
+> cd /var/ftp/pub
+> get test.txt
 \end{verbatim}
-And see log.
-\begin{verbatim}
-#auserch -m AVC
-\end{verbatim}
-Various accesses are denied. So you have to add policy that allows
-denied access.
-You can do it easily  by policy generation tool.
-Select {\it Generate Policy} from control panel, window like  figure
-\ref{fig:vsftpd-generate} will open. Usually, you do not have to change
-configuration, if you want more secure configuration, check {\it
-Generate more secure policy}, it will generate policy that uses detailed
-write permission, but you will need more time to complete configuration.
-To generate policy press {\it generate} button. Then result is  shown
-like figure \ref{fig:vsftpd-generate-result}. 
-If you want to add generated  policy, check check boxes, and if you want
-to allow to directory, use Glob button.
-In this case,  it is more efficient to allow access to /etc/vsftpd
-directory, so click Glob button twice.\\
-Filename  changes  /etc/vsftpd/vsftpd.conf  $\rightarrow$ /etc/vsftpd/*
-$\rightarrow$ /etc/vsftpd/**.\\
-In this case, configuration like \ref{fig:vsftpd-generate-save} will be
-saved. Click {\it Save and Apply} button.\\
-Test vsftpd again and use Policy Generation tool again, if you see
-nothing, then test in Enforcing mode. If it works, all done!. If not,
-add configuration by Policy Generation tool until it works.
+
+ここで、ログを見てみると（auserch -m AVCで見ることが出来ます)、様々なア
+クセスログが出ていることが分かります。ポリシー生成ツールでこれらを許可す
+る設定を追加していきます。
+ {\it ポリシーを生成} をコントロールパネルから選択すると、図
+ \ref{fig:vsftpd-generate}のような画面が開きます。
+通常は、デフォルトの設定のまま「ポリシーを生成」ボタンを押します。
+図 \ref{fig:vsftpd-generate-result}のように結果画面が開きます。
+追加したい設定についてはチェックボタンを押します。ディレクトリ丸ごとアク
+セス許可をしたい場合は「まとめて指定」を使います。
+今回の場合は、/etc/vsftpdディレクトリにまとめて設定を許可したほうが効率
+がいいので、/etc/vsftpd/vsftpd.confのところで、「まとめて指定」ボタンを
+使います。
+ファイル名は、  /etc/vsftpd/vsftpd.conf  $\rightarrow$ /etc/vsftpd/*
+$\rightarrow$ /etc/vsftpd/**のように変わっていきます\\
+
+さて、今回の例では図 \ref{fig:vsftpd-generate-save}のような設定が追加さ
+れることになります。 {\it セーブし設定を適用} を押して設定を反映します。\\
+再度vsftpdの動作確認をして、ポリシ生成ツールを使います。何も設定が生成さ
+れなくなったら、次はEnforcingモードでテストします。もし動作すれば、設定
+はおしまいです。そうでなければ、生成ツールでポリシを追加し、再度テストし
+ます。テスト、ポリシの生成をアプリケーションがEnforcingモードで動作する
+まで繰り返します。
 
 
 \begin{figure}

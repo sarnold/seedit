@@ -374,8 +374,7 @@ SELINUX=enforcing
        もっとも簡単な解決方法は、そのアプリケーションに対してのみ、
        SELinuxのアクセス制御が働かないようにすることです。
        セキュリティはもちろん落ちますが、SELinux全部を無効にするよりはマ
-       シといえます。 \ref{sec:unconfine}で紹介します。
-       
+       シといえます。 \ref{sec:unconfine}で紹介します。       
  \item ポリシーを修正する\\
        アプリケーションが、SELinuxのアクセス拒否のため動作しなかった場合、
        本来は、ポリシーを編集すべきです。 \ref{sec:addpolicy}で紹介します。
@@ -720,7 +719,55 @@ SELinuxのアクセス拒否のためにアプリケーションが動作しない、と判明したら
 してやる必要があります。
 SELinux Policy Editorでは、
 このような場合にポリシーを生成するためのツールがGUIおよびコマンドライン
-で用意されています。
+で用意されています。より具体的な例は、新規ドメイン作成とともに、
+\ref{sec:createdomain}章にて紹介します。
+
+\subsection{ポリシ生成の仕組み}
+ ポリシの生成はSELinuxのログを基にして行われます。 Permissiveモードでの
+ 動作確認の間に, SELinuxのログが取得されます。Permissiveモードとは、アク
+ セスがSELinuxによって拒否される場合、ログを取るだけのモードでした。
+ (SELinuxが原因で動作しない)アプリケーションを動作させるには、
+ 拒否されるアクセスを許可してやる必要があります。\\
+ 以下は、アクセス拒否ログの例です。このログを例に、ポリシ生成ツールがど
+ うやってポリシを生成するのかを見ていきます。
+\begin{verbatim}
+----
+time->Wed Apr 26 18:34:32 2006
+1: type=PATH msg=audit(1146090872.442:29): item=0 
+name="/etc/vsftpd/vsftpd.conf" flags=101  inode=584775 dev=03:03 
+mode=0100600 ouid=0 ogid=0 rdev=00:00
+type=CWD msg=audit(1146090872.442:29):  
+cwd="/etc/selinux/seedit/src/policy/simplified_policy"
+2: type=SYSCALL msg=audit(1146090872.442:29): arch=40000003 
+syscall=5 success=yes exit=3 a0=bfb04c52 a1=8800 a2=0 a3=8800 
+items=1 pid=13151 auid=4294967295 uid=0 gid=0 euid=0 suid=0 
+fsuid=0 egid=0 sgid=0 fsgid=0 comm="vsftpd" exe="/usr/sbin/vsftpd"
+3: type=AVC msg=audit(1146090872.442:29): avc:  denied  { read } 
+for  pid=13151 comm="vsftpd" name="vsftpd.conf" dev=hda3 
+ino=584775 scontext=user_u:system_r:ftpd_t 
+tcontext=system_u:object_r:default_t tclass=file
+----	
+\end{verbatim}
+３行目はSELinuxのアクセス拒否ログで， 「  ftpd\_tドメインが、
+vsftpd.confという名前のファイルを読もうとして拒否された」 という意味です.
+３行目から、以下のような設定を追加する必要があることが分かります。
+
+\begin{verbatim}
+allow vsftpd.conf r;
+\end{verbatim}
+これだけでは、vsftpd.confのフルパスを記述してないので、アクセス
+を許可できてません。しかし、３行目のログにはフルパス情報は書かれていませ
+ん。 フルパスを得るために、1行目のログを利用します。ここに、vsftpd.conf
+のフルパスは/etc/vsftpd/vsftpd.confと書かれています。
+1行目と３行目を組み合わせることで、以下を追加すればいいことが分かります。
+\begin{verbatim}
+allow /etc/vsftpd/vsftpd.conf r;	
+\end{verbatim}
+auditdサービスを起動していない場合、1行目のログは取得されません。つまり、
+フルパス情報がログに含まれないことを意味します。ですので、SELinux Policy
+Editorを使うときはauditdを使うことをお薦めします。\\
+ なお、auditdが動いてない場合は、locateコマンドを使ってフルパスを推測し
+ ますが、失敗することも多いです。
 
 \subsection{GUI(ポリシ生成ツール)}
 
@@ -733,51 +780,53 @@ SELinux Policy Editorでは、
 \caption{ポリシ生成ツール}\label{fig:vsftpd-generate-1}
 \includegraphics*{images/vsftpd-generate.png}
 \end{figure}
-Usually, you do not have to configure nothing.
-Press {\it Generate policy } button.
 
-
-What can be configured is shown below for reference.
+これは、ポリシ自動生成のための設定画面です。通常はデフォルトのままでかま
+いません。「ポリシーの生成」ボタンを押すことで、ポリシーが生成されます。\\
+なお、ここで設定可能な項目を参考のために解説します。\\
 \begin{itemize}
- \item Input\\
-       This is input source of SELinux access log. If auditd service is
-       running, choose audit.log. auditd service is not running choose
-       dmesg. dmesg contains less information than audit.log, so
-       accuracy of genarated policy is reduced. Therefore it is
-       recommended to enabled auditd service and select audit.log.
- \item Generate more secure policy\\
-       If checked, generator trys to generate more secure policy. In
-       current version, it trys to use detailed file write
-       permission(a,o,c,e,t). If not checked, those permissions are not
-       used, instead w permission is used in generated policy.
- \item Read All log\\ 
-  When checked, read all message from log input. If not input is read
-       only from last policy load(the place where load\_policy
-       permission is granted).
+ \item 入力\\
+       これは、SELinuxのアクセスログが記録される場所を設定します。auditd
+       が動いている時は、audit.logを選びます。そうでない場合は、dmesgを
+       選択します。自分でファイル名を指定することもできます。
+ \item セキュリティの高い設定を生成\\
+       これがチェックされると、ポリシ生成ツールは、よりセキュリティの高
+       い設定を生成しようとします。現バージョンでは、詳細書き込みパーミッ
+       ション(a,o,c,e,t)を使う設定を生成します。これをチェックしない場合
+       は、wパーミッションしか使いません。
+
+ \item 全てのログを読み込み\\
+       これをチェックすると、選択したログから全てのメッセージを入力とし
+       て読み込みます。
+       これをチェックしない場合は、最後の設定反映後(load\_policyが許可さ
+       れた後)のログのみを読み込み
+       ます。
  \item Skip search log\\
-       When checked, access denial for dir:search permission is
-       skipped. dir:search  often lead to unwanted output.
+       これをチェックすると，dir:searchパーミッションのアクセス拒否ログ
+       をスキップします。このパーミッションは余計な設定生成につながりや
+       すいからです。
 \end{itemize}
 
 
-\subsubsection{Examine result and add policy}
-
-After pressing {\it Generate policy } button,  policy is generated.
-It takes  some time. When finished, result is outputted in Result tab.
-Figure \ref{fig:vsftpd-generate-result-1} is example output.
+\subsubsection{結果を確認し、設定を実際に追加}
+{\it 設定を生成}　ボタンを押すと、ポリシーが生成されます。　しばらく時間
+がかかります。設定生成が完了すると、「結果」タブに結果が表示されます。\\
+図 \ref{fig:vsftpd-generate-result-1}は、生成された結果の例です。
 
 \begin{figure}
-\caption{Policy Generate result}\label{fig:vsftpd-generate-result-1}
+\caption{ポリシ生成結果}\label{fig:vsftpd-generate-result-1}
 \includegraphics*{images/vsftpd-generate-result.png}
 \end{figure}
+最初の行では、 {\it allownet -protocol tcp -port
+1024- server;} という設定をvsftpd\_tドメインに追加するかを聞いています。
+対応するアクセス拒否ログも一緒に表示されています。このポリシーを追加した
+い場合は、チェックボックスにチェックを入れます。\\
 
-First row is asking, do you want to add {\it allownet -protocol tcp -port
-1024- server;} to vsftpd\_t domain? And Log is access denial of SELinux,
-from that log policy is generated.
-If you want to  add policy, check check box.\\
-{\it Glob} button is very useful.You can allow access to all files in directories.
-For example, select row {\it allow /etc/vsftpd/vsftpd.conf r,s;}
-After clicking {\it Glob} button, the filename changes  like below.
+
+{\it まとめて指定} ボタンは便利な機能です。ディレクトリ単位でまとめてア
+クセス許可をすることができます。\\
+ {\it allow /etc/vsftpd/vsftpd.conf r,s;}を選択し、「まとめて指定」ボタ
+ ンを押していくと、以下のようにファイル名が変わっていきます。
 \begin{verbatim}
 /etc/vsftpd/vsftpd.conf ->
 /etc/vsftpd/* ->
@@ -799,50 +848,6 @@ The policy is added to domain, and policy is loaded to kernel.
 \end{figure}
 
 
-\subsection{How policy generator works?}
-Policy is generated from SELinux access log.
-In test in permissive mode, access log is obtained.
-In permissive mode, if access is denied by policy, it only takes log. To
-make application work, you have to allow denied access. \\
-
-Following is example of access denial log in audit.log.
-\begin{verbatim}
-----
-time->Wed Apr 26 18:34:32 2006
-1: type=PATH msg=audit(1146090872.442:29): item=0 
-name="/etc/vsftpd/vsftpd.conf" flags=101  inode=584775 dev=03:03 
-mode=0100600 ouid=0 ogid=0 rdev=00:00
-type=CWD msg=audit(1146090872.442:29):  
-cwd="/etc/selinux/seedit/src/policy/simplified_policy"
-2: type=SYSCALL msg=audit(1146090872.442:29): arch=40000003 
-syscall=5 success=yes exit=3 a0=bfb04c52 a1=8800 a2=0 a3=8800 
-items=1 pid=13151 auid=4294967295 uid=0 gid=0 euid=0 suid=0 
-fsuid=0 egid=0 sgid=0 fsgid=0 comm="vsftpd" exe="/usr/sbin/vsftpd"
-3: type=AVC msg=audit(1146090872.442:29): avc:  denied  { read } 
-for  pid=13151 comm="vsftpd" name="vsftpd.conf" dev=hda3 
-ino=584775 scontext=user_u:system_r:ftpd_t 
-tcontext=system_u:object_r:default_t tclass=file
-----	
-\end{verbatim}
-Line 3 means, {\it read access by ftpd\_t domain to filename vsftpd.conf is denied}.
-From line 3,  we can say that following should be added.\\\
-\begin{verbatim}
-allow vsftpd.conf r;
-\end{verbatim}
-
-However, full path for vsftpd.conf is not known. To obtain full path we
-use log in line 1. It says full path for vsftpd.conf is
-/etc/vsftpd/vsftpd.conf.
-By combining line 1 and 3 we can conclude that following should be
-added.
-\begin{verbatim}
-allow /etc/vsftpd/vsftpd.conf r;	
-\end{verbatim}
-If you are not running auditd service log in line 1 is not obtained. In
-other words, full path information is not included in log. That is why
-we recommend to run auditd in using SELinux Policy Editor.\\
-When  auditd is not running policy generator tries to obtain full path
-by locate command, but it often fails.
 
 
 
@@ -984,7 +989,9 @@ SELinuxのログにはフルパス情報は含まれてませんが、audit2spdlはフルパスを
 \end{enumerate}
 
 
-\section{新たにドメインを作成する}\label{sec:createdomainGUI}
+%%%!!!!注意、提示された設定をむやみやたらに追加しない
+
+\section{新たにドメインを作成する}\label{sec:createdomain}
 seeditでのポリシーの書き方を覚える最も良い方法は、新たなドメインを作成す
 る設定を試すことです。vsftp FTPサーバにftpd\_tドメインを付与する実例を元
 に、見ていきましょう。\\

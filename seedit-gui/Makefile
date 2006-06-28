@@ -6,7 +6,7 @@ SRC = seedit-gui-domain-manager.py seedit-gui-edit.py seedit-gui-generate-policy
 
 all:
 
-install:
+install: 
 	mkdir -p $(prefix)/share/icons/seedit
 	install -m 744 ./icons/*  $(prefix)/share/icons/seedit
 	mkdir -p $(prefix)/lib/seedit/ui

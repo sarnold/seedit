@@ -116,11 +116,25 @@ class seeditGeneratePolicyWindow(seeditCommon):
 		for key in  outputStr.keys():
 			list = outputStr[key]
 			log=""
+			samelog=0
 			for l in list:
 				domain = l[0]
 				allow = l[1]
-				log=log+l[2]
-				
+
+				tmp = l[2] ##To eleminate same log
+				tmp = re.sub("^type=AVC.*avc:","",tmp)
+				if re.search(tmp, log):
+					m = re.search("^type=AVC msg=audit\(.+\):",l[2])
+					if m:
+						samelog=samelog+1
+				else:
+					log=log+l[2]
+
+			if samelog>0:
+				samelog=_("%d samelog...") % (samelog)
+			else:
+				samelog=""
+			log =log+samelog			
 			result.append((domain,allow,log))
 
 		return result
@@ -417,7 +431,9 @@ class seeditGeneratePolicyWindow(seeditCommon):
 		window.connect('destroy', lambda w: gtk.main_quit())
 		vboxFrame = gtk.VBox()
 		window.add(vboxFrame)
-
+		menubar = self.initMenu(window)
+		vboxFrame.pack_start(menubar, False)
+	
 		notebook = gtk.Notebook()
 		notebook.set_tab_pos(gtk.POS_TOP)
 		self.mNotebook=notebook

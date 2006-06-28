@@ -61,6 +61,7 @@ class seeditEditWindow(seeditCommon):
     ui = '''<ui>
     <menubar name="MenuBar">
       <menu action="Help">
+        <menuitem action="Manual"/>
         <menuitem action="About"/>
       </menu>
      </menubar>
@@ -159,6 +160,8 @@ class seeditEditWindow(seeditCommon):
         self.actiongroup = actiongroup
 	actiongroup.add_actions([ ('About', gtk.STOCK_DIALOG_INFO,_("_About"), None,
                                   _('About'), self.showAbout),
+				  ('Manual', gtk.STOCK_HELP,_("_Help"), None,
+                                  _('Manual'), self.showManual),
                                  ('Help', None, _('_Help')),
 
 

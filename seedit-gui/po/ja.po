@@ -304,7 +304,7 @@ msgstr "%sを編集しています"
 
 #: seedit-gui-edit.py:437 seedit/ui/GUICommon.py:45
 msgid "_About"
-msgstr ""
+msgstr "このプログラムについて"
 
 #: seedit-gui-edit.py:438 seedit/ui/GUICommon.py:46
 msgid "About"
@@ -312,7 +312,7 @@ msgstr "このプログラムについて"
 
 #: seedit-gui-edit.py:439 seedit/ui/GUICommon.py:47
 msgid "_Help"
-msgstr ""
+msgstr "ヘルプ"
 
 msgid "_Save"
 msgstr "保存"

@@ -7,7 +7,9 @@ import os
 import sys
 import gettext
 import gobject
+import locale
 import threading
+import pwd
 sys.path.insert(0,"/usr/lib")
 from UILogic import *
 
@@ -19,6 +21,7 @@ class seeditCommon:
     ui = '''<ui>
     <menubar name="MenuBar">
       <menu action="Help">
+        <menuitem action="Manual"/>
         <menuitem action="About"/>
       </menu>
       
@@ -44,6 +47,8 @@ class seeditCommon:
         actiongroup.add_actions([
                                  ('About', gtk.STOCK_DIALOG_INFO,_("_About"), None,
                                   _('About'), self.showAbout),
+                                  ('Manual', gtk.STOCK_HELP,_("_Help"), None,
+                                  _('Manual'), self.showManual),
                                  ('Help', None, _('_Help')),
                                  ])
 
@@ -93,7 +98,37 @@ class seeditCommon:
     
     def notImplementedCallBack(self,w,data=None):
         self.showNotImplementedDialog()
+
+    def showManual(self,data=None):
+        argv=[]
+        argv.append("/usr/bin/firefox")
         
+        lang = locale.getlocale()[0]
+        if lang == "ja_JP":
+            uri = "http://seedit.sourceforge.net/doc/2.0/tutorial_jp/"
+        else:
+            uri = "http://seedit.sourceforge.net/doc/2.0/tutorial/"
+                
+        argv.append(uri)
+        
+
+        if os.environ.has_key("USERHELPER_UID"):
+            uidstr = os.environ["USERHELPER_UID"]
+            prevuid= os.getuid()
+            prevusername=  os.environ["USER"]
+            prevlogname= os.environ["LOGNAME"]
+            uid = int(uidstr)
+            username = pwd.getpwuid(uid)[0]
+            os.environ["USER"]=username
+            os.environ["LOGNAME"]= username
+        try:
+            gobject.spawn_async(argv)
+        except:
+            message =_("Failed to launch browser")
+            self.showMessageDialog(gtk.MESSAGE_ERROR,message)
+        os.environ["USER"]=prevusername
+        os.environ["LOGNAME"]= prevlogname
+            
     def showAbout(self,data=None):
         message = _("SELinux Policy Editor GUI\nVersion %s\n") % (self.mVersion) 
         message += _("All rights reserved (c) 2006 Yuichi Nakamura\n")

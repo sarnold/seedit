@@ -7,6 +7,7 @@ import gtk
 import sys
 import os
 import gettext
+import gobject
 sys.path.insert(0,"/usr/lib")
 from  seedit.ui.GUICommon import *
 from seedit.ui.UILogic import *
@@ -27,7 +28,7 @@ EDIT_COMMAND="/usr/sbin/seedit-gui-edit"
 LOAD_COMMAND="/usr/sbin/seedit-gui-load"
 
 class seeditMainWindow(seeditCommon):
-  
+
     def forkProgram(self,path):
         pid = os.fork()
         if(pid==0):

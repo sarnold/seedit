@@ -42,6 +42,8 @@ install:all
 	cp -r base_policy $(SEEDITCONFROOT)/converter/conf
 	cp -r macros $(SEEDITCONFROOT)/converter/conf
 	mv $(SEEDITCONFROOT)/converter/conf/base_policy/spdl_spec.xml.expand  $(SEEDITCONFROOT)/converter/conf/base_policy/spdl_spec.xml
+	mkdir -p $(sysconfdir)/pam.d
+	install -m 744 pam.d/seedit-gui.$(DISTRO)   $(sysconfdir)/pam.d/seedit-gui
 
 
 doc:./doc/permission_integrate.pdf

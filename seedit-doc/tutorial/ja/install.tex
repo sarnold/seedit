@@ -30,7 +30,9 @@ auditパッケージをインストールして、auditdを有効にしておくことを強く薦めます。
     \item ファイルを入手\\
 seedit-converter-2.0.(ディストリビューション
 	  名).rpm, seedit-policy-2.0.x-(ディストリビューション
-	  名).rpm, seedit-gui-2.0.x.rpm,seedit-doc-gui-2.0.x.rpmを以下のURLより入手します。
+	  名).rpm, seedit-gui-2.0.x.rpm,seedit-doc-2.0.x.rpmを以下のURL
+	より入手します.
+
 	X Window Systemが入ってない場合は、seedit-guiはダウンロードしま
 	せん
 \begin{verbatim}
@@ -67,6 +69,18 @@ seedit-loadコマンドは、SPDLで書かれたポリシ(Simplified Policy)を、
 	  のシステムに合わせたポリシを生成してくれます（このコマンドを入
 	  力する前は、rpmパッケージ開発者の環境に適したポリシが生成され
 	  てます。）。
+
+\item CentOS 4の注意点\\ 
+CentOS 4のSELinuxパッケージに含まれるラベル初期化コマンド(fixfiles)のバ
+	グにより、初期化がうまくいかないことがあります。
+具体的には、「今までにstrcitポリシーを使ったことがある」または「RBACを有
+	効にしたことがある」場合は、以下のコマンドで初期化する必要があり
+	ます。
+\begin{verbatim}
+# setfiles /etc/selinux/seedit/contexts/files/file_contexts  / -F -vv
+# reboot
+\end{verbatim}
+
 
  \item インストールは終わりです\\
 インストールされているか確認するには、\ref{sec:makesure}章を参照してくだ

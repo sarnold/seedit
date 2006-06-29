@@ -50,11 +50,20 @@ $ su
  \item Initialization\\ \label{item:init}
 When system restarts, some relabeling process run. It takes some
 	  minutes. When you log in, initialize policy and reboot again by following
-	  command.
+	  command. 
 \begin{verbatim}
 # seedit-load
 # reboot
 \end{verbatim}
+\item Notice about CentOS 4\\ 
+If you are using CentOS4, there is a bug in SELinux's relabel command.
+If you have installed strict policy, or have enabled RBAC before, 
+you have to run following command.
+\begin{verbatim}
+# setfiles /etc/selinux/seedit/contexts/files/file_contexts  / -F -vv
+# reboot
+\end{verbatim}
+
  \item That's it!\\
 You can make sure seedit is installed by following command.
 \begin{verbatim}

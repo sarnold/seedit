@@ -17,4 +17,5 @@ allow /var/lib/ntp/** r,w,s;
 allownet -protocol udp,tcp -port 123 client,server;
 allownet -protocol  udp -port 53 client;
 
+allow etc_runtime_t r,s;
 }

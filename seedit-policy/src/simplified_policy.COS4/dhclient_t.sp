@@ -17,12 +17,13 @@ allow /etc/sysconfig/network-scripts/** r,x,s;
 allow /usr/bin/**   x,r,s;
 allow /sbin/**   x,r,s;
 allow /bin/** r,x,s;
+allow /sbin/restorecon r,dx,s;
 
 #Readable
 allow /var/lock/subsys/** s,r;
 allow /etc/sysconfig/** r,s;
 allow /etc/selinux/config  s,r;
-
+allow /etc/initlog.conf s,r;
 
 allownet -protocol udp,tcp -port 68 server;
 allownet -protocol udp,tcp -port 67 client;
@@ -32,4 +33,7 @@ allowpriv netlink;
 allowpriv cap_net_admin;
 #Add by seedit-generator
 allownet -protocol raw use;
+
+
+
 }

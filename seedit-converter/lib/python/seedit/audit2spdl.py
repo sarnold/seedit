@@ -265,12 +265,23 @@ def makePathFromType(type):
         return ""
     return path
     
-
+def getInodeByStat(path):
+    if os.path.exists(path):
+        s = os.stat(path)
+        return s.st_ino
+    else:
+        return 0
 
 def updateInoPath(path,line):
     if path=="":
         return
+
+
     ino = getInode(line)
+    secclass = getEqualValue(line,"tclass")
+    if secclass == "dir": #when secclass dir,inode number is incorrect(it is for directory) in log
+        ino = getInodeByStat(path)
+    
     if ino:
         gInoPathDir[ino]=path
 def guessPathByInoDir(line):

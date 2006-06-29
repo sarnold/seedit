@@ -1,6 +1,6 @@
-
+DISTRO = FC5
 CC		= gcc
-CFLAGS		= -Wall -O2 -g -DDEBUG=1 -DDIRSEARCH=1
+CFLAGS		= -Wall -O2 -g -DDEBUG=1 -DDIRSEARCH=1 -D$(DISTRO)
 LD		= -ll -lselinux 
 INCLUDE		= -I/usr/include/selinux -I/usr/include/libxml2/ -I../include
 LDPATH		= -L/usr/lib

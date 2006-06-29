@@ -1,4 +1,5 @@
 SELINUXTYPE=seedit
+DISTRO=FC5
 sysconfdir = /etc
 prefix = /usr
 CONVERTER=/usr/local/bin/seedit-converter

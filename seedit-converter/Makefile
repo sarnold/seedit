@@ -1,4 +1,4 @@
-
+DISTRO=FC5
 
 all:
 	$(MAKE) -C lib

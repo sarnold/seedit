@@ -1,4 +1,4 @@
-MODULES="seedit-converter seedit-policy seedit-gui"
+MODULES="seedit-converter seedit-policy seedit-gui seedit-doc"
 VERSION=2.0.0.b7
 
 mkdir -p archive

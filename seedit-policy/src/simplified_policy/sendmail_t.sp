@@ -22,7 +22,7 @@ allow /var/spool/clientmqueue/** r,w,s;
 allow /etc/aliases.db r,w,s;
 allow /etc/aliases r,w,s;
 allow /root s;
-
+allow etc_runtime_t r,s;
 allow /usr/bin/procmail r,x,s;
 
 allow system_crond_tmp_t r,s,a;

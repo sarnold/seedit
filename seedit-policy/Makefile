@@ -58,6 +58,7 @@ install: policy dir
 	if [ ! -e $(POLICYROOT)/contexts/files/file_contexts.old ]; then \
 		cp $(POLICYROOT)/contexts/files/file_contexts $(POLICYROOT)/contexts/files/file_contexts.old;\
 	fi
+	rm $(SEEDITCONFROOT)/policy/all.sp
 	touch $(POLICYROOT)/users/system.users
 	touch $(POLICYROOT)/users/local.users
 

@@ -873,6 +873,13 @@ def getEqualValue(line,name):
 
     return value
 
+def parseSyscall(line):
+    result =0
+    s = getEqualValue(line, "syscall")
+    if s!="":
+        result = string.atoi(s)
+
+    return result
   
 def parseLine(line):
     """

@@ -1,13 +1,15 @@
 prefix=/usr
-INSTALLDIR = $(prefix)/share/doc/seedit
+INSTALLDIR = $(prefix)/share/doc/seedit/manual/ja
 
 all: html
 
 install: html
 	mkdir -p $(INSTALLDIR)
-	mv tutorial_jp $(INSTALLDIR)/manual/ja
+	install -m 644  tutorial_jp/* $(INSTALLDIR)
 
 html: dvi
+	rm -rf tutorial_jp
+	rm -rf install_jp
 	latex2html  -show_section_numbers -link 2 -split +1 tutorial.tex
 	latex2html  -show_section_numbers -link 2 -split +0 install.tex
 	mv tutorial tutorial_jp

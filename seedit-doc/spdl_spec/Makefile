@@ -4,8 +4,8 @@ INSTALLDIR = $(prefix)/share/doc/seedit
 all:html 
 
 install:  html
-	mkdir -p $(INSTALLDIR)
-	mv spel_spec $(INSTALLDIR)
+	mkdir -p $(INSTALLDIR)/spdl_spec
+	install -m 644 spdl_spec/* $(INSTALLDIR)/spdl_spec
 
 html: spdl_spec.dvi
 	latex2html  -show_section_numbers -link 2 -split +2 spdl_spec.tex

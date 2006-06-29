@@ -105,18 +105,25 @@ class seeditCommon:
         
         lang = locale.getlocale()[0]
         if lang == "ja_JP":
-            uri = "http://seedit.sourceforge.net/doc/2.0/tutorial_jp/"
+            helpFile="/usr/share/doc/seedit/manual/ja/index.html"
         else:
-            uri = "http://seedit.sourceforge.net/doc/2.0/tutorial/"
+            helpFile="/usr/share/doc/seedit/manual/en/index.html"
+        if os.path.exists(helpFile):
+            uri = "file://"+helpFile
+        else:
+            if lang == "ja_JP":
+                uri = "http://seedit.sourceforge.net/doc/2.0/tutorial_jp/"
+            else:
+                uri = "http://seedit.sourceforge.net/doc/2.0/tutorial/"
                 
         argv.append(uri)
         
-
+        prevusername=  os.environ["USER"]
+        prevlogname= os.environ["LOGNAME"]
+   
         if os.environ.has_key("USERHELPER_UID"):
             uidstr = os.environ["USERHELPER_UID"]
             prevuid= os.getuid()
-            prevusername=  os.environ["USER"]
-            prevlogname= os.environ["LOGNAME"]
             uid = int(uidstr)
             username = pwd.getpwuid(uid)[0]
             os.environ["USER"]=username

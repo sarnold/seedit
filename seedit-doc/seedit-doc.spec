@@ -15,7 +15,7 @@ BuildArch: noarch
 %setup -q
 
 %build
-make build
+
 %install
 rm -rf $RPM_BUILD_ROOT
 %makeinstall

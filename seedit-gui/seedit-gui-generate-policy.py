@@ -216,8 +216,9 @@ class seeditGeneratePolicyWindow(seeditCommon):
 		renderer=  gtk.CellRendererText()
 		renderer.set_property('editable', True)
 		renderer.connect( 'edited', self.allowEditedCallBack, model )
-		renderer.set_property('ellipsize', pango.ELLIPSIZE_END)
-
+		if hasattr(pango,"ELLIPSIZE_END"):
+			renderer.set_property('ellipsize', pango.ELLIPSIZE_END)
+		
 
 		
 		column = gtk.TreeViewColumn(header[1],renderer,text=2)

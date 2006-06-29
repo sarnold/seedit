@@ -13,6 +13,9 @@
 This document shows how to install SELinux Policy Editor.
 
 \section{Install from RPMs}\label{sec:rpm}
+Supported Platforms are Fedora Core5 and Cent OS 4.3(may work in Redhat
+Enterprize Linux 4).\\
+
 You can easily install from RPM
 \begin{enumerate}
  \item Install required package\\
@@ -103,7 +106,7 @@ and permissive mode(SELinux is effectively disabled).
 \section{Installing from source}
 \begin{enumerate}
  \item Obtain files\\
-Download seedit-converter-1.4.x.tgz and seedit-policy-1.4.x.tgz
+Download seedit-converter-2.0.x.tgz and seedit-policy-2.0.x.tgz
 From below URL.
 \begin{verbatim}
 http://sourceforge.net/project/showfiles.php?group_id=135756	
@@ -112,9 +115,11 @@ http://sourceforge.net/project/showfiles.php?group_id=135756
 \begin{verbatim}
 # tar czvf seedit-*.tgz
 # cd seedit-converter
-# make install
+# make install DISTRO=(FC5 or COS4)
 # cd .. 
 # cd seedit-policy
+# make install DISTRO=(FC5 or COS4)
+# cd seedit-gui
 # make install
 # touch /.autorelabel
 # reboot

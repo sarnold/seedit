@@ -8,6 +8,7 @@ URL: http://seedit.sourceforge.net/
 Source0: %{name}-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 BuildArch: noarch
+BuildRequires: latex2html
 
 %description
 

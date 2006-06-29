@@ -8,7 +8,7 @@ URL: http://sedit.sourceforge.net/
 Source0: %{name}-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 BuildArch: noarch
-Requires: seedit-converter >= 2.0.0, seedit-policy >= 2.0.0
+Requires: seedit-converter >= 2.0.0, seedit-policy >= 2.0.0,audit
 
 
 %description

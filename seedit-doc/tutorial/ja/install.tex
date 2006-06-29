@@ -11,7 +11,13 @@
 このドキュメントは、SELinux Policy Editorのインストール方法を解説してい
 ます。
 
+\section{動作環境}
+Fedora Core5およびCent OS 4.3での動作を確認しています。
+開発は、Fedora Core5ベースで行っています。
+
+
 \section{RPMから導入}  \label{sec:rpm}
+
 RPMパッケージを使うことで簡単にインストールできます
 \begin{enumerate}
  \item  必要なパッケージ\\
@@ -110,9 +116,12 @@ http://sourceforge.net/project/showfiles.php?group_id=135756
 \begin{verbatim}
 # tar czvf seedit-*.tgz
 # cd seedit-converter
-# make install
+# make install DISTRO=(FC5またはCOS4)
 # cd .. 
 # cd seedit-policy
+# make install DISTRO=(FC5またはCOS4)
+# cd ..
+# cd seedit-gui
 # make install
 # touch /.autorelabel
 # reboot

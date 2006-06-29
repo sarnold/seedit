@@ -26,8 +26,6 @@ install:
 	ln -sf /usr/bin/consolehelper  $(prefix)/bin/seedit-gui
 	mkdir -p $(sysconfdir)/security/console.apps
 	install -m 744 console.apps/seedit-gui $(sysconfdir)/security/console.apps
-	mkdir -p $(sysconfdir)/pam.d
-	install -m 744 pam.d/seedit-gui    $(sysconfdir)/pam.d
 	mkdir -p $(prefix)/share/applications/
 	install -m 744 desktop/seedit-gui.desktop $(prefix)/share/applications
 	mkdir -p $(prefix)/share/pixmaps/

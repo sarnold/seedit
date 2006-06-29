@@ -32,7 +32,12 @@ dir:
 
 policy:  
 	mkdir -p policy
-	cp -r src/simplified_policy policy
+	if [ -e src/simplified_policy.$(DISTRO) ];then \
+		cp -r src/simplified_policy.$(DISTRO) policy/simplified_policy;\
+	else \
+		cp -r src/simplified_policy policy/simplified_policy;\
+	fi
+
 
 	cp -r /etc/seedit/converter/conf/base_policy policy/
 	cp -r /etc/seedit/converter/conf/macros policy/

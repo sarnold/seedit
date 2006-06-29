@@ -75,11 +75,14 @@ class generatePolicyThread(threading.Thread):
 			data = (i,size)
 			gobject.idle_add(self.updateLabel, data)
 			rule = parseLine(line)
-			syscall = parseSyscall(line)
+			newsyscall = parseSyscall(line)
+			if newsyscall>0:
+				syscall = newsyscall
 			i = i+1
 			if self.mDialog.mSkipSearchFlag:
 				if rule and rule.has_key("secclass") and rule.has_key("permission") and syscall!=5:
 					#syscall 5 is open, for open system call, log is not skipped
+					print syscall
 					if rule["secclass"]=="dir" and "search" in rule["permission"]:
 						continue
 			if(rule):

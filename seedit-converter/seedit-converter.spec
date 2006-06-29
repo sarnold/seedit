@@ -37,6 +37,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/seedit-unconfined
 %{_bindir}/seedit-template
 %{_libdir}/seedit/*
+/etc/pam.d/seedit-gui
 %config /etc/seedit/converter
 
 %changelog

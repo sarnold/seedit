@@ -40,7 +40,6 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/icons/seedit/*
 /usr/share/applications/seedit-gui.desktop
 /usr/share/locale/*
-/etc/pam.d/seedit-gui
 /etc/security/console.apps/seedit-gui
 /usr/share/pixmaps/seedit-gui.png
 

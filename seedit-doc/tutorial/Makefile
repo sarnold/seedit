@@ -1,11 +1,12 @@
-INSTALLDIR=doc
+prefix=/usr
+INSTALLDIR = $(prefix)/share/doc/seedit/en
 
-all: html pdf
+all: html 
 
-install: tutorial.pdf html
+install: all
 	mkdir -p $(INSTALLDIR)
-	mv tutorial.pdf $(INSTALLDIR)/tutorial.pdf
-	mv tutorial $(INSTALLDIR)/tutorial
+	mv tutorial $(INSTALLDIR)/manual
+
 html: dvi
 	latex2html  -show_section_numbers -link 2 -split +1 tutorial.tex
 	latex2html  -show_section_numbers -link 2 -split +0 install.tex

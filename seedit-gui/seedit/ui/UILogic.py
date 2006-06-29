@@ -3,7 +3,7 @@ import os
 import sys
 import string
 import re
-import selinux
+
  
 from xml.dom.minidom import parse, parseString
 

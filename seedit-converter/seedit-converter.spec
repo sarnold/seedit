@@ -1,7 +1,7 @@
 %define distro FC5
 Summary: Compliler for simplified policy
 Name: seedit-converter
-Version: 2.0.0.b7
+Version: 2.0.0.rc1
 Release: %{distro} 
 License: GPL
 Group: System Environment/Base

@@ -1,0 +1,10 @@
+SELinux Policy EditorのドキュメントのREADME
+
+* manual
+マニュアルが格納されています。
+
+* spdl_spec
+Simplified Policy Description Language(SPDL)のリファレンスです。
+
+* rbac
+SELinux Policy EditorでRBACを使う方法です

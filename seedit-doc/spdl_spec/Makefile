@@ -1,11 +1,12 @@
-INSTALLDIR=doc
+prefix=/usr
+INSTALLDIR = $(prefix)/share/doc/seedit
 
-all:html spdl_spec.pdf
+all:html 
 
-install: spdl_spec.pdf html
+install:  html
 	mkdir -p $(INSTALLDIR)
-	mv spdl_spec.pdf $(INSTALLDIR)/spdl_spec.pdf
-	mv spel_spec $(INSTALLDIR)/simplified_policy_manual
+	mv spel_spec $(INSTALLDIR)
+
 html: spdl_spec.dvi
 	latex2html  -show_section_numbers -link 2 -split +2 spdl_spec.tex
 

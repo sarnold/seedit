@@ -1,6 +1,6 @@
-Summary: Documents for SELinux Policy Editor(packages seedit-*)
+Summary: Documents for SELinux Policy Editor
 Name: seedit-doc
-Version: 1.2.0
+Version: 2.0.0.b7
 Release: 1
 License: GPL
 Group: Documentation
@@ -26,9 +26,9 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root,-)
-/usr/share/doc/seedit-doc
+/usr/share/doc/seedit
 
 %changelog
-* Thu Aug 25 2005 Yuichi Nakamura <ynakam@gwu.edu> - doc-1
+* Wed Jun 28 2005 Yuichi Nakamura <ynakam@gwu.edu> - doc-1
 - Initial build.
 

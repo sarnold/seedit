@@ -1,18 +1,24 @@
-datadir=/usr/share
+prefix=/usr
+INSTALLPATH= $(prefix)/share/doc/seedit
 
-build:
-	rm -rf build
-	mkdir build
-	cp -r install build
-	cp -r manual build
-	cp -r tutorial build
-	cd simplified_policy/manual;\
-	make install INSTALLDIR=../../build;\
-	cd euc_jp;\
-	make install INSTALLDIR=../../../build
-
-install: build
-	mkdir -p $(datadir)/doc/seedit-doc
-	cp -r build/* $(datadir)/doc/seedit-doc
+all:
+	$(MAKE) -C tutorial
+	$(MAKE) -C tutorial/ja
+	$(MAKE) -C spdl_spec
+	$(MAKE) -C rbac
 
 
+install:all
+	mkdir -p $(INSTALLPATH) 
+	$(MAKE) -C tutorial install
+	$(MAKE) -C tutorial/ja install
+	$(MAKE) -C spdl_spec install
+	$(MAKE) -C rbac install
+	install -m 644 README $(INSTALLPATH)
+	install -m 644 README.ja $(INSTALLPATH)
+
+clean:
+	$(MAKE) -C tutorial clean
+	$(MAKE) -C tutorial/ja clean
+	$(MAKE) -C spdl_spec clean
+	$(MAKE) -C rbac clean

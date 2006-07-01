@@ -16,8 +16,17 @@ Requires: seedit-converter >= 2.0.0, checkpolicy,m4
 BuildRequires: seedit-converter >= 2.0.0
 
 %description
-Simplified policy for SELinux is packed.
-Simplified policy is converted into usual SELinux policy by seedit-converter.
+ Simplified Policy for SELinux. It is main component of SELinux Policy Editor. 
+Simplified Policy is described by syntax called SPDL. 
+It is converted by seedit-converter into normal SELinux policy.
+
+%package devel
+Summary: Sample policy of Simplified Policy for developpers. 
+Group: System Environment/Base
+Requires: seedit-converter
+
+%description devel
+Sample policy of Simplified Policy for developpers. It contains configuration using macros in template_macros.te
 
 %prep
 %setup -q -n seedit-policy-%{version}
@@ -40,7 +49,6 @@ if [ $1 = 1 ]; then
 	mv %{selinuxconf} %{selinuxconf}.orig
 	mv  %{selinuxconf}.tmp %{selinuxconf}
 	touch /.autorelabel
-
 fi
 
 if [ -e /etc/seedit/policy/sysadm_r.sp ]; then
@@ -76,3 +84,4 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Sat Jul 1 2006 Yuichi Nakamura<himainu-ynakam@miomio.jp> 2.0.0
 - Initial version
+

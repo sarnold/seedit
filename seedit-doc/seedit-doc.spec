@@ -11,6 +11,7 @@ BuildArch: noarch
 BuildRequires: latex2html
 
 %description
+HTML based documents of SELinux Policy Editor
 
 %prep
 %setup -q
@@ -30,6 +31,6 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/doc/seedit
 
 %changelog
-* Wed Jun 28 2005 Yuichi Nakamura <ynakam@gwu.edu> - doc-1
-- Initial build.
+* Sat Jul 1 2006 Yuichi Nakamura<himainu-ynakam@miomio.jp> 2.0.0
+- Initial version
 

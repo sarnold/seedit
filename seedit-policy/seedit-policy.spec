@@ -1,7 +1,7 @@
 %define type strict
 %define selinuxconf /etc/selinux/config
 %define distro FC5
-Summary: Sample policy of Simplified Policy
+Summary: Simplified Policy for SELinux
 #Name: seedit-policy-%{type}
 Name: seedit-policy
 Version: 2.0.0.rc1
@@ -16,14 +16,8 @@ Requires: seedit-converter >= 2.0.0, checkpolicy,m4
 BuildRequires: seedit-converter >= 2.0.0
 
 %description
-
-%package devel
-Summary: Sample policy of Simplified Policy for developpers. 
-Group: System Environment/Base
-Requires: seedit-converter
-
-%description devel
-Sample policy of Simplified Policy for developpers. It contains configuration using macros in template_macros.te
+Simplified policy for SELinux is packed.
+Simplified policy is converted into usual SELinux policy by seedit-converter.
 
 %prep
 %setup -q -n seedit-policy-%{version}
@@ -79,23 +73,5 @@ rm -rf $RPM_BUILD_ROOT
 %config /etc/seedit/policy
 
 %changelog
-* Tue Apr 18 2006 Yuichi Nakamura <ynakam@gwu.edu>
-1.4.0-test1
-* Wed Feb 27 2006 Yuichi Nakmaura <ynakam@gwu.edu>
-1.3.3
-* Wed Feb 1 2006 Yuichi Nakmaura <ynakam@gwu.edu>
-Small fix for XML support
-* Tue Jan 17 2006 Yuichi Nakamura <ynakam@gwu.edu>
-1.3.1 fix spdl_spec.xml to eleminate permission overlap
-* Fri Jan 13 2006 Yuichi Nakamura <ynakam@gwu.edu>
-1.3 
-* Tue Aug 23 2005 Yuichi Nakamura <ynakam@gwu.edu>
-1.2
-add devel package
-* Wed Jul 20 2005  Yuichi Nakamura <ynakam@gwu.edu> 
-1.1
-Add policy for X, cron.
-* Sun Jul 13 2005  Yuichi Nakamura <ynakam@gwu.edu> 
-1.0
-- Initial build.
-
+* Sat Jul 1 2006 Yuichi Nakamura<himainu-ynakam@miomio.jp> 2.0.0
+- Initial version

@@ -8,10 +8,11 @@ URL: http://sedit.sourceforge.net/
 Source0: %{name}-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 BuildArch: noarch
-Requires: seedit-converter >= 2.0.0, seedit-policy >= 2.0.0,audit
+Requires: seedit-converter >= 2.0.0, seedit-policy >= 2.0.0,audit,pygtk2
 
 
 %description
+X Window based GUI for SELinux Policy Editor
 
 %prep
 %setup -q
@@ -44,6 +45,6 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/pixmaps/seedit-gui.png
 
 %changelog
-* Sun Jun 18 2006 Yuichi Nakamura<himainu-ynakam@miomio.jp> 2.0.0b5
-Initial
+* Sat Jul 1 2006 Yuichi Nakamura<himainu-ynakam@miomio.jp> 2.0.0
+- Initial version
 

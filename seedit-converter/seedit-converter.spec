@@ -10,6 +10,7 @@ Source0: %{name}-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
 %description
+Compiler for simplified policy and utilities.
 
 %prep
 %setup -q
@@ -41,17 +42,6 @@ rm -rf $RPM_BUILD_ROOT
 %config /etc/seedit/converter
 
 %changelog
-* Tue Apr 18 2006 Yuichi Nakamura<ynakam@gwu.edu> 1.4.0
-* Wed Feb 23  2006 Yuichi Nakamura<ynakam@gwu.edu> 1.3.3
-* Wed Feb 1  2006 Yuichi Nakamura<ynakam@gwu.edu> 1.3.2
-XML support:seedit-export, seedit-import
-* Tue Jan 17 2006 Yuichi Nakamura<ynakam@gwu.edu> 1.3.1
-audit2spdl
-* Fri Jan 13 2006 Yuichi Nakamura<ynakam@gwu.edu> 1.3.0
-Support new file permissions
-* Tue Aug 30 2005 Yuichi Nakamura<ynakam@gwu.edu> 1.2.0
-Fixed some bugs.
-* Wed Jul 20 2005 Yuichi Nakamura<ynakam@gwu.edu> 1.1.0
-Cron support
-* Sun Jul 10 2005  Yuichi Nakamura <ynakam@gwu.edu> 1.0.0-1
-- Initial version for RPM package.
+* Sat Jul 1 2006 Yuichi Nakamura<himainu-ynakam@miomio.jp> 2.0.0
+- Initial version
+

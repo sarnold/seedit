@@ -41,6 +41,22 @@ if [ $1 = 1 ]; then
 	mv  %{selinuxconf}.tmp %{selinuxconf}
 	touch /.autorelabel
 
+	echo "/var/tmp/bootstrap.sh" >> /etc/rc.d/rc.local
+
+	# Create bootstrap.sh # Code related to bootstrap is from Yoichi Hirose <yhirose@users.sourceforge.jp>
+	cat << __EOF >/var/tmp/bootstrap.sh
+
+#!/bin/sh
+/usr/sbin/seedit-load -v
+cat /etc/rc.d/rc.local | sed -e 's!/var/tmp/bootstrap.sh!!g' > /etc/rc.d/rc.local.tmp
+rm -f /etc/rc.d/rc.local
+mv /etc/rc.d/rc.local.tmp /etc/rc.d/rc.local
+chmod 0755 /etc/rc.d/rc.local
+init 6
+
+__EOF
+	chmod 755 /var/tmp/bootstrap.sh
+
 fi
 
 if [ -e /etc/seedit/policy/sysadm_r.sp ]; then

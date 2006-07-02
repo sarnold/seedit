@@ -1,11 +1,11 @@
 %define type strict
 %define selinuxconf /etc/selinux/config
-%define distro COS4
+%define distro FC5
 Summary: Simplified Policy for SELinux
 #Name: seedit-policy-%{type}
 Name: seedit-policy
 Version: 2.0.0.rc1
-Release: %{distro}.4
+Release: 2.%{distro}
 License: GPL
 Group:  System Environment/Base
 URL:  http://seedit.sourceforge.net/
@@ -52,6 +52,7 @@ if [ $1 = 1 ]; then
 cat /etc/rc.d/rc.local | sed -e 's!/var/tmp/bootstrap.sh!!g' > /etc/rc.d/rc.local.tmp
 rm -f /etc/rc.d/rc.local
 mv /etc/rc.d/rc.local.tmp /etc/rc.d/rc.local
+/usr/sbin/seedit-restorecon  /etc/rc.d/rc.local -v
 chmod 0755 /etc/rc.d/rc.local
 init 6
 

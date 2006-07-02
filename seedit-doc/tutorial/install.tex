@@ -19,18 +19,10 @@ Enterprize Linux 4).\\
 You can easily install from RPM
 \begin{enumerate}
  \item Install required package\\
-       You need checkpolicy package.
+       You need checkpolicy,audit package.
 \begin{verbatim}
-# yum install checkpolicy		
+# yum install checkpolicy audit
 \end{verbatim}
-And it is highly recommended to install audit package, and enable
-       auditd.
-\begin{verbatim}
-#yum install audit
-#chkconfig auditd on
-#/etc/init.d/auditd start
-\end{verbatim}
-
 
     \item Obtain files\\
 Download seedit-converter-2.0.x.rpm and seedit-policy-2.0.x-(your
@@ -52,12 +44,11 @@ $ su
 \end{verbatim}
  \item Initialization\\ \label{item:init}
 When system restarts, some relabeling process run. It takes some
-	  minutes. When you log in, initialize policy and reboot again by following
-	  command. 
-\begin{verbatim}
-# seedit-load
-# reboot
-\end{verbatim}
+	  minutes. \\
+After install, auditd service is also running. auditd service is to take
+     detailed  SELinux log in /var/log/audit/audit.log.
+
+
 \item Notice about CentOS 4\\ 
 If you are using CentOS4, there is a bug in SELinux's relabel command.
 If you have installed strict policy, or have enabled RBAC before, 
@@ -138,7 +129,17 @@ And
 #touch /.autorelabel
 #reboot	
 \end{verbatim}
+
+At first login do following.
+\begin{verbatim}
+#seedit-restorecon -R /etc
+#seedit-load 
+#reboot	
+\end{verbatim}
+
 \end{enumerate}
+
+
 
 \section{Make sure seedit is installed}\label{sec:makesure}
 

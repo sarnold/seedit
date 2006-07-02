@@ -21,17 +21,12 @@ Fedora Core5およびCent OS 4.3での動作を確認しています。
 RPMパッケージを使うことで簡単にインストールできます
 \begin{enumerate}
  \item  必要なパッケージ\\
-checkpolicyパッケージが必要です。以下でインストールしておきます。
+checkpolicy,auditパッケージが必要です。以下でインストールしておきます
+	(CentOSではデフォルトで入っています)。
 \begin{verbatim}
-# yum install checkpolicy	
+# yum install checkpolicy audit
 \end{verbatim}
 
-auditパッケージをインストールして、auditdを有効にしておくことを強く薦めます。
-\begin{verbatim}
-#yum install audit
-#chkconfig auditd on
-#/etc/init.d/auditd start
-\end{verbatim}
 
     \item ファイルを入手\\
 seedit-converter-2.0.(ディストリビューション
@@ -62,19 +57,14 @@ $ su
 # reboot
 \end{verbatim}
  \item 初期化\\ \label{item:init}
-再起動時、ファイルのラベルが付与され直しされます。数分かかります。無事ログイン
-	  できたら、以下のコマンドで初期化作業をして下さい。
-\begin{verbatim}
-# seedit-load
-# reboot
-\end{verbatim}
-seedit-loadコマンドは、SPDLで書かれたポリシ(Simplified Policy)を、
-	  SELinuxのポリシに変換し、カーネルに読み込ませたり、ファイルと
-	  タイプの関連付けを直したりするコマンドです。このコマンドを入力
-	  することで、自分
-	  のシステムに合わせたポリシを生成してくれます（このコマンドを入
-	  力する前は、rpmパッケージ開発者の環境に適したポリシが生成され
-	  てます。）。
+再起動時、ファイルのラベルが付与され直しされます。数分かかります。途中で
+	画面が青くなっても問題はありません。しばらく待てば、自動的にリブー
+	トされます。無事ログイン
+	  できたら、完了です。\\
+なお、auditdサービスがデフォルトで起動しています。これは詳細なSELinuxの
+	ログを/var/log/audit/audit.logに取ることができ、ポリシ自動生成機
+	能をより便利に使うために必要ですので、このサービスは有効にしておくことを強く薦めます。
+
 
 \item CentOS 4の注意点\\ 
 CentOS 4のSELinuxパッケージに含まれるラベル初期化コマンド(fixfiles)のバ
@@ -104,7 +94,7 @@ CentOS 4のSELinuxパッケージに含まれるラベル初期化コマンド(fixfiles)のバ
 	  モードで起動します。
 \end{enumerate}
 
-\subsection{ソースからのインストール方法}
+\section{ソースからのインストール方法}
 \begin{enumerate}
  \item Obtain files\\
  seedit-converter-2.0.x.tgz and seedit-policy-2.0.x.tgzを以下からダウン
@@ -140,9 +130,19 @@ SELINUXTYPE=targeted
 #touch /.autorelabel
 #reboot	
 \end{verbatim}
+ログインしたら、以下のコマンドで初期化作業を行います。
+\begin{verbatim}
+#restorecon -R /etc
+#seedit-load -v
+#chkconfig auditd on
+#/etc/init.d/auditd start
+#reboot	
+\end{verbatim}
+seedit-loadコマンドは、SPDLで書かれたポリシ(Simplified Policy)を、 SELinuxのポリシに変換し、カーネルに読み込ませたり、ファイルと タイプの関連付けを直したりするコマンドです。このコマンドを入力 することで、自分 のシステムに合わせたポリシを生成してくれます（このコマンドを入 力する前は、rpmパッケージ開発者の環境に適したポリシが生成され てます。）。
+
 \end{enumerate}
 
-\subsection{何が影響されるか？}
+\section{何が影響されるか？}
 インストールによって、
 /etc/selinux/configが以下のように編集されます。
 \begin{verbatim}

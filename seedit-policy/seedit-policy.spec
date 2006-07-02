@@ -47,6 +47,7 @@ if [ $1 = 1 ]; then
 	cat << __EOF >/var/tmp/bootstrap.sh
 
 #!/bin/sh
+/usr/sbin/seedit-restorecon -R /etc -v
 /usr/sbin/seedit-load -v
 cat /etc/rc.d/rc.local | sed -e 's!/var/tmp/bootstrap.sh!!g' > /etc/rc.d/rc.local.tmp
 rm -f /etc/rc.d/rc.local

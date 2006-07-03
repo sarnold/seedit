@@ -89,6 +89,15 @@ Following 3 roles are defined by default.
 	       login from X, you have to allow to use sysadm\_r, but be
 	       careful, because behavior of such users are not confined
 	       by SELinux.
+	\item Configure to use sysadm\_r\\
+	       Usually, you will not login root user directly. You
+	       will use su, you have to allow some user to use sysadm\_r.
+	       For example to allow user ynakam to use sysadm\_r, add following after {\it
+	       user root;} in /etc/seedit/policy/sysadm\_r.sp.\\
+	       \begin{verbatim}
+		user ynakam;
+	       \end{verbatim}
+
        \end{enumerate}
 \end{itemize}
 

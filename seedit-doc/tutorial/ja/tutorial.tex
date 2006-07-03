@@ -38,7 +38,7 @@ SELinuxの難しさはポリシーの設定にあります。ポリシーが難しい理由は以下が
 \section{SELinux Policy Editor(seedit)とは？}
 \subsection{概略}
 SELinux Policy Editor(略称seedit)は、SELinuxを簡単にするツールです。
-seeditは、Simplified Policy(単純化ポリシー)と、Simplified Policy周辺ツー
+seeditは、Simplified Policy(単純化ポリシー)と、GUIなどSimplified Policy周辺ツー
 ルから成り立つツールです。\\
 最も重要な要素はSimplified Policyです。
 Simplified Policyとは、Simplified Policy Description Language(単純化ポリ
@@ -76,12 +76,14 @@ SELinux Policy Editorの元となるバージョンは、日立ソフトウェアエンジニア
 
 \subsection{seeditの限界}
 seeditは、到達できるセキュリティレベルに限界があります。
-Simplified Policyは、情報フロー分析が不可能です。
+Simplified Policyの、情報フロー分析可能性が証明されていません。
 「ポリシーは、形式的（数学的）
 に分析可能であるべきである」と考える人は、seeditを使ってはいけません。
-SELinuxのstrictポリシーを頑張って使ってください。
-情報フロー分析可能なSimplified Policyについては、現在考察を進めていると
-ころです。
+SELinuxのstrictポリシーを頑張って使ってください。\\
+Simplified Policyから生成されるSELinuxのポリシーを分析すれば、情報フロー
+分析を可能かもしれません。ラベル付けのルールも、情報フロー分析に気をつかっ
+てはいます。しかし、情報科学的に証明された物ではありません。
+
 
 
 \section{SELinuxの背景知識}
@@ -123,18 +125,20 @@ SELinuxのstrictポリシーを頑張って使ってください。
        enforcing/permissiveモードの切り替えには、{\it
        setenforce} コマンドを使います。使い方は、後で紹介します。
  \item SELinuxのアクセス拒否ログ\\
-       SELinuxによってアクセスが拒否された場合、Fedora Core5の場合、
+       SELinuxによってアクセスが拒否された場合、auditdサービスが動作して
+       いる場合は、 /var/log/audit/audit.logにログアクセス拒否ログが出
+       力されます。一方、auditdサービスが動作していない場合は、
        /var/log/messagesにアクセス拒否ログが出ます。dmesgコマンドでも閲
-       覧可能です。Fedora Core4や、auditdサービスが動作している場合は，
-       /var/log/audit/audit.logにログが出力されることに気を付けます。
+       覧可能です。
 \end{enumerate}
 
 
 
 \section{GUIの概要}
-GUIを使うことで、より簡単にSELinuxを使うことができます。
+seeditのGUIを使うことで、より簡単にSELinuxを使うことができます。
 X Window Systemから、「seedit-gui」または「デスクトップ→管理→
-SELinux Policy Editor」または、コンソールから「seedit-gui」とすることでGUIが起動
+SELinux Policy Editor」(Cent OSの場合は「アプリケーション」→「システム
+設定」→「SELinux Policy Editor」)または、コンソールから「seedit-gui」とすることでGUIが起動
 します。
 すると、
  {\it SELinux Policy Editor コントロールパネル}という画面が開きます。
@@ -165,7 +169,7 @@ SELinux Policy Editor」または、コンソールから「seedit-gui」とすることでGUIが起動
        \begin{itemize}
 	\item SELinuxのアクセスログからポリシーを生成
        \end{itemize}
- \item ポリシーを編集(section \ref{sec:guieditor})
+ \item ポリシーを編集(\ref{sec:guieditor}節)
        \begin{itemize}
 	\item テキストベースのエディタからポリシーを編集。
        \end{itemize}
@@ -196,7 +200,7 @@ file\_contextsファイル)に変換されます。変換後のポリシーは
 
 \subsection{デフォルトで用意されているSimplified Policy}
 デフォルトでインストールされているSimplified Policyは、「targetedポリシー」
-相当のもので、設定が甘いです。具体的に以下のようになってます。
+相当のもので、設定が緩い部分があります。具体的に以下のようになってます。
 \begin{itemize}
  \item 選択されたデーモンプロセスだけが守られており、SELinuxによって制限
        されないプロセスの存在を許容\\
@@ -222,7 +226,7 @@ unconfinedドメインが割り当てられたアプリケー
 ティ上重要になってきます。
 
 \subsection{システムの状況把握(GUI)}\label{sec:seedit-status}
-システムの状況を把握するために、 {\i ステータス} をコントロールパネルか
+システムの状況を把握するために、 {\it ステータス} をコントロールパネルか
 ら選択します。{\it seedit ステータスビューア} というウィンドウが開きます。
 
 
@@ -291,9 +295,11 @@ PID, プロセス, ドメイン、をクリックすることで、それぞれの項目で結果をソー
 avahi-daemon, rpc.statdなどにUnconfinedドメインが割り当てられていること
 が分かります。これらのサービスは使わないならば、停止すべきでしょう。使う
 ならば、ドメインを割り当てるべきです。
+\clearpage
 
 \subsection{システムの状況把握(seedit-unconfinedコマンド)}
-seedit-unconfinedコマンドは、rootユーザーになってから使います。
+コマンドラインからもシステムの状況を把握可能です。seedit-unconfinedコマ
+ンドを使います。seedit-unconfinedコマンドは、rootユーザーになってから使います。
 \subsubsection{動作中のプロセスのポリシー適用状況を確認}
 
 「seedit-unconfined -e」にて、動作中のプロセスのポリシー適用状況を確認で
@@ -397,11 +403,10 @@ GUIおよびコマンドから作業することができます。
 GUIから作業するには、 コントロールパネルから{\it ドメインを管理}を選択し
 ます。\\
  {\it seedit
-ドメイン・ロール管理}というウィンドウが開きます。 {\it ドメインを削除}タ
-ブを選択します。
+ドメイン・ロール管理}というウィンドウが開きます(図\ref{fig:manage-delete})。 {\it ドメインを削除}タブを選択します。
 
 \begin{figure}
-\caption{Unconfine application}\label{fig:manage-delete}
+\caption{ドメイン管理ツール}\label{fig:manage-delete}
 \includegraphics*{images/manage-delete.png}
 \end{figure}
 
@@ -440,6 +445,7 @@ Unconfined(initrc\_t)} が表示されます。\\
  \item mv /etc/seedit/policy/extras/{\it ドメインの名前}.sp
        /etc/seedit/policy/{\it ドメインの名前}.sp
  \item seedit-load
+ \item ドメインを削除したサービスを再起動
 \end{enumerate}
 この方法の良い点は，変換後のSELinuxのポリシーのサイズが小さくなることぐ
 らいです。
@@ -651,7 +657,7 @@ allowという書式を使って、ファイル名とパーミッションが記述されています。
 \subsubsection{ネットワークアクセス制御を設定:allownet}
 ネットワークに関連するアクセス制御も可能です。
 ポート番号を使ってサーバーとして振る舞う権限、クライアントとしてポートに
-接続する権限を設定可能です{\footnote ネットワークインターフェースやIPア
+接続する権限を設定可能です\footnote{ネットワークインターフェースやIPア
 ドレスの利用制御も可能ですが、これ
 らはcommon-relaxed.spでデフォルト許可されています}。
 10行目では、httpd\_tドメインがTCP80,443ポートを使ってサーバーとして振る
@@ -659,7 +665,8 @@ allowという書式を使って、ファイル名とパーミッションが記述されています。
 もし、MySQLサーバー(TCP 3306)に接続したいなら、以下のように設定します。
 allownet -protocol tcp -port 3306 client;\\
 ポート番号の指定としては、 -1023, 1024-, * という表記が可能です。
- -1023は全てのWellknownポートです。1024-は、1024以上のポート番号、*は全
+ -1023は全てのWellknownポート(他ドメインで使っているポートは除く)です。
+ 1024-は、1024以上のポート番号(他ドメインで使っているポートは除く)、*は全
  てのポート番号を意味します。
 
 \subsubsection{他の特権を設定する:allowpriv}
@@ -722,6 +729,8 @@ allownet -protocol tcp -port 80 server;
 \includegraphics*{images/edit-network.png}
 \end{figure}
 
+\clearpage
+
 \section{ポリシーを追加する}\label{sec:addpolicy}
 \subsection{Permissiveモードで問題切り分け}
 SELinuxのアクセス拒否のためにアプリケーションが動作しない、と判明したら
@@ -777,11 +786,10 @@ allow vsftpd.conf r;
 allow /etc/vsftpd/vsftpd.conf r;	
 \end{verbatim}
 auditdサービスを起動していない場合、1行目のログは取得されません。つまり、
-フルパス情報がログに含まれないことを意味します。ですので、SELinux Policy
+フルパス情報がログに含まれないことを意味します。auditdが動いてない場合は、locateコマンドを使ってフルパスを推測しますが、失敗することも多いです。
+ですので、SELinux Policy
 Editorを使うときはauditdを使うことをお薦めします。\\
- なお、auditdが動いてない場合は、locateコマンドを使ってフルパスを推測し
- ますが、失敗することも多いです。
-
+ 
 \subsection{GUI(ポリシ生成ツール)}
 
 \subsubsection{ツールを起動}
@@ -864,9 +872,6 @@ Editorを使うときはauditdを使うことをお薦めします。\\
 \end{figure}
 
 
-
-
-
 \subsection{コマンドライン(audit2spdlコマンド)}
 audit2spdlというコマンドを使うことでも、ポリシー生成を行うことができます。
 使いかたは、以下のようになります。
@@ -888,7 +893,7 @@ audit2spdlコマンドは、SELinuxのアクセス拒否ログを、Simplified Policyに変
 を簡単に追加できます。以下が、出力例です。
 
 \begin{verbatim}
-#audit2spdl -dl
+#audit2spdl -al
 .... It takes some time...
 -------------------------
 #SELinux deny log:
@@ -1000,9 +1005,19 @@ SELinuxのログにはフルパス情報は含まれてませんが、audit2spdlはフルパスを
        得るため様々な作業を行っています。それにも関らず失敗することもあ
        ります。auditdサービスを起動しておくことで、フルパスを得る可能性
        を高めることができます。
-
-
 \end{enumerate}
+
+\subsection{ポリシ生成の諸注意}
+\begin{itemize}
+ \item chrootしているアプリケーションではフルパスがうまく生成されないこ
+       とも\\
+       例えば、vsftpdは、/var/ftpにchrootします。/var/ftp以下のファイル
+       にアクセスし、ポリシ生成をした時、
+       allow /pub r,s;のようなポリシが生成されますが、ファイル名が正しく
+       ありません。実際は、/var/ftp/pubと記述しなくてはいけません。
+
+
+\end{itemize}
 
 
 %%%!!!!注意、提示された設定をむやみやたらに追加しない
@@ -1017,7 +1032,10 @@ seeditでのポリシーの書き方を覚える最も良い方法は、新たなドメインを作成す
  \item ドメインが正しく付与されることを確認
  \item テスト動作とポリシーの追加
 \end{enumerate}
-
+vsftpdをインストールしていない場合は、以下でインストールします。
+\begin{verbatim}
+#yum install vsftpd
+\end{verbatim}
 
 \subsection{GUIから新規ドメインを設定}\label{sec:createdomainGUI}
 vsftp\_t ドメインを作成し、Anonymous FTPサーバとして動作するのに必要な設
@@ -1075,6 +1093,7 @@ allownet -protocol tcp -port 21 server;
 
 
 %% chroot環境でのパス提示の注意
+\clearpage
 
 \subsubsection{ドメインの確認}
 Permissiveモードに切り替え、vsftpdを起動し、そのドメインが「vsftpd\_t」
@@ -1136,6 +1155,7 @@ $\rightarrow$ /etc/vsftpd/**のように変わっていきます\\
 \includegraphics*{images/vsftpd-generate-save.png}
 \end{figure}
 
+\clearpage
 \subsection{コマンドラインからドメイン作成}
 \subsubsection{テンプレートとなる設定を作成}
 seedit-templateコマンドを使うことで、テンプレートとなる設定を作成できま
@@ -1235,7 +1255,9 @@ allow /etc/vsftpd  s;
 -------------------------
 
 #SELinux deny log:
-type=AVC msg=audit(1148486747.277:30): avc:  denied  { append } for  pid=11761 comm="vsftpd" name="xferlog" dev=hda3 ino=163412 scontext=user_u:system_r:ftpd_t
+type=AVC msg=audit(1148486747.277:30): avc:  denied  
+{ append } for  pid=11761 comm="vsftpd" name="xferlog" 
+dev=hda3 ino=163412 scontext=user_u:system_r:ftpd_t
 tcontext=system_u:object_r:var_log_t tclass=file
 #Suggested configuration
 File ftpd_t.sp:

@@ -1,5 +1,5 @@
-MODULES="seedit-converter seedit-policy"
-VERSION=2.0.0.rc1
+VERSION=2.0.0
+RELEASE=1
 DISTRO=FC5
 
 mkdir -p archive/source
@@ -11,14 +11,14 @@ rpmbuild -ta seedit-policy-$VERSION.tar.gz
 rpmbuild -ta seedit-gui-$VERSION.tar.gz 
 rpmbuild -ta seedit-doc-$VERSION.tar.gz 
 
-mv ~/rpm/RPMS/i386/seedit-converter-$VERSION-$DISTRO.i386.rpm ./RPM
-mv ~/rpm/RPMS/noarch/seedit-policy-$VERSION-$DISTRO.noarch.rpm ./RPM
-mv ~/rpm/RPMS/noarch/seedit-gui-$VERSION-1.noarch.rpm ./RPM
-mv ~/rpm/RPMS/noarch/seedit-doc-$VERSION-1.noarch.rpm ./RPM
-mv ~/rpm/SRPMS/seedit-converter-$VERSION-$DISTRO.src.rpm ./source
-mv ~/rpm/SRPMS/seedit-policy-$VERSION-$DISTRO.src.rpm ./source
-mv ~/rpm/SRPMS/seedit-gui-$VERSION-1.src.rpm ./source
-mv ~/rpm/SRPMS/seedit-doc-$VERSION-1.src.rpm ./source
+mv ~/rpm/RPMS/i386/seedit-converter-$VERSION-$RELEASE.$DISTRO.i386.rpm ./RPM
+mv ~/rpm/RPMS/noarch/seedit-policy-$VERSION-$RELEASE.$DISTRO.noarch.rpm ./RPM
+mv ~/rpm/RPMS/noarch/seedit-gui-$VERSION-$RELEASE.noarch.rpm ./RPM
+mv ~/rpm/RPMS/noarch/seedit-doc-$VERSION-$RELEASE.noarch.rpm ./RPM
+mv ~/rpm/SRPMS/seedit-converter-$VERSION-$RELEASE.$DISTRO.src.rpm ./source
+mv ~/rpm/SRPMS/seedit-policy-$VERSION-$RELEASE.$DISTRO.src.rpm ./source
+mv ~/rpm/SRPMS/seedit-gui-$VERSION-$RELEASE.src.rpm ./source
+mv ~/rpm/SRPMS/seedit-doc-$VERSION-$RELEASE.src.rpm ./source
 
 
 

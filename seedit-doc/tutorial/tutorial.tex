@@ -90,7 +90,7 @@ Policy Editor.
 You can also launch  GUI, by typing seedit-gui.\\
 You will see window {\it SELinux Policy Editor Control Panel}.
 In the control panel, you will see icons(you will see buttons instead of
-icons in CentOS 4) like figure \ref{fig:controlpanel}.\\
+icons in Cent OS 4) like figure \ref{fig:controlpanel}.\\
 
 \begin{figure}[h]
 \caption{SELinux Policy Editor Control Panel}\label{fig:controlpanel}
@@ -98,13 +98,13 @@ icons in CentOS 4) like figure \ref{fig:controlpanel}.\\
 \end{figure}
 
 By double-clicking icon, management windows  open. 
-What you can do by double-cliking icons is summarized in following.
+What you can do by double-clicking icons is summarized in following.
 \begin{itemize}
  \item Status\\
-       The usage is shonw in section \ref{sec:seedit-status}.
+       The usage is shown in section \ref{sec:seedit-status}.
        \begin{itemize}
 	\item See status of SELinux, such as SELinux mode, domains for
-	      runnning  process, domains for network process.
+	      running  process, domains for network process.
 	\item Change SELinux mode
        \end{itemize}
  \item Manage Domain
@@ -164,7 +164,7 @@ Figure \ref{fig:status-selinux} is screenshot.
 \includegraphics{images/status-selinux.png}
 \end{figure}
 
-By {\it seedit Installed? Yes}, you can know seedit is sucessfully
+By {\it seedit Installed? Yes}, you can know seedit is successfully
 installed.
 From {\it Current mode}, you can see current mode is permissive mode.
 You can change current mode from this box, select {\it Enforcing} and
@@ -202,7 +202,7 @@ Fig \ref{fig:status-network} is example output.
 \caption{Check domain of network processes}\label{fig:status-network}
 \includegraphics*{images/status-network.png}
 \end{figure}
-From above, You have to be especially careful to service whose domamin
+From above, You have to be especially careful to service whose domain
 is  unconfined.
 If you create domain, you can confine it, or you may decide not to run
 the service.
@@ -317,11 +317,11 @@ line.\\
 
 
 \subsubsection{Remove domain}
-Another way to unconfine apolication is to remove configuration file for
+Another way to unconfine application is to remove configuration file for
 domain. The procedure is following.
 \begin{enumerate}
  \item Select domain which you want to disable
- \item Select radio button {\it Permanentlly}
+ \item Select radio button {\it Permanently}
  \item Press  Apply button
 \end{enumerate}
 To  confine application again,  you have to do it by hand.
@@ -525,7 +525,7 @@ By selecting {\it Edit Policy} from control panel, you can launch policy Editor.
 From {\it Open} icon, you can select domain.
 For example, when you open httpd\_t domain, you can see like figure \ref{fig:edit}.
 You can  edit policy like text editor.\\
-By {\it Save} button, you can save it and apply editted policy, policy
+By {\it Save} button, you can save it and apply edited policy, policy
 load is automatically done.\\
 {\it Reload }  button read configuration file for domain  again, it is
 useful when you edit policy from another tool(such as generator).\\
@@ -1229,7 +1229,7 @@ You can configure like following.
        allow /etc/init.d/httpd r;\\
        is ignored(init.d is symbolic link to rc.d/init.d).
  \item Hardlink\\
-       In Linux system, contents of file can be refered by multiple name
+       In Linux system, contents of file can be refereed by multiple name
        using hard link. Hardlink is rarely used recent distro, but you
        have to note about this if you want to preserve security.\\
        In SPDL, following rule exists about hard link.\\
@@ -1238,7 +1238,7 @@ You can configure like following.
        For example, /etc/shadow and /var/chroot/etc/shadow is hardlinked,
        and /etc/shadow exists originally, to access contents of
        /etc/shadow, you have to use file name /etc/shadow. Configuration
-       using /var/chroot/etc/shadow will be igonored. 
+       using /var/chroot/etc/shadow will be ignored. 
        If some domain(assume foo\_t ) want to read
        /var/chroot/etc/shadow, you have to configure {\it allow
        /etc/shadow r;}\\
@@ -1247,7 +1247,7 @@ You can configure like following.
        In following, /etc/shadow and /var/shadow is assumed as
        hardlinked files.
        \begin{enumerate}
-	\item If rule is described to one file name, the file nameis treated as
+	\item If rule is described to one file name, the file name is treated as
 	      original.\\
 	      Ex: allow /etc/shadow r; is described in some domain, but
 	      rules using filename /var/shadow is not described,
@@ -1271,12 +1271,12 @@ You can configure like following.
 allow /etc/shadow r;
 allow /var/shadow r;
 \end{verbatim}
-1 of 2 will be igored, and do no harm.
+1 of 2 will be ignored, and do no harm.
   
        Above treatment of hardlink is necessary to avoid a kind of {\it back door }
        of path name based configuration. Assume hard link to
        /etc/shadow is created by some trick under /var/www/html, without this
-       behavior, apache web server can access contents of /etc/shadow
+       behavior, Apache web server can access contents of /etc/shadow
        via /var/www/html/shadow. To protect this, we must limit way to access
        hard link to 1.\\
        http://securityblog.org/brindle/2006/04/19 is good reference.\\

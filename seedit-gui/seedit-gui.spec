@@ -45,6 +45,6 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/pixmaps/seedit-gui.png
 
 %changelog
-* Sat Jul 1 2006 Yuichi Nakamura<himainu-ynakam@miomio.jp> 2.0.0
+* Mon Jul 3 2006 Yuichi Nakamura<himainu-ynakam@miomio.jp> 2.0.0
 - Initial version
 

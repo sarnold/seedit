@@ -14,7 +14,7 @@ This document shows how to install SELinux Policy Editor.
 
 \section{Install from RPMs}\label{sec:rpm}
 Supported Platforms are Fedora Core5 and Cent OS 4.3(should work in Redhat
-Enterprize Linux 4).\\
+Enterprise Linux 4).\\
 
 You can easily install from RPM
 \begin{enumerate}
@@ -31,8 +31,6 @@ from below URL.
 \begin{verbatim}
 http://seedit.sourceforge.net/download.html
 \end{verbatim}
-If you use Fedora Core 5, download seedit-converter-2.0.x-FC5.rpm and
-       seedit-policy-2.0.x-FC5.rpm.\\
 If you do not have X Window System, you do not need seedit-gui package.
 
  \item Install rpms
@@ -83,7 +81,7 @@ SELINUXTYPE=seedit
 \end{verbatim}
 Our system does not interfere with other existing system components
 except that.
-\subsection{qUninstall}
+\subsection{Uninstall}
 If you want to uninstall. Do following.
 \begin{verbatim}
 # rpm -e seedit-policy seedit-converter	
@@ -115,7 +113,15 @@ http://sourceforge.net/project/showfiles.php?group_id=135756
 # touch /.autorelabel
 # reboot
 \end{verbatim}
-Next is the same as \ref{sec:rpm} (\ref{item:init}).\\
+
+At first login do following.
+\begin{verbatim}
+#seedit-restorecon -R /etc
+#seedit-load 
+#reboot	
+\end{verbatim}
+
+
  \item uninstall\\
 You can go back to Fedora Core5 default by following.\\
 Modify /etc/selinux/config like below.
@@ -130,12 +136,6 @@ And
 #reboot	
 \end{verbatim}
 
-At first login do following.
-\begin{verbatim}
-#seedit-restorecon -R /etc
-#seedit-load 
-#reboot	
-\end{verbatim}
 
 \end{enumerate}
 
@@ -160,7 +160,7 @@ Then  select {\it Status}, you will see \ref{fig:status-selinux}.
 If it shows {\it seedit installed: yes}, installation is success!.\\
 
 From command line, if result of sestatus shows following, installation
-is sucessful.
+is successful.
 \begin{verbatim}
 # sestatus
 SELinux status:                 enabled

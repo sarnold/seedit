@@ -29,28 +29,24 @@ checkpolicy,auditパッケージが必要です。以下でインストールしておきます
 
 
     \item ファイルを入手\\
-seedit-converter-2.0.(ディストリビューション
-	  名).rpm, seedit-policy-2.0.x-(ディストリビューション
-	  名).rpm, seedit-gui-2.0.x.rpm,seedit-doc-2.0.x.rpmを以下のURL
-	より入手します.
-
-	X Window Systemが入ってない場合は、seedit-guiはダウンロードしま
-	せん
+以下より、seedit-converter,seedit-policy,seedit-doc, seedit-guiパッケー
+	ジを入手します。	
+X Window Systemが入ってない場合は、seedit-guiはダウンロードしません。
 \begin{verbatim}
 http://selpe.sourceforge.jp/download_jp.html
 \end{verbatim}
 
+ファイル名は、
+seedit-converter-2.0.0.(ディストリビューション
+	  名).i386.rpm, seedit-policy-2.0.0-(ディストリビューション
+	  名).i386.rpm, seedit-gui-2.0.0-1.noarch.rpm,seedit-doc-2.0.0-1.noarch.rpmとなってます。\\
 
 seedit-converterには、Simplified PolicyをSELinuxのポリシに変換するツールと、Simplified
 	  Policy管理ツールが同梱されています。seedit-policyには、
 	  simplified policyが格納されています。seedit-guiは、GUIです。
 
-
-Fedora Core5かつ最新版が2.0.0ならば、
-seedit-converter-2.0.0-FC5.i386.rpm, seedit-policy-2.0.0-FC5.noarch.rpm
-	  の２つのファイルをダウンロードします。
- \item rpmをインストール\\
-入手したrpmを以下のようにインストールし,リブートします。
+ \item rpmパッケージをインストール\\
+入手したrpmパッケージを以下のようにインストールし,リブートします。
 \begin{verbatim}
 $ su 
 # rpm -ivh seedit-*.rpm
@@ -61,10 +57,9 @@ $ su
 	画面が青くなっても問題はありません。しばらく待てば、自動的にリブー
 	トされます。無事ログイン
 	  できたら、完了です。\\
-なお、auditdサービスがデフォルトで起動しています。これは詳細なSELinuxの
+なお、auditdサービスが起動するようになっています。これは詳細なSELinuxの
 	ログを/var/log/audit/audit.logに取ることができ、ポリシ自動生成機
 	能をより便利に使うために必要ですので、このサービスは有効にしておくことを強く薦めます。
-
 
 \item CentOS 4の注意点\\ 
 CentOS 4のSELinuxパッケージに含まれるラベル初期化コマンド(fixfiles)のバ
@@ -96,8 +91,8 @@ CentOS 4のSELinuxパッケージに含まれるラベル初期化コマンド(fixfiles)のバ
 
 \section{ソースからのインストール方法}
 \begin{enumerate}
- \item Obtain files\\
- seedit-converter-2.0.x.tgz and seedit-policy-2.0.x.tgzを以下からダウン
+ \item ファイル入手\\
+ seedit-converter-2.0.0.tgz and seedit-policy-2.0.0.tgz,seedit-gui-2.0.0.tgzを以下からダウン
        ロードします。
 \begin{verbatim}
 http://sourceforge.net/project/showfiles.php?group_id=135756	
@@ -116,7 +111,17 @@ http://sourceforge.net/project/showfiles.php?group_id=135756
 # touch /.autorelabel
 # reboot
 \end{verbatim}
-次の作業は、 \ref{sec:rpm} (\ref{item:init})と同じです。\\
+
+\item 初期化
+ログインしたら、以下のコマンドで初期化作業を行います。
+\begin{verbatim}
+#restorecon -R /etc
+#seedit-load -v
+#chkconfig auditd on
+#/etc/init.d/auditd start
+#reboot	
+\end{verbatim}
+seedit-loadコマンドは、SPDLで書かれたポリシ(Simplified Policy)を、 SELinuxのポリシに変換し、カーネルに読み込ませたり、ファイルと タイプの関連付けを直したりするコマンドです。このコマンドを入力 することで、自分 のシステムに合わせたポリシを生成してくれます（このコマンドを入 力する前は、rpmパッケージ開発者の環境に適したポリシが生成され てます。）
  \item アンインストール\\
 次のようにして、Fedora Coreデフォルトの状態に戻ることができます。
 /etc/selinux/configを以下のように編集します。
@@ -130,15 +135,7 @@ SELINUXTYPE=targeted
 #touch /.autorelabel
 #reboot	
 \end{verbatim}
-ログインしたら、以下のコマンドで初期化作業を行います。
-\begin{verbatim}
-#restorecon -R /etc
-#seedit-load -v
-#chkconfig auditd on
-#/etc/init.d/auditd start
-#reboot	
-\end{verbatim}
-seedit-loadコマンドは、SPDLで書かれたポリシ(Simplified Policy)を、 SELinuxのポリシに変換し、カーネルに読み込ませたり、ファイルと タイプの関連付けを直したりするコマンドです。このコマンドを入力 することで、自分 のシステムに合わせたポリシを生成してくれます（このコマンドを入 力する前は、rpmパッケージ開発者の環境に適したポリシが生成され てます。）。
+
 
 \end{enumerate}
 

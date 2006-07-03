@@ -93,5 +93,5 @@ rm -rf $RPM_BUILD_ROOT
 %config /etc/seedit/policy
 
 %changelog
-* Sat Jul 1 2006 Yuichi Nakamura<himainu-ynakam@miomio.jp> 2.0.0
+* Mon Jul 3 2006 Yuichi Nakamura<himainu-ynakam@miomio.jp> 2.0.0
 - Initial version

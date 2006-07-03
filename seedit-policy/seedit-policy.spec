@@ -4,8 +4,8 @@
 Summary: Simplified Policy for SELinux
 #Name: seedit-policy-%{type}
 Name: seedit-policy
-Version: 2.0.0.rc1
-Release: 2.%{distro}
+Version: 2.0.0.rc2
+Release: 1.%{distro}
 License: GPL
 Group:  System Environment/Base
 URL:  http://seedit.sourceforge.net/

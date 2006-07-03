@@ -43,6 +43,7 @@
 #include <seedit/common.h>
 #include "is_customizable_type.h"
 
+
 static int change=1;
 static int verbose=0;
 static FILE *outfile=NULL;
@@ -138,6 +139,11 @@ int chk_child(security_context_t prev_context, security_context_t new_context){
   char *index;
   int is_child = 0;
 
+  if (security_check_context(prev_context) < 0){
+    printf("Invalid context relabeled:%s\n",prev_context);
+    return 1;
+  }
+
   prev_type = strrchr((char *)prev_context, ':')+1;
   new_type  = strrchr((char *)new_context, ':')+1;
   if(prev_type == NULL || new_type == NULL)
@@ -191,6 +197,7 @@ int restore(const char *filename) {
   security_context_t prev_context=NULL;
   struct stat st;
   char path[PATH_MAX+1];
+  int child;
 
   if (excludeCtr > 0 && exclude(filename)) {
       return 0;
@@ -260,8 +267,8 @@ int restore(const char *filename) {
 	 !(customizable=is_context_customizable(prev_context) > 0))) {
       if (only_changed_user(scontext, prev_context) == 0) {
 	      if (outfile) fprintf(outfile, "%s\n", filename);
-	      
-	      if(chk_child(prev_context, scontext)==1){
+	      child = chk_child(prev_context, scontext);
+	      if(child){
 		if (change) {
 		  if (lsetfilecon(filename,scontext) < 0) {
 		    fprintf(stderr,"%s set context %s->%s failed:'%s'\n",
@@ -275,7 +282,7 @@ int restore(const char *filename) {
 		if (verbose)
 		  printf("%s reset %s context %s->%s\n",
 			 progname, filename, (retcontext >= 0 ? prev_context : ""), scontext);
-	      }else{
+	      }else{	      
 		if (verbose)
 		  printf("Skipped to preserve label, may be hardlinked: %s(%s->%s)\n",
 			  filename, (retcontext >= 0 ? prev_context : ""), scontext);

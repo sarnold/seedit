@@ -6,7 +6,22 @@ all:
 	$(MAKE) -C tutorial/ja
 	$(MAKE) -C spdl_spec
 	$(MAKE) -C rbac
+upload: 
+	mkdir -p upload
+	mv tutorial/tutorial.pdf upload
+	mv tutorial/tutorial upload
+	mv tutorial/ja/tutorial_jp.pdf upload
+	mv tutorial/ja/tutorial_jp upload
+	mv spdl_spec/*.pdf upload
+	mv spdl_spec/spdl_spec upload
+	mv rbac/rbac_guide.pdf	upload
+	mv rbac/rbac_guide	upload
 
+doc:
+	$(MAKE) -C tutorial html pdf
+	$(MAKE) -C tutorial/ja html pdf
+	$(MAKE) -C spdl_spec html pdf
+	$(MAKE) -C rbac html pdf
 
 install:all
 	mkdir -p $(INSTALLPATH) 

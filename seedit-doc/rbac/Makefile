@@ -10,7 +10,7 @@ install:  html
 html: rbac_guide.dvi
 	latex2html  -show_section_numbers -link 2 -split +2 rbac_guide.tex
 
-rbac_guide.pdf: rbac_guide.dvi 
+pdf: rbac_guide.dvi 
 	dvipdf rbac_guide.dvi
 
 rbac_guide.dvi: *.tex

@@ -10,7 +10,7 @@ install:  html
 html: spdl_spec.dvi
 	latex2html  -show_section_numbers -link 2 -split +2 spdl_spec.tex
 
-spdl_spec.pdf: spdl_spec.dvi 
+pdf: spdl_spec.dvi 
 	dvipdf spdl_spec.dvi
 
 spdl_spec.dvi: *.tex

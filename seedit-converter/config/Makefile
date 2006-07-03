@@ -54,7 +54,7 @@ doc:./doc/permission_integrate.pdf
 	cd doc;	latex permission_integrate.tex;\
 	latex permission_integrate.tex;\
 	latex permission_integrate.tex;\
-	latex2html -show_section_numbers -link 2 -split 0 permission_integrate.tex;\
+	latex2html -show_section_numbers -link 2  permission_integrate.tex;\
 	dvipdf  permission_integrate.dvi
 
 clean:

@@ -27,6 +27,7 @@ allowtmp -fs tmpfs -name auto r,w,s;
 allow /usr/libexec/openssh/** r,x,s;
 
 allowpriv getsecurity;
+allowpriv setsecurity;
 allowpriv cap_chown;
 
 allowcom -ipc unix r,w;

@@ -21,6 +21,8 @@ allowfs proc_pid_self w;
 allowpriv netlink;
 allowpriv audit_write;
 allowpriv getsecurity;
+allowpriv setsecurity;
+
 allowcom -ipc syslogd_t r,w;
 allow dev_log_t r,o,t;
 

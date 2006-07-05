@@ -1,7 +1,7 @@
 Summary: Documents for SELinux Policy Editor
 Name: seedit-doc
 Version: 2.0.0
-Release: 1
+Release: 2 
 License: GPL
 Group: Documentation
 URL: http://seedit.sourceforge.net/

@@ -161,7 +161,7 @@ class loadPolicyThread(threading.Thread):
         self.mDialog.mTextBuffer.insert(self.mDialog.mTextBuffer.get_end_iter(),line)
 
     
-    def __init__(self,dialog,command, closeFlag=True):
+    def __init__(self,dialog,command, closeFlag=False):
         if command == None:
             command = gSeeditLoad +" -v"
 

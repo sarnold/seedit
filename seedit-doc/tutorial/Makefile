@@ -9,8 +9,8 @@ install: all
 
 html: dvi
 	rm -rf tutorial
-	latex2html  -show_section_numbers -link 2 -split +1 tutorial.tex
-	latex2html  -show_section_numbers -link 2 -split +0 install.tex
+	latex2html  -local_icons -show_section_numbers -link 2 -split +1 tutorial.tex
+	latex2html  -local_icons -show_section_numbers -link 2 -split +0 install.tex
 
 pdf:  dvi
 	dvipdfm tutorial.dvi 

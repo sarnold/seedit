@@ -10,8 +10,8 @@ install: html
 html: dvi
 	rm -rf tutorial_jp
 	rm -rf install_jp
-	latex2html  -show_section_numbers -link 2 -split +1 tutorial.tex
-	latex2html  -show_section_numbers -link 2 -split +0 install.tex
+	latex2html  -local_icons -show_section_numbers -link 2 -split +1 tutorial.tex
+	latex2html  -local_icons -show_section_numbers -link 2 -split +0 install.tex
 	mv tutorial tutorial_jp
 	mv install install_jp
 

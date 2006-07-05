@@ -8,7 +8,7 @@ install:  html
 	mv rbac_guide $(INSTALLDIR)
 
 html: rbac_guide.dvi
-	latex2html  -show_section_numbers -link 2 -split +2 rbac_guide.tex
+	latex2html  -local_icons -show_section_numbers -link 2 -split +2 rbac_guide.tex
 
 pdf: rbac_guide.dvi 
 	dvipdf rbac_guide.dvi

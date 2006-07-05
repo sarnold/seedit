@@ -6,7 +6,7 @@ all:
 	$(MAKE) -C tutorial/ja
 	$(MAKE) -C spdl_spec
 	$(MAKE) -C rbac
-upload: 
+upload: doc
 	mkdir -p upload
 	mv tutorial/tutorial.pdf upload
 	mv tutorial/tutorial upload
@@ -18,6 +18,7 @@ upload:
 	mv rbac/rbac_guide	upload
 
 doc:
+	export LOCAL_ICONS=1
 	$(MAKE) -C tutorial html pdf
 	$(MAKE) -C tutorial/ja html pdf
 	$(MAKE) -C spdl_spec html pdf
@@ -33,7 +34,9 @@ install:all
 	install -m 644 README.ja $(INSTALLPATH)
 
 clean:
+	rm -rf upload
 	$(MAKE) -C tutorial clean
 	$(MAKE) -C tutorial/ja clean
 	$(MAKE) -C spdl_spec clean
 	$(MAKE) -C rbac clean
+

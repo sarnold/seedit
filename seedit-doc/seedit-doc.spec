@@ -5,7 +5,7 @@ Release: 1
 License: GPL
 Group: Documentation
 URL: http://seedit.sourceforge.net/
-Source0: %{name}-%{version}.tar.gz
+Source0: %{name}-%{version}-%{release}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 BuildArch: noarch
 BuildRequires: latex2html

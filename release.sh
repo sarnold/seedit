@@ -1,5 +1,6 @@
 MODULES="seedit-converter seedit-policy seedit-gui seedit-doc"
 VERSION=2.0.0
+RELEASE=2
 
 mkdir -p archive
 
@@ -19,8 +20,8 @@ then
 	rm $name-$VERSION.tar.gz
 fi
 
-tar czvf $name-$VERSION.tar.gz $name-$VERSION
-mv $name-$VERSION.tar.gz archive
+tar czvf $name-$VERSION-$RELEASE.tar.gz $name-$VERSION
+mv $name-$VERSION-$RELEASE.tar.gz archive
 rm -rf $name-$VERSION
 done
 

@@ -6,8 +6,12 @@ all:
 	$(MAKE) -C tutorial/ja
 	$(MAKE) -C spdl_spec
 	$(MAKE) -C rbac
-upload: doc
+upload:  doc
 	mkdir -p upload
+	mv tutorial/install.pdf upload
+	mv tutorial/install upload
+	mv tutorial/ja/install_jp.pdf upload
+	mv tutorial/ja/install_jp upload
 	mv tutorial/tutorial.pdf upload
 	mv tutorial/tutorial upload
 	mv tutorial/ja/tutorial_jp.pdf upload

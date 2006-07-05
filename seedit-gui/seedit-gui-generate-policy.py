@@ -358,6 +358,7 @@ class seeditGeneratePolicyWindow(seeditCommon):
 			return
 	        #remove saved rows
 		self.removeCheckedRows(treeview)
+		self.mTextBuffer.delete(self.mTextBuffer.get_start_iter(),self.mTextBuffer.get_end_iter())
 		toBeAppendedPolicy.clear()
 		
 					

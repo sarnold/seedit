@@ -1,3 +1,6 @@
+#! SELinux Policy Editor, a simple editor for SELinux policies
+#! Copyright (C) 2006 Yuichi Nakamura
+
 domain_trans sshd_t,newrole_t,login_t /bin/bash,/bin/sh;
 domain_trans gdm_t /etc/X11/xdm/Xsession;
 

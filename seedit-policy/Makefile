@@ -1,5 +1,8 @@
 # $Id: Makefile,v 1.8 2006/05/05 16:05:36 ynakam Exp $
 
+#! SELinux Policy Editor, a simple editor for SELinux policies
+#! Copyright (C) 2006 Yuichi Nakamura
+
 SELINUXTYPE=seedit
 sysconfdir = /etc
 prefix = /usr

@@ -1,5 +1,8 @@
 #!/usr/bin/perl
-# Author: Yuichi Nakamura <ynakam@gwu.edu>
+
+#! SELinux Policy Editor, a simple editor for SELinux policies
+#! Copyright (C) 2006 Yuichi Nakamura
+
 # This tool is for developper
 # generates allow_admin_all macro from security class
 

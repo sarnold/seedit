@@ -1,3 +1,6 @@
+#! SELinux Policy Editor, a simple editor for SELinux policies
+#! Copyright (C) 2006 Yuichi Nakamura
+
 {
 domain crond_t;
 program /usr/sbin/crond,/usr/sbin/atd ;

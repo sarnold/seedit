@@ -1,4 +1,7 @@
-/*(c)2006 Yuichi Nakamura*/
+/*
+#! SELinux Policy Editor, a simple editor for SELinux policies
+#! Copyright (C) 2006 Yuichi Nakamura
+*/
 
 #ifndef PREPROCESS_INCLUDE_H
 #define PREPROCESS_INCLUDE_H

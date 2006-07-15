@@ -1,3 +1,6 @@
+#! SELinux Policy Editor, a simple editor for SELinux policies
+#! Copyright (C) 2006 Yuichi Nakamura
+
 {
 domain newrole_t;
 domain_trans sysadm_r,user_r,staff_r /usr/bin/newrole;

@@ -1,5 +1,8 @@
 # $Id: Makefile,v 1.11 2006/04/28 16:48:28 ynakam Exp $
-# (c) Yuichi Nakamura himainu-ynakam@miomio.jp
+
+#! SELinux Policy Editor, a simple editor for SELinux policies
+#! Copyright (C) 2006 Yuichi Nakamura
+
 sysconfdir =/etc
 CONVERTER=/usr/bin/seedit-converter
 LOADPOLICY=/usr/sbin/load_policy

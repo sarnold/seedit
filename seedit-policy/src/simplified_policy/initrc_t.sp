@@ -1,3 +1,6 @@
+#! SELinux Policy Editor, a simple editor for SELinux policies
+#! Copyright (C) 2006 Yuichi Nakamura
+
 {
 domain initrc_t;
 domain_trans init_t /etc/init.d, /etc/rc.d/rc,/etc/rc.d/rc.sysinit,/etc/rc.d/rc.local;

@@ -1,3 +1,7 @@
+#! SELinux Policy Editor, a simple editor for SELinux policies
+#! Copyright (C) 2006 Yuichi Nakamura
+#This file is based on original SELinux http://www.nsa.gov/selinux
+
 #
 # Define the labeling behavior for inodes in particular filesystem types.
 # This information was formerly hardcoded in the SELinux module.
@@ -7,8 +11,8 @@
 fs_use_xattr ext2 system_u:object_r:fs_t;
 fs_use_xattr ext3 system_u:object_r:fs_t;
 fs_use_xattr xfs system_u:object_r:fs_t;
-fs_use_xattr reiserfs system_u:object_r:fs_t;
 fs_use_xattr jfs system_u:object_r:fs_t;
+fs_use_xattr reiserfs system_u:object_r:fs_t;
 fs_use_xattr jffs2 system_u:object_r:fs_t;
 
 # Use the allocating task SID to label inodes in the following filesystem

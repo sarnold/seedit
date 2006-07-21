@@ -45,7 +45,7 @@ class seeditCommon:
     </menubar>
     </ui>'''
 
-    mVersion = "2.0.0"
+    mVersion = "2.1.0"
     
     #Returns menubar
     def initMenu(self,window):

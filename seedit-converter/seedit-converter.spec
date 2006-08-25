@@ -2,7 +2,7 @@
 Summary: Compliler for simplified policy
 Name: seedit-converter
 Version: 2.0.0
-Release: 1.%{distro}
+Release: 2.%{distro}
 License: GPL
 Group: System Environment/Base
 URL: http://sedit.sourceforge.net/
@@ -42,6 +42,9 @@ rm -rf $RPM_BUILD_ROOT
 %config /etc/seedit/converter
 
 %changelog
+* Fri Aug 25 2006 Yuichi Nakamura 2.0.0-2
+Fixed bug. rename was integrated into c permission, e is correct.
+
 * Mon Jul 2 2006 Yuichi Nakamura<himainu-ynakam@miomio.jp> 2.0.0
 - Initial version
 

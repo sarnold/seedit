@@ -1,3 +1,8 @@
+*2006/08/25 2.0.0-2 Yuichi Nakamura
+Fixed bug.
+rename was integrated into c permission,
+it is mistake,e permission is  correct.
+
 *2006/04/10 1.4.0 Yuichi Nakamura
 Many mofifications
 - SPDL Syntax simplification

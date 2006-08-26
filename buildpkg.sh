@@ -4,6 +4,8 @@ RELEASE=2
 mkdir -p archive
 
 name=$1
+distro=$2
+
 if [ ! -n name ]; then 
     echo "Usage buildpkg <packagename> <distro>"
 fi
@@ -24,7 +26,7 @@ mv $name-$VERSION-$RELEASE.tar.gz archive
 rm -rf $name-$VERSION
 
 cd archive
-rpmbuild -ta $name-$VERSION-$RELEASE.tar.gz
+rpmbuild -ta $name-$VERSION.tar.gz
 mkdir -p RPM
 mkdir -p source
 
@@ -37,5 +39,16 @@ fi
 if [ -e ~/rpm/SRPMS/$name-$VERSION-$RELEASE.src.rpm ]; then
     mv ~/rpm/SRPMS/$name-$VERSION-$RELEASE.src.rpm ./source
 fi
+
+if [ -e ~/rpm/RPMS/i386/$name-$VERSION-$RELEASE.$distro.i386.rpm ]; then
+    mv ~/rpm/RPMS/i386/$name-$VERSION-$RELEASE.$distro.i386.rpm ./RPM
+fi
+if [ -e ~/rpm/RPMS/noarch/$name-$VERSION-$RELEASE.$distro.noarch.rpm ]; then
+    mv ~/rpm/RPMS/noarch/$name-$VERSION-$RELEASE.$distro.noarch.rpm ./RPM
+fi
+if [ -e ~/rpm/SRPMS/$name-$VERSION-$RELEASE.$distro.src.rpm ]; then
+    mv ~/rpm/SRPMS/$name-$VERSION-$RELEASE.$distro.src.rpm ./source
+fi
+
 
 mv  $name-$VERSION-$RELEASE.tar.gz source

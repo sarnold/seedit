@@ -13,7 +13,7 @@ allow /var/named/** r,s;
 
 allow /var/named/chroot/var/run/named/* r,w,s;
 allowdev -root /var/named/chroot/dev;
-allow /var/named/chroot/dev/* r,w,s;
+allow /var/named/chroot/dev/* r,o,t,s;
 allow /etc/named.conf r;
 allow /etc/named.caching-nameserver.conf r;
 allow /etc/named.rfc1912.zones r;

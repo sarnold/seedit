@@ -147,6 +147,9 @@ class seeditCommon:
             os.environ["LOGNAME"]= username
         try:
             gobject.spawn_async(argv)
+        except AttributeError:
+            message =_("Sorry, this function is not supported!")
+            self.showMessageDialog(gtk.MESSAGE_INFO,message)
         except:
             message =_("Failed to launch browser")
             self.showMessageDialog(gtk.MESSAGE_ERROR,message)

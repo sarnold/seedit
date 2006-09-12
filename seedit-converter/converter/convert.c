@@ -1122,8 +1122,6 @@ void out_dir_search(FILE* outfp, DOMAIN *domain){
       exit(1);
     }
     fprintf(outfp,"allow %s %s:dir search;\n", domain->name, label->labelname);
-    if(strcmp(domain->name,"webmaster_t")==0)
-      fprintf(stderr,"#%s\n",name);
     if(strcmp(name,"~/")==0){
       fprintf(outfp,"allow %s dir_homedir_rootdir_t:dir search;\n", domain->name);
     }

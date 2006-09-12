@@ -1,4 +1,4 @@
-%define distro FC5
+%define distro COS4
 Summary: Compliler for simplified policy
 Name: seedit-converter
 Version: 2.0.1

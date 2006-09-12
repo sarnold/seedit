@@ -1,6 +1,6 @@
 %define type strict
 %define selinuxconf /etc/selinux/config
-%define distro FC5
+%define distro COS4
 Summary: Simplified Policy for SELinux
 #Name: seedit-policy-%{type}
 Name: seedit-policy

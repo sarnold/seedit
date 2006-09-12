@@ -6,7 +6,7 @@
 SELINUXTYPE=seedit
 sysconfdir = /etc
 prefix = /usr
-DISTRO = FC5
+DISTRO = COS4
 CONVERTER=/usr/local/bin/seedit-converter
 LOADPOLICY=/usr/sbin/load_policy
 CHECKPOLICY=/usr/bin/checkpolicy

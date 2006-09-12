@@ -1,9 +1,4 @@
-#! SELinux Policy Editor, a simple editor for SELinux policies
-#! Copyright (C) 2006 Yuichi Nakamura
-
-domain_trans sshd_t,newrole_t,login_t /bin/bash,/bin/sh;
-domain_trans gdm_t /etc/X11/xdm/Xsession;
-
+include local_login.sp
 
 allowdev -tty open;
 allowdev -pts open;
@@ -32,5 +27,6 @@ allow /usr/libexec/openssh/** r,x,s;
 allowpriv getsecurity;
 allowpriv setsecurity;
 allowpriv cap_chown;
+allowpriv cap_sys_tty_config;
 
-allowcom -ipc unix r,w;
+allowcom -ipc self r,w;

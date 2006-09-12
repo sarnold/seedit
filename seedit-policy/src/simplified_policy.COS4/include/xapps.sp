@@ -1,5 +1,3 @@
-#! SELinux Policy Editor, a simple editor for SELinux policies
-#! Copyright (C) 2006 Yuichi Nakamura
 
 allow /usr/share/X11/** r,s;
 allow /etc/X11  s;

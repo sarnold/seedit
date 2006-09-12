@@ -1,6 +1,3 @@
-#! SELinux Policy Editor, a simple editor for SELinux policies
-#! Copyright (C) 2006 Yuichi Nakamura
-
 {
 domain sendmail_t;
 program /usr/sbin/sendmail.sendmail;
@@ -11,7 +8,6 @@ include nameservice.sp;
 
 allownet -protocol  tcp -port 25 server,client;
 allownet -protocol  udp -port 512,53 client;
-
 
 #utmp
 allow initrc_var_run_t r,o,s;

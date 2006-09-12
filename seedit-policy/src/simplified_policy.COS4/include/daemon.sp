@@ -1,6 +1,3 @@
-#! SELinux Policy Editor, a simple editor for SELinux policies
-#! Copyright (C) 2006 Yuichi Nakamura
-
 #Common Access rights for daemons
 
 allow dev_log_t r,w,s;

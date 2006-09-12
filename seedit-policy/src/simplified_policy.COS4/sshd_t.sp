@@ -1,6 +1,3 @@
-#! SELinux Policy Editor, a simple editor for SELinux policies
-#! Copyright (C) 2006 Yuichi Nakamura
-
 {
 domain sshd_t;
 program /usr/sbin/sshd ;
@@ -18,7 +15,13 @@ allowdev -pts general admin;
 allowdev -pts open;
 
 allowpriv cap_sys_chroot;
+allowpriv cap_chown;
+allowpriv cap_dac_override;
+allowpriv cap_dac_read_search;
+allowpriv cap_sys_tty_config;
+
 allowpriv getsecurity;
+allowpriv setsecurity;
 
 allow /etc/selinux/** r,s;
 allow /root/** s;

@@ -1,6 +1,3 @@
-#! SELinux Policy Editor, a simple editor for SELinux policies
-#! Copyright (C) 2006 Yuichi Nakamura
-
 {
 domain samba_t;
 program /usr/sbin/smbd,/usr/sbin/nmbd;

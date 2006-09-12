@@ -44,6 +44,14 @@ static void out_domain_trans(FILE *);
 static void out_net_type(FILE *);
 static void out_rbac(FILE *);
 
+void out_userhelper_context(FILE *fp){
+  
+  if(rbac_hash_table ==NULL){
+    fprintf(fp,"system_u:system_r:unconfined_t\n");
+  }else{
+    fprintf(fp,"system_u:sysadm_r:sysadm_t\n");
+  }
+}
 
 void out_customizable_types(FILE *fp){
   HASH_NODE **array;
@@ -89,12 +97,15 @@ void convert(char *outdir){
   FILE *unconfined_fp=stdout;
   FILE *customizable_types_fp=stdout;
   FILE *homedir_template_fp=stdout;
+  FILE *userhelper_context_fp=stdout;
 
   if(outdir!=NULL){
     policy_fp= openfile(outdir,"generated.conf");
     file_context_fp = openfile(outdir,"file_contexts");
     unconfined_fp = openfile(outdir,"unconfined_domains");
     customizable_types_fp=openfile(outdir,"customizable_types");
+    userhelper_context_fp=openfile(outdir,"userhelper_context");
+    
   }  
 
  /* print default files */
@@ -166,8 +177,9 @@ void convert(char *outdir){
 	/* print file_contexts */
 	out_file_contexts_config(file_context_fp);
 
-	/*print customizable_types*/
 	out_customizable_types(customizable_types_fp);
+
+	out_userhelper_context(userhelper_context_fp);
 
 #ifdef DEBUG
 	//print_user();
@@ -182,6 +194,8 @@ void convert(char *outdir){
 	  fclose(customizable_types_fp);
 	if(homedir_template_fp!= NULL)
 	  fclose(homedir_template_fp);
+	if(userhelper_context_fp!=NULL)
+	  fclose(userhelper_context_fp);
 }
 
 /**
@@ -729,7 +743,7 @@ out_one_com_acl(FILE *outfp, DOMAIN *d, COM_ACL_RULE *acl)
 	}
 
 	if(check_domainname(to_domain)!=0){
-	  fprintf(stderr,"Warning: Target domain %s does not exist for allowcom rule. Skipped.\n", to_domain);
+	  fprintf(stderr,"Warning: Target domain %s does not exist for allowcom rule. Skipped.\n", to_domain);	  
 	  return;
 	}
 

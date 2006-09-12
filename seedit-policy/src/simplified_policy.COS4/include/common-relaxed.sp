@@ -1,6 +1,3 @@
-#! SELinux Policy Editor, a simple editor for SELinux policies
-#! Copyright (C) 2006 Yuichi Nakamura
-
 #common configuration common to all domain
 #This should be included first
 

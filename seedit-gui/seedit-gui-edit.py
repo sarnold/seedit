@@ -35,10 +35,10 @@ class openDomainDialog(gtk.Dialog, seeditCommon):
 	
 	
 	def domainListComboCallBack(self,widget,data=None):
-		
 		self.mDomain= self.get_active_text(widget)
 
 	def openFile(self):
+		self.mDomain = self.mEntry.get_text()
 		domain = self.mDomain
 		if re.search("\.sp$",domain):
 			filename = gSPPath +"/"+domain
@@ -62,7 +62,10 @@ class openDomainDialog(gtk.Dialog, seeditCommon):
 		label = gtk.Label(_("Select domain:"))
 		hbox.pack_start(label, False, False,5)
 		combo = gtk.combo_box_entry_new_text()
+		
 		self.mDomainListComboBox = combo
+		self.mEntry = combo.child
+
 		self.mDomain=""
 		domainList = getEditableDomainList()
 		for domain in domainList:

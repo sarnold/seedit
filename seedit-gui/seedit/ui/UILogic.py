@@ -635,3 +635,32 @@ def allowNetStr(protocol, portType, portText, serverFlag, clientFlag):
     
     return str
 
+def createRoleTemplate(user, role, remoteLoginFlag,dacSkipFlag):
+    result=""
+    result = "{\n"
+
+    if not re.search("\w_r$", role):
+        return None
+
+    result = result + "role "+role +";\n"
+    
+    if user:
+        result = result +"user "+user+";\n"
+
+    if remoteLoginFlag:
+        result = result +"include remote_login.sp;\n"
+    
+    result = result + "include user_common.sp;\n"
+    result = result + "include common-relaxed.sp;\n"
+
+    if dacSkipFlag:
+        result = result +"allowpriv cap_dac_override;\n"
+        result = result +"allowpriv cap_dac_read_search;\n"
+
+    result = result +"allow ~/** r,w,x,s;\n"
+
+
+    result = result + "\n#Write access control here....\n\n"
+
+    result = result + "}\n"
+    return result

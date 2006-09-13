@@ -33,11 +33,13 @@ GUI_MANAGE=2
 GUI_GENERATE=3
 GUI_EDIT=4
 GUI_LOAD=5
+GUI_RMANAGE=6
 gIconPath= "/usr/share/icons/seedit/"
 if not os.path.exists(gIconPath+"icon.png"):
     gIconPath="./icons/"
 STATUS_COMMAND="/usr/sbin//seedit-gui-status"
 DOMAIN_MANAGE_COMMAND="/usr/sbin/seedit-gui-domain-manager"
+ROLE_MANAGE_COMMAND="/usr/sbin/seedit-gui-role-manager"
 
 GENERATE_COMMAND="/usr/sbin/seedit-gui-generate-policy"
 EDIT_COMMAND="/usr/sbin/seedit-gui-edit"
@@ -58,6 +60,8 @@ class seeditMainWindow(seeditCommon):
             self.forkProgram(STATUS_COMMAND)
         elif(mode == GUI_MANAGE):
             self.forkProgram(DOMAIN_MANAGE_COMMAND)
+        elif(mode == GUI_RMANAGE):
+            self.forkProgram(ROLE_MANAGE_COMMAND)
         elif(mode == GUI_GENERATE):
             self.forkProgram(GENERATE_COMMAND)
 	elif(mode == GUI_EDIT):
@@ -103,6 +107,11 @@ class seeditMainWindow(seeditCommon):
         model.append([_("Status"), defaultIcon,GUI_STATUS])
         
         model.append([_("Manage Domain"), newIcon,GUI_MANAGE])
+
+        rbac = getRBAC()
+        if rbac:
+            model.append([_("Manage Role"), newIcon,GUI_RMANAGE])
+        
         model.append([_("Generate policy"), defaultIcon,GUI_GENERATE])
         model.append([_("Edit policy"), defaultIcon,GUI_EDIT])
         model.append([_("Apply policy/Relabel"), defaultIcon,GUI_LOAD])

@@ -1,6 +1,6 @@
 Summary: GUI for SELinux  Policy Editor
 Name: seedit-gui
-Version: 2.1.0
+Version: 2.0.1
 Release:  1
 License: GPL
 Group: System Environment/Base
@@ -34,6 +34,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_sbindir}/seedit-gui
 %{_sbindir}/seedit-gui-status
 %{_sbindir}/seedit-gui-domain-manager
+%{_sbindir}/seedit-gui-role-manager
 %{_sbindir}/seedit-gui-generate-policy
 %{_sbindir}/seedit-gui-edit
 %{_sbindir}/seedit-gui-load

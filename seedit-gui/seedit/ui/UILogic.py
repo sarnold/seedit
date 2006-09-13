@@ -120,6 +120,22 @@ def setBootMode(mode):
     return SEEDIT_SUCCESS
 
 
+def getRBAC():
+    if os.path.exists(gSPPath+"/sysadm_r.sp"):
+        return True
+    return False
+
+def setRBAC(mode):
+    currentMode = getRBAC()
+
+    if mode==currentMode:
+        return SEEDIT_SUCCESS
+
+    
+
+    return SEEDIT_ERROR
+
+    
     
 def getBootMode():
     try:
@@ -432,7 +448,7 @@ def setDisableTransBoolean(domain,value):
         value ="0"
     
     command = gSetsebool +" -P "+bool +" "+value
-    
+    print command
     input=os.popen(command, "r")
     line = input.readlines()
     if input.close():
@@ -471,13 +487,16 @@ def getDisableTransDomain():
     for line in lines:
         m = re.search("_disable_trans", line)
         if m:
-            m = re.search("-->\s*on",line)
+            m = re.search("-->\s*(on|active)",line)
             if m:
                 l = line.split()
                 bool = l[0]
                 prefix = re.sub("_disable_trans$","",bool)
                 domain = prefix+"_t"
                 result.append(domain)
+            
+    print command
+    print result
     return result
 
 

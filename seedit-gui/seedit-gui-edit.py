@@ -28,14 +28,15 @@ from  seedit.ui.GUICommon import *
 from  seedit.ui.UILogic import *
 
 
-class openDomainDialog(gtk.Dialog):
+class openDomainDialog(gtk.Dialog, seeditCommon):
 
 	def getOpenDomain(self):
 		return self.mDomain
 	
 	
 	def domainListComboCallBack(self,widget,data=None):
-		self.mDomain= widget.get_active_text()
+		
+		self.mDomain= self.get_active_text(widget)
 
 	def openFile(self):
 		domain = self.mDomain

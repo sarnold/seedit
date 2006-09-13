@@ -173,7 +173,17 @@ class seeditCommon:
                 return False
         return True
 
-  
+   
+    #In Cent OS4, get_active_text is not supported
+    def get_active_text(self,widget):
+        index = widget.get_active()
+        if index <0:
+            return ""
+        model = widget.get_model()
+        text = model[index][0]
+        return text
+ 
+
 
 class loadPolicyThread(threading.Thread):
 
@@ -617,4 +627,3 @@ class insertPolicyWindow(seeditCommon):
 
 		vbox.pack_start(hbox,False)
 		window.show_all()
-

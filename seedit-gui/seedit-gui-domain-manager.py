@@ -56,7 +56,8 @@ class deleteDomainTab(seeditCommon):
         self.mPropertyLabel2.set_text("")
 
     def deleteButtonCallBack(self, widget, data=None):
-        domain = self.mDomainListComboBox.get_active_text()
+        domain = self.get_active_text(self.mDomainListComboBox)
+
 
         if self.mTemporalFlag == False:
             message =_("Really remove %s?  The backup is created in extras directory. ") % (domain)
@@ -75,7 +76,7 @@ class deleteDomainTab(seeditCommon):
     
     
     def enableButtonCallBack(self, widget, data=None):
-        domain = self.mDisabledDomainListComboBox.get_active_text()
+        domain = self.get_active_text(self.mDisabledDomainListComboBox)
         r = setDisableTransBoolean(domain, "off")
         if r == SEEDIT_SUCCESS:
             self.showMessageDialog(gtk.MESSAGE_INFO, _("Success.\n"))
@@ -85,7 +86,7 @@ class deleteDomainTab(seeditCommon):
 
 
     def domainListComboCallBack(self,widget,data=None):
-        domain = widget.get_active_text()
+        domain = self.get_active_text(widget)
         pList = []
 
         if domain == "":
@@ -102,7 +103,7 @@ class deleteDomainTab(seeditCommon):
         self.mPropertyLabel.set_text(str)
 
     def disabledDomainListComboCallBack(self,widget,data=None):
-        domain = widget.get_active_text()
+        domain = self.get_active_text(widget)
         pList = []
 
         if domain == "":

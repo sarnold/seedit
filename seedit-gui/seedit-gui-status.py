@@ -54,6 +54,14 @@ class seStatusTab(seeditCommon):
             bootMode = DISABLED
         
         result = setMode(currentMode)
+
+        index = self.mRBACComboBox.get_active()
+        if index == 0:
+            rbac=True
+        else:
+            rbac=False
+       
+        
         if result == SEEDIT_ERROR:
             message = _("Failed to change current mode. Permission denied")
             self.showMessageDialog(gtk.MESSAGE_ERROR,message)
@@ -67,6 +75,13 @@ class seStatusTab(seeditCommon):
             mode = getBootMode()
             self.setModeCombo(self.mBootModeComboBox,mode)
 
+
+        result = setRBAC(rbac)
+        if result == SEEDIT_ERROR:
+            message = _("To change RBAC status, please use seedit-rbac command")
+            self.showMessageDialog(gtk.MESSAGE_INFO,message)
+            rbac = getBootMode()
+            self.setEnableCombo(self.mRBACComboBox,rbac)
         
     def setModeCombo(self, combo, mode):
 
@@ -76,6 +91,14 @@ class seStatusTab(seeditCommon):
             combo.set_active(0)
         else:        
             combo.set_active(2)
+
+    def setEnableCombo(self,combo, bool):
+        if bool:
+            combo.set_active(0)
+        else:
+            combo.set_active(1)
+        
+        
     
     def __init__(self,parent):
         vbox = gtk.VBox()
@@ -121,8 +144,23 @@ class seStatusTab(seeditCommon):
         mode = getBootMode()
         self.setModeCombo(combo,mode)
         vbox.pack_start(hbox1,False,False)
+      
+
+        label = gtk.Label(_("RBAC"))
+        hbox1=gtk.HBox()
+        hbox1.pack_start(label,False,False,10)
+        combo = gtk.combo_box_new_text()
+        self.mRBACComboBox = combo
+        hbox1.pack_start(combo,False,False,10)
+        combo.append_text(_("Enabled"))
+        combo.append_text(_("Disabled"))
+        vbox.pack_start(hbox1,False,False)
+        rbac = getRBAC()
+        self.setEnableCombo(combo,rbac)
+        
         separator = gtk.HSeparator() 
         vbox.pack_start(separator,False,False,5)
+        
         
         button = gtk.Button(_("Apply"))
         button.connect("clicked", self.applyButtonCallBack)

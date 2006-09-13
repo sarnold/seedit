@@ -495,8 +495,7 @@ def getDisableTransDomain():
                 domain = prefix+"_t"
                 result.append(domain)
             
-    print command
-    print result
+    
     return result
 
 

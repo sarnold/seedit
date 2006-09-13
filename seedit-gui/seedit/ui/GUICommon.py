@@ -173,6 +173,26 @@ class seeditCommon:
                 return False
         return True
 
+    def yesNoSelection(self, message, default, callback):
+        hbox = gtk.HBox()
+        label = gtk.Label(message)
+        hbox.pack_start(label, False, False,5)
+        radio = gtk.RadioButton(None, _("Yes"))
+        self.mDaemonFlag = True
+        radio.connect("toggled", callback, True)
+        if default == True:
+            radio.set_active(True)
+
+        hbox.pack_start(radio, False, False,5)
+        radio = gtk.RadioButton(radio, _("No"))
+        if default == False:
+            radio.set_active(True)
+        radio.connect("toggled", callback, False)
+        
+        
+        hbox.pack_start(radio, False, False,5)
+
+        return hbox
    
     #In Cent OS4, get_active_text is not supported
     def get_active_text(self,widget):
@@ -627,3 +647,74 @@ class insertPolicyWindow(seeditCommon):
 
 		vbox.pack_start(hbox,False)
 		window.show_all()
+
+
+class editTemplateFrame(seeditCommon):  
+    def saveButtonCallBack(self, data=None):
+        filename = self.mToBeSavedFile
+        start = self.mTextBuffer.get_start_iter()
+        end = self.mTextBuffer.get_end_iter()
+        data = self.mTextBuffer.get_text(start,end)
+                
+        if not self.checkOverWrite(filename):
+            self.showMessageDialog(gtk.MESSAGE_INFO, _("Save cancelled.\n"))
+            return
+
+        r = saveStringToFile(data,filename)
+        if r<0:
+            self.showMessageDialog(gtk.MESSAGE_INFO, _("File write error. Save cancelled.\n"))
+            return
+
+        ld=loadPolicyDialog(self.mParentWindow)
+        (s, data) = ld.do()
+
+        if s<0:
+            os.unlink(filename)
+            self.showMessageDialog(gtk.MESSAGE_INFO, _("Syntax error was found.\n"))
+
+
+            return
+        else:
+
+            self.showMessageDialog(gtk.MESSAGE_INFO, _("Domain created successfully.\n"))
+               
+        return
+
+    def addButtonCallBack(self,data=None):
+        window = insertPolicyWindow(self,self.mTextBuffer)
+
+        
+    def __init__(self,parentWindow,frameTitle,textBufferTitle):
+        self.mParentWindow = parentWindow
+        frame = gtk.Frame(frameTitle)
+        self.mFrame = frame
+        vbox = gtk.VBox()
+        frame.add(vbox)
+        hbox = gtk.HBox()
+        label = gtk.Label(textBufferTitle)
+        hbox.pack_start(label,False,False,5)
+        label = gtk.Label("")
+        self.mToBeSavedFileLabel= label
+        self.mToBeSavedFile=None
+        
+        hbox.pack_start(label,False,False,5)
+        vbox.pack_start(hbox,False,False,0)
+        
+        sw = gtk.ScrolledWindow()
+        sw.set_size_request(300,200)
+        sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        textview = gtk.TextView()
+        textbuffer = textview.get_buffer()
+        self.mTextBuffer= textbuffer
+        sw.add(textview)
+        vbox.pack_start(sw, True, True, 5)
+        
+        hbox = gtk.HBox()
+        button = gtk.Button(_("Add policy"))
+        hbox.pack_start(button, False, False, 5)
+        button.connect("clicked", self.addButtonCallBack)
+        button = gtk.Button(_("Save and Apply"))
+        hbox.pack_start(button, False, False, 5)
+        button.connect("clicked", self.saveButtonCallBack)
+        vbox.pack_start(hbox, False, False, 5)
+        

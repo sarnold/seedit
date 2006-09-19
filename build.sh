@@ -1,6 +1,6 @@
-VERSION=2.0.0
+VERSION=2.0.1
 RELEASE=1
-DISTRO=FC5
+DISTRO=COS4
 
 mkdir -p archive/source
 mkdir -p archive/RPM

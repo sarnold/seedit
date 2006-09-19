@@ -6,7 +6,7 @@ Release: 1.%{distro}
 License: GPL
 Group: System Environment/Base
 URL: http://sedit.sourceforge.net/
-Source0: %{name}-%{version}.tar.gz
+Source0: %{name}-%{version}-%{Release}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
 %description

@@ -9,7 +9,7 @@ Release: 1.%{distro}
 License: GPL
 Group:  System Environment/Base
 URL:  http://seedit.sourceforge.net/
-Source0: seedit-policy-%{version}.tar.gz
+Source0: seedit-policy-%{version}-%{Release}.tar.gz
 BuildRoot: %{_tmppath}/seedit-policy-%{version}-%{release}-root
 BuildArch: noarch
 Requires: seedit-converter >= 2.0.0, checkpolicy,m4,audit

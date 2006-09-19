@@ -1,12 +1,13 @@
 %define distro COS4
+%define buildnum 1
 Summary: Compliler for simplified policy
 Name: seedit-converter
 Version: 2.0.1
-Release: 1.%{distro}
+Release: %{buildnum}.%{distro}
 License: GPL
 Group: System Environment/Base
 URL: http://sedit.sourceforge.net/
-Source0: %{name}-%{version}-%{Release}.tar.gz
+Source0: %{name}-%{version}-%{buildnum}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
 %description

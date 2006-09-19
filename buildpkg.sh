@@ -1,13 +1,14 @@
-VERSION=2.0.0
-RELEASE=2
+VERSION=2.0.1
+RELEASE=1
+DISTRO=COS4
 
 mkdir -p archive
 
 name=$1
-distro=$2
+distro=$DISTRO
 
 if [ ! -n name ]; then 
-    echo "Usage buildpkg <packagename> <distro>"
+    echo "Usage buildpkg <packagename> "
 fi
 
 if [ -e $name-$VERSION ]
@@ -26,7 +27,7 @@ mv $name-$VERSION-$RELEASE.tar.gz archive
 rm -rf $name-$VERSION
 
 cd archive
-rpmbuild -ta $name-$VERSION.tar.gz
+rpmbuild -ta $name-$VERSION-$RELEASE.tar.gz
 mkdir -p RPM
 mkdir -p source
 

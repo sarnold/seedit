@@ -1,15 +1,16 @@
 %define type strict
 %define selinuxconf /etc/selinux/config
 %define distro COS4
+%define buildnum 1
 Summary: Simplified Policy for SELinux
 #Name: seedit-policy-%{type}
 Name: seedit-policy
 Version: 2.0.1
-Release: 1.%{distro}
+Release: %{buildnum}.%{distro}
 License: GPL
 Group:  System Environment/Base
 URL:  http://seedit.sourceforge.net/
-Source0: seedit-policy-%{version}-%{Release}.tar.gz
+Source0: seedit-policy-%{version}-%{buildnum}.tar.gz
 BuildRoot: %{_tmppath}/seedit-policy-%{version}-%{release}-root
 BuildArch: noarch
 Requires: seedit-converter >= 2.0.0, checkpolicy,m4,audit

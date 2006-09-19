@@ -42,6 +42,10 @@ rm -rf $RPM_BUILD_ROOT
 %config /etc/seedit/converter
 
 %changelog
+* Tue Sep 19 2006 Yuichi Nakamura 2.0.1-1
+Fixed bug for RBAC(default_cotnexts)
+Converter will generate userhelper_contexts
+
 * Fri Aug 25 2006 Yuichi Nakamura 2.0.0-2
 Fixed bug. rename was integrated into c permission, e is correct.
 

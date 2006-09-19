@@ -93,5 +93,8 @@ rm -rf $RPM_BUILD_ROOT
 %config /etc/seedit/policy
 
 %changelog
+* Tue Sep 19 2006 Yuichi Nakamura 2.0.1
+Fixed policy for Cent OS4
+
 * Mon Jul 3 2006 Yuichi Nakamura<himainu-ynakam@miomio.jp> 2.0.0
 - Initial version

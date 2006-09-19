@@ -8,7 +8,7 @@ URL: http://sedit.sourceforge.net/
 Source0: %{name}-%{version}-%{release}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 BuildArch: noarch
-Requires: seedit-converter >= 2.0.0, seedit-policy >= 2.0.0,audit,pygtk2
+Requires: seedit-converter >= 2.0.1, seedit-policy >= 2.0.1,audit,pygtk2
 
 
 %description
@@ -46,6 +46,9 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/pixmaps/seedit-gui.png
 
 %changelog
+* Tue Sep 19 2006 Yuichi Nakamura 2.0.1
+Fixed bug for Cent OS 4
+
 * Mon Jul 3 2006 Yuichi Nakamura<himainu-ynakam@miomio.jp> 2.0.0
 - Initial version
 

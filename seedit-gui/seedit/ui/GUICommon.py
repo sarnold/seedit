@@ -163,7 +163,7 @@ class seeditCommon:
     def checkOverWrite(self, filename):
 
         if os.path.exists(filename):
-            response = self.showYesNoDialog(_("The file %s already exists. \n Overwrite this file?")%
+            response = self.showYesNoDialog(_("The file %s already exists. \n Overwrite this file?")% (filename))
             if response == gtk.RESPONSE_YES:
                 return True
             elif response == gtk.RESPONSE_NO:

@@ -103,8 +103,11 @@ class seeditMainWindow(seeditCommon):
         defaultIcon = gtk.gdk.pixbuf_new_from_file(gIconPath+"icon.png")
         newIcon = gtk.gdk.pixbuf_new_from_file(gIconPath+"new.png")
         delIcon = gtk.gdk.pixbuf_new_from_file(gIconPath+"del.png")
-        
-        model.append([_("Status"), defaultIcon,GUI_STATUS])
+        statusIcon = gtk.gdk.pixbuf_new_from_file(gIconPath+"view-status.png")
+        generateIcon = gtk.gdk.pixbuf_new_from_file(gIconPath+"generate-policy.png")
+        editIcon = gtk.gdk.pixbuf_new_from_file(gIconPath+"new.png")
+
+        model.append([_("Status"), statusIcon,GUI_STATUS])
         
         model.append([_("Manage Domain"), newIcon,GUI_MANAGE])
 
@@ -112,8 +115,8 @@ class seeditMainWindow(seeditCommon):
         if rbac:
             model.append([_("Manage Role"), newIcon,GUI_RMANAGE])
         
-        model.append([_("Generate policy"), defaultIcon,GUI_GENERATE])
-        model.append([_("Edit policy"), defaultIcon,GUI_EDIT])
+        model.append([_("Generate policy"), generateIcon,GUI_GENERATE])
+        model.append([_("Edit policy"), editIcon,GUI_EDIT])
         model.append([_("Apply policy/Relabel"), defaultIcon,GUI_LOAD])
 
         noIconViewFlag=False #in old pygtk, no IconView widget

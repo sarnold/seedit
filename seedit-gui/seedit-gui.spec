@@ -1,6 +1,6 @@
 Summary: GUI for SELinux  Policy Editor
 Name: seedit-gui
-Version: 2.0.1
+Version: 2.0.2
 Release:  1
 License: GPL
 Group: System Environment/Base
@@ -46,8 +46,12 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/pixmaps/seedit-gui.png
 
 %changelog
+* Tue Sep 26 2006 Yuichi Nakamura 2.0.2
+Merged changes(about lanugage changes) from Shane M. Coughlan.
+
 * Tue Sep 19 2006 Yuichi Nakamura 2.0.1
 Fixed bug for Cent OS 4
+Merged clean up about copyright statement from Shane M. Coughlan.
 
 * Mon Jul 3 2006 Yuichi Nakamura<himainu-ynakam@miomio.jp> 2.0.0
 - Initial version

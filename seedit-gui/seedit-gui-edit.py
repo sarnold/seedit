@@ -2,7 +2,7 @@
 
 #! SELinux Policy Editor, a simple editor for SELinux policies
 #! Copyright (C) 2006 Yuichi Nakamura
-#! 
+#! Copyright (c) 2006 SELinux Policy Editor Team
 #! This program is free software; you can redistribute it and/or modify
 #! it under the terms of the GNU General Public License as published by
 #! the Free Software Foundation; either version 2 of the License, or
@@ -108,7 +108,8 @@ class seeditEditWindow(seeditCommon):
 	    filename = getDomainFileName(self.mDomain)
 	    r = saveStringToFile(str,filename)
 	    if r != SEEDIT_SUCCESS:
-		    self.showMessageDialog(gtk.MESSAGE_ERROR, _("File open Error:%s. \n")%(filename))
+		    self.showMessageDialog(gtk.MESSAGE_ERROR, _("There was an error opening the file:%s. \n")%(filename))
+
 		    return
 	    
 	    ld=loadPolicyDialog(self)
@@ -125,7 +126,8 @@ class seeditEditWindow(seeditCommon):
 		    buf.apply_tag(tag,start,end)
 		    r = saveStringToFile(self.mBackupLines, filename)
 		    if r != SEEDIT_SUCCESS:
-			    self.showMessageDialog(gtk.MESSAGE_ERROR, _("File open Error:%s. \n")%(filename))
+			    self.showMessageDialog(gtk.MESSAGE_ERROR, _("There was an error opening the file:%s. \n")%(filename))
+
 			    return
 	    else:
 		    msg = _("%s:load success") % (self.mDomain)
@@ -155,7 +157,9 @@ class seeditEditWindow(seeditCommon):
 		    return
 	    input = dialog.openFile()
 	    if input ==None:
-		    self.showMessageDialog(gtk.MESSAGE_ERROR, _("File open Error.\n"))
+		    self.showMessageDialog(gtk.MESSAGE_ERROR, _("There was an error opening the file.\n"))
+
+		    
 		    return
 	    self.mDomain = dialog.getOpenDomain()
 	    

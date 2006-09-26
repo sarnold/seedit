@@ -2,7 +2,7 @@
 
 #! SELinux Policy Editor, a simple editor for SELinux policies
 #! Copyright (C) 2006 Yuichi Nakamura
-#! 
+#! Copyright (c) 2006 SELinux Policy Editor Team
 #! This program is free software; you can redistribute it and/or modify
 #! it under the terms of the GNU General Public License as published by
 #! the Free Software Foundation; either version 2 of the License, or
@@ -63,14 +63,14 @@ class seStatusTab(seeditCommon):
        
         
         if result == SEEDIT_ERROR:
-            message = _("Failed to change current mode. Permission denied")
+            message = _("Failed to change the current mode. Permission denied")
             self.showMessageDialog(gtk.MESSAGE_ERROR,message)
             mode = getMode()
             self.setModeCombo(self.mCurrentModeComboBox,mode)
         
         result = setBootMode(bootMode)
         if result == SEEDIT_ERROR:
-            message = _("Failed to change boot mode. Permission denied")
+            message = _("Failed to change the boot mode. Permission denied")
             self.showMessageDialog(gtk.MESSAGE_ERROR,message)
             mode = getBootMode()
             self.setModeCombo(self.mBootModeComboBox,mode)
@@ -104,15 +104,15 @@ class seStatusTab(seeditCommon):
         vbox = gtk.VBox()
         self.mParentWindow=parent
         self.mElement = vbox
+        label = gtk.Label(_("Is SELinux Policy Editor installed?"))
 
-        label = gtk.Label(_("seedit Installed?"))
         hbox = gtk.HBox()
         hbox.pack_start(label, False, False,10)
         vbox.pack_start(hbox, False, False)
         if seeditInstalled()==True:
             label = gtk.Label(_("Yes"))
         else:
-            label = gtk.Label(_("No!"))
+            label = gtk.Label(_("No"))
         hbox.pack_start(label, False, False,10)
 
         
@@ -276,7 +276,7 @@ class seeditStatusWindow(seeditCommon):
         # Create the toplevel window
         window = gtk.Window()
         self.mWindow = window
-        window.set_title(_("seedit Status"))
+        window.set_title(_("SELinux Policy Editor status"))
         
         window.connect('destroy', lambda w: gtk.main_quit())
 

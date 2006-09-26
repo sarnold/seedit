@@ -2,7 +2,7 @@
 
 #! SELinux Policy Editor, a simple editor for SELinux policies
 #! Copyright (C) 2006 Yuichi Nakamura
-#! 
+#! Copyright (c) 2006 SELinux Policy Editor Team
 #! This program is free software; you can redistribute it and/or modify
 #! it under the terms of the GNU General Public License as published by
 #! the Free Software Foundation; either version 2 of the License, or
@@ -452,7 +452,7 @@ class seeditGeneratePolicyWindow(seeditCommon):
 		window = gtk.Window()
 		self.mWindow = window
 		self.mResult = []
-		window.set_title(_("seedit policy generator"))
+		window.set_title(_("SELinux Policy Editor policy generator"))
 		window.connect('destroy', lambda w: gtk.main_quit())
 		vboxFrame = gtk.VBox()
 		window.add(vboxFrame)
@@ -462,7 +462,7 @@ class seeditGeneratePolicyWindow(seeditCommon):
 		notebook = gtk.Notebook()
 		notebook.set_tab_pos(gtk.POS_TOP)
 		self.mNotebook=notebook
-		label = gtk.Label(_("Generation configuration"))
+		label = gtk.Label(_("Generate configuration"))
 		vboxFrame.pack_start(notebook, True, True,5)
 	
 		vbox = gtk.VBox()
@@ -492,21 +492,21 @@ class seeditGeneratePolicyWindow(seeditCommon):
 		vbox.pack_start(hbox, False, False, 5)
 
 		hbox = gtk.HBox()
-		button = gtk.CheckButton(_("Generate more secure policy"))
+		button = gtk.CheckButton(_("Generate a more secure policy"))
 		seedit.audit2spdl.gHighSecurityFlag=False
 		button.connect("toggled", self.checkButtonCallBack, "secure")
 		hbox.pack_start(button, False, False,0)
 		vbox.pack_start(hbox, False, False, 5)
 		
 		hbox = gtk.HBox()
-		button = gtk.CheckButton(_("Read All log"))
+		button = gtk.CheckButton(_("Read all the log"))
 		self.mReadAllLogFlag=False
 		button.connect("toggled", self.checkButtonCallBack, "allLog")
 		hbox.pack_start(button, False, False,0)
 		vbox.pack_start(hbox, False, False, 5)
 
 		hbox = gtk.HBox()
-		button = gtk.CheckButton(_("Skip search log"))
+		button = gtk.CheckButton(_("Skip reading dir search"))
 		button.set_active(True)
 		self.mSkipSearchFlag=True
 		button.connect("toggled", self.checkButtonCallBack, "skip")
@@ -552,7 +552,7 @@ class seeditGeneratePolicyWindow(seeditCommon):
 		button.connect("clicked", self.deleteRowCallBack, self.mGeneratedPolicyTreeView)
 		hbox.pack_start(button, False, False, 5)
 
-		frame=gtk.Frame(_("Following will be saved"))
+		frame=gtk.Frame(_("The following will be saved"))
 		resultTabVBox.pack_start(frame,False, False,5)
 		vbox = gtk.VBox()
 		frame.add(vbox)

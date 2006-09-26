@@ -2,7 +2,7 @@
 
 #! SELinux Policy Editor, a simple editor for SELinux policies
 #! Copyright (C) 2006 Yuichi Nakamura
-#! 
+#! Copyright (c) 2006 SELinux Policy Editor Team
 #! This program is free software; you can redistribute it and/or modify
 #! it under the terms of the GNU General Public License as published by
 #! the Free Software Foundation; either version 2 of the License, or
@@ -40,7 +40,7 @@ class seeditLoadWindow(seeditCommon):
 			return
 		elif self.mType=="init":
 			title =_("Initialize label")
-			message= _("Relabeling all file labels, it will take very  long time.")
+			message= _("Now relabeling all files.  This will take a while.")
 			closeFlag = False
 			command = gSeedit_load+" -vi"
 			ld=loadPolicyDialog(self,closeFlag,title,message,command)
@@ -67,7 +67,7 @@ class seeditLoadWindow(seeditCommon):
 	def __init__(self):
 		window = gtk.Window()
 		self.mWindow = window
-		window.set_title(_("seedit load policy/relabel"))
+		window.set_title(_("SELinux Policy Editor load policy/relabel"))
 		window.connect('destroy', lambda w: gtk.main_quit())
 		frameVbox = gtk.VBox()
 

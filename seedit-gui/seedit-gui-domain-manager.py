@@ -2,7 +2,7 @@
 
 #! SELinux Policy Editor, a simple editor for SELinux policies
 #! Copyright (C) 2006 Yuichi Nakamura
-#! 
+#! Copyright (c) 2006 SELinux Policy Editor Team
 #! This program is free software; you can redistribute it and/or modify
 #! it under the terms of the GNU General Public License as published by
 #! the Free Software Foundation; either version 2 of the License, or
@@ -60,15 +60,17 @@ class deleteDomainTab(seeditCommon):
 
 
         if self.mTemporalFlag == False:
-            message =_("Really remove %s?  The backup is created in extras directory. ") % (domain)
+            message =_("Really remove %s?  A backup will be created in extras directory. ") % (domain)
+
             response = self.showYesNoDialog(message)
             if response == gtk.RESPONSE_NO:
-                self.showMessageDialog(gtk.MESSAGE_INFO, _("Operation cancelled.\n"))
+                self.showMessageDialog(gtk.MESSAGE_INFO, _("The operation has been cancelled.\n"))
+
                 return
         
         r = deleteDomain(domain, self.mTemporalFlag)        
         if r == SEEDIT_SUCCESS:
-            self.showMessageDialog(gtk.MESSAGE_INFO, _("Domain removed,next load policy.\n"))
+            self.showMessageDialog(gtk.MESSAGE_INFO, _("Domain removed, next load policy.\n"))
             self.updateComboBoxes()
             if self.mTemporalFlag == False:
                 ld=loadPolicyDialog(self.mParentWindow)
@@ -242,7 +244,8 @@ class createDomainTab(seeditCommon):
 
         extraDomains = getExtraDomainList()
         if domain in extraDomains:
-            message = _("Domain template already exists in extras directory. Do you want to reuse?")
+            message = _("A domain template already exists in extras directory. Do you want to use this template?")
+
             response = self.showYesNoDialog(message)
             if response == gtk.RESPONSE_YES:
                 filename = getExtraDomainFileName(domain)

@@ -109,15 +109,15 @@ class seeditMainWindow(seeditCommon):
 
         model.append([_("Status"), statusIcon,GUI_STATUS])
         
-        model.append([_("Manage Domain"), newIcon,GUI_MANAGE])
+        model.append([_("Manage domain"), newIcon,GUI_MANAGE])
 
         rbac = getRBAC()
         if rbac:
-            model.append([_("Manage Role"), newIcon,GUI_RMANAGE])
+            model.append([_("Manage role"), newIcon,GUI_RMANAGE])
         
         model.append([_("Generate policy"), generateIcon,GUI_GENERATE])
         model.append([_("Edit policy"), editIcon,GUI_EDIT])
-        model.append([_("Apply policy/Relabel"), defaultIcon,GUI_LOAD])
+        model.append([_("Apply policy\nrelabel"), defaultIcon,GUI_LOAD])
 
         noIconViewFlag=False #in old pygtk, no IconView widget
         try:

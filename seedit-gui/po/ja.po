@@ -482,7 +482,7 @@ msgid "Status"
 msgstr "ステータス"
 
 #: seedit-gui.py:80
-msgid "Manage Domain"
+msgid "Manage domain"
 msgstr "ドメインを管理"
 
 #: seedit-gui.py:81
@@ -573,7 +573,7 @@ msgid "Initialize all file labels"
 msgstr "全ファイルのラベルを初期化する"
 
 #: seedit-gui.py:87
-msgid "Apply policy/Relabel"
+msgid "Apply policy\nrelabel"
 msgstr "ポリシーのロード、ラベル付け"
 
 

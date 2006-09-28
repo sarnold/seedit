@@ -101,7 +101,7 @@ void convert(char *outdir){
 
   if(outdir!=NULL){
     policy_fp= openfile(outdir,"generated.conf");
-    file_context_fp = openfile(outdir,"file_contexts");
+    file_context_fp = openfile(outdir,"file_contexts.m4");
     unconfined_fp = openfile(outdir,"unconfined_domains");
     customizable_types_fp=openfile(outdir,"customizable_types");
     userhelper_context_fp=openfile(outdir,"userhelper_context");

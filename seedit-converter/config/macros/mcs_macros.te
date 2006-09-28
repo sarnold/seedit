@@ -1,8 +1,5 @@
 ##These are taken from serefpolicy 2.3.7
 
-#define(`enable_mls',`1')
-
-
 ########################################
 #
 # gen_user(username, prefix, role_set, mls_defaultlevel, mls_range, [mcs_categories])

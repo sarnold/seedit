@@ -213,17 +213,7 @@ void declare_initial_types(FILE *outfp){
 
 
 
-/**
- *  @name:	declare_initial_users
- *  @about:	declare default users
- *  @args:	outfp (FILE *) -> output file descripter
- *  @return:	none
- */
-void
-declare_initial_users(FILE *outfp)
-{
-	fprintf(outfp, "user system_u roles system_r;\n\n\n");
-}
+
 
 /**
  *  @name:	declare_initial_constrains
@@ -280,6 +270,8 @@ void set_base_policy_files(char *dir){
   base_files->attribute_te = mk_fullpath(dir, ATTRIBUTE_FILE);
   base_files->converter_conf = mk_fullpath(dir, CONVERTER_CONF_FILE); 
   base_files->unsupported_te = mk_fullpath(dir,UNSUPPORTED_TE_FILE);  
+  base_files->mcs = mk_fullpath(dir,MCS_FILE);  
+  
 
   return;
 }

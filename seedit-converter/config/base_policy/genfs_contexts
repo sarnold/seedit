@@ -3,54 +3,54 @@
 
 # proc (excluding /proc/PID)
 # used in allowproc
-genfscon proc /				system_u:object_r:proc_t
-genfscon proc /kmsg			system_u:object_r:proc_kmsg_t
-genfscon proc /kcore			system_u:object_r:proc_kcore_t
+genfscon proc /				gen_context(system_u:object_r:proc_t,s0)
+genfscon proc /kmsg			gen_context(system_u:object_r:proc_kmsg_t,s0)
+genfscon proc /kcore			gen_context(system_u:object_r:proc_kcore_t,s0)
 
 # used in allowadm getsecurity
 # selinuxfs
-genfscon selinuxfs /			system_u:object_r:security_t
+genfscon selinuxfs /			gen_context(system_u:object_r:security_t,s0)
 
 ## Following are used in allowfs 
 # sysfs
-genfscon sysfs /			system_u:object_r:sysfs_t
+genfscon sysfs /			gen_context(system_u:object_r:sysfs_t,s0)
 # autofs
-genfscon autofs /			system_u:object_r:autofs_t
-genfscon automount /			system_u:object_r:autofs_t
+genfscon autofs /			gen_context(system_u:object_r:autofs_t,s0)
+genfscon automount /			gen_context(system_u:object_r:autofs_t,s0)
 # usbfs
-genfscon usbdevfs /			system_u:object_r:usbfs_t
-genfscon usbfs / 			system_u:object_r:usbfs_t
+genfscon usbdevfs /			gen_context(system_u:object_r:usbfs_t,s0)
+genfscon usbfs / 			gen_context(system_u:object_r:usbfs_t,s0)
 # cd,dvd file systems
-genfscon iso9660 /			system_u:object_r:cdfs_t
-genfscon udf /				system_u:object_r:cdfs_t
+genfscon iso9660 /			gen_context(system_u:object_r:cdfs_t,s0)
+genfscon udf /				gen_context(system_u:object_r:cdfs_t,s0)
 # romfs
-genfscon romfs /			system_u:object_r:romfs_t
-genfscon cramfs /			system_u:object_r:romfs_t
+genfscon romfs /			gen_context(system_u:object_r:romfs_t,s0)
+genfscon cramfs /			gen_context(system_u:object_r:romfs_t,s0)
 # ramfs
-genfscon ramfs /			system_u:object_r:ramfs_t
+genfscon ramfs /			gen_context(system_u:object_r:ramfs_t,s0)
 # File system for windows&dos
-genfscon vfat /				system_u:object_r:dosfs_t
-genfscon msdos /			system_u:object_r:dosfs_t
-genfscon fat /				system_u:object_r:dosfs_t
-genfscon ntfs /				system_u:object_r:dosfs_t
+genfscon vfat /				gen_context(system_u:object_r:dosfs_t,s0)
+genfscon msdos /			gen_context(system_u:object_r:dosfs_t,s0)
+genfscon fat /				gen_context(system_u:object_r:dosfs_t,s0)
+genfscon ntfs /				gen_context(system_u:object_r:dosfs_t,s0)
 # samba
-genfscon cifs /				system_u:object_r:smbfs_t
-genfscon smbfs /			system_u:object_r:smbfs_t
+genfscon cifs /				gen_context(system_u:object_r:smbfs_t,s0)
+genfscon smbfs /			gen_context(system_u:object_r:smbfs_t,s0)
 # nfs
-genfscon nfs /				system_u:object_r:nfs_t
-genfscon nfs4 /				system_u:object_r:nfs_t
-genfscon afs /				system_u:object_r:nfs_t
+genfscon nfs /				gen_context(system_u:object_r:nfs_t,s0)
+genfscon nfs4 /				gen_context(system_u:object_r:nfs_t,s0)
+genfscon afs /				gen_context(system_u:object_r:nfs_t,s0)
 
-genfscon inotifyfs /			system_u:object_r:inotifyfs_t
-genfscon hugetlbfs /			system_u:object_r:hugetlbfs_t
+genfscon inotifyfs /			gen_context(system_u:object_r:inotifyfs_t,s0)
+genfscon hugetlbfs /			gen_context(system_u:object_r:hugetlbfs_t,s0)
 
 
 # unsupported filesystems
-genfscon rootfs /			system_u:object_r:unsupported_fs_t
-genfscon debugfs /			system_u:object_r:unsupported_fs_t
-genfscon eventpollfs / 			system_u:object_r:unsupported_fs_t
-genfscon futexfs / 			system_u:object_r:unsupported_fs_t
-genfscon bdev / 			system_u:object_r:unsupported_fs_t
-genfscon nfsd / 			system_u:object_r:unsupported_fs_t
-genfscon rpc_pipefs / 			system_u:object_r:unsupported_fs_t
-genfscon binfmt_misc / 			system_u:object_r:unsupported_fs_t
+genfscon rootfs /			gen_context(system_u:object_r:unsupported_fs_t,s0)
+genfscon debugfs /			gen_context(system_u:object_r:unsupported_fs_t,s0)
+genfscon eventpollfs / 			gen_context(system_u:object_r:unsupported_fs_t,s0)
+genfscon futexfs / 			gen_context(system_u:object_r:unsupported_fs_t,s0)
+genfscon bdev / 			gen_context(system_u:object_r:unsupported_fs_t,s0)
+genfscon nfsd / 			gen_context(system_u:object_r:unsupported_fs_t,s0)
+genfscon rpc_pipefs / 			gen_context(system_u:object_r:unsupported_fs_t,s0)
+genfscon binfmt_misc / 			gen_context(system_u:object_r:unsupported_fs_t,s0)

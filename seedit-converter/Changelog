@@ -1,3 +1,6 @@
+*2006/09/28 Yuichi Nakamura
+Modified to support MCS
+
 *2006/08/25 2.0.0-2 Yuichi Nakamura
 Fixed bug.
 rename was integrated into c permission,

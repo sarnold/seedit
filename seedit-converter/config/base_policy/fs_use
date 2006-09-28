@@ -12,30 +12,30 @@
 
 # Use xattrs for the following filesystem types.
 # Requires that a security xattr handler exist for the filesystem.
-fs_use_xattr ext2 system_u:object_r:fs_t;
-fs_use_xattr ext3 system_u:object_r:fs_t;
-fs_use_xattr xfs system_u:object_r:fs_t;
-fs_use_xattr jfs system_u:object_r:fs_t;
-fs_use_xattr reiserfs system_u:object_r:fs_t;
-fs_use_xattr jffs2 system_u:object_r:fs_t;
+fs_use_xattr ext2 gen_context(system_u:object_r:fs_t,s0);
+fs_use_xattr ext3 gen_context(system_u:object_r:fs_t,s0);
+fs_use_xattr xfs gen_context(system_u:object_r:fs_t,s0);
+fs_use_xattr jfs gen_context(system_u:object_r:fs_t,s0);
+fs_use_xattr reiserfs gen_context(system_u:object_r:fs_t,s0);
+fs_use_xattr jffs2 gen_context(system_u:object_r:fs_t,s0);
 
 # Use the allocating task SID to label inodes in the following filesystem
 # types, and label the filesystem itself with the specified context.
 # This is appropriate for pseudo filesystems that represent objects
 # like pipes and sockets, so that these objects are labeled with the same
 # type as the creating task.  
-fs_use_task pipefs system_u:object_r:fs_t;
-fs_use_task sockfs system_u:object_r:fs_t;
+fs_use_task pipefs gen_context(system_u:object_r:fs_t,s0);
+fs_use_task sockfs gen_context(system_u:object_r:fs_t,s0);
 
 # Use a transition SID based on the allocating task SID and the
 # filesystem SID to label inodes in the following filesystem types,
 # and label the filesystem itself with the specified context.
 # This is appropriate for pseudo filesystems like devpts and tmpfs
 # where we want to label objects with a derived type.
-fs_use_trans devpts system_u:object_r:devpts_t;
-fs_use_trans tmpfs system_u:object_r:tmpfs_t;
-fs_use_trans shm system_u:object_r:tmpfs_t;
-fs_use_trans mqueue  system_u:object_r:tmpfs_t;
+fs_use_trans devpts gen_context(system_u:object_r:devpts_t,s0);
+fs_use_trans tmpfs gen_context(system_u:object_r:tmpfs_t,s0);
+fs_use_trans shm gen_context(system_u:object_r:tmpfs_t,s0);
+fs_use_trans mqueue  gen_context(system_u:object_r:tmpfs_t,s0);
 
 # The separate genfs_contexts configuration can be used for filesystem 
 # types that cannot support persistent label mappings or use

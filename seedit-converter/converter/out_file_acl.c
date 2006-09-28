@@ -680,11 +680,11 @@ save_prev_label(char *path, char *tmp_label)
 			//      fprintf(stdout, "%s\t%s\n", fullpath, type);
 			if (stat_ret==0 && S_ISDIR(buf.st_mode))
 			{
-				fprintf(TMP_fp, "%s(|/.*)\tsystem_u:object_r:%s\n", fullpath, type);
+				fprintf(TMP_fp, "%s(|/.*)\tgen_context(system_u:object_r:%s,s0)\n", fullpath, type);
 			}
 			else
 			{
-				fprintf(TMP_fp, "%s\tsystem_u:object_r:%s\n", fullpath, type);
+				fprintf(TMP_fp, "%s\tgen_context(system_u:object_r:%s,s0)\n", fullpath, type);
 			}
 		}
 

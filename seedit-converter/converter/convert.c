@@ -109,9 +109,12 @@ void convert(char *outdir){
   }  
 
  /* print default files */
+
   include_file(get_base_policy_files()->security_class, policy_fp);
   include_file(get_base_policy_files()->initial_sids, policy_fp);
   include_file(get_base_policy_files()->access_vectors, policy_fp);
+  include_file(get_base_policy_files()->mcs, policy_fp);
+
   /* print default all attribute */
   declare_attributes(policy_fp);
   /* print initial types */
@@ -628,7 +631,7 @@ void out_portcon(FILE *outfp, int protocol){
   for(i=0;i<num;i++){
     type = port_array[i]->data;
     number = port_array[i]->key;
-    fprintf(outfp, "portcon %s %s system_u:object_r:%s\n",protostr,number,type);
+    fprintf(outfp, "portcon %s %s gen_context(system_u:object_r:%s,s0)\n",protostr,number,type);
   }
   free(port_array);
 
@@ -642,12 +645,12 @@ void out_netifcon(FILE *outfp){
   fprintf(outfp, "#Type for NIC\n"); 
   if(netif_list == NULL){
     /* dummy labels: to satisfy syntax  */
-    fprintf(outfp, "netifcon lo system_u:object_r:netif_t system_u:object_r:unlabeled_t\n");
+    fprintf(outfp, "netifcon lo gen_context(system_u:object_r:netif_t,s0) gen_context(system_u:object_r:unlabeled_t,s0)\n");
     return;
   }
   for(i=0; netif_list[i]!=NULL;i++){
     type = joint_str(netif_list[i],"_t");
-    fprintf(outfp, "netifcon %s system_u:object_r:%s system_u:object_r:unlabeled_t\n",netif_list[i],type);
+    fprintf(outfp, "netifcon %s gen_context(system_u:object_r:%s,s0) gen_context(system_u:object_r:unlabeled_t,s0)\n",netif_list[i],type);
   }  
 }
 
@@ -665,7 +668,7 @@ void out_nodecon(FILE *outfp){
   fprintf(outfp, "#Type for node\n"); 
   if(node_label_table == NULL||node_label_table->element_num==0){
     /* dummy labels: to satisfy syntax  */
-    fprintf(outfp, "nodecon 127.0.0.1 255.255.255.255 system_u:object_r:node_t\n");
+    fprintf(outfp, "nodecon 127.0.0.1 255.255.255.255 gen_context(system_u:object_r:node_t,s0)\n");
     return;
   }
   table = node_label_table;
@@ -682,7 +685,7 @@ void out_nodecon(FILE *outfp){
     *p ='\0';
     addr = s;
     netmask = p+1;
-    fprintf(outfp, "nodecon %s %s system_u:object_r:%s;\n",addr,netmask, type);
+    fprintf(outfp, "nodecon %s %s gen_context(system_u:object_r:%s,s0);\n",addr,netmask, type);
     free(s);
   }  
 
@@ -702,10 +705,10 @@ void out_netcontext(FILE *outfp){
   out_portcon(outfp,NET_UDP);
   
   fprintf(outfp,"#Default port number\n");
-  fprintf(outfp,"portcon tcp 1-1023 system_u:object_r:wellknown_tcp_port_t\n");
-  fprintf(outfp,"portcon udp 1-1023 system_u:object_r:wellknown_udp_port_t\n");
-  fprintf(outfp,"portcon tcp 1024-65535 system_u:object_r:unpriv_tcp_port_t\n");
-  fprintf(outfp,"portcon udp 1024-65535 system_u:object_r:unpriv_udp_port_t\n");
+  fprintf(outfp,"portcon tcp 1-1023 gen_context(system_u:object_r:wellknown_tcp_port_t,s0)\n");
+  fprintf(outfp,"portcon udp 1-1023 gen_context(system_u:object_r:wellknown_udp_port_t,s0)\n");
+  fprintf(outfp,"portcon tcp 1024-65535 gen_context(system_u:object_r:unpriv_tcp_port_t,s0)\n");
+  fprintf(outfp,"portcon udp 1024-65535 gen_context(system_u:object_r:unpriv_udp_port_t,s0)\n");
   out_netifcon(outfp);
 
   out_nodecon(outfp);
@@ -1989,14 +1992,16 @@ out_one_user_role(void *u)
 	max = ur->role_name_array_num;
 	str_a = ur->role_name_array;
 
-	fprintf(rbac_out, "user %s roles {", ur->username);
+	fprintf(rbac_out, "gen_user(%s,,", ur->username);
+	//	fprintf(rbac_out, "user %s roles {", ur->username);
 
 	for (i = 0; i < max; i++)
 	{
 		fprintf(rbac_out, " %s ", str_a[i]);
 	}
 	
-	fprintf(rbac_out,"system_r };\n");
+	//	fprintf(rbac_out,"system_r };\n");
+	fprintf(rbac_out,"system_r , s0,s0)\n");
 
 	return 0;
 }
@@ -2124,10 +2129,13 @@ out_rbac(FILE *outfp)
 
 
 	if (rbac_hash_table == NULL){
-	  fprintf(rbac_out, "user system_u roles system_r;\n");
-	  fprintf(rbac_out, "user user_u roles { system_r };\n");
-#ifdef COS4
-	  fprintf(rbac_out, "user root roles { system_r };\n");
+
+	  fprintf(rbac_out, "gen_user(system_u,, system_r,s0 - s15:c0.c255, c0.c255)\n");	  
+	  fprintf(rbac_out, "gen_user(user_u,, system_r,s0, s0)\n");
+
+
+#ifdef COS4	
+	  fprintf(rbac_out,"gen_user(root, , system_r, s0, s0 - s15:c0.c255, c0.c255)\n");
 #endif
 	  return;
 	}
@@ -2141,8 +2149,9 @@ out_rbac(FILE *outfp)
 	 handle_all_element(rbac_hash_table, out_role_allow);
 
 	/* print "user" */
-	fprintf(rbac_out, "user system_u roles system_r;\n");
-	fprintf(rbac_out, "user user_u roles { system_r };\n");
+	fprintf(rbac_out, "gen_user(system_u,, system_r,s0 - s15:c0.c255, c0.c255)\n");	  
+	fprintf(rbac_out, "gen_user(user_u,, system_r,s0, s0)\n");
+
 	handle_all_element(user_hash_table, out_one_user_role);
 
 

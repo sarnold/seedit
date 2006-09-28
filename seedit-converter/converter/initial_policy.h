@@ -35,7 +35,7 @@
 #define CONVERTER_CONF_FILE                   "converter.conf"
 #define DEFAULT_BASE_POLICY_DIR          "base_policy"
 #define UNSUPPORTED_TE_FILE                   "unsupported.te"
-
+#define MCS_FILE                         "mcs"
 
 /*struct to store full path file name for base policy files*/
 typedef struct basepolicy_t{
@@ -50,6 +50,7 @@ typedef struct basepolicy_t{
   char * types_te;
   char * attribute_te;
   char * converter_conf;
+  char * mcs;
 } BASEPOLICY;
 
 
@@ -72,8 +73,6 @@ typedef struct context_t
 
 int include_file(char *f, FILE *);
 void declare_initial_types(FILE *);
-void declare_initial_roles(FILE *);
-void declare_initial_users(FILE *);
 void declare_initial_constrains(FILE *);
 void declare_attributes(FILE *);
 void test_allow(FILE *);

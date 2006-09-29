@@ -669,6 +669,8 @@ void out_nodecon(FILE *outfp){
   if(node_label_table == NULL||node_label_table->element_num==0){
     /* dummy labels: to satisfy syntax  */
     fprintf(outfp, "nodecon 127.0.0.1 255.255.255.255 gen_context(system_u:object_r:node_t,s0)\n");
+    fprintf(outfp, "nodecon 0.0.0.0 255.255.255.255 gen_context(system_u:object_r:node_t,s0)\n");
+
     return;
   }
   table = node_label_table;

@@ -612,7 +612,7 @@ void out_file_contexts_special_file(FILE *file_contexts){
   fprintf(file_contexts, "#These labels are to protect Terminal\n");
   fprintf(file_contexts, "/dev/[^/]*tty[^/]* \tgen_context(system_u:object_r:tty_device_t,s0)\n");
   fprintf(file_contexts, "/dev/[^/]*pty[^/]* \tgen_context(system_u:object_r:tty_device_t,s0)\n");
-  fprintf(file_contexts, "/dev/pts\tsystem_u:object_r:devpts_t\n");
+  fprintf(file_contexts, "/dev/pts\tgen_context(system_u:object_r:devpts_t)\n");
   fprintf(file_contexts, "/dev/pts(/.*)?	<<none>>\n");
   fprintf(file_contexts, "/dev/vcs[^/]*\tgen_context(system_u:object_r:vcs_device_t,s0)\n");
   fprintf(file_contexts, "/dev/tty\tgen_context(system_u:object_r:devtty_t,s0)\n");

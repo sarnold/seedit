@@ -1050,6 +1050,7 @@
   </integrate>
 
 
+
   <integrate value="allowfile">
     <description>Integrated permissions for file allow</description>
     <option value="s">
@@ -2196,6 +2197,93 @@
     </option>
 
   </integrate>
+
+  <integrate value="allowkey">
+      <description>Integrated permissions for kernel key subsystem</description>
+      <option value="v">
+      <macro value="allow_key_v"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	    <type value="type"/>
+	    <secclass value="key"/>
+	  <permission value="view"/>
+	</rule>
+      </rules>
+    </option>
+    <option value="r">
+      <macro value="allow_key_r"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	    <type value="type"/>
+	    <secclass value="key"/>
+	  <permission value="read"/>
+	</rule>
+      </rules>
+    </option>
+  <option value="w">
+      <macro value="allow_key_w"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	    <type value="type"/>
+	    <secclass value="key"/>
+	  <permission value="write"/>
+	</rule>
+      </rules>
+    </option>
+ <option value="s">
+      <macro value="allow_key_s"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	    <type value="type"/>
+	    <secclass value="key"/>
+	  <permission value="search"/>
+	</rule>
+      </rules>
+    </option>
+<option value="l">
+      <macro value="allow_key_l"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	    <type value="type"/>
+	    <secclass value="key"/>
+	  <permission value="link"/>
+	</rule>
+      </rules>
+    </option>
+<option value="t">
+      <macro value="allow_key_t"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	    <type value="type"/>
+	    <secclass value="key"/>
+	  <permission value="setattr"/>
+	</rule>
+      </rules>
+    </option>
+<option value="c">
+      <macro value="allow_key_c"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	    <type value="type"/>
+	    <secclass value="key"/>
+	  <permission value="create"/>
+	</rule>
+      </rules>
+    </option>
+
+
+
+</integrate> 
+
+
+
   <group value="all_file_class">
     <element value="dir"/>
     <element value="file"/>

@@ -70,6 +70,10 @@ xmlChar *get_comment_str(){
 }
 
 
+int register_key_acl(char **domains_list){
+  /*dummy!!!*/
+  return 0;
+}
 
 int register_role(char *name){
   xmlNodePtr node=NULL;

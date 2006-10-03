@@ -97,4 +97,5 @@ allow $1 domain:netlink_audit_socket *;
 allow $1 domain:netlink_ip6fw_socket *;
 allow $1 domain:netlink_dnrt_socket *;
 allow $1 domain:netlink_kobject_uevent_socket *;
+allow $1 domain:key *;
 ')

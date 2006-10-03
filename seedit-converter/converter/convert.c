@@ -1276,20 +1276,41 @@ void out_adm_other_acl(FILE *fp, DOMAIN *domain){
 /*output allowkey rule*/
 static void out_key_acl(FILE *outfp, DOMAIN *d){
   KEY_RULE rule;
-
+  char *domain;
   int i;
+  int j; 
+  int num ;
+
   for (i=0; i< d->key_rule_array_num ;i++){
     rule = d->key_rule_array[i];
+    num = get_ntarray_num(rule.target);
+    for (j=0; j<num;j++){
+      domain = rule.target[j];
+      if(check_domainname(domain)==0){
+	if(rule.permission & VIEW_PRM)
+	  fprintf(outfp,"allow_key_v(%s,%s)\n",d->name, domain);
+	if(rule.permission & READ_PRM)
+	  fprintf(outfp,"allow_key_r(%s,%s)\n",d->name, domain);
+	if(rule.permission & WRITE_PRM)
+	  fprintf(outfp,"allow_key_w(%s,%s)\n",d->name, domain);
+	if(rule.permission & SEARCH_PRM)
+	  fprintf(outfp,"allow_key_s(%s,%s)\n",d->name, domain);
+	if(rule.permission & LINK_PRM)
+	  fprintf(outfp,"allow_key_s(%s,%s)\n",d->name, domain);
+	if(rule.permission & SETATTR_PRM)
+	  fprintf(outfp,"allow_key_t(%s,%s)\n",d->name, domain);
+	if(rule.permission & CREATE_PRM)
+	  fprintf(outfp,"allow_key_t(%s,%s)\n",d->name, domain);
 
-    if(check_domainname(target)==0){
-      fprintf(outfp,"allow_network_%s_use(%s,%s)\n",protocol_name, name,target);
-    }else{
-      fprintf(stderr,"Warning. Domain %s does not exist skipped.\n", target);
-  }
+	
+	
 
+      }else{
+	fprintf(stderr,"Warning:allowkey:Domain %s does not exist skipped.\n", domain);
+      }      
+    }
   }
   
-
 }
 
 

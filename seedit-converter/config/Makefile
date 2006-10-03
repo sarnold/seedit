@@ -75,4 +75,4 @@ doc:./doc/permission_integrate.pdf
 	dvipdf  permission_integrate.dvi
 
 clean:
-	rm -rf policy doc/*.aux doc/*.toc doc/*.pdf src/base_policy/unsupported.te src/macros/seedit_macros.te
+	rm -rf policy doc/*.aux doc/*.toc doc/*.pdf base_policy/unsupported.te macros/seedit_macros.te

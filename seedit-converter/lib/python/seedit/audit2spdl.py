@@ -796,12 +796,13 @@ def genOther(rule,line,domdoc):
     """
     
     spRuleList=[]
-    genRuleType=["allowpriv","allownet","allowcom"]
+    genRuleType=["allowpriv","allownet","allowcom","allowkey"]
 
     integrateTagList=domdoc.getElementsByTagName("integrate")
     permTagList=[]
     for t in integrateTagList:
         ruleName=getAttr(t,"value")
+            
         if ruleName in genRuleType:
             permTagList.extend(t.getElementsByTagName("permission"))
     
@@ -826,7 +827,7 @@ def genOther(rule,line,domdoc):
                     oneRule["ruletype"]=""
                 else:
                     oneRule["ruletype"]=getAttr(n,"value")
-
+                
                 
                 if  (oneRule["ruletype"],oneRule["option"]) in gNeglectRule:
                     continue
@@ -926,13 +927,12 @@ def parseLine(line):
     m = re.compile("scontext=\S+").search(line)
     if m:
         list = string.split(m.group(),":")
-        rule["domain"] = list.pop()
+        rule["domain"] = list[2]
 
     m = re.compile("tcontext=\S+").search(line)
     if m:
         list = string.split(m.group(),":")
-        rule["type"] = list.pop()
-       
+        rule["type"] = list[2]
         
     rule["secclass"] = getEqualValue(line,"tclass")
 
@@ -1173,6 +1173,16 @@ def allowcomStr(spRule,security="low"):
     str=str+";"
     return str
 
+def allowkeyStr(spRule,security="low"):
+    str =""
+    option = spRule["option"]
+
+    str ="allowkey "+domainToRole(spRule["type"])+" "+option+" ;"
+    return str
+
+
+
+
 def allownetStr(spRule):
     str=""
     option=spRule["option"]
@@ -1239,7 +1249,9 @@ def SPDLstr(spRuleList,line):
             ruleStr = allowprivStr(spRule)            
         elif ruletype in ("allowpts","allowtty"):
             ruleStr=allowTtyPtsStr(spRule)
-      
+        elif ruletype =="allowkey":
+            ruleStr = allowkeyStr(spRule)
+            
         outStruct.append((fileName,line,ruleStr))
       
     return outStruct

@@ -514,6 +514,7 @@ genAllowRule(outFileObject,"allowpts", doc,mode)
 genAllowRule(outFileObject,"allownet", doc,mode)
 genAllowRule(outFileObject,"allowcom", doc,mode)
 genAllowRule(outFileObject,"allowpriv", doc,mode)
+genAllowRule(outFileObject,"allowkey", doc,mode)
 genAllowRule(outFileObject,"transition", doc,mode)
 
 outFileObject.close()

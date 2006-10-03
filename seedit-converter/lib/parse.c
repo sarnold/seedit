@@ -84,7 +84,7 @@ int str_to_perm(char *s){
 
 /*Permission string for key to number*/
 int str_to_key_perm(char *s){
-  if (strcmp(s, VIEW_STR)){
+  if (strcmp(s, VIEW_STR)==0){
     return VIEW_PRM;
   }else if (strcmp(s, READ_STR) == 0){
     return READ_PRM;
@@ -215,7 +215,7 @@ int str_to_sig_perm(char *s){
 
 
 /**
- *  @name:	add_permisstion
+ *  @name:	add_permission
  *  @about:	add permission 
  *  @args:	s (char *) -> admin permisstion string
  *  @args:	flag (int) -> 

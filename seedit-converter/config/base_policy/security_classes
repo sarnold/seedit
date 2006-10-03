@@ -1,15 +1,11 @@
-#! SELinux Policy Editor, a simple editor for SELinux policies
-#! This section of the code is from the NSA SELinux release.
-#! Copyright (C) 2001, 2003 National Security Agency
-
-# These files are from the NSA SELinux code.  More verbose comments might
-# be a useful addition to describe their exact relationship with SELinux
-# Policy Editor.
 # FLASK
 
 #
 # Define the security object classes 
 #
+
+# Classes marked as userspace are classes
+# for userspace object managers
 
 class security
 class process
@@ -52,20 +48,20 @@ class ipc
 #
 
 # passwd/chfn/chsh
-class passwd
+class passwd			# userspace
 
 # SE-X Windows stuff
-class drawable
-class window
-class gc
-class font
-class colormap
-class property
-class cursor
-class xclient
-class xinput
-class xserver
-class xextension
+class drawable			# userspace
+class window			# userspace
+class gc			# userspace
+class font			# userspace
+class colormap			# userspace
+class property			# userspace
+class cursor			# userspace
+class xclient			# userspace
+class xinput			# userspace
+class xserver			# userspace
+class xextension		# userspace
 
 # pax flags
 class pax
@@ -81,13 +77,20 @@ class netlink_audit_socket
 class netlink_ip6fw_socket
 class netlink_dnrt_socket
 
-class dbus
-class nscd
+class dbus			# userspace
+class nscd			# userspace
 
 # IPSec association
 class association
 
 # Updated Netlink class for KOBJECT_UEVENT family.
 class netlink_kobject_uevent_socket
+
+class appletalk_socket
+
+class packet
+
+# Kernel access key retention
+class key
 
 # FLASK

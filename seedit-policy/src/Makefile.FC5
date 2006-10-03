@@ -34,8 +34,8 @@ policy:
 	mkdir -p $(OUTDIR);
 	m4 -s $(CONFDIR)/*.sp >$(CONFDIR)/all.sp;
 	$(CONVERTER) -i $(CONFDIR)/all.sp -o $(OUTDIR) -b $(BASEPOLICYDIR) -I $(CONFDIR)/include ;
-	$(M4) -D enable_mcs -Imacros -s $(MACRODIR)/*.te $(OUTDIR)/generated.conf > $(OUTDIR)/policy.conf;
-	$(M4) -D enable_mcs -Imacros -s $(MACRODIR)/mcs_macros.te $(OUTDIR)/file_contexts.m4 > $(OUTDIR)/file_contexts;
+	$(M4)  -Imacros -s $(MACRODIR)/*.te $(OUTDIR)/generated.conf > $(OUTDIR)/policy.conf;
+	$(M4)  -Imacros -s $(MACRODIR)/mcs_macros.te $(OUTDIR)/file_contexts.m4 > $(OUTDIR)/file_contexts;
 
 	$(CHECKPOLICY) -o $(OUTDIR)/policy.$(POLICYVER) -c $(POLICYVER) $(OUTDIR)/policy.conf
 
@@ -43,6 +43,7 @@ install: policy
 	cp $(OUTDIR)/policy.$(POLICYVER) $(POLICYDIR)
 	cp $(OUTDIR)/unconfined_domains $(POLICYDIR)
 	cp $(OUTDIR)/file_contexts $(CONTEXTSDIR)/files/
+	cp $(OUTDIR)/file_contexts.m4 $(CONTEXTSDIR)/files/
 	cp $(OUTDIR)/customizable_types $(CONTEXTSDIR)
 	cp $(OUTDIR)/userhelper_context $(CONTEXTSDIR)
 	cp -r $(BASEPOLICYDIR)/contexts/*  $(CONTEXTSDIR) 
@@ -66,7 +67,9 @@ diffrelabel: install
 		exec 3<&-;\
 	fi;
 	$(LOADPOLICY) $(POLICYDIR)/policy.$(POLICYVER)
-	diff $(OLD_FILE_CONTEXTS) $(FILE_CONTEXTS) -r|grep -e "^[<>]"|sed -e 's/^[><][ \t]*//'|sed -e 's/[ \t]\+.*//'|sed -e 's/(.*//'|sort|sed s/"\[\^\/\]"//g > fcdiff.tmp
+	diff $(OLD_FILE_CONTEXTS) $(FILE_CONTEXTS) -r |cat >  fcdiff.m4.tmp
+	$(M4)  -Imacros -s $(MACRODIR)/mcs_macros.te fcdiff.m4.tmp > fcdiff.pre.tmp
+	cat fcdiff.pre.tmp |grep -e "^[<>]"|sed -e 's/^[><][ \t]*//'|sed -e 's/[ \t]\+.*//'|sed -e 's/(.*//'|sort|sed s/"\[\^\/\]"//g > fcdiff.tmp
 	exec 3< fcdiff.tmp;\
 	while read FLs 0<&3; do \
 	for FL in $$FLs; do \
@@ -78,5 +81,8 @@ diffrelabel: install
 	exec 3<&-;\
 	cp $(FILE_CONTEXTS) $(OLD_FILE_CONTEXTS)
 	rm fcdiff.tmp
+	rm fcdiff.m4.tmp
+	rm fcdiff.pre.tmp
+
 
 

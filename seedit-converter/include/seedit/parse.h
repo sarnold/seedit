@@ -21,6 +21,7 @@
 #ifndef PARSE_H
 #define PARSE_H
 int str_to_perm(char *);
+int str_to_key_perm(char *);
 char *perm_to_str(int allowed);
 int get_tmp_perm();
 void set_tmp_perm(int value);
@@ -42,6 +43,7 @@ int register_file_deny(char *);
 int register_tmp_file_acl(char *,char *,int);
 int register_tmp_fs_acl(char *,char *,int);
 int register_net_acl(int, int);
+int register_key_acl(char **);
 int register_net_sock_acl(int,int ,int,char**,char **);
 int register_net_netif_acl(int,int,char **,int);
 int register_net_node_acl(int,int,char **,int);
@@ -67,6 +69,7 @@ char *get_sourcefile();
 #define ADM_PERM		3
 #define RW_PERM			4
 #define NET_PERM                5
+#define KEY_PERM                6
 
 #define TCP_ACL		0x01		/* TCP socket		*/
 #define UDP_ACL		0x02		/* UDP socket		*/
@@ -115,7 +118,7 @@ char *get_sourcefile();
 
 
 /**
- *  permissions used against file
+ *  permissions used for file/key
  */
 #define DENY_PRM		0x00
 #define READ_PRM		0x01
@@ -129,6 +132,8 @@ char *get_sourcefile();
 #define CREATE_PRM              0x100
 #define SETATTR_PRM             0x200
 #define DOMAIN_EXECUTE_PRM      0x400
+#define VIEW_PRM                0x800
+#define LINK_PRM                0x1000
 
 #define READ_STR		"r"
 #define WRITE_STR		"w"
@@ -140,6 +145,8 @@ char *get_sourcefile();
 #define CREATE_STR              "c"
 #define SETATTR_STR             "t"
 #define DOMAIN_EXECUTE_STR      "dx"
+#define VIEW_STR                "v"
+#define LINK_STR                "l"
 
 /**
  *  permission of SIGNAL

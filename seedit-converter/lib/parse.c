@@ -82,6 +82,28 @@ int str_to_perm(char *s){
 	return -1;
 }
 
+/*Permission string for key to number*/
+int str_to_key_perm(char *s){
+  if (strcmp(s, VIEW_STR)){
+    return VIEW_PRM;
+  }else if (strcmp(s, READ_STR) == 0){
+    return READ_PRM;
+  }else if (strcmp(s, WRITE_STR) == 0){
+    return WRITE_PRM;
+  }else if (strcmp(s, SEARCH_STR) == 0){
+    return SEARCH_PRM;
+  }else if (strcmp(s, CREATE_STR) == 0){
+    return CREATE_PRM;	
+  }else if (strcmp(s, SETATTR_STR)==0){
+    return SETATTR_PRM;
+  }else if (strcmp(s,LINK_STR)==0){
+    return LINK_PRM;
+  }else if(strcmp(s, WILDCARD_STR) == 0){
+    return VIEW_PRM|READ_PRM|WRITE_PRM|SEARCH_PRM|LINK_PRM|CREATE_PRM|SETATTR_PRM;
+  }
+  return -1;
+}
+
 
 /**
  *  @name:	perm_to_str
@@ -194,7 +216,7 @@ int str_to_sig_perm(char *s){
 
 /**
  *  @name:	add_permisstion
- *  @about:	add permittion 
+ *  @about:	add permission 
  *  @args:	s (char *) -> admin permisstion string
  *  @args:	flag (int) -> 
  *  @args:	init (int) -> whether ADMIN_RULE buffer is initialized..
@@ -215,6 +237,9 @@ int add_permission(char *s, int flag, int init)
 	if (flag == FILE_PERM)
 	{
 		p = str_to_perm(s);
+	}
+	if (flag == KEY_PERM){
+	  p = str_to_key_perm(s);
 	}
 	if (flag == RW_PERM)
 	{

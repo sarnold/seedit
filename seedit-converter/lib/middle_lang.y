@@ -52,6 +52,7 @@ extern int yylex(void);
 %token ALLOWCOM
 %token ALLOWADM
 %token ALLOWDEV
+%token ALLOWKEY
 %token ALLOWFS
 %token ALLOWTMP
 %token ALLOWPRIV
@@ -188,6 +189,9 @@ PERMISSIONS : PERMISSIONS ',' IDENTIFIER {add_permission($3,FILE_PERM,0);}
             |IDENTIFIER { add_permission($1,FILE_PERM,1); }
             |ASTERISK { add_permission($1,FILE_PERM,1);}
 ;
+
+
+
 
 
 DENY_DEF :DENY PATH ';'{register_file_deny($2);}
@@ -334,6 +338,17 @@ SIG_PERMISSIONS : SIG_PERMISSIONS ',' IDENTIFIER {add_permission($3,SIG_PERM,0);
                 |IDENTIFIER { add_permission($1,SIG_PERM,1); }             
                 |ASTERISK { add_permission($1, SIG_PERM, 1); }
 ;
+
+
+ALLOWKEY_DEF:ALLOWKEY DOMAINS_DEF KEY_PERMISSIONS ';' {register_key_acl(domains_list);}
+;
+
+KEY_PERMISSIONS : KEY_PERMISSIONS ',' IDENTIFIER {add_permission($3,KEY_PERM,0);}
+                |IDENTIFIER { add_permission($1,KEY_PERM,1); }             
+                |ASTERISK { add_permission($1, KEY_PERM, 1); }
+;
+
+
 
 ALLOWPRIV_DEF:ALLOWPRIV   IDENTIFIER ';' {register_admin_other_acl($2,0);}
              |DENYPRIV    IDENTIFIER ';'  {register_admin_other_acl($2,1);}

@@ -59,6 +59,7 @@ allow {return(ALLOW);}
 allowtmp {return(ALLOWTMP);}
 allownet {return(ALLOWNET);}
 allowcom {return(ALLOWCOM);}
+allowkey {return(ALLOWKEY);}
 allowdev {return(ALLOWDEV);}
 allowfs {return(ALLOWFS);}
 allowpriv {return(ALLOWPRIV);}

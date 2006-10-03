@@ -814,7 +814,9 @@ insert_domain_hash_by_name(char *name)
 	newdomain->net_socket_rule_array_num=0;
 	newdomain->net_netif_rule_array =NULL;
 	newdomain->net_netif_rule_array_num = 0;
-	
+	newdomain->key_rule_array = NULL;
+	newdomain->key_rule_array_num = 0;
+
 	return insert_element(domain_hash_table, newdomain, newdomain->name);
 }
 
@@ -1254,6 +1256,7 @@ int register_net_netif_acl(int rule_type, int protocol, char **netif_list, int p
   
   return 0;
 }
+
 
 int register_net_sock_acl(int rule_type,int protocol, int behavior, char **port_list, char **domain_list){
   int i;
@@ -1874,5 +1877,31 @@ int append_file_rule(char *domain_name, char *filename, int perm, int state){
     /* when allow <dir>* is described, add dummy permission to dummy domain. */
     label_child_dir(filename);
   }
+  return 0;
+}
+
+
+int register_key_acl(char **domain_list){
+
+  DOMAIN *domain;
+  KEY_RULE *tmp;
+  KEY_RULE work;
+  int len;
+  int i;
+  char **target=NULL;
+
+  domain = search_domain_hash(current_domain);
+  work.domain = domain;
+  work.permission = get_tmp_perm();
+  work.type = ALLOW_RULE;
+
+  len = get_ntarray_num(domain_list);  
+  for(i=0;i<len;i++){
+    target = extend_ntarray(target, domain_list[i]);
+  }
+  work.target= target;
+  tmp = (KEY_RULE *)extend_array(domain->key_rule_array, &(domain->key_rule_array_num), sizeof(KEY_RULE));
+  tmp[domain->key_rule_array_num -1]=work;
+  domain->key_rule_array = tmp;
   return 0;
 }

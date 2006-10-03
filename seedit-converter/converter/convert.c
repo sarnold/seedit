@@ -1273,6 +1273,25 @@ void out_adm_other_acl(FILE *fp, DOMAIN *domain){
 
 }
 
+/*output allowkey rule*/
+static void out_key_acl(FILE *outfp, DOMAIN *d){
+  KEY_RULE rule;
+
+  int i;
+  for (i=0; i< d->key_rule_array_num ;i++){
+    rule = d->key_rule_array[i];
+
+    if(check_domainname(target)==0){
+      fprintf(outfp,"allow_network_%s_use(%s,%s)\n",protocol_name, name,target);
+    }else{
+      fprintf(stderr,"Warning. Domain %s does not exist skipped.\n", target);
+  }
+
+  }
+  
+
+}
+
 
 /**
  *  @name:	out_acls
@@ -1299,6 +1318,7 @@ out_acls(FILE *outfp, DOMAIN *domain)
 	out_tty_type_change(outfp, domain);
 	out_fs_acl(outfp, domain);
 	out_fs_trans_acl(outfp, domain);
+	out_key_acl(outfp, domain);
 	out_adm_other_acl(outfp, domain);
 	
 }

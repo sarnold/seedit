@@ -134,6 +134,13 @@ typedef struct net_node_rule_t{
 }NET_NODE_RULE;
 
 
+typedef struct key_rule_t{
+  DOMAIN *domain;
+  int type; /*DENY_RULE or ALLOW_RULE*/
+  int permission; 
+  char **target; /*domain list array terminated by NULL*/
+} KEY_RULE;
+
 /**
  *  IPC ACL
  */
@@ -240,6 +247,10 @@ struct domain_t {
   int             net_netif_rule_array_num;
   NET_NODE_RULE *net_node_rule_array;
   int           net_node_rule_array_num;
+
+  /*allowkey*/
+  KEY_RULE *key_rule_array;
+  int key_rule_array_num;
 
   /*allowpriv*/
   ADMIN_OTHER_RULE *admin_rule_array;

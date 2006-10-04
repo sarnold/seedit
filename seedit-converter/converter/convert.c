@@ -47,9 +47,9 @@ static void out_rbac(FILE *);
 void out_userhelper_context(FILE *fp){
   
   if(rbac_hash_table ==NULL){
-    fprintf(fp,"system_u:system_r:unconfined_t\n");
+    fprintf(fp,"gen_context(system_u:system_r:unconfined_t,s0)\n");
   }else{
-    fprintf(fp,"system_u:sysadm_r:sysadm_t\n");
+    fprintf(fp,"gen_context(system_u:sysadm_r:sysadm_t,s0)\n");
   }
 }
 
@@ -104,7 +104,7 @@ void convert(char *outdir){
     file_context_fp = openfile(outdir,"file_contexts.m4");
     unconfined_fp = openfile(outdir,"unconfined_domains");
     customizable_types_fp=openfile(outdir,"customizable_types");
-    userhelper_context_fp=openfile(outdir,"userhelper_context");
+    userhelper_context_fp=openfile(outdir,"userhelper_context.m4");
     
   }  
 

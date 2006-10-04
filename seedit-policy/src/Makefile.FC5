@@ -36,7 +36,9 @@ policy:
 	$(CONVERTER) -i $(CONFDIR)/all.sp -o $(OUTDIR) -b $(BASEPOLICYDIR) -I $(CONFDIR)/include ;
 	$(M4)  -Imacros -s $(MACRODIR)/*.te $(OUTDIR)/generated.conf > $(OUTDIR)/policy.conf;
 	$(M4)  -Imacros -s $(MACRODIR)/mcs_macros.te $(OUTDIR)/file_contexts.m4 > $(OUTDIR)/file_contexts;
-
+	$(M4)  -Imacros -s $(MACRODIR)/mcs_macros.te $(OUTDIR)/userhelper_context.m4 > $(OUTDIR)/userhelper_context.tmp;
+	grep system_u $(OUTDIR)/userhelper_context.tmp >  $(OUTDIR)/userhelper_context
+	rm $(OUTDIR)/userhelper_context.tmp
 	$(CHECKPOLICY) -o $(OUTDIR)/policy.$(POLICYVER) -c $(POLICYVER) $(OUTDIR)/policy.conf
 
 install: policy

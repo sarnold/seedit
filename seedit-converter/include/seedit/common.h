@@ -21,6 +21,8 @@
 
 #ifndef COMMON_H
 #define COMMON_H
+#include <selinux.h>
+
 void chop_nl(char *);
 char *get_nth_tok(char *, char *, int);
 char *get_nth_tok_alloc(char *, char *, int);
@@ -55,7 +57,7 @@ int is_home_dir(char *path, char **homedir_list);
 char *match_home_dir(char *path, char **homedir_list);
 char *get_user_from_path(char *path, char **homedir_list);
 char **joint_ntarray(char **a1, char **a2);
-
+char *get_type_from_context(security_context_t context);
 #define ROOT_LABEL		"rootdir_t"
 
 

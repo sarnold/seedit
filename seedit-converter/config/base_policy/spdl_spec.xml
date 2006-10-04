@@ -256,6 +256,13 @@
     <section>
       <description>Pending.. May be changed</description>
       <rules>
+        <rule value="allow">
+	  <domain value="global"/>
+	  <type value="unlabeled_t"/>
+	  <secclass value="packet"/>
+	  <permission value="send"/>
+	  <permission value="recv"/>
+        </rule>
 	<rule value="allow">
 	  <domain value="global"/>
 	  <type value="file_type"/>
@@ -275,6 +282,9 @@
 	  <permission value="ioctl"/><permission value="read"/><permission value="write"/><permission value="create"/><permission value="getattr"/><permission value="setattr"/><permission value="lock"/><permission value="relabelfrom"/><permission value="relabelto"/><permission value="append"/><permission value="bind"/><permission value="connect"/><permission value="listen"/><permission value="accept"/><permission value="getopt"/><permission value="setopt"/><permission value="shutdown"/><permission value="recvfrom"/><permission value="sendto"/><permission value="recv_msg"/><permission value="send_msg"/><permission value="name_bind"/>
 	</rule>
       </rules>
+
+
+
     </section>
     <section>
       <description>Does not support user space AVC</description>

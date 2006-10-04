@@ -665,8 +665,8 @@ save_prev_label(char *path, char *tmp_label)
 			return;
 		}
 
-		type = strrchr((char *)context, ':');
-
+		//		type = strrchr((char *)context, ':');
+		type = get_type_from_context(context);
 		if (type == NULL)
 		{
 			error_print(__FILE__, __LINE__, "bug\n");
@@ -674,7 +674,6 @@ save_prev_label(char *path, char *tmp_label)
 			exit(1);
 		}
 
-		type++;
 		if (strcmp(type, tmp_label) == 0)
 		{
 			//      fprintf(stdout, "%s\t%s\n", fullpath, type);
@@ -689,6 +688,7 @@ save_prev_label(char *path, char *tmp_label)
 		}
 
 		freecon(context);
+		free(type);
 
 		free(fullpath);
 	}

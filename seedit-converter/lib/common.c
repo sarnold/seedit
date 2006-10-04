@@ -852,3 +852,17 @@ char *get_user_from_path(char *path, char **homedir_list){
   free(work);
   return result;
 }
+
+/*get type from security context
+  result: type,allocated by malloc, when error, NULL returned
+*/
+char *get_type_from_context(security_context_t context){
+  char *type;
+  char *work;
+  char *work2;
+  work = strdup(context);
+  work2 = get_nth_tok(work, ":", 3);
+  type = strdup(work2);
+  free(work);
+  return type;
+}

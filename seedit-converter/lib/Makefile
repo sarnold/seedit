@@ -3,7 +3,7 @@ CC		= gcc
 LEX		= lex
 YACC		= yacc
 CFLAGS		= -Wall -O2 -g -DDEBUG=1
-INCLUDE = -I../include 
+INCLUDE = -I../include  -I/usr/include/selinux
 OBJS 	= y.tab.o lex.yy.o parse.o common.o
 TARGET = libseedit.a
 prefix = /usr

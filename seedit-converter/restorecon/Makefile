@@ -5,7 +5,7 @@
 prefix = /usr
 DISTRO = FC5
 CFLAGS ?= -Werror -Wall -W
-override CFLAGS += -I$(prefix)/include -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -I../include -D$(DISTRO)
+override CFLAGS += -I$(prefix)/include -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -I../include -I/usr/include/selinux -D$(DISTRO)
 LDLIBS += -lselinux  -L$(prefix)/lib
 LIBSEEDIT = ../lib/libseedit.a
 

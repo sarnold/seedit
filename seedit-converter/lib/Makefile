@@ -17,7 +17,7 @@ $(TARGET):  $(OBJS)
 	$(CC) -c $(CFLAGS) $(INCLUDE) $<
 
 y.tab.o: y.tab.c
-	$(CC) -c $(CFLAGS) y.tab.c -I../include 
+	$(CC) -c $(CFLAGS) y.tab.c -I../include -I/usr/include/selinux
 
 lex.yy.c: middle_lang.l
 	$(LEX) middle_lang.l 

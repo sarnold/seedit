@@ -5,7 +5,7 @@
 sysconfdir =/etc
 CONVERTER=/usr/bin/seedit-converter
 LOADPOLICY=/usr/sbin/load_policy
-CHECKPOLICY=/usr/bin/checkpolicy -M
+CHECKPOLICY=/usr/bin/checkpolicy
 FIXFILES=/sbin/fixfiles
 RESTORECON=/usr/sbin/seedit-restorecon
 SELINUXTYPE=seedit
@@ -19,7 +19,7 @@ OUTDIR =./sepolicy
 INSTALL_PATH = $(POLICYROOT)
 SELINUXCONF=$(sysconfdir)/selinux/config
 
-M4=m4 
+M4=m4
 DEFAULT_POLICYVER=18
 POLICYVER := $(shell $(CHECKPOLICY)  -V |cut -f 1 -d ' ')
 ifeq ($(POLICYVER),)
@@ -32,11 +32,13 @@ OLD_FILE_CONTEXTS=  $(CONTEXTSDIR)/files/file_contexts.m4.old
 
 policy:
 	mkdir -p $(OUTDIR);
-	$(M4) -s $(CONFDIR)/*.sp >$(CONFDIR)/all.sp;
+	m4 -s $(CONFDIR)/*.sp >$(CONFDIR)/all.sp;
 	$(CONVERTER) -i $(CONFDIR)/all.sp -o $(OUTDIR) -b $(BASEPOLICYDIR) -I $(CONFDIR)/include ;
 	$(M4)  -Imacros -s $(MACRODIR)/*.te $(OUTDIR)/generated.conf > $(OUTDIR)/policy.conf;
 	$(M4)  -Imacros -s $(MACRODIR)/mcs_macros.te $(OUTDIR)/file_contexts.m4 > $(OUTDIR)/file_contexts;
-
+	$(M4)  -Imacros -s $(MACRODIR)/mcs_macros.te $(OUTDIR)/userhelper_context.m4 > $(OUTDIR)/userhelper_context.tmp;
+	grep system_u $(OUTDIR)/userhelper_context.tmp >  $(OUTDIR)/userhelper_context
+	rm $(OUTDIR)/userhelper_context.tmp
 	$(CHECKPOLICY) -o $(OUTDIR)/policy.$(POLICYVER) -c $(POLICYVER) $(OUTDIR)/policy.conf
 
 install: policy

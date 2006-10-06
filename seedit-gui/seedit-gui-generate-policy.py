@@ -506,7 +506,7 @@ class seeditGeneratePolicyWindow(seeditCommon):
 		vbox.pack_start(hbox, False, False, 5)
 
 		hbox = gtk.HBox()
-		button = gtk.CheckButton(_("Skip reading denial of search for tclass:dir"))
+		button = gtk.CheckButton(_("Skip reading denied searches for the 'tclass=dir' value"))
 		button.set_active(True)
 		self.mSkipSearchFlag=True
 		button.connect("toggled", self.checkButtonCallBack, "skip")

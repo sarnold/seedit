@@ -2215,7 +2215,7 @@ out_rbac(FILE *outfp)
 	if (rbac_hash_table == NULL){
 	  fprintf(rbac_out,"gen_user(system_u, , system_r, s0, s0 - s15:c0.c1023, c0.c1023)\n");
 
-	  fprintf(rbac_out, "gen_user(user_u,, system_r,s0, s0)\n");
+	  fprintf(rbac_out,"gen_user(user_u, , system_r, s0, s0 - s15:c0.c1023, c0.c1023)\n");
 
 
 

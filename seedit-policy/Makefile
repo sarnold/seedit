@@ -41,7 +41,6 @@ policy:
 		cp -r src/simplified_policy policy/simplified_policy;\
 	fi
 
-
 	cp -r /etc/seedit/converter/conf/base_policy policy/
 	cp -r /etc/seedit/converter/conf/macros policy/
 

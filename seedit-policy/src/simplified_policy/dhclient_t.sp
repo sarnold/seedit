@@ -20,6 +20,7 @@ allow /etc/sysconfig/network-scripts/** r,x,s;
 allow /usr/bin/**   x,r,s;
 allow /sbin/**   x,r,s;
 allow /bin/** r,x,s;
+allow /etc/init.d r,s;
 
 #Readable
 allow /var/lock/subsys/** s,r;

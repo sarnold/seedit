@@ -16,9 +16,12 @@ allowpriv netlink;
 allowpriv audit_adm;
 
 allow /var/log/audit/**  r,a,c,s;
-allow /etc/audit.rules r,s;
-allow /etc/auditd.conf r,s;
+allow /etc/audit/** r,s;
+allow /sbin/audispd r,x,s;
 
 allowfs proc_pid_self  w;
 
+#Add by seedit-generator
+allow /usr/bin/** x,r,s;
+allow /bin/** x,r,s;
 }

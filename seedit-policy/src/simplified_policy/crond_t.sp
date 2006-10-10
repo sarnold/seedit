@@ -10,8 +10,7 @@ include daemon.sp;
 include authentication.sp;
 include nameservice.sp;
 
-allow /etc/selinux/config r,s;
-allow /etc/selinux/seedit/contexts/** r,s;
+allow /etc/selinux/** r,s;
 allow /etc/crontab r,x,s;
 allow /etc/cron.daily/** r,s,x;
 allow /etc/cron.hourly/** r,s,x;
@@ -36,4 +35,7 @@ allowpriv audit_write;
 
 allowpriv cap_dac_override;
 allowpriv cap_dac_read_search;
+#Add by seedit-generator
+allowcom -ipc initrc_t w;
+allow /var/run/setrans/** o,r,s;
 }

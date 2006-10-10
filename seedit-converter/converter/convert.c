@@ -1877,9 +1877,10 @@ void out_mcs(FILE *outfp){
   FILE_LABEL *label;
 
   fprintf(outfp,"ifdef(`enable_mcs',`\n"); 
-  fprintf(outfp, "typeattribute initrc_t mcssetcats;\n");
-  fprintf(outfp, "typeattribute init_t mcssetcats;\n");
-  fprintf(outfp, "typeattribute kernel_t mcssetcats;\n");
+  fprintf(outfp, "typeattribute initrc_t mcssetcats,mcsptraceall,mcskillall;\n");
+  fprintf(outfp, "typeattribute unconfined_t mcssetcats,mcsptraceall,mcskillall;\n");
+  fprintf(outfp, "typeattribute init_t mcssetcats,mcsptraceall,mcskillall;\n");
+  fprintf(outfp, "typeattribute kernel_t mcssetcats,mcsptraceall,mcskillall;\n");
   
   for(i=0; converter_conf.mcs_range_trans_entry[i]!=NULL;i++){
     label = search_element(file_label_table, converter_conf.mcs_range_trans_entry[i]);
@@ -2212,7 +2213,7 @@ out_rbac(FILE *outfp)
 
 
 	if (rbac_hash_table == NULL){
-	  fprintf(rbac_out,"gen_user(system_u, , system_r, s0, s0 - s15:c0.c1023, c0.c255)\n");
+	  fprintf(rbac_out,"gen_user(system_u, , system_r, s0, s0 - s15:c0.c1023, c0.c1023)\n");
 
 	  fprintf(rbac_out, "gen_user(user_u,, system_r,s0, s0)\n");
 

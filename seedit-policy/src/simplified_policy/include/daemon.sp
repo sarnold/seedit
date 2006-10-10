@@ -23,3 +23,6 @@ include tmpfile.sp
 #And it is not audited in permissive mode, 
 allowpriv cap_setuid;
 allowpriv cap_setgid;
+
+
+allowcom -ipc mcstransd_t w;

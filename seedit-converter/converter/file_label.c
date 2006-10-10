@@ -622,6 +622,17 @@ void out_file_contexts_special_file(FILE *file_contexts){
     fprintf(file_contexts, "%s(/.*)?             <<none>>\n",proc_mount_point_list[i]);
   }
   fprintf(file_contexts, "####End of special files\n");
+  fprintf(file_contexts, "####Start of dummy files for MCS, modular policy\n");
+  
+  
+  fprintf(file_contexts, "\n");
+  fprintf(file_contexts," ifdef(`enable_mcs', `\n");
+  fprintf(file_contexts, "HOME_ROOT/dummy -b <<none>>\n");
+  fprintf(file_contexts, "HOME_DIR/dummy -b  <<none>>\n");
+  fprintf(file_contexts,"')\n");
+  fprintf(file_contexts, "####End of dummy files\n");
+
+  
 
 }
 

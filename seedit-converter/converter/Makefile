@@ -1,4 +1,4 @@
-DISTRO = COS4
+DISTRO          =COS4
 CC		= gcc
 CFLAGS		= -Wall -O2 -g -DDEBUG=1 -DDIRSEARCH=1 -D$(DISTRO)
 LD		= -ll -lselinux 

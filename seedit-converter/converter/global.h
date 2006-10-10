@@ -385,6 +385,7 @@ extern char **g_file_user_list;
 #define MAX_NETIF 16
 #define MAX_PROC_MOUNT 16
 #define MAX_HOME 16
+#define MAX_ENTRY 256
 typedef struct converter_conf_t{
   /*list to store files that are labeled in configuration in conveter.conf*/
   /*End of list is NULL*/
@@ -396,6 +397,9 @@ typedef struct converter_conf_t{
   char *proc_mount_point_list[MAX_PROC_MOUNT];
   char *authentication_domain[MAX_CLASS];
   char *homedir_list[MAX_HOME]; /*path to home directory, no slash at the end : i.e /home*/
+  char *mcs_range_trans_entry[MAX_ENTRY]; /*Entrypoint of range_trans, like: 
+                                        range_transition getty_t login_exec_t s0 - s0:c0.c1023;
+                                       */
 }CONVERTER_CONF;
 
 extern CONVERTER_CONF converter_conf;

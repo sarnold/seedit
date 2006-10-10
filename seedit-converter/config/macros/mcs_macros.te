@@ -17,3 +17,16 @@ user $1 roles { $3 }`'ifdef(`enable_mls', ` level $4 range $5')`'ifdef(`enable_m
 # gen_context(context,mls_sensitivity,[mcs_categories])
 #
 define(`gen_context',`$1`'ifdef(`enable_mls',`:$2')`'ifdef(`enable_mcs',`:s0`'ifelse(`$3',,,`:$3')')')dnl
+
+########################################
+#
+# gen_cats(N)
+#
+# declares categores c0 to c(N-1)
+#
+define(`decl_cats',`dnl
+category c$1;
+ifelse(`$1',`$2',,`decl_cats(incr($1),$2)')dnl
+')
+
+define(`gen_cats',`decl_cats(0,decr($1))')

@@ -57,6 +57,7 @@ policy:
 install: policy dir
 	cp policy/Makefile  $(SEEDITCONFROOT)/converter/
 	cp -r policy/simplified_policy/*  $(SEEDITCONFROOT)/policy
+	cp src/setrans.conf	$(POLICYROOT)
 
 	if [ -e $(POLICYROOT)/contexts/files/file_contexts ]; then \
 		cp $(POLICYROOT)/contexts/files/file_contexts $(POLICYROOT)/contexts/files/file_contexts.old;\

@@ -339,6 +339,19 @@ void parse_homedir_list(char *buf){
 }
 
 
+void parse_mcs_range_trans_entry(char *buf){
+  char delm[]=" \t";  
+  int i;
+  if(split_and_set_list(buf,delm,converter_conf.mcs_range_trans_entry, MAX_ENTRY) == -1){      
+    fprintf(stderr,"Error: too many mcs_range_trans_entry. Modify MAX_ENTRY and recompile\n");
+    exit(1);
+  }  
+  for(i=0; converter_conf.mcs_range_trans_entry[i]!=NULL;i++){
+    strip_slash(converter_conf.mcs_range_trans_entry[i]);
+  }
+
+}
+
 
 
 void parse_file_type_trans_fs(char *buf){
@@ -413,6 +426,8 @@ void parse_converter_conf(){
       parse_authentication_domain(buf);      
     }else if(strcmp(identifier,"homedir_list")==0){
       parse_homedir_list(buf);
+    }else if(strcmp(identifier,"mcs_range_trans_entry")==0){
+      parse_mcs_range_trans_entry(buf);	       
     }else{
       ;
     }    

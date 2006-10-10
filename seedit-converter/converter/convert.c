@@ -43,6 +43,7 @@ static void out_domain_trans(FILE *);
 //static void out_dummy_user_conf(FILE *);
 static void out_net_type(FILE *);
 static void out_rbac(FILE *);
+static void out_mcs(FILE *outfp);
 
 void out_userhelper_context(FILE *fp){
   
@@ -161,6 +162,8 @@ void convert(char *outdir){
 
 	/* print "domain_auto_trans or domain_trans " */
 	out_domain_trans(policy_fp);
+
+	out_mcs(policy_fp);
 
 	/* print rbac configuration */
  	out_rbac(policy_fp);
@@ -1869,6 +1872,28 @@ int check_disable_trans_boolean_defined(char *to_domain){
   return 0;
 }
 
+void out_mcs(FILE *outfp){
+  int i;  
+  FILE_LABEL *label;
+
+  fprintf(outfp,"ifdef(`enable_mcs',`\n"); 
+  fprintf(outfp, "typeattribute initrc_t mcssetcats;\n");
+  fprintf(outfp, "typeattribute init_t mcssetcats;\n");
+  fprintf(outfp, "typeattribute kernel_t mcssetcats;\n");
+  
+  for(i=0; converter_conf.mcs_range_trans_entry[i]!=NULL;i++){
+    label = search_element(file_label_table, converter_conf.mcs_range_trans_entry[i]);
+    if (label == NULL){
+      continue;
+    }      
+
+    fprintf(outfp,"range_transition domain %s  s0 - s0:c0.c1023;\n",label->labelname);    
+  }
+    
+  fprintf(outfp,"')\n");    
+ 
+}
+
 void out_domain_trans_child_dir(FILE *, TRANS_RULE *, char *);
 
 /**
@@ -1890,8 +1915,22 @@ void out_domain_trans(FILE *outfp){
   for (i = 0; i < domain_trans_rule_num; i++){
     /* search target path's file label */
     t = rulebuf[i];
+
     disable_trans_defined = check_disable_trans_boolean_defined(t.child);
     if(disable_trans_defined){
+
+      label = search_element(file_label_table, t.path);
+      if (label == NULL){
+	fprintf(stderr, "bug line %d\n", __LINE__);
+	exit(1);
+      }      
+      fprintf(outfp,"ifdef(`enable_mcs',`\n");
+
+      if(!ntarray_check_exist(converter_conf.mcs_range_trans_entry  ,t.path)){
+	fprintf(outfp,"range_transition unconfined_domain %s s0;\n",label->labelname);
+      }
+      fprintf(outfp,"')\n");    
+
       boolean_name = get_disable_trans_boolean_name(t.child);
       fprintf(outfp,"if(%s){}else{\n",boolean_name);
       free(boolean_name);
@@ -1909,6 +1948,7 @@ void out_domain_trans(FILE *outfp){
     }
        
     if(strcmp(name,"unconfined_domain")==0){
+   
       ;
     }else if(search_element(domain_hash_table, name) == NULL){
       fprintf(stderr, "Warning: domain %s does not exists for \"domain_trans %s %s\" rule. Skipped.\n", name, t.parent,t.path);
@@ -2172,14 +2212,14 @@ out_rbac(FILE *outfp)
 
 
 	if (rbac_hash_table == NULL){
+	  fprintf(rbac_out,"gen_user(system_u, , system_r, s0, s0 - s15:c0.c1023, c0.c255)\n");
 
-	  fprintf(rbac_out, "gen_user(system_u,, system_r,s0 - s15:c0.c255, c0.c255)\n");	  
 	  fprintf(rbac_out, "gen_user(user_u,, system_r,s0, s0)\n");
 
 
-#ifdef COS4	
-	  fprintf(rbac_out,"gen_user(root, , system_r, s0, s0 - s15:c0.c255, c0.c255)\n");
-#endif
+
+	  fprintf(rbac_out,"gen_user(root, , system_r, s0, s0 - s15:c0.c1023, c0.c1023)\n");
+
 	  return;
 	}
 	/*print role system_r ..*/
@@ -2191,11 +2231,11 @@ out_rbac(FILE *outfp)
 	/* print allow <role> <role>; */
 	 handle_all_element(rbac_hash_table, out_role_allow);
 
-	/* print "user" */
-	fprintf(rbac_out, "gen_user(system_u,, system_r,s0 - s15:c0.c255, c0.c255)\n");	  
-	fprintf(rbac_out, "gen_user(user_u,, system_r,s0, s0)\n");
+	 /* print "user" */
+	 fprintf(rbac_out,"gen_user(system_u, , system_r, s0, s0 - s15:c0.c1023, c0.c1023)\n");
+	 fprintf(rbac_out, "gen_user(user_u,, system_r,s0, s0)\n");
 
-	handle_all_element(user_hash_table, out_one_user_role);
+	 handle_all_element(user_hash_table, out_one_user_role);
 
 
 	

@@ -2,5 +2,5 @@
 # Please use the semanage command to make changes
 
 system_u:system_u:s0-s0:c0.c1023
-root:root:s0-s0:c0.c255
+root:root:s0-s0:c0.c1023
 __default__:user_u:s0

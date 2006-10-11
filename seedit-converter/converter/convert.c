@@ -1299,7 +1299,7 @@ static void out_key_acl(FILE *outfp, DOMAIN *d){
 	if(rule.permission & SEARCH_PRM)
 	  fprintf(outfp,"allow_key_s(%s,%s)\n",d->name, domain);
 	if(rule.permission & LINK_PRM)
-	  fprintf(outfp,"allow_key_s(%s,%s)\n",d->name, domain);
+	  fprintf(outfp,"allow_key_l(%s,%s)\n",d->name, domain);
 	if(rule.permission & SETATTR_PRM)
 	  fprintf(outfp,"allow_key_t(%s,%s)\n",d->name, domain);
 	if(rule.permission & CREATE_PRM)

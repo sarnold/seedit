@@ -55,3 +55,5 @@ allow /usr/share/locale/** r,s;
 allownet -protocol * -netif * send,recv;
 allownet -protocol * -node * send,recv,bind;
 
+
+allowkey self *;

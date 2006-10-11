@@ -15,4 +15,5 @@ bool dummy_boolean false;
 
 #watch load_policy and setenforce
 auditallow domain security_t:security { load_policy setenforce };
+auditallow domain self:capability sys_chroot;
 

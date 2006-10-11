@@ -24,5 +24,5 @@ include tmpfile.sp
 allowpriv cap_setuid;
 allowpriv cap_setgid;
 
-
 allowcom -ipc mcstransd_t w;
+allow /var/run/setrans/** r,s,t,o;

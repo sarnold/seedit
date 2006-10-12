@@ -226,6 +226,26 @@ def guessPathByLocate(line):
     return ""
 
 
+#Get path name considering chroot
+def getPathWithChroot(name, inode,pid, ppid):
+    candidatePath=[]
+
+    candidatePath.append(os.path.normpath(name))
+    
+    if gChrootStatus.has_key(pid) : #may chroot
+        cpath = gChrootStatus[pid]+"/"+name
+        candidatePath.append(os.path.normpath(cpath))
+
+    if gChrootStatus.has_key(ppid):
+        cpath = gChrootStatus[ppid]+"/"+name
+        candidatePath.append(os.path.normpath(cpath))
+
+    for c in candidatePath:
+        if inode == getInodeByStat(c):
+            return c
+    return ""
+
+
 def guessPathByPATHEntry(lines,index):
 
     """
@@ -239,98 +259,64 @@ def guessPathByPATHEntry(lines,index):
     id = getAuditId(line)
     pid = getPid(line)
     ppid = getPpid(lines, index)
+    inode = getInode(line)
     domain = getDomain(line)
     if(id):
-        try:
-            logs = getRelatedLog(lines,index)
+        logs = getRelatedLog(lines,index)
 
-            path =""
-            cwd=""
-            for l in logs:
-                if(string.find(l,"type=CWD")>=0):
-                    m=re.compile("cwd=\S+").search(l)
-                    if m:
-                        cwd = string.split(m.group(),"=").pop()
-                        cwd = string.replace(cwd,"\"","")
-                    if path!="":
-                        if path[0]!="/":
+        path =""
+        cwd=""
 
-                            if gChrootStatus.has_key(pid) : #may chroot
-                                path = gChrootStatus[pid]+"/"+cwd+"/"+path
+        for l in logs:
 
-                            elif gChrootStatus.has_key(ppid):
-                                path = gChrootStatus[ppid]+"/"+cwd+"/"+path
-
-                            else:
-                                path = cwd + "/"+path
-                            
-                            path = os.path.normpath(path)
-
-                            if path=="//":
-                                return ""
+            if(string.find(l,"type=CWD")>=0):
+                m=re.compile("cwd=\S+").search(l)
+                if m:
+                    cwd = string.split(m.group(),"=").pop()
+                    cwd = string.replace(cwd,"\"","")
+                if path!="":
+                    if path[0]!="/":
+                        candidatePath=[]
+                        path = cwd+"/"+path
+                        path = os.path.normpath(path)
+                        realpath = getPathWithChroot(path, inode, pid,ppid)
+                        if realpath=="//":
+                            return ""
+                        if realpath=="":
                             return path
+                        return realpath
+                    else:
+                        return path
+                else:
+                    return ""
 
-                        
-                if(string.find(l,"type=PATH")>=0 or string.find(l,"type=AVC_PATH")>=0):
-
-                    m=re.compile("name=\S+").search(l)
-                    if (m==None):
-                        m = re.compile("path=\S+").search(l)
-                    
-                    if m:
-                        path = string.split(m.group(),"=").pop()
-                        if path.find("\"") == -1: #It is but of audit
-                            path = ""
-                        path = string.replace(path,"\"","")
-                        
-                        
-                        if path==".":
-                            if cwd!="":
-                                 path = cwd + "/"+path
-                                 
-                                 path = os.path.normpath(path)
-                                 
-                                 return path
-                            else:
-
-                                continue
-
-                        
-                        try:
-                            if gChrootStatus.has_key(pid): #may chroot
-                                realpath = gChrootStatus[pid]+"/"+path
-                            elif gChrootStatus.has_key(ppid):
-                                realpath = gChrootStatus[ppid]+"/"+path
-
-                            else:
-                                realpath=path
-                            
-                            os.stat(realpath)
-                          
-                            return realpath
-                        
-                        except:
-                            if cwd!="":
-                                 path = cwd + "/"+path
-                                 
-                                 path = os.path.normpath(path)
-                                 
-                                 return path  
-
-                    else:                        
-                        return ""                    
+            if(string.find(l,"type=PATH")>=0 or string.find(l,"type=AVC_PATH")>=0):
 
 
-                if path==".":
-                    path=""
+                m=re.compile("name=\S+").search(l)
+                if (m==None):
+                    m = re.compile("path=\S+").search(l)
 
-            
-                
-            return path
-            
-        except:
-            #ausearch not available
-            return ""
+                if m:
+                    path = string.split(m.group(),"=").pop()
+
+                    if path.find("\"") == -1: #It is but of audit
+                        path = ""
+                    path = string.replace(path,"\"","")
+
+                    if path[0]==".":
+                        continue
+
+                    realpath = getPathWithChroot(path, inode,pid,ppid)
+                    if realpath =="":
+                        continue
+                    else:
+                        return realpath
+
+            if path==".":
+                path=""
+
+            return path   
            
     else:
         #audit event id is not available..
@@ -389,6 +375,7 @@ def guessFilePath(rule,lines,index):
 
     path = guessPathByInoDir(line)
     if path=="":
+   
         path= guessPathByPATHEntry(lines,index)    
     if path =="":
         path = guessPathByLocate(line)
@@ -577,6 +564,9 @@ def genFileAllow(rule,lines,index,domdoc):
     if re.search("^/home/", path):
         spRule["homepath"]=path #path before ~
         path = re.sub("/home/[^/]+","~",path)
+        if path =="~":
+            path ="~/"
+        
 
     spRule["path"] = path
     if not os.path.isdir(path):

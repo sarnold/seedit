@@ -1,5 +1,6 @@
 %define type strict
 %define selinuxconf /etc/selinux/config
+%define auditrules  /etc/audit/audit.rules
 %define distro COS4
 %define buildnum 1
 Summary: Simplified Policy for SELinux
@@ -43,6 +44,9 @@ if [ $1 = 1 ]; then
 	touch /.autorelabel
 
 	echo "/var/tmp/bootstrap.sh" >> /etc/rc.d/rc.local
+        cat %{auditrules} | sed -e 's!-a exit,always -S chdir!!g' > %{auditrules}.tmp
+	mv %{auditrules}.tmp %{auditrules}
+	echo "-a exit,always -S chdir" >> /etc/audit/audit.rules
 
 	# Create bootstrap.sh # Code related to bootstrap is from Yoichi Hirose <yhirose@users.sourceforge.jp>
 	cat << __EOF >/var/tmp/bootstrap.sh

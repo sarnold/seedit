@@ -95,10 +95,10 @@ outList=[]
 i=0
 size=len(lines)
 for line in lines:
-
+    
     sys.stderr.write(_("#Analyzing log. Progress:%d/%d\r") % (i,size))
     sys.stderr.flush()
-    rule = parseLine(line)
+    rule = parseLine(lines, i)
     if(rule):
         spRuleList=genSPDL(rule,line,domdoc)
         

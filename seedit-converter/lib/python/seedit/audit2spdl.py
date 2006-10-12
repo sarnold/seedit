@@ -32,6 +32,15 @@ gAusearch = "/sbin/ausearch"
 #key: inode, value:path
 gInoPathDir = dict()
 
+
+#key: inode, value:path
+# stores inode and full path obtained from chdir syscall log
+gChdirInoPathDir = dict()
+
+#Touple of pid, chroot dir
+gChrootStatus = [-1,""]
+
+
 def errorExit(msg):
     sys.stderr.write(msg)
     sys.exit(1)
@@ -59,6 +68,13 @@ def readLog(input, loadPolicyFlag):
         lines=lineBuf
 
     return lines
+
+
+
+
+
+
+
 
 def readSPDLSpec(filename):
     """
@@ -98,7 +114,7 @@ def getInput(opts):
                 errorExit("Input file open error:"+arg+"\n")
         if opt in ("-a","--audit"):
             try:
-                input = os.popen("/sbin/ausearch -m avc,daemon_start")
+                input = os.popen("/sbin/ausearch -m avc,syscall,daemon_start")
             except:
                 errorExit("Warning ausearch is not available for your system input is /bin/dmesg")
                 try:
@@ -120,13 +136,18 @@ def getPid(line):
         pid = string.split(m.group(),"=").pop()
         return pid
 
-    return -1
+    return "-1"
 
 def getInode(line):
     m=re.compile("\sino=\d+").search(line)
     if m:
         ino = string.split(m.group(),"=").pop()
         return string.atoi(ino)
+    m=re.compile("\sinode=\d+").search(line)
+    if m:
+        ino = string.split(m.group(),"=").pop()
+        return string.atoi(ino)
+    
     return -1
 
 def getName(line):
@@ -149,6 +170,21 @@ def getAuditId(line):
     m = re.compile("audit\(\d+\.\d+:\d+").search(line)
     if m:
         id = string.split(m.group(),":").pop()
+        return id
+    else:
+        return None
+    
+    return None
+
+
+def getUniqueAuditId(line):
+    """
+    get conbination of time and Audit event ID in log entry
+    It is unique
+    """
+    m = re.compile("audit\(\d+\.\d+:\d+").search(line)
+    if m:
+        id = m.group()
         return id
     else:
         return None
@@ -895,8 +931,140 @@ def parseSyscall(line):
         result = string.atoi(s)
 
     return result
-  
-def parseLine(line):
+
+
+# Generate full path list from PATH= and CWD= 
+# returns list of (fullpath, inode number) : inode number is integer
+# If failed return ("", inode number)
+# Generate full path only for existing file
+def genFullPath(lines):
+    inode = -1
+    path = ""
+    cwd = ""
+    list = []
+    # it is assumed that PATH,CWD appears in sequence(PATH -> CWD).
+    for l in lines:
+
+        if l.find("type=PATH") >=0:
+            inode = getInode(l)
+            m=re.compile("name=\S+").search(l)
+            if m:
+                path = string.split(m.group(),"=").pop()
+                if path.find("\"") == -1: 
+                    path = ""
+                path = string.replace(path,"\"","")
+
+                if path==".":
+                        continue
+
+                try:
+                    os.stat(path)
+                    
+                    list.append((path,inode))
+                except:
+                    pass                
+                
+        
+        if l.find("type=CWD")>=0 :
+            m=re.compile("cwd=\S+").search(l)
+            if m:
+                cwd = string.split(m.group(),"=").pop()
+                cwd = string.replace(cwd,"\"","")
+            if path!="":
+                if path[0]!="/":
+                    path = cwd + "/"+path
+                    path = os.path.normpath(path)
+                    if path=="//":
+                        list.append(("",inode))
+                        continue
+
+                    try:
+                        os.stat(path)
+                        list.append((path,inode))
+                    except:
+                        list.append(("", inode))
+
+    return list
+
+####
+# Guess changed root after chroot, from sys_chroot and chdir logs
+# and update gChrootStatus
+def updateChangedRoot(lines,index):
+    line = lines[index]
+    reg = re.compile("type=SYSCALL.*syscall=12")
+    m = reg.search(line)
+    if m:
+        updateChdirInoPathDir(lines, index)
+        return
+    
+    reg = re.compile("avc:.*granted.*{.*sys_chroot.*}")
+    m= reg.search(line)
+    if not m:
+        return 
+        
+    logs = getRelatedLog(lines, index)
+    list = genFullPath(logs)
+    path =""
+    
+    if list:
+        (path, inode)=list[0]
+        if path =="":
+            if gChdirInoPathDir.has_key(inode):
+                path = gChdirInoPathDir[inode]
+
+    pid = getPid(lines[index])
+
+    gChrootStatus = (pid, path)
+
+
+def updateChdirInoPathDir(lines, index):
+    logs = getRelatedLog(lines, index)    
+    list = genFullPath(logs)
+
+    if list:
+        (path, inode)=list[0]
+        gChdirInoPathDir[inode] = path
+       
+
+
+###
+# |lines|: whole log data
+# Get logs related to log at |index|
+# Related logs means, logs whose auid is the same
+def getRelatedLog(lines, index):
+    result = []
+    result.insert(0,lines[index])
+    
+    start = index
+    auid = getUniqueAuditId(lines[index])
+    if auid == None:
+        return result
+
+    i = start -1
+    while i>0:
+        line = lines[i]
+        if auid == getUniqueAuditId(line):
+            result.insert(0,line)
+        else:
+            break
+        i = i-1
+    
+    l = len(lines)    
+    i = start+1
+    while i < l:
+        line = lines[i]
+        
+        if auid == getUniqueAuditId(line):
+            result.append(line)
+        else:
+            break
+        
+        i = i+1
+
+    return result
+
+
+def parseLine(lines, i):
     """
     Parse one log line and make&return dictionary.
     Keys are following
@@ -909,7 +1077,9 @@ def parseLine(line):
     avcFlag=False
     denyFlag=False
     rule = dict()
- 
+    line = lines[i]
+    updateChangedRoot(lines, i)
+    
     tokenList = string.split(line)
     for token in tokenList:
         if token=="avc:" or token=="message=avc:":

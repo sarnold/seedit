@@ -1,6 +1,6 @@
 Summary: GUI for SELinux  Policy Editor
 Name: seedit-gui
-Version: 2.0.2
+Version: 2.1.0
 Release:  1
 License: GPL
 Group: System Environment/Base
@@ -8,7 +8,7 @@ URL: http://sedit.sourceforge.net/
 Source0: %{name}-%{version}-%{release}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 BuildArch: noarch
-Requires: seedit-converter >= 2.0.1, seedit-policy >= 2.0.1,audit,pygtk2
+Requires: seedit-converter >= 2.1.0, seedit-policy >= 2.1.0,audit,pygtk2
 
 
 %description

@@ -14,8 +14,8 @@ URL:  http://seedit.sourceforge.net/
 Source0: seedit-policy-%{version}-%{buildnum}.tar.gz
 BuildRoot: %{_tmppath}/seedit-policy-%{version}-%{release}-root
 BuildArch: noarch
-Requires: seedit-converter >= 2.0.0, checkpolicy,m4,audit
-BuildRequires: seedit-converter >= 2.0.0
+Requires: seedit-converter >= 2.1.0, checkpolicy,m4,audit
+BuildRequires: seedit-converter >= 2.1.0
 
 %description
 Simplified policy for SELinux is packed.

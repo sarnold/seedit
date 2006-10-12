@@ -100,8 +100,7 @@ for line in lines:
     sys.stderr.flush()
     rule = parseLine(lines, i)
     if(rule):
-        spRuleList=genSPDL(rule,line,domdoc)
-        
+        spRuleList=genSPDL(rule,lines,i,domdoc)        
         list=SPDLstr(spRuleList,line)
         outList.extend(list)
 

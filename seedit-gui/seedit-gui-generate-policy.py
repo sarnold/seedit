@@ -86,11 +86,12 @@ class generatePolicyThread(threading.Thread):
 		size = len(lines)
 		i=0
 		syscall=0
+		index = -1
 		for line in lines:
-
+			index = index+1
 			data = (i,size)
 			gobject.idle_add(self.updateLabel, data)
-			rule = parseLine(line)
+			rule = parseLine(lines,index)
 			newsyscall = parseSyscall(line)
 			if newsyscall>0:
 				syscall = newsyscall
@@ -102,7 +103,7 @@ class generatePolicyThread(threading.Thread):
 					if rule["secclass"]=="dir" and "search" in rule["permission"]:
 						continue
 			if(rule):
-				spRuleList=genSPDL(rule,line,domdoc)
+				spRuleList=genSPDL(rule,lines,index,domdoc)
 				
 				list=SPDLstr(spRuleList,line)
 				result.append(list)

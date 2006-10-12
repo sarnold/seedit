@@ -37,8 +37,8 @@ gInoPathDir = dict()
 # stores inode and full path obtained from chdir syscall log
 gChdirInoPathDir = dict()
 
-#Touple of pid, chroot dir
-gChrootStatus = [-1,""]
+#key: pid ,value:path
+gChrootStatus = dict()
 
 
 def errorExit(msg):
@@ -126,6 +126,18 @@ def getInput(opts):
     return input
 
 
+def getDomain(line):
+    """
+    get domain from log entry
+    """
+    domain = ""
+    m = re.compile("scontext=\S+").search(line)
+    if m:
+        list = string.split(m.group(),":")
+        domain = list[2]
+    
+    return domain
+
 def getPid(line):
     """
     get Pid from log entry
@@ -199,7 +211,7 @@ def guessPathByLocate(line):
     ino = getInode(line)
     name = getName(line)
     comm = "locate "+name
-    
+
     result=os.popen(comm)
     locates = result.readlines()
     for path in locates:
@@ -214,25 +226,27 @@ def guessPathByLocate(line):
     return ""
 
 
-def guessPathByAusearch(line):
+def guessPathByPATHEntry(lines,index):
 
     """
-    First, guess full path by ausearch.
+    First, guess full path by PATH entry
     And return guessed path
     If not exist file is returned, notexist_|filename| is returned
     Can not be guessed, "" is returned
     """
 
+    line = lines[index]
     id = getAuditId(line)
     pid = getPid(line)
+    ppid = getPpid(lines, index)
+    domain = getDomain(line)
     if(id):
         try:
-            result=os.popen(gAusearch + " -a "+id+" -p "+pid+" 2>&1", "r")
-            l=result.readline()
+            logs = getRelatedLog(lines,index)
 
             path =""
             cwd=""
-            while l:
+            for l in logs:
                 if(string.find(l,"type=CWD")>=0):
                     m=re.compile("cwd=\S+").search(l)
                     if m:
@@ -240,8 +254,18 @@ def guessPathByAusearch(line):
                         cwd = string.replace(cwd,"\"","")
                     if path!="":
                         if path[0]!="/":
-                            path = cwd + "/"+path
+
+                            if gChrootStatus.has_key(pid) : #may chroot
+                                path = gChrootStatus[pid]+"/"+cwd+"/"+path
+
+                            elif gChrootStatus.has_key(ppid):
+                                path = gChrootStatus[ppid]+"/"+cwd+"/"+path
+
+                            else:
+                                path = cwd + "/"+path
+                            
                             path = os.path.normpath(path)
+
                             if path=="//":
                                 return ""
                             return path
@@ -268,12 +292,23 @@ def guessPathByAusearch(line):
                                  
                                  return path
                             else:
-                                l=result.readline()
+
                                 continue
-                            
+
+                        
                         try:
-                            os.stat(path)
-                            return path                            
+                            if gChrootStatus.has_key(pid): #may chroot
+                                realpath = gChrootStatus[pid]+"/"+path
+                            elif gChrootStatus.has_key(ppid):
+                                realpath = gChrootStatus[ppid]+"/"+path
+
+                            else:
+                                realpath=path
+                            
+                            os.stat(realpath)
+                          
+                            return realpath
+                        
                         except:
                             if cwd!="":
                                  path = cwd + "/"+path
@@ -284,7 +319,7 @@ def guessPathByAusearch(line):
 
                     else:                        
                         return ""                    
-                l=result.readline()
+
 
                 if path==".":
                     path=""
@@ -344,17 +379,17 @@ def guessPathByInoDir(line):
     return ""
     
     
-def guessFilePath(rule,line):
+def guessFilePath(rule,lines,index):
     """
     guess full path information
     """
-
+    line = lines[index]
     if rule["type"] in gExcLabelList:
         return rule["type"]
 
     path = guessPathByInoDir(line)
     if path=="":
-        path= guessPathByAusearch(line)    
+        path= guessPathByPATHEntry(lines,index)    
     if path =="":
         path = guessPathByLocate(line)
 
@@ -496,7 +531,7 @@ def genAllowfs(rule,domdoc):
         return None
     
 
-def genFileAllow(rule,line,domdoc):
+def genFileAllow(rule,lines,index,domdoc):
     """
     return Dict
     ruletype:   type of SPDL element, this case, allowfile
@@ -506,8 +541,10 @@ def genFileAllow(rule,line,domdoc):
     permission: list of permission     
     """
     spRuleList=[]
-    spRule = dict()    
-    path = guessFilePath(rule,line)
+    spRule = dict()
+    line = lines[index]
+
+    path = guessFilePath(rule,lines,index)
     if rule["secclass"]=="lnk_file":
         pass
     else:
@@ -872,13 +909,14 @@ def genOther(rule,line,domdoc):
 
     return spRuleList
     
-def genSPDL(rule,line,domdoc):
+def genSPDL(rule,lines,index, domdoc):
     """
     generate SPDL based on rule.
     rule is dictionary in parseLine funct    
     """
 
     spRuleList=[]
+    line = lines[index]
 
     spRuleList = genExceptionalRule(rule,line,domdoc)
     if spRuleList:
@@ -899,7 +937,7 @@ def genSPDL(rule,line,domdoc):
             return spRuleList
     
     if rule["secclass"] in gFileClass:
-        spRuleList= genFileAllow(rule,line,domdoc)
+        spRuleList= genFileAllow(rule,lines,index,domdoc)
         if spRuleList:
             return spRuleList
 
@@ -1013,8 +1051,7 @@ def updateChangedRoot(lines,index):
                 path = gChdirInoPathDir[inode]
 
     pid = getPid(lines[index])
-
-    gChrootStatus = (pid, path)
+    gChrootStatus[pid] = path
 
 
 def updateChdirInoPathDir(lines, index):
@@ -1025,6 +1062,53 @@ def updateChdirInoPathDir(lines, index):
         (path, inode)=list[0]
         gChdirInoPathDir[inode] = path
        
+
+
+def getPpidFromLine(line):
+    m=re.compile("\sppid=\d+").search(line)
+    if m:
+        ppid = string.split(m.group(),"=").pop()
+        return ppid
+    return "-1"
+    
+
+def getPpid(lines, index):
+    """
+    get ppid from SYSCALL
+    """
+    auid = getUniqueAuditId(lines[index])
+    if auid == None:
+        return -1
+    
+    start = index
+
+    i = start -1
+    while i>0:
+        line = lines[i]
+        if auid == getUniqueAuditId(line):
+           id = getPpidFromLine(line)
+           if id != "-1":
+               return id
+        else:
+            break
+        i = i-1
+    
+    l = len(lines)    
+    i = start+1
+    while i < l:
+        line = lines[i]
+        
+        if auid == getUniqueAuditId(line):
+            id = getPpidFromLine(line)
+            if id != "-1":
+                return id
+        else:
+            break
+        
+        i = i+1
+
+    return "-1"
+
 
 
 ###
@@ -1116,7 +1200,8 @@ def parseLine(lines, i):
 
 
     rule["name"] = getName(line)
-
+    
+    
     return rule
 
 
@@ -1396,6 +1481,8 @@ def SPDLstr(spRuleList,line):
     (filename to be outputted, log entry, generated rule)
     """
     outStruct=[]
+
+
     for spRule in spRuleList:
         fileName = domainToFileName(spRule["domain"])
         if spRule["domain"]=="unlabeled_t":

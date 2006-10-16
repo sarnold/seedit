@@ -15,7 +15,7 @@ allowpriv cap_sys_resource;
 allowpriv netlink;
 allowpriv audit_adm;
 
-allow /var/log/audit/**  r,a,c,s;
+allow /var/log/audit/**  r,w,s;
 allow /etc/audit/** r,s;
 allow /sbin/audispd r,x,s;
 

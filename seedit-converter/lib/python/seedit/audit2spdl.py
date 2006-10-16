@@ -41,6 +41,7 @@ gChdirInoPathDir = dict()
 gChrootStatus = dict()
 
 
+
 def errorExit(msg):
     sys.stderr.write(msg)
     sys.exit(1)
@@ -55,15 +56,25 @@ def readLog(input, loadPolicyFlag):
     if loadPolicyFlag:
         reg = re.compile("avc:.*granted.*{.*load_policy.*}")
         reg2= re.compile("type=DAEMON_START.*auditd.*start")
+        reg3 =re.compile("type=SYSCALL.*syscall=12")
     
         for line in lines:
+            m3 = reg3.search(line)
+            if m3:
+                #Eleminate unneeded logs(sycall=12 for unconfined domains)
+                if getSubjDomain(line) in ("unconfined_t", "system_crond_t"):
+                    lineBuf.pop()
+                    lineBuf.pop()
+                    lineBuf.pop()
+                    lineBuf.pop()
+                continue
+            
             lineBuf.append(line)
             m = reg.search(line)
             m2 = reg2.search(line)
             if m or m2:
                 del lineBuf
                 lineBuf=[]
-            
         del lines
         lines=lineBuf
 
@@ -137,6 +148,22 @@ def getDomain(line):
         domain = list[2]
     
     return domain
+
+
+def getSubjDomain(line):
+    """
+    get domain from log entry
+    """
+    domain = ""
+    m = re.compile("subj=\S+").search(line)
+    if m:
+        list = string.split(m.group(),":")
+        domain = list[2]
+    
+    return domain
+
+
+
 
 def getPid(line):
     """
@@ -1017,19 +1044,25 @@ def genFullPath(lines):
 ####
 # Guess changed root after chroot, from sys_chroot and chdir logs
 # and update gChrootStatus
+# if lines[index] is log for chroot or syscall 12, return True
 def updateChangedRoot(lines,index):
     line = lines[index]
+    
     reg = re.compile("type=SYSCALL.*syscall=12")
+   
     m = reg.search(line)
-    if m:
+    if m:        
         updateChdirInoPathDir(lines, index)
-        return
+        return True
     
     reg = re.compile("avc:.*granted.*{.*sys_chroot.*}")
     m= reg.search(line)
     if not m:
-        return 
-        
+        return False
+
+    
+  
+    
     logs = getRelatedLog(lines, index)
     list = genFullPath(logs)
     path =""
@@ -1043,6 +1076,7 @@ def updateChangedRoot(lines,index):
     pid = getPid(lines[index])
     gChrootStatus[pid] = path
 
+    return True
 
 def updateChdirInoPathDir(lines, index):
     logs = getRelatedLog(lines, index)    
@@ -1152,7 +1186,10 @@ def parseLine(lines, i):
     denyFlag=False
     rule = dict()
     line = lines[i]
-    updateChangedRoot(lines, i)
+    r = updateChangedRoot(lines, i)
+
+    if r==True:
+        return None
     
     tokenList = string.split(line)
     for token in tokenList:

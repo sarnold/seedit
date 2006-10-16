@@ -72,24 +72,10 @@ for opt,arg in opts:
         seedit.audit2spdl.gHighSecurityFlag=True
     elif opt in ("-r"):
         seedit.audit2spdl.gRestoreconFlag = True
-        
-lines=input.readlines()
-lineBuf=[]
 
-if gLoadPolicyFlag:
-    reg = re.compile("avc:.*granted.*{.*load_policy.*}")
-    reg2= re.compile("type=DAEMON_START.*auditd.*start")
-    
-    for line in lines:
-        lineBuf.append(line)
-        m = reg.search(line)
-        m2 = reg2.search(line)
-        if m or m2:
-            del lineBuf
-            lineBuf=[]
-            
-    del lines
-    lines=lineBuf
+
+lines = readLog(input, gLoadPolicyFlag)
+
 
 outList=[]
 i=0

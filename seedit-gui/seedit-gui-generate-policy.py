@@ -61,7 +61,7 @@ class generatePolicyThread(threading.Thread):
 			if inputType == "dmesg":
 				input=os.popen("dmesg", "r")
 			elif inputType == "audit.log":
-				input = os.popen("/sbin/ausearch -m avc,daemon_start")
+				input = os.popen("/sbin/ausearch -m avc,syscall,daemon_start")
 			else:				
 				filename = self.mDialog.mInputFileEntry.get_text()
 				

@@ -38,4 +38,6 @@ allowpriv cap_dac_read_search;
 #Add by seedit-generator
 allowcom -ipc initrc_t w;
 allow /var/run/setrans/** o,r,s;
+
+allowkey kernel_t l,s ;
 }

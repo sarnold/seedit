@@ -377,7 +377,7 @@ msgid "dmesg"
 msgstr ""
 
 #: seedit-gui-generate-policy.py:331
-msgid "Read All log"
+msgid "Read all the log"
 msgstr "全てのログを読み込み"
 
 #: seedit-gui-generate-policy.py:338
@@ -536,8 +536,10 @@ msgstr "成功"
 msgid "load policy"
 msgstr "設定の反映"
 
-#: seedit/ui/GUICommon.py:193
-msgid "Loading Policy... It may take time. Do not close window!"
+
+
+#: seedit/ui/GUICommon.py:289
+msgid "Loading Policy. This make take a while. Please do not close the window."
 msgstr "設定を反映しています。しばらく時間がかかりますが、ウィンドウを閉じないでください"
 
 #: seedit/ui/GUICommon.py:197
@@ -615,14 +617,14 @@ msgid "Desktop application?"
 msgstr "デスクトップで動作するアプリケーションですか?"
 
 #: seedit-gui-generate-policy.py:372
-msgid "Generate more secure policy"
+msgid "Generate a more secure policy"
 msgstr "セキュリティの高い設定を生成（設定工数は増えます）"
 
 msgid "Save"
 msgstr "保存"
 
 #: seedit-gui-generate-policy.py:451
-msgid "Following will be saved"
+msgid "The following will be saved"
 msgstr "以下の設定が保存されます"
 
 #: seedit-gui-generate-policy.py:411
@@ -636,3 +638,12 @@ msgstr "まとめて指定を戻す"
 #: seedit/ui/GUICommon.py:317
 msgid "File/Dir name:"
 msgstr "ファイル・ディレクトリ名"
+
+#: seedit-gui-generate-policy.py:466
+msgid "Generate configuration"
+msgstr "設定を生成"
+
+#: seedit-gui-generate-policy.py:510
+msgid "Skip reading denied searches for the 'tclass=dir' value"
+msgstr "tclass=dirに対するsearchの拒否ログを読み込まない"
+

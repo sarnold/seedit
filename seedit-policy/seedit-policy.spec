@@ -44,10 +44,11 @@ if [ $1 = 1 ]; then
 	touch /.autorelabel
 
 	echo "/var/tmp/bootstrap.sh" >> /etc/rc.d/rc.local
-        cat %{auditrules} | sed -e 's!-a exit,always -S chdir!!g' > %{auditrules}.tmp
-	mv %{auditrules}.tmp %{auditrules}
-	echo "-a exit,always -S chdir" >> /etc/audit/audit.rules
-
+	if [ -e %{auditrules} ]
+	        cat %{auditrules} | sed -e 's!-a exit,always -S chdir!!g' > %{auditrules}.tmp
+		mv %{auditrules}.tmp %{auditrules}
+		echo "-a exit,always -S chdir" >> /etc/audit/audit.rules
+	fi
 	# Create bootstrap.sh # Code related to bootstrap is from Yoichi Hirose <yhirose@users.sourceforge.jp>
 	cat << __EOF >/var/tmp/bootstrap.sh
 

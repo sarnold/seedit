@@ -6,7 +6,7 @@
 Summary: Simplified Policy for SELinux
 #Name: seedit-policy-%{type}
 Name: seedit-policy
-Version: 2.1.0
+Version: 2.1.0.b1
 Release: %{buildnum}.%{distro}
 License: GPL
 Group:  System Environment/Base

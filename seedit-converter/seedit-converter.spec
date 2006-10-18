@@ -2,7 +2,7 @@
 %define buildnum 1
 Summary: Compliler for simplified policy
 Name: seedit-converter
-Version: 2.1.0
+Version: 2.1.0.b1
 Release: %{buildnum}.%{distro}
 License: GPL
 Group: System Environment/Base

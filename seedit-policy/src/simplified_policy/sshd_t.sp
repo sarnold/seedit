@@ -19,7 +19,7 @@ allowdev -pts open;
 
 allowpriv cap_sys_chroot;
 allowpriv getsecurity;
-
+allowpriv setsecurity;
 allow /etc/selinux/** r,s;
 allow /root/** s;
 allow ~/** s;

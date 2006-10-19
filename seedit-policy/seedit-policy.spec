@@ -1,7 +1,7 @@
 %define type strict
 %define selinuxconf /etc/selinux/config
-%define auditrules  /etc/audit/audit.rules
-%define distro COS4
+%define auditrules  /etc/audit.rules
+%define distro FC5
 %define buildnum 1
 Summary: Simplified Policy for SELinux
 #Name: seedit-policy-%{type}
@@ -49,6 +49,7 @@ if [ $1 = 1 ]; then
 		mv %{auditrules}.tmp %{auditrules}
 	 			
 		echo "-a exit,always -S chdir" >> %{auditrules}
+		/sbin/restorecon %{auditrules}
 	fi
 
 	

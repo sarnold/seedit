@@ -47,8 +47,12 @@ if [ $1 = 1 ]; then
 	if [ -e %{auditrules} ]; then
 	        cat %{auditrules} | sed -e 's!-a exit,always -S chdir!!g' > %{auditrules}.tmp
 		mv %{auditrules}.tmp %{auditrules}
-		echo "-a exit,always -S chdir" >> /etc/audit/audit.rules
+	 			
+		echo "-a exit,always -S chdir" >> %{auditrules}
 	fi
+
+	
+
 	# Create bootstrap.sh # Code related to bootstrap is from Yoichi Hirose <yhirose@users.sourceforge.jp>
 	cat << __EOF >/var/tmp/bootstrap.sh
 

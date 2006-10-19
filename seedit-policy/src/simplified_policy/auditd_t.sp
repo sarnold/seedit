@@ -17,6 +17,8 @@ allowpriv audit_adm;
 
 allow /var/log/audit/**  r,w,s;
 allow /etc/audit/** r,s;
+allow /etc/audit.rules r,s;
+allow /etc/auditd.conf r,s;
 allow /sbin/audispd r,x,s;
 
 allowfs proc_pid_self  w;

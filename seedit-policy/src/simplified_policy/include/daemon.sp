@@ -26,3 +26,4 @@ allowpriv cap_setgid;
 
 allowcom -ipc mcstransd_t w;
 allow /var/run/setrans/** r,s,t,o;
+allow /etc/selinux/seedit/setrans.conf r,s;

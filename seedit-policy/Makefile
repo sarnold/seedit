@@ -43,12 +43,8 @@ policy:
 
 	cp -r /etc/seedit/converter/conf/base_policy policy/
 	cp -r /etc/seedit/converter/conf/macros policy/
+	cp /etc/seedit/converter/Makefile policy/Makefile;\
 
-	if [ -e src/Makefile.$(DISTRO) ];then \
-		cp src/Makefile.$(DISTRO) policy/Makefile;\
-	else \
-		cp src/Makefile policy/Makefile;\
-	fi
 
 
 	cd policy ;make 

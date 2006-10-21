@@ -62,7 +62,11 @@ install:all
 	mv $(SEEDITCONFROOT)/converter/conf/base_policy/spdl_spec.xml.expand  $(SEEDITCONFROOT)/converter/conf/base_policy/spdl_spec.xml
 	mkdir -p $(sysconfdir)/pam.d
 	install -m 744 pam.d/seedit-gui.$(DISTRO)   $(sysconfdir)/pam.d/seedit-gui
-
+	if [ -e makefiles/Makefile.$(DISTRO) ];then \
+		install -m 744 makefiles/Makefile.$(DISTRO) $(SEEDITCONFROOT)/converter;\
+	else \
+		install -m 744 makefiles/Makefile $(SEEDITCONFROOT)/converter;\
+	fi
 
 doc:./doc/permission_integrate.pdf
 

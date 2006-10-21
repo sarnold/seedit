@@ -5,7 +5,7 @@
 sysconfdir =/etc
 CONVERTER=/usr/bin/seedit-converter
 LOADPOLICY=/usr/sbin/load_policy
-CHECKPOLICY=/usr/bin/checkpolicy -M
+CHECKPOLICY=/usr/bin/checkpolicy
 FIXFILES=/sbin/fixfiles
 RESTORECON=/usr/sbin/seedit-restorecon
 SELINUXTYPE=seedit
@@ -19,8 +19,8 @@ OUTDIR =./sepolicy
 INSTALL_PATH = $(POLICYROOT)
 SELINUXCONF=$(sysconfdir)/selinux/config
 
-M4=m4 -D enable_mcs
-DEFAULT_POLICYVER=20
+M4=m4
+DEFAULT_POLICYVER=18
 POLICYVER := $(shell $(CHECKPOLICY)  -V |cut -f 1 -d ' ')
 ifeq ($(POLICYVER),)
 POLICYVER=$(DEFAULT_POLICYVER)

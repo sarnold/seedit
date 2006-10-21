@@ -1,3 +1,6 @@
+*2006/10/21 Yuichi Nakamura
+Included Makefiles in config/makefiles
+
 *2006/10/12 Yuichi Nakamura
  Improved performance of audit2spdl
  Guess fullpath in chroot environment

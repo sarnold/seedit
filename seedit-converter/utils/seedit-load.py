@@ -89,28 +89,31 @@ def removeAuditChdirFromAuditRulesFile():
         fh.write(line)
     fh.close()
 
+
+def forkExec(command,verbose=False):
+    if verbose:
+        print command
+    pid = os.fork()
+    if pid==0:
+        os.system(command)
+        sys.exit(0)
+    os.wait()
+     
+
 def removeAuditChdir():
      removeAuditChdirFromAuditRulesFile()
      confinedDomains=getConfinedDomains("/etc/selinux/seedit/policy/confined_domains")
-     command = gAuditCtl+" -d exit,always -S chdir"
+     command = gAuditCtl+" -d exit,always -S chdir"+"  >/dev/null 2>&1 "
      
-         
-     pid = os.fork()
-     if pid==0:
-         os.system(command+" >/dev/null 2>&1 ")
-         sys.exit(0)
-     os.wait()
+     forkExec(command,gVerboseFlag)
+     
      
      if confinedDomains==None:
          return
           
      for domain in confinedDomains:
-         command = gAuditCtl+" -d exit,always -S chdir -F obj_type="+domain
-         pid = os.fork()
-         if pid==0:
-             os.system(command+" >/dev/null 2>&1 ")
-             sys.exit(0)
-         os.wait()
+         command = gAuditCtl+" -d exit,always -S chdir -F obj_type="+domain+" >/dev/null 2>&1 "
+         forkExec(command,gVerboseFlag)
      return
 
 #audit chdir syscall to obtain full path when program chroots
@@ -122,11 +125,8 @@ def doAuditChdir():
 
     for domain in confinedDomains:
         command = gAuditCtl+" -a exit,always -S chdir -F obj_type="+domain
-        pid = os.fork()
-        if pid==0:
-            os.system(command+" >/dev/null 2>&1 ")
-            sys.exit(0)
-        os.wait()
+        command = command +" >/dev/null 2>&1 "
+        forkExec(command,gVerboseFlag)
 
     filename = getAuditRulesFileName()
     try:
@@ -157,12 +157,8 @@ def doAuditChdir():
 #logs all chdir 
 def doAuditChdirAll():
     
-    command = gAuditCtl+" -a exit,always -S chdir"
-    pid = os.fork()
-    if pid==0:
-        os.system(command+" >/dev/null 2>&1 ")
-        sys.exit(0)
-    os.wait()
+    command = gAuditCtl+" -a exit,always -S chdir >/dev/null 2>&1"
+    forkExec(command,gVerboseFlag)
 
     filename = getAuditRulesFileName()
     try:

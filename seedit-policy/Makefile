@@ -19,7 +19,7 @@ CONFDIR=./policy/simplified_policy
 BASEPOLICYDIR=./policy/base_policy
 MACRODIR=./policy/macros
 OUTDIR =./policy/sepolicy
-FCFILE=./distro/$(DISTRO)/dynamic_contexts
+DYNAMIC_CONTEXTS=./distro/$(DISTRO)/dynamic_contexts
 SPDLSPEC=./src/base_policy/spdl_spec.xml
 
 dir:
@@ -48,7 +48,7 @@ policy:
 
 
 	cd policy ;make 
-	if [ -e $(FCFILE) ] ; then cat $(FCFILE) >> policy/sepolicy/file_contexts; fi
+	if [ -e $(DYNAMIC_CONTEXTS) ] ; then cat $(DYNAMIC_CONTEXTS) >> policy/sepolicy/file_contexts; fi
 install: policy dir
 	cp policy/Makefile  $(SEEDITCONFROOT)/converter/
 	cp -r policy/simplified_policy/*  $(SEEDITCONFROOT)/policy
@@ -58,6 +58,8 @@ install: policy dir
 		cp $(POLICYROOT)/contexts/files/file_contexts $(POLICYROOT)/contexts/files/file_contexts.old;\
 	fi
 	cd policy;make install 
+	if [ -e $(DYNAMIC_CONTEXTS) ] ; then cat $(DYNAMIC_CONTEXTS) >> policy/sepolicy/file_contexts; fi
+	cp policy/sepolicy/file_contexts  $(POLICYROOT)/contexts/files/file_contexts
 
 	if [ ! -e $(POLICYROOT)/contexts/files/file_contexts.old ]; then \
 		cp $(POLICYROOT)/contexts/files/file_contexts $(POLICYROOT)/contexts/files/file_contexts.old;\

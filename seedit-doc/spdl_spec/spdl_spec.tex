@@ -1,5 +1,5 @@
 \documentclass{article}
-\title{Specification of Simplified Policy Description Language(SPDL) ver 2.0}
+\title{Specification of Simplified Policy Description Language(SPDL) ver 2.1.}
 \author{Yuichi Nakamura \thanks{himainu-ynakam@miomio.jp}}
 \begin{document}
 \maketitle
@@ -1056,6 +1056,39 @@ Following strings can be used.
 
 \subsection{denypriv}
 This can be used to cancel allowpriv configuration.
+
+\section{Access control of kernel key retention service:allowkey}
+This feature is included at version  2.1 or  later.\\
+
+After Linux 2.6.18, new feature {\it kernel key retention service)} is
+included. By the feature, each process can obtain key. 
+For detail of key retention service, please refer to kernel document
+Document/keys.txt (You can look at the copy at
+http://free-electrons.com/kerneldoc/latest/keys.txt).
+allowkey controls access to key.
+This feature is effective only for FC5 or later. Cent OS does not have
+kernel key subsystem, so allowkey means nothing.\\
+
+\begin{enumerate}
+ \item Syntax\\
+       allowkey {\it domain} {\it permissions};\\
+For permissions, you can use following.\\
+v: View. Look attribute of key.\\
+r: Read. Read contents of key.\\
+W: Write. Write contents of key. \\
+s: Search. Search keyrings.\\
+l: Link. Permits key  or keyrings to be linked to.\\
+t: Set Attribute: Set attribute of key.\\
+For detail of permission, see Document/keys.txt.       
+ \item Meaning\\
+ Allow access to keys retained by {\it  domain}.\\
+For example,\\
+allowkey login\_t v,r;\\
+means, allow view and  read access to keys, obtained by process whose
+       domain is login\_t.
+
+\end{enumerate}
+
 
 
 \end{document}

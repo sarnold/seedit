@@ -1,12 +1,10 @@
-%define type strict
 %define selinuxconf /etc/selinux/config
 %define auditrules  /etc/audit/audit.rules
 %define distro FC6
 %define buildnum 1
 Summary: Simplified Policy for SELinux
-#Name: seedit-policy-%{type}
 Name: seedit-policy
-Version: 2.1.0.b2
+Version: 2.1.0.b3
 Release: %{buildnum}.%{distro}
 License: GPL
 Group:  System Environment/Base
@@ -29,7 +27,7 @@ Simplified policy is converted into usual SELinux policy by seedit-converter.
 %install
 rm -rf $RPM_BUILD_ROOT
 DISTRO=%{distro}
-%makeinstall CONVERTER=/usr/bin/seedit-converter DISTRO=$DISTRO POLICYTYPE=%{type} DEVELFLAG=0 SELINUXTYPE=seedit
+%makeinstall CONVERTER=/usr/bin/seedit-converter DISTRO=$DISTRO  DEVELFLAG=0 SELINUXTYPE=seedit
 
 %pre
 if [ -e /etc/selinux/seedit/contexts/files/file_contexts.all.old ] ; then

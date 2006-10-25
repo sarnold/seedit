@@ -51,7 +51,12 @@ if [ $1 = 1 ]; then
 		echo "-a exit,always -S chdir" >> %{auditrules}
 		/sbin/restorecon %{auditrules}
 	fi
-
+	if [ -e /etc/selinux/restorecond.conf ];then 
+		cat /etc/selinux/restorecond.conf |sed -e 's/^\/etc\/ld.so.cache.*$//'>/etc/selinux/restorecond.conf.tmp
+		cp /etc/selinux/restorecond.conf.tmp /etc/selinux/restorecond.conf
+		/sbin/restorecon /etc/selinux/restorecond.conf
+	fi
+	echo "/etc/ld.so.cache" >> /etc/selinux/restorecond.conf
 	
 
 	# Create bootstrap.sh # Code related to bootstrap is from Yoichi Hirose <yhirose@users.sourceforge.jp>

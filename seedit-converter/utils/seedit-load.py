@@ -277,12 +277,13 @@ for opt,arg in opts:
 if gBehavior=="":
     gBehavior="load"
 
-removeAuditChdir()
-if gAuditChdirFlag==True:
-    doAuditChdir()
-
-if gAuditChdirAllFlag==True:
-    doAuditChdirAll()
+#Handles logging for chdir syscall
+if gBehavior != "test":
+    removeAuditChdir()
+    if gAuditChdirFlag==True:
+        doAuditChdir()
+    if gAuditChdirAllFlag==True:
+        doAuditChdirAll()
 
 s=0
 

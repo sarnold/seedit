@@ -67,7 +67,7 @@ def readLog(input, loadPolicyFlag):
                     lineBuf.pop()
                     lineBuf.pop()
                     lineBuf.pop()
-                continue
+                    continue            
             
             lineBuf.append(line)
             m = reg.search(line)
@@ -265,6 +265,7 @@ def getPathWithChroot(name, inode,pid, ppid):
         cpath = gChrootStatus[pid]+"/"+name
         candidatePath.append(os.path.normpath(cpath))
 
+
     if gChrootStatus.has_key(ppid):
         cpath = gChrootStatus[ppid]+"/"+name
         candidatePath.append(os.path.normpath(cpath))
@@ -272,6 +273,7 @@ def getPathWithChroot(name, inode,pid, ppid):
     for c in candidatePath:
         if inode == getInodeByStat(c):
             return c
+    
     return ""
 
 
@@ -1049,11 +1051,11 @@ def genFullPath(lines):
 # if lines[index] is log for chroot or syscall 12, return True
 def updateChangedRoot(lines,index):
     line = lines[index]
-    
+
     reg = re.compile("type=SYSCALL.*syscall=12")
    
     m = reg.search(line)
-    if m:        
+    if m:
         updateChdirInoPathDir(lines, index)
         return True
     
@@ -1061,22 +1063,23 @@ def updateChangedRoot(lines,index):
     m= reg.search(line)
     if not m:
         return False
-
-    
-  
+      
     
     logs = getRelatedLog(lines, index)
+
     list = genFullPath(logs)
     path =""
     
     if list:
         (path, inode)=list[0]
+
         if path =="":
             if gChdirInoPathDir.has_key(inode):
                 path = gChdirInoPathDir[inode]
 
     pid = getPid(lines[index])
     gChrootStatus[pid] = path
+
 
     return True
 

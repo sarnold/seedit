@@ -38,7 +38,7 @@
 
 static void modify_rules();
 static void make_dir_list();
-static void out_allow(FILE *,FILE *);
+static void out_allow(FILE *,FILE *,FILE *);
 static void out_domain_trans(FILE *);
 //static void out_dummy_user_conf(FILE *);
 static void out_net_type(FILE *);
@@ -96,6 +96,7 @@ void convert(char *outdir){
   FILE *policy_fp=stdout;
   FILE *file_context_fp=stdout;
   FILE *unconfined_fp=stdout;
+  FILE *confined_fp = stdout;
   FILE *customizable_types_fp=stdout;
   FILE *homedir_template_fp=stdout;
   FILE *userhelper_context_fp=stdout;
@@ -104,6 +105,7 @@ void convert(char *outdir){
     policy_fp= openfile(outdir,"generated.conf");
     file_context_fp = openfile(outdir,"file_contexts.m4");
     unconfined_fp = openfile(outdir,"unconfined_domains");
+    confined_fp = openfile(outdir,"confined_domains");
     customizable_types_fp=openfile(outdir,"customizable_types");
     userhelper_context_fp=openfile(outdir,"userhelper_context.m4");
     
@@ -158,7 +160,7 @@ void convert(char *outdir){
 	out_net_type(policy_fp);
 
 	/* print "allow ..." */
-	out_allow(policy_fp,unconfined_fp);
+	out_allow(policy_fp,unconfined_fp,confined_fp);
 
 	/* print "domain_auto_trans or domain_trans " */
 	out_domain_trans(policy_fp);
@@ -196,12 +198,15 @@ void convert(char *outdir){
 	  fclose(file_context_fp);
 	if(unconfined_fp!=NULL)
 	  fclose(unconfined_fp);
+	if(confined_fp!=NULL)
+	  fclose(confined_fp);
 	if(customizable_types_fp!=NULL)
 	  fclose(customizable_types_fp);
 	if(homedir_template_fp!= NULL)
 	  fclose(homedir_template_fp);
 	if(userhelper_context_fp!=NULL)
 	  fclose(userhelper_context_fp);
+
 }
 
 /**
@@ -1525,7 +1530,7 @@ int check_unconfined(DOMAIN *domain){
  */
 
 void
-out_allow(FILE *outfp,FILE *unconfined_fp)
+out_allow(FILE *outfp,FILE *unconfined_fp,FILE *confined_fp)
 {
 	HASH_NODE **domain_array;
 	DOMAIN *domain;
@@ -1558,6 +1563,7 @@ out_allow(FILE *outfp,FILE *unconfined_fp)
 		    fprintf(outfp, "allow %s self:process transition;\n", domain->name);
 		  }
 		}else{
+		  fprintf(confined_fp,"%s\n",domain->name);
 		  fprintf(outfp, "type %s,domain;\n", domain->name);
 		}
 

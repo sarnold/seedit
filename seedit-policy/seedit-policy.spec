@@ -45,10 +45,10 @@ if [ $1 = 1 ]; then
 
 	echo "/var/tmp/bootstrap.sh" >> /etc/rc.d/rc.local
 	if [ -e %{auditrules} ]; then
-	        cat %{auditrules} | sed -e 's!-a exit,always -S chdir!!g' > %{auditrules}.tmp
+	        cat %{auditrules} | sed -e 's!-a exit,always -S chroot!!g' > %{auditrules}.tmp
 		mv %{auditrules}.tmp %{auditrules}
 	 			
-		echo "-a exit,always -S chdir" >> %{auditrules}
+		echo "-a exit,always -S chroot" >> %{auditrules}
 		/sbin/restorecon %{auditrules}
 	fi
 	if [ -e /etc/selinux/restorecond.conf ];then 
@@ -88,7 +88,11 @@ if [ $1 = 0 ]; then
 	mv %{selinuxconf} %{selinuxconf}.orig
 	mv %{selinuxconf}.tmp %{selinuxconf}
 	touch /.autorelabel
-
+	if [ -e %{auditrules} ]; then
+	        cat %{auditrules} | sed -e 's!-a exit,always -S chroot!!g' > %{auditrules}.tmp
+		mv %{auditrules}.tmp %{auditrules}
+		/sbin/restorecon %{auditrules}
+	fi
 else
 	mv /etc/selinux/seedit/contexts/files/file_contexts.all.old2 /etc/selinux/seedit/contexts/files/file_contexts.all.old
 	if [ -e /etc/seedit/policy/sysadm_r.sp ]; then

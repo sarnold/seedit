@@ -19,11 +19,177 @@
 
 import sys
 import os
+import re
 import getopt
 import string
 import gettext
 
 gMakeFlags="CONFDIR=/etc/seedit/policy OUTDIR=/etc/seedit/converter/sepolicy BASEPOLICYDIR=/etc/seedit/converter/conf/base_policy MACRODIR=/etc/seedit/converter/conf/macros"
+gAuditCtl="/sbin/auditctl"
+
+def getConfinedDomains(filename):
+    confinedDomains = []
+    try:
+        fh = open(filename)
+    except:
+        sys.stderr.write(_("Input file open error:%s") % filename)
+        return None
+
+    l = fh.readline()
+    while l:
+        l = string.replace(l,"\n","")
+        confinedDomains.append(l)
+        l = fh.readline()
+    return confinedDomains
+
+def getAuditRulesFileName():
+    filename="/etc/audit.rules"
+        
+    try:
+        fh = open(filename)
+    except:
+        filename = "/etc/audit/audit.rules"
+        try:
+            fh = open(filename)
+        except:
+            #audit is not installed
+            return ""
+    fh.close()
+    return filename
+
+
+        
+def removeAuditChdirFromAuditRulesFile():
+    filename=getAuditRulesFileName()
+    if filename=="":
+        return
+    try:
+        fh = open(filename)
+    except:
+        sys.exit(1)
+
+    lines=fh.readlines()
+    lineBuf=[]
+    reg = re.compile("-a exit,always -S chdir")
+    for line in lines:
+        m = reg.search(line)
+        if m:
+            continue
+        lineBuf.append(line)
+
+    fh.close()
+
+    try:
+        fh = open(filename,"w")
+    except:
+        print "File open error"+filename
+        sys.exit(1)
+
+    for line in lineBuf:
+        fh.write(line)
+    fh.close()
+
+def removeAuditChdir():
+     removeAuditChdirFromAuditRulesFile()
+     confinedDomains=getConfinedDomains("/etc/selinux/seedit/policy/confined_domains")
+     command = gAuditCtl+" -d exit,always -S chdir"
+     
+         
+     pid = os.fork()
+     if pid==0:
+         os.system(command+" >/dev/null 2>&1 ")
+         sys.exit(0)
+     os.wait()
+     
+     if confinedDomains==None:
+         return
+          
+     for domain in confinedDomains:
+         command = gAuditCtl+" -d exit,always -S chdir -F obj_type="+domain
+         pid = os.fork()
+         if pid==0:
+             os.system(command+" >/dev/null 2>&1 ")
+             sys.exit(0)
+         os.wait()
+     return
+
+#audit chdir syscall to obtain full path when program chroots
+#audit only for confined domains
+def doAuditChdir():
+    confinedDomains=getConfinedDomains("/etc/selinux/seedit/policy/confined_domains")
+    if confinedDomains==None:
+        return
+
+    for domain in confinedDomains:
+        command = gAuditCtl+" -a exit,always -S chdir -F obj_type="+domain
+        pid = os.fork()
+        if pid==0:
+            os.system(command+" >/dev/null 2>&1 ")
+            sys.exit(0)
+        os.wait()
+
+    filename = getAuditRulesFileName()
+    try:
+        fh = open(filename)
+    except:
+        print "File open error"+filename
+        sys.exit(1)
+
+    lines = fh.readlines()
+    lineBuf=[]
+    for line in lines:
+        lineBuf.append(line)
+    
+    for domain in confinedDomains:
+        s = "-a exit,always -S chdir -F obj_type="+domain+"\n"
+        lineBuf.append(s)
+
+    try:
+        fh = open(filename,"w")
+    except:
+        print "File open error"+filename
+        sys.exit(1)
+
+    for line in lineBuf:
+        fh.write(line)
+    fh.close()
+
+#logs all chdir 
+def doAuditChdirAll():
+    
+    command = gAuditCtl+" -a exit,always -S chdir"
+    pid = os.fork()
+    if pid==0:
+        os.system(command+" >/dev/null 2>&1 ")
+        sys.exit(0)
+    os.wait()
+
+    filename = getAuditRulesFileName()
+    try:
+        fh = open(filename)
+    except:
+        print "File open error"+filename
+        sys.exit(1)
+
+    lines = fh.readlines()
+    lineBuf=[]
+    for line in lines:
+        lineBuf.append(line)
+    
+
+    s = "-a exit,always -S chdir\n"
+    lineBuf.append(s)
+    try:
+        fh = open(filename,"w")
+    except:
+        print "File open error"+filename
+        sys.exit(1)
+
+    for line in lineBuf:
+        fh.write(line)
+    fh.close()
+
+
 
 def printUsage():
     sys.stderr.write("seedit-load [-l(--load)] [-t(--test)] [-v(--verbose)] [-i (--init)]")
@@ -32,6 +198,8 @@ def printUsage():
     sys.stderr.write(_("\t-i\tInitialize all file labels. This takes time.\n"))
     sys.stderr.write(_("\t-v\tVerbose output\n"))
     sys.stderr.write(_("\t-e\tVerbose output, to stderr\n"))
+    sys.stderr.write(_("\t-n\tDo not audit chdir logs(Effective only after FC5\n)"))
+    sys.stderr.write(_("\n-a\tAudit all chdir logs(Will generate lots of logs\n"))
     sys.stderr.write(_("\t l,i,t option conflicts each other.\n"))
     sys.exit(1)
 
@@ -78,9 +246,11 @@ if __name__ == '__main__':
 gVerboseStderrFlag=False
 gVerboseFlag = False
 gBehavior = "" #load,test,init
+gAuditChdirFlag = True  #-n option
+gAuditChdirAllFlag = False #-a option
 
 try:
-    opts, args = getopt.getopt(sys.argv[1:], "tvei", ["test","verbose","init"])
+    opts, args = getopt.getopt(sys.argv[1:], "atnvei", ["audit","test","noaudit","verbose","init"])
 except getopt.GetoptError:
     printUsage()
 
@@ -92,6 +262,11 @@ for opt,arg in opts:
         gBehavior="test"
     elif opt in ("-v","--verbose"):
         gVerboseFlag=True
+    elif opt in ("-n","--noaudit"):
+        gAuditChdirFlag=False
+    elif opt in ("-a","--audit"):
+        gAuditChdirAllFlag=True
+        gAuditChdirFlag=False
     elif opt in ("-e"):
         gVerboseStderrFlag=True
     elif opt in ("-i","--init"):
@@ -105,6 +280,13 @@ for opt,arg in opts:
 
 if gBehavior=="":
     gBehavior="load"
+
+removeAuditChdir()
+if gAuditChdirFlag==True:
+    doAuditChdir()
+
+if gAuditChdirAllFlag==True:
+    doAuditChdirAll()
 
 s=0
 

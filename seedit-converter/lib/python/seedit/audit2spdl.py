@@ -158,8 +158,10 @@ def getSubjDomain(line):
     m = re.compile("subj=\S+").search(line)
     if m:
         list = string.split(m.group(),":")
-        domain = list[2]
-    
+        try:
+            domain = list[2]
+        except:
+            domain =""
     return domain
 
 

@@ -11,6 +11,13 @@ if [ -z $name ]; then
     echo "Usage buildpkg <packagename> "
 fi
 
+mkdir -p archive
+
+cd $name
+cat $name.spec|sed -e "s/^%define distro.*\$/%define distro $DISTRO/"|sed -e "s/^%define auditrules.*\$/%define auditrules $AUDITCONF/">$name.spec.tmp
+mv $name.spec.tmp $name.spec
+cd ..
+
 if [ -e $name-$VERSION ]
 then 
 rm -rf $name-$VERSION
@@ -50,4 +57,3 @@ if [ -e ~/rpm/SRPMS/$name-$VERSION-$RELEASE.$distro.src.rpm ]; then
 fi
 
 
-mv  $name-$VERSION-$RELEASE.tar.gz source

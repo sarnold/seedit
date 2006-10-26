@@ -1,17 +1,21 @@
 \documentclass{article}
-\title{Specification of Simplified Policy Description Language(SPDL) ver 2.1.}
+\title{SPDL説明書 ver 2.1.}
 \author{Yuichi Nakamura \thanks{himainu-ynakam@miomio.jp}}
 \begin{document}
 \maketitle
 \tableofcontents
 \newpage
-This document describes syntax and meaning of SPDL configuration elements.
+これは、SPDL(Simplified Policy Description Language(単純化ポリシ設定言語))
+の設定要素の解説書です。
 
 
 
-\section{Overview}
-Simplified policy is written in  syntax  called Simplified Policy
-Description Language(SPDL). SPDL compiler(seedit-converter) converts
+\section{概要}
+seeditのポリシーファイル(/etc/seedit/policy)は、SPDLという書式で書かれています。
+SPDLコンパイラ(seedit-converterコマンド、seedit-loadコマンドの中で呼び出
+されます)によって、SPDLは
+
+SPDL compiler(seedit-converter) converts
 SPDL into normal SELinux policy language.
 
 \subsection{Feature}

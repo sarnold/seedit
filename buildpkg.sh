@@ -28,27 +28,25 @@ rm -rf $name-$VERSION
 
 cd archive
 rpmbuild -ta $name-$VERSION-$RELEASE.tar.gz
-mkdir -p RPM
-mkdir -p source
 
 if [ -e ~/rpm/RPMS/i386/$name-$VERSION-$RELEASE.i386.rpm ]; then
-    mv ~/rpm/RPMS/i386/$name-$VERSION-$RELEASE.i386.rpm ./RPM
+    mv ~/rpm/RPMS/i386/$name-$VERSION-$RELEASE.i386.rpm .
 fi
 if [ -e ~/rpm/RPMS/noarch/$name-$VERSION-$RELEASE.noarch.rpm ]; then
-    mv ~/rpm/RPMS/noarch/$name-$VERSION-$RELEASE.noarch.rpm ./RPM
+    mv ~/rpm/RPMS/noarch/$name-$VERSION-$RELEASE.noarch.rpm .
 fi
 if [ -e ~/rpm/SRPMS/$name-$VERSION-$RELEASE.src.rpm ]; then
-    mv ~/rpm/SRPMS/$name-$VERSION-$RELEASE.src.rpm ./source
+    mv ~/rpm/SRPMS/$name-$VERSION-$RELEASE.src.rpm .
 fi
 
 if [ -e ~/rpm/RPMS/i386/$name-$VERSION-$RELEASE.$distro.i386.rpm ]; then
-    mv ~/rpm/RPMS/i386/$name-$VERSION-$RELEASE.$distro.i386.rpm ./RPM
+    mv ~/rpm/RPMS/i386/$name-$VERSION-$RELEASE.$distro.i386.rpm .
 fi
 if [ -e ~/rpm/RPMS/noarch/$name-$VERSION-$RELEASE.$distro.noarch.rpm ]; then
-    mv ~/rpm/RPMS/noarch/$name-$VERSION-$RELEASE.$distro.noarch.rpm ./RPM
+    mv ~/rpm/RPMS/noarch/$name-$VERSION-$RELEASE.$distro.noarch.rpm .
 fi
 if [ -e ~/rpm/SRPMS/$name-$VERSION-$RELEASE.$distro.src.rpm ]; then
-    mv ~/rpm/SRPMS/$name-$VERSION-$RELEASE.$distro.src.rpm ./source
+    mv ~/rpm/SRPMS/$name-$VERSION-$RELEASE.$distro.src.rpm .
 fi
 
 

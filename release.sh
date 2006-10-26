@@ -3,8 +3,7 @@ MODULES="seedit-converter seedit-policy seedit-gui seedit-doc"
 . common.sh
 
 mkdir -p archive
-echo $DISTRO
-exit
+
 #rewrite %{distro} %{auditrules}
 for name in $MODULES
 do

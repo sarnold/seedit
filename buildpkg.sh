@@ -1,13 +1,13 @@
-VERSION=2.0.1
-RELEASE=1
-DISTRO=COS4
+#!/bin/sh
+
+. common.sh
 
 mkdir -p archive
 
 name=$1
 distro=$DISTRO
 
-if [ ! -n name ]; then 
+if [ -z $name ]; then 
     echo "Usage buildpkg <packagename> "
 fi
 

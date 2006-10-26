@@ -1,6 +1,7 @@
 %define selinuxconf /etc/selinux/config
 %define auditrules  /etc/audit/audit.rules
 %define distro FC6
+%define modular y
 %define buildnum 1
 Summary: Simplified Policy for SELinux
 Name: seedit-policy
@@ -47,15 +48,16 @@ if [ $1 = 1 ]; then
 		mv %{auditrules}.tmp %{auditrules}
 	 			
 		echo "-a exit,always -S chroot" >> %{auditrules}
-		/sbin/restorecon %{auditrules}
 	fi
 	if [ -e /etc/selinux/restorecond.conf ];then 
 		cat /etc/selinux/restorecond.conf |sed -e 's/^\/etc\/ld.so.cache.*$//'>/etc/selinux/restorecond.conf.tmp
 		cp /etc/selinux/restorecond.conf.tmp /etc/selinux/restorecond.conf
-		/sbin/restorecon /etc/selinux/restorecond.conf
 	fi
 	echo "/etc/ld.so.cache" >> /etc/selinux/restorecond.conf
 	
+	if [ %{modular} = "y" ]; then
+		/usr/sbin/semodule -b /etc/selinux/seedit/policy/base.pp -s seedit -n
+	fi
 
 	# Create bootstrap.sh # Code related to bootstrap is from Yoichi Hirose <yhirose@users.sourceforge.jp>
 	cat << __EOF >/var/tmp/bootstrap.sh
@@ -89,7 +91,6 @@ if [ $1 = 0 ]; then
 	if [ -e %{auditrules} ]; then
 	        cat %{auditrules} | sed -e 's!-a exit,always -S chroot!!g' > %{auditrules}.tmp
 		mv %{auditrules}.tmp %{auditrules}
-		/sbin/restorecon %{auditrules}
 	fi
 else
 	mv /etc/selinux/seedit/contexts/files/file_contexts.all.old2 /etc/selinux/seedit/contexts/files/file_contexts.all.old

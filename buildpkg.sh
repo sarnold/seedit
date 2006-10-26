@@ -14,7 +14,7 @@ fi
 mkdir -p archive
 
 cd $name
-cat $name.spec|sed -e "s/^%define distro.*\$/%define distro $DISTRO/"|sed -e "s/^%define auditrules.*\$/%define auditrules $AUDITCONF/">$name.spec.tmp
+cat $name.spec|sed -e "s/^%define distro.*\$/%define distro $DISTRO/"|sed -e "s/^%define auditrules.*\$/%define auditrules $AUDITCONF/"|sed -e "s/^%define modular.*\$/%define modular $MODULAR/">$name.spec.tmp
 mv $name.spec.tmp $name.spec
 cd ..
 

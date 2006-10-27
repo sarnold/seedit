@@ -12,65 +12,67 @@
 
 \section{概要}
 seeditのポリシーファイル(/etc/seedit/policy)は、SPDLという書式で書かれています。
-SPDLコンパイラ(seedit-converterコマンド、seedit-loadコマンドの中で呼び出
-されます)によって、SPDLは
+SPDLコンパイラ(seedit-converterコマンド。seedit-loadコマンドの中で呼び出
+されます)によって、SPDLは普通のSELinuxのポリシー書式に変換され、設定が反映さ
+れます。
 
-SPDL compiler(seedit-converter) converts
-SPDL into normal SELinux policy language.
-
-\subsection{Feature}
-The feature of SPDL is hiding labels, and reducing number of
-permissions.
+\subsection{機能}
+SPDLの主な機能は、ラベルの隠蔽（パス名ベースの設定）と、パーミッションの
+絞りこみです。
 \begin{itemize}
- \item Hiding labels\\
-       SPDL does not use types to configure access control. You can use
-       file name and port number to configure.
- \item Reduce number of permissions\\
-       There are too many permissions in SELinux, so SPDL reduces number
-       of permissions by removing permissions and integrating
-       permissions.
-       Permissions that does not have security impact is
-       removed. Permission removal is implemented by allowing that
-       permission to all domains. Integrating permission means, treating
-       set of permissions as one permission. For example r permission
-       for file integrates SELinux permissions related to file read.
-       For detail of what kind of permissions are removed, integrated  see {\it
-       Integrated/unsupported permissions in Simplified Policy } in
-       http://seedit.sourceforge.net/doc/permission\_integrate/.
+ \item ラベルの隠蔽\\
+       通常のSELinuxでは、ラベルをリソースに付与し、ラベルを使って
+       設定する必要があります。ラベルの管理、ラベルとリソースの対応付け
+       の把握が繁雑でした。一方、
+       SPDLでは、ラベルは隠蔽されています。ファイル名やポート
+       番号などのリソース名を指定して設定できます。
+
+ \item パーミッションの絞りこみ\\
+       SELinuxには、数百のパーミッションが存在していました。一方SPDLでは、
+       パーミッションを除去したり、統合することによって、パーミッション
+       の数を絞りこんでいます。セキュリティ上の影響が極力少なくなるよう
+       配慮し、絞りこんでいます。\\
+       「パーミッション除去」とは、そのパーミッションが全ドメインに許可
+       されるようにし、実質そのパーミッションに関するアクセス制御が働か
+       ないようにすることです。\\
+       「パーミッション統合」は、複数のパーミッションを一つのパーミッショ
+       ンとして扱うことです。どんなパーミッションが除去され、統合されて
+       いるのかは、
+       http://seedit.sourceforge.net/doc/permission\_integrate/にありま
+       す。
 \end{itemize}
 
 
-\subsection{Overview of SPDL configuration elements}
-Configuration elements are following.
+\subsection{SPDLの設定要素の概要}
+SPDLは、次のような設定を行うことができます。
 \begin{itemize}
- \item Giving domain to applications\\
-       To assign domain, we  have to configure domain transitions. 
-       
-       SPDL has two elements to configure domain transition:  {\it domain\_trans} and  {\it
-       program} .
-       {\it domain\_trans} is syntax to configure domain transition,
-       {\it program} is syntax for simplified configuration.
+ \item アプリケーションへのドメイン付与\\
+       ドメインを割り当てるには、SELinuxのドメイン遷移を設定する必要があ
+       ります。ドメイン遷移の設定には、２種類の要素が用意されています。\\
+       {\it domain\_trans}という諸式は普通のドメイン遷移の諸式です。\\
+       {\it program}は、簡略版の書式です。
 
  \item RBAC\\
-       SPDL supports RBAC. {\it role} and {\it user} elements do that.
- \item Access control to file\\       
-       {\it allow/deny} are SPDL elements that enables to configure
-       access control to normal files. {\it allowdev} exists for device
-       files, and {\it allowtmp} exists for temporally(dynamically
-       created) files.
- \item Access control to network\\
-       {\it allownet} does this.
- \item Access control to IPC\\
-       {\it allowcom} does access control to IPC and signal.
- \item Access control to other privilege\\
-       Other important OS operations that is not restricted above can be
-       configured by {\it allowpriv}.
+       RBACをサポートしています。{\it role}, {\it user}文を使うことで設
+       定できます。
+ \item ファイルアクセス制御\\       
+       {\it allow/deny} 文は、通常ファイルへのアクセス制御設定です。デバ
+       イスファイル関連としては、 {\it allowdev}文があります。{\it
+       allowtmp}は、一時ファイルの保護に使います。
+ \item ネットワークアクセス制御\\
+       {\it allownet}文で設定できます。
+ \item IPC(プロセス間通信)の制御\\
+       {\it allowcom}文で、IPCおよびシグナルのアクセス制御設定ができます。
+ \item Keyのアクセス制御\\
+       {\it allowkey}文は、プロセス毎の鍵領域のアクセス制御に使います。
+ \item その他の特権\\
+       その他の、重大なOSの操作については、{\it allowpriv}文で設定します。
 \end{itemize}
 
-\subsection{Default deny rule}
-Domain and roles are denied all permissions unless allowed by SPDL.
+\subsection{デフォルト拒否}
+ドメインは、デフォルトでは、全て拒否されます。
 
-\subsection{Terms}
+\subsection{用語}
 \begin{itemize}
 \item Domain \\
  Domain is the same as domain in SELinux. It is attached to process by domain transition.

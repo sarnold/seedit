@@ -106,7 +106,7 @@ statement.
 Syntax is following.\\
 include {\it filename};
 The include path can be specified by -I option of seedit-converter, by
-default it is /etc/selinux/seedit/src/policy/simplified\_policy/include.
+default it is /etc/seedit/policy/include.
 
 
 \section{Declare domain and role}
@@ -182,7 +182,8 @@ Above means user root and ynakam can use user\_r.
  \item Syntax\\
     program {\it path-to-program};
  \item Meaning\\
-    {\it path-to-program} is attached domain in normal case.   By this, {\it path-to-program} is attached domain launched from
+       By this,
+       {\it path-to-program} is attached domain when launched from
        command line, and /etc/init.d scripts.That is to
        say, allow domain transition from unconfined domain. 
     However, domain transition from authentication program domain(such as

@@ -11,7 +11,7 @@
 
 
 \section{概要}
-seeditのポリシーファイル(/etc/seedit/policy)は、SPDLという書式で書かれています。
+seeditのポリシーファイル, Simplified Policy(/etc/seedit/policy)は、SPDLという書式で書かれています。
 SPDLコンパイラ(seedit-converterコマンド。seedit-loadコマンドの中で呼び出
 されます)によって、SPDLは普通のSELinuxのポリシー書式に変換され、設定が反映さ
 れます。
@@ -74,140 +74,161 @@ SPDLは、次のような設定を行うことができます。
 
 \subsection{用語}
 \begin{itemize}
-\item Domain \\
- Domain is the same as domain in SELinux. It is attached to process by domain transition.
-\item Role\\
- Role in SPDL is simplified. Role is identified
-      with a domain for user shell. In SPDL, we describe access
-      rights for role. In fact, it is giving access rights for user
-      shell of the role. For example, when you give access right for
-      {\it sysadm\_r}, access right is given to 
-{\it sysadm\_t}(Domain for user shell of {\it sysadm\_r}).\\
- Note that in generated SELinux policy, all roles can type every types.
-      There is no syntax corresponding to {\it role:x:types:y} in
-      simplified language.
-\item Unconfined domain\\
-unconfined domain is a domain that is configured to be allowed
-      everything. If process is given unconfined domain, it is passes
-      all SELinux permission checks, so it runs the same as in normal Linux.\\
+\item ドメイン \\
+ ドメインは、SELinuxと同じです。ドメインは、プロセスにドメイン遷移で割り
+      当てられます。
+\item ロール\\
+ SPDLのロールは、単純化されています。ユーザシェルに付与されるドメインと
+      同じ意味です。SPDLでは、アクセス制御設定をロールに対して行いますが、
+      実際は、ユーザシェルのドメインに対して権限が与えられています。例を
+      見てみましょう。sysadm\_rロールに対して許可された権限は、ログイン
+     後のユーザーシェルのドメインsysadm\_tに許可されます。\\
+      SPDLから生成されるSELinuxのポリシでは, {\it role 全てのロール 全て
+      のタイプ;}のような設定がされています。
 
-To configure unconfined domain {\it allowpriv all;} is used.
+\item 非制限(unconfined)ドメイン\\
+      unconfinedドメインとは、全ての権限が許可されたドメインのことをいい
+      ます。つまり、このようなドメインが付与されたプロセスは実質SELinux
+      のアクセス制御を受けません。{\it allowpriv all;}と設定されたドメイ
+      ンはunconfinedドメインとなります。
 \end{itemize}                  
 
-\section{Structure of configuration by simplified language}
-Configuration is composed of sections. In each section, access control for domains/roles are described. Section begins with $\{$ and ends with $\}$. 
+\section{SPDLによる設定の構造}
+設定は、「セクション」という単位で構成されます。
+セクションとは、 $\{$ 　 $\}$で囲まれた領域のことです。
 
-\subsection{Syntax of section}
+一つのドメイン・ロールに
+対して、セクションが一つ存在し、セクションの中で、ドメイン，ロールに対す
+る設定がなされます。
 
-$\{$  (begin of section)\\
-$domain/role$  (declare domain or role, one domain or role can be declared in one section) \\
-$users$  (This can be used only for role)\\
-$domain\_trans$|$program$ (Configure domain transition)\\
-$allow/deny$|$allowxx$  (Describe access control for files, access control for resources other than file)\\
-$\}$  (end of section)\\
+\subsection{セクションの構造}
 
-\section{Import configuration from other file:include}
-you can include configuration from other file by {\it include}
-statement.
-Syntax is following.\\
+$\{$  (セクションの開始)\\
+$domain/role$  (ドメイン、ロールの宣言。一つのドメイン、ロールしか宣言で
+きない。) \\
+$users$  (ロールの設定の時のみ有効。)\\
+$domain\_trans$|$program$ (ドメイン付与の設定)\\
+$allow/deny$|$allowxx$  (ファイルやネットワークなどへのアクセスを許可)\\
+$\}$  (セクション終わり)\\
+
+\section{他ファイルの設定を流用:include}
+{\it include}を使うことで、他ファイルの設定を流用することができます。
+書式は以下です。
 include {\it filename};
-The include path can be specified by -I option of seedit-converter, by
-default it is /etc/selinux/seedit/src/policy/simplified\_policy/include.
+filenameの内容が、そのまま設定されます。デフォルトでは、filenameは、
+/etc/seedit/policy/includeからのパスです。seedit-converterの-Iオプション
+でパスを帰ることもできます。
 
 
-\section{Declare domain and role}
-\subsection{Declare domain:domain}
+\section{ドメイン、ロールの宣言}
+\subsection{ドメインの宣言:domain}
 \begin{enumerate}
- \item Syntax \\
+ \item 書式 \\
       domain {\it domain name} ;
- \item Meaning\\
-       Declare domain. All configuration in a section is done for
-       the declared domain.
- \item Constraints\\
-Domain name must end with {\it \_t}. This statement can not be used twice in one section. 
+ \item 意味\\
+       ドメインを宣言します。セクション中の設定は、ここで宣言したドメイ
+       ンに対してなされることになります。
+ \item 制約\\
+　{\it domain name}は、必ず {\it \_t}で終わる名前である必要があります。
+       また、一つのセクション中で2つのドメインの宣言はできません。
 \end{enumerate}
 
-\subsection{Declare role:role}
+\subsection{ロールの宣言:role}
 \begin{enumerate}
- \item Syntax\\
+ \item 書式\\
     role {\it  role name } ;
- \item Meaning\\
-     Declare role.  {\it  role name } is associated to user by using
-       {\it user} statement as shown below.
- \item Constraints\\
-       {\it role name} must end with {\it \_r}. This statement can not be used twice in one section. 
+ \item 意味\\
+     ロールを宣言します。ロールを使えるユーザは次の{\it user}文で行いま
+       す。
+ \item 制約\\
+       {\it role name}は、{\it \_r}で終わる必要があります。一つのセクショ
+       ン中では１度しか記述できません。
 \end{enumerate}
 
-\section{Configure RBAC:user}
+\section{RBACの設定:user}
 \begin{enumerate}
- \item Syntax\\
+ \item 書式\\
        user {\it user name};
- \item Meaning\\
-       Define users who can use the role. 
- \item Example\\
+ \item 意味\\
+       ロールを使えるユーザを列挙します。
+ \item 例\\
        \{\\
        role user\_r;\\
        user root;\\
        user ynakam;\\
        ....\\
-Above means user root and ynakam can use user\_r.
-\item Constraints\\
-       It can be used only section where role is declared. 
+ユーザrootとynakamがuser\_rロールを使えることを意味します。
+\item 制約\\
+　ロールが宣言されたセクションでしか使えません。
 
 \end{enumerate}
 
-\section{Domain transition}
-\subsection{Domain transition:domain\_trans}
+\section{ドメイン遷移}
+SELinuxでは、ドメインを付与するためにドメイン遷移を使います。SPDLは、
+このドメイン遷移を詳細に設定するdomain\_trans文および単純設定するprogram文
+をサポートしています。
+
+\subsection{domain\_trans}
 \begin{enumerate}
- \item Syntax\\
+ \item 書式\\
     domain\_trans {\it parent domain} {\it filename-of-entrypoint};
- \item Meaning\\
-    This defines how domain is assigned to process. 
- \item Example\\
+ \item 意味\\
+    {\it parent domain}のドメインで動作しているプロセスが、 {\it
+       filename-of-entrypoint}実行ファイルを実行すると、ドメインが割り当
+       てられます。 {\it parent domain}および {\it
+       filename-of-entrypoint}は、カンマ区切りで列挙可能です。
+ \item 例\\
 \begin{verbatim}
 {
    domain httpd_t;
    domain_trans initrc_t /sbin/httpd;
 ...
 \end{verbatim}
-    Above means that when process(domain: initrc\_t) executes
-       /sbin/httpd, /sbin/httpd runs as httpd\_t domain.
- \item Note\\
-       Dynamic domain transition can be configured by omitting entry
-       point. For example,  
+    initrc\_tドメインで動作するプロセスが、/sbin/httpdを実行すると、
+       /sbin/httpdには、httpd\_tドメインが割り当てられます。
+ \item 高度な設定\\
+       Dynamic domain transitionも設定可能です。 以下のように{\it
+       filename-of-entrypoint}を省略します。\\
+
        \{\\
        domain httpd\_t;\\
        domain\_trans  initrc\_t;\\
        
-       means, dynamic domain transition from initrc\_t to httpd\_t is allowed.
+       initrc\_tからhttpd\_tへのdynamic domain transitionが許可されます。
 
 \end{enumerate}
 
-\subsection{Simplified domain transition:program}\label{sec:program}
+\subsection{単純なドメイン付与:program}\label{sec:program}
 \begin{enumerate}
- \item Syntax\\
+ \item 書式\\
     program {\it path-to-program};
- \item Meaning\\
-    {\it path-to-program} is attached domain in normal case.   By this, {\it path-to-program} is attached domain launched from
-       command line, and /etc/init.d scripts.That is to
-       say, allow domain transition from unconfined domain. 
-    However, domain transition from authentication program domain(such as
-       domains for su,login,sshd) is not configured. Which domains are
-       regarded as authentication\_domain is configured in
-       authentication\_domain field in converter.conf.\\
- \item Example\\
+ \item 意味\\
+        {\it path-to-program}が、コマンドラインから起動されたり、
+       /etc/init.dから起動された時にドメインを割り当てる書式です。\\
+       正確に言うと、unconfinedドメインから起動された時、ドメインが割り
+       当てられます。\\
+       しかし、認証を伴うプログラムからドメインを割り当てる設定は、これ
+       ではできません(su,login,sshdなど)。認証を伴うプログラムに使うドメ
+       イン一覧は、converter.confの authentication\_domainフィールドで列
+       挙されています。\\
+ \item 例\\
 1)
 \begin{verbatim}
 {
 domain httpd_t;
 program /usr/sbin/httpd;
 }
-/usr/sbin/httpd is attached httpd_t domain when launched from command
-		line and /etc/init.d script.
+
+コマンドラインまたはシステム起動スクリプトから/usr/sbin/httpdを起動した
+		ら、/usr/sbin/httpdにはhttpd\_tドメインが割り当てられま
+			す。
 \end{verbatim}
- \item Note\\
-    This element is intended to be used in relaxed policy. This will not
-       mean nothing in more strict policy where there is not unconfined domain.
+ \item 注意\\
+       これは、unconfinedドメインが存在するポリシーのために用意された書
+       式です。unconfinedドメインが存在しない場合は、意味がなくなります。\\
+       また、RBACが有効な場合は、sysadm\_rロールのシェルから起動した場合
+       のみ、ドメインが割り当てられます。sysadm\_rはunconfinedドメインだ
+       からです。
 \end{enumerate}
 
 

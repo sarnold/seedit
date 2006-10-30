@@ -41,8 +41,11 @@ allow initrc_var_run_t  r,o,s;
 allowfs proc_pid_self r,w,s;
 allowpriv netlink;
 allowpriv audit_write;
-
+#Add by seedit-generator
 allow /var/run/setrans/** o,r,s;
+#Add by seedit-generator
 allowpriv setsecurity;
-allowkey gdm_t l ;
+allowkey gdm_t l,s ;
+allowkey kernel_t l ;
+allowpriv cap_chown;
 }

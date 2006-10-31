@@ -255,7 +255,7 @@ program /usr/sbin/httpd;
 	httpd\_t is allowed to read all files and directories under
 	/var/www and its children.
   \item Detailed configuration support\\
-	In addition to a s,r,x,w permissions, new permissions o,t,a,c,e
+	In addition to s,r,x,w permissions, permissions o,t,a,c,e
 	can be used. Permission {\it w} is divided into those
 	permissions.\\
 	\begin{itemize}
@@ -276,15 +276,17 @@ program /usr/sbin/httpd;
 	\begin{verbatim}
 Example:
         {
+	  domain httpd_t;
           program /usr/sbin/httpd;
           allow /var/www/cgi-bin/test.cgi r,s,dx;
         }
         {
+	  domain cgi_t;
           program /var/www/cgi-bin/test.cgi;
           allow ............
         }
 	\end{verbatim}
-	In this case, /usr/sbin/httpd have dx permission to
+	In this case, httpd\_t domain have dx permission to
 	test.cgi. Domain is defined below. So, test.cgi runs as
 	different domain.           
   \item Limitation about home-directories\\

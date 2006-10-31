@@ -1,5 +1,5 @@
 \documentclass{article}
-\title{SPDL説明書 ver 2.1.}
+\title{SPDL仕様書 ver 2.1.}
 \author{Yuichi Nakamura \thanks{himainu-ynakam@miomio.jp}}
 \begin{document}
 \maketitle
@@ -232,120 +232,144 @@ program /usr/sbin/httpd;
 \end{enumerate}
 
 
-\section{Access control to normal files:allow/deny}
+\section{通常ファイルのアクセス制御:allow/deny}
 \subsection{allow}\label{section:allow}
  \begin{enumerate}
-  \item Syntax
+  \item 書式
 	\begin{enumerate}
 	 \item allow {\it filename} $\mid$ {\it label} [r],[w],[x],[s],[o],[t],[a],[c],[e],[dx];
 	\end{enumerate}
-  \item Meaning\\
+  \item 意味\\
 	\begin{enumerate}
-	 \item  Allow access to file.
+	 \item  ファイルへのアクセスを許可します
 	\end{enumerate}
-  \item Specifying filename\\
+  \item ファイル名の指定\\
 	\begin{itemize}
-	 \item Wildcard\\
-	       For {\it filename} {\it directory}/* and {\it directory}** can
-	be used.  For example, /var/* means, all files in /var
-	directory, and /var directory. /var/** means, all files under
-	/var, /var directory and files/dirs in its
-	child,child's child... 	directories.
-	 \item Home directories\\
-	       File name that starts with  \textasciitilde ~ represents
-	       home directory(Not including /root).
-	       For example, ~/public\_html means,
-	       /home/{\it all users}/public\_html.\\
-	       But in role configuration, it is different, it means home directories for users that can use role.
-
+	 \item ワイルドカード\\
+	       {\it filename}の部分には、 {\it directory}/* and {\it
+	       directory}** のような指定ができます。  例えば、/var/* は、
+	       /var直下の全てのファイルを意味します。/var/** は、/var直
+	       下の全てのファイルに加え、/varのサブディレクトリの以下に
+	       ある、全てのファイル、ディレクトリを意味します。
+	 \item ホームディレクトリ\\
+	        \textasciitilde ~ から始まるファイル名は、ユーザーのホー
+	       ムディレクトリ（/root以外）を表します。
+	       例えば、
+ ~/public\_html means, /home/{\it 全てのユーザ}/public\_htmlを表します。\\
+	       ただし、ロールの設定の場合は、意味が異なります。そのロー
+	       ルを使うことができるユーザーのホームディレクトリだけを表
+	       します。例えば、
+	       \begin{verbatim}
+		{
+		role staff_r;
+		user ynakam;
+		user himainu;
+		allow ~/** r,w;
+		}
+	       \end{verbatim}
+	       では、staff\_rは、/home/ynakam,/home/himainuへのアクセス
+	       のみが許可されています。
 	\end{itemize}
 
-  \item Meaning of permissions.
+  \item パーミッションの意味
   \begin{itemize}
    \item r(Read)\\
-	 Allows to read file
+	 ファイルの読み込み
    \item w(Write)\\
-	 Allows to write,create,delete file. Note that creation of
-	 device is not allowed unless {\it allowpriv devcreate} is described.
+	 ファイル、ディレクトリの書き込み、生成、消去、追記。
+	 ただし、デバイスファイルに関する操作は許可されません。デバイス
+	 ファイルに対してもアクセスを許可したい場合は、allowpriv
+	 devcreate(デバイスの生成のみが許可されます)またはallowdevを使う必要があります。
    \item x(eXecute)\\
-	 Allows to execute file.
+	 ファイルの実行
    \item s(Search)\\ 
-	 Search file tree. i.e. Get contents of directory. For file,means nothing.
+	 ディレクトリの中身の閲覧。ファイルに対して設定しても何も起こり
+	 ません。ディレクトリ以下のファイルの読み込みを許可したい場合はr
+	 と一緒に設定します。
   \end{itemize}
-  \item Example\\
+  \item 例\\
 	\{\\
 	domain httpd\_t;\\
 	...\\
 	allow /var/www/** r,s;\\
 	....\\
-	httpd\_t is allowed to read all files and directories under
-	/var/www and its children.
-  \item Detailed configuration support\\
-	In addition to a s,r,x,w permissions, new permissions o,t,a,c,e
-	can be used. Permission {\it w} is divided into those
-	permissions.\\
+	
+	httpd\_tは、/var/www以下のファイル、ディレクトリをサブディレクト
+	リを含めて全て読み込みを許可されています。
+  \item 詳細パーミッション\\
+	s,r,x,wパーミッション以外にも、o,t,a,c,eというパーミッションを使
+	うこともできます。これらは、wパーミッションを分割したものです。
 	\begin{itemize}
 	 \item o: Overwrite\\
-	       Allows only writing file, not allow create,delete.
+	       ファイルの上書き保存のみを許可します。ファイルの消去や生
+	       成は許可されません。
 	 \item t: seTattr\\
-	       Allow modify attribute of file.
+	       ファイルの属性（所有者など）を変更します。なお、SELinuxのラベル情報は変更できません。
 	 \item a: Append\\
-	       Allow append to file.
+	       ファイルを追記モードでオープンすることを許可します。
 	 \item c: Create\\
+	       ファイルの生成を許可します。
 	       Allow to create file.
 	 \item e: Erase\\
-	       Allow to delete file  
+	       ファイルの消去を許可します。
 	\end{itemize}
-  \item Domain execute permission\\
-	{\it dx} permission means Domain Execute. If domain is defined
-	for the program, program is executed in new domain.
+  \item ドメイン遷移パーミッション:dx\\
+	{\it dx} という特殊なパーミッションが用意されています。もし、ド
+	メインがそのプログラムに対して定義されていれば、そのプログラムに
+	新たなドメインが付与されて動作します。
 	\begin{verbatim}
-Example:
+例:
         {
+	  domain httpd_t;
           program /usr/sbin/httpd;
           allow /var/www/cgi-bin/test.cgi r,s,dx;
         }
         {
+	  domain cgi_t;
           program /var/www/cgi-bin/test.cgi;
           allow ............
         }
 	\end{verbatim}
-	In this case, /usr/sbin/httpd have dx permission to
-	test.cgi. Domain is defined below. So, test.cgi runs as
-	different domain.           
-  \item Limitation about home-directories\\
-	Deny statement for individual home directory does not work.
-	For example,
+	この場合 httpd\_tドメインは、test.cgiに対してdxパーミッションが
+	許可されています。test.cgiには、cgi\_tというドメインを割り当てる
+	設定がされているため、cgi\_tドメインが割り当てられます。\\
+	なお、通常の「x」パーミッションですと、test.cgiは、httpd\_tのま
+	ま動作してしまいます。         
+	program /var/www/cgi-bin/test.cgi;という設定は、unconfinedドメイ
+	ンから起動した場合にcgi\_tドメインを割り当てる設定であるため、httpd\_t
+	から起動した場合には、cgi\_tは割り当てられません。
+
+  \item ホームディレクトリについての制限事項\\
+	個々のユーザーのホームディレクトリにdenyを記述しても無視されます。\\
+	例：
 	\begin{verbatim}
 deny /home/ynakam/public_html;
 	\end{verbatim}
-does not work.
-
+	
  \end{enumerate}
 
 \subsection{deny}
 \begin{enumerate}
- \item Syntax\\
+ \item 書式\\
  deny {\it filename};
- \item Meaning\\
-This is used to describe constraints for allow and, also used to cancel allow.
- \item Example
+ \item 意味\\
+allow文に対する制約を記述したり、allowをキャンセルするのに使われます。
+ \item 例
 \begin{enumerate}
- \item Example 1: Describe constraints\\
+ \item 例１ 1: 制約の記述\\
    \begin{verbatim}
-*In file constraints
+*constraintsという名前のファイル名
 deny /etc/shadow;
 
-*In httpd_t.a
+*httpd_t.spというファイル
 {
 domain httpd_t;
 include constraints;
 allow /etc/* r,s; 
 }
    \end{verbatim}
-By {\it include constraints;} configuration in file constrains is
-       included .
-So, the above configuration is the same as following.
+{\it include constraints;}では、constraintsという名前のファイルで行った
+       設定、つまり、deny /etc/shadowが設定されます。以下と同じ意味です。
        \begin{verbatim}
 {
 domain httpd_t;
@@ -354,100 +378,98 @@ deny   /etc/shadow;
 allow /etc/* r,s;
 }
        \end{verbatim}
-This means, httpd\_t have r,s permission to files in /etc. But can not
-       access /etc/shadow.
-To allow access to /etc/shadow, 
-{\it allow /etc/shadow r,s;} should be described explicitly.
-Deny is useful to prevent misconfiguration.
+これの意味ですが、httpd\_tドメインは、/etcの下にあるファイルに対して読み
+       込みができます。
+しかし、/etc/shadowにはアクセスはできません。\\
+/etc/shadowにアクセスするには、
+{\it allow /etc/shadow r,s;} と、明示的に書かねばなりません。denyは、設
+       定ミスを防ぐのに役に立ちます。
 
- \item Example 2: Cancel allow\\
+ \item 例2: allowのキャンセル\\
 \begin{verbatim}
 {
 domain httpd_t;
 allow /etc/* r,s;
 deny /etc;
 \end{verbatim}
-{\it allow /etc/* r,s;} is cancelled by deny /etc;
+{\it allow /etc/* r,s;} は、deny /etc;を記述することでキャンセルされます。
 
 \end{enumerate}
 \end{enumerate}
 
-\subsection{Priority of allow, deny when conflict happens}
+\subsection{allowとdenyで衝突するルールが記述された時}
  \begin{enumerate}
-  \item OR operation(When allow conflicts) \\
-	When allow rule conflicts, 
-	OR operation is applied.\\
+  \item allowがコンフリクトしたらORを取る \\
 	\begin{itemize}
-	 \item Example
+	 \item 例
 	       \begin{verbatim}
 domain foo_t;
 allow /var/** r;
 allow /var/** s;
 	       \end{verbatim}
-foo\_t have r,s permission to under /var.
+foo\_t は /var/**に、 r,sが許可されます。
 	       \begin{verbatim}
 domain foo_t;
 allow /var/run/* r;
 allow /var/run/** w;
 	       \end{verbatim}
-foo\_t have r permission to in /var.
-But for sub-directory(/var/run/xxx etc), it has w permission.
+foo\_tは、/var/run直下のファイルにrパーミッションが許可されます。
+一方、/var/run以下のファイル・ディレクトリに対し、サブディレクトリ含めて
+	       wパーミッションが許可されます。
 
-  \item Conflict between child and parent
+  \item 親ディレクトリ、子ディレクトリで衝突した場合
 	       \begin{verbatim}
 domain foo_t;
 allow /var/** r;
 allow /var/run/** w;
 	       \end{verbatim}
-
-foo\_t have r permission to under /var(including subdir).
-For /var/run , it has only w permission.
+foo\_tは、/var以下にrパーミッションが許可されますが、
+/var/run以下についてだけは、wパーミッションが許可されます。
 	\end{itemize}
 
-  \item Cancel previous configuration(When allow/deny conflicts)\\
-	When allow and deny conflicts, 
-configuration that appears later survives.
+  \item allow/denyが衝突したら、前にされていた設定を打ち消し\\
        \begin{itemize}
-	  \item Example
+	  \item 例：
 		\begin{verbatim}
 domain foo_t;
 allow /foo/* r,s;
 deny  /foo/* ;
 		\end{verbatim}
-		{\it allow /foo/* r,s} is cancelled.
+		{\it allow /foo/* r,s}が打ち消されます。
 		\begin{verbatim}
 domain foo_t;
 deny  /foo/* ;
 allow /foo/* r,s;
 		\end{verbatim}
-		{\it deny /foo/* } is cancelled.
+		{\it deny /foo/* }が打ち消されます。
 
 		\begin{verbatim}
 domain foo_t;
 allow  /foo/bar/** r,s;
 deny   /foo/** ;
 		\end{verbatim}
-		{\it allow /foo/bar/** r,s} is cancelled.
+		{\it allow /foo/bar/** r,s}が打ち消されます。
 
-	\item Exception\\
-		However,		
+	\item 例外\\		
 		\begin{verbatim}
 domain foo_t;
 deny  /foo/bar/**;
 allow /foo/** r,s;
 		\end{verbatim}
-		{\it deny /foo/bar/**}  is {\it not} cancelled. To
-		cancel deny, you have to describe allow for denied
-		directory(in this case, {\it allow /foo/bar some\_permission;})
+		{\it deny /foo/bar/**} は打ち消されません。 {\it not}
+		cancelled. denyをキャンセルするには、常にdenyされたディ
+		レクトリを直接指定したallowを書く必要があります。(今回の
+		場合 {\it allow /foo/bar/** r,s;}のように書く必要があり
+		ます)
        \end{itemize}
  \end{enumerate}
 
-\subsection{Special files}
-Access to following files are special.
+\subsection{特殊なファイル}
+以下のファイルに対するアクセス制御は特殊な扱いになっています。
 \begin{enumerate}
  \item  /dev/tty* /dev/pts /dev/ptmx, /dev/vcs*,/dev/vcsa*\\
-	If you write allow for those file, this does nothing.
-	Access control to these files must be done by allowdev. 
+	これらは端末に関するファイルですが、allowを書いても何も起こりません。これらのファイ
+	ルへのアクセスは、allowdev文で行うようになっています。
  \item  /proc, /sysfs, /selinux, /dev/tmpfs\\
 	Allow to these files do nothing, because these files are mounted
 	on filesystems that do not support xattr. See allowfs. For

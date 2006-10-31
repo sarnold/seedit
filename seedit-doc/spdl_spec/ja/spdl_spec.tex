@@ -471,131 +471,147 @@ allow /foo/** r,s;
 	これらは端末に関するファイルですが、allowを書いても何も起こりません。これらのファイ
 	ルへのアクセスは、allowdev文で行うようになっています。
  \item  /proc, /sysfs, /selinux, /dev/tmpfs\\
-	Allow to these files do nothing, because these files are mounted
-	on filesystems that do not support xattr. See allowfs. For
-	/selinux see allowpriv getsecurity.
+	これらのファイルに対する設定は、何も起こりません。内部的なことを
+	いうと、SELinuxは、これらのファイルがマウントされているファイル
+	システムをサポートしていないためです。allowfsを使うことで一部設
+	定することはできます。また、/selinux以下へのアクセス制御は
+	allowpriv getsecurity, setsecurityで制御できます。
 \end{enumerate}
 
 
-\subsection{Notice about links}
-\subsubsection{Treatment of symbolic links}
- Configuration to file that contains symbolic link is ignored.\\
-       For example, \\
+\subsection{リンクに関する注意事項}
+\subsubsection{シンボリックリンクの扱い}
+　パスの途中にシンボリックリンクが含まれるようなファイル名は、無視されま
+ す。
+     例えば、 \\
        allow /etc/init.d/httpd r;\\
-       is ignored(init.d is symbolic link to rc.d/init.d).
-\subsubsection{Treatment of hard links}
-  In Linux system, contents of file can be refered by multiple name
-       using hard link. Hardlink is rarely used recent distro, but you
-       have to note about this if you want to preserve security.\\
-       In SPDL, following rule exists about hard link.\\
-       {\it If file has multiple hardlink, to access the file, you must
-       specify originally existing file name.}\\
-       For example, /etc/shadow and /var/chroot/etc/shadow is hardlinked,
-       and /etc/shadow exists originally, to access contents of
-       /etc/shadow, you have to use file name /etc/shadow. Configuration
-       using /var/chroot/etc/shadow will be igonored. 
-       If some domain(assume foo\_t ) want to read
-       /var/chroot/etc/shadow, you have to configure {\it allow
-       /etc/shadow r;}\\
-       Next, there is a question, what is criteria of file {\it
-       originally} exist? Following is answer.\\
-       In following, /etc/shadow and /var/shadow is assumed as
-       hardlinked files.
+       は無視されます。(init.dは、rc.d/init.dへのシンボリックリンクだか
+ らです)。
+\subsubsection{ハードリンクの取扱い}
+
+       Linuxシステムでは、ハードリンクを使うことで、ファイルの中身を複数
+       のファイル名で参照することができます。ハードリンクは、デフォルト
+       ではほとんど使われていないため、以下の内容を気にする場面はほとん
+       ど現れませんが、セキュリティ上知っておいたほうがいいでしょう。\\
+       SPDLでは、ハードリンクは以下のルールで処理されます。\\
+       {\it ファイルの中身が複数のハードリンクで参照される場合、元々存在
+       したファイル名を記述する必要がある。それ以外のファイル名が指定さ
+       れた場合は無視される。}\\
+       例えば、/etc/shadow と/var/chroot/etc/shadowがハードリンクされて
+       いたとします。/etc/shadowが元々存在していたとすると、/etc/shadow
+       (と/var/chroot/etc/shadow)の中身を見るためには、allow
+       /etc/shadow rと記述する必要があります。allow /var/chroot/etc/shadow r
+       と記述しても無視されます。\\
+       ハードリンクが複数存在する場合、どのファイル名を「元々存在するファ
+       イル名」とするかの基準が気になるところです。以下の基準で
+       「元々存在するファイル名」が判定されます。以下で出てくる例では、
+       /etc/shadow, /var/shadowがハードリンクされたファイルだと仮定しま
+       す。\\
        \begin{enumerate}
-	\item If rule is described to one file, the file is treated as
-	      original.\\
-	      Ex: allow /etc/shadow r; is described in some domain, but
-	      rules using filename /var/shadow is not described,
-	      /etc/shadow is treated as original.
-	\item If rules are described to multiple hardlinked files, the
-	      filename that name is the youngest is treated as
-	      original\\
-	      Ex: allow /etc/shadow r, and allow /var/shadow r; are
-	      described in some domains, /var/shadow is treated as
-	      original, because /var/shadow > /etc/shadow.
-	\item If rules are not described for hardlinked files, the
-	      directory names that hardlinks exist are compared. The
-	      file whose directory  name is oldest  is original.\\
-	      Ex: /etc/shadow, /var/shadow do not appear in any domain.
-	      Then /var/shadow is treated as original. Because
-	      /var > /etc.
+	\item 全ポリシ中で、一つのファイル名に対する設定しか書かれていな
+	      い場合、そのファイル名が「元々存在するファイル名」になりま
+	      す\\
+	      例: allow /etc/shadow rがある場所で記述されているとします。
+	      そして、/var/shadowを使った設定はどこにも記述されていない
+	      とします。この場合は、/etc/shadowが、元々存在するファイル
+	      名として取り扱われます。
+	\item 複数のファイル名に対する設定が記述されていた場合、名前が一
+	      番若いものが、「元々存在するファイル名」になります。\\
+	      例: allow /etc/shadow r,allow /var/shadow r; という設定が
+	      記述されていたとします。この場合、「/etc/shadow」が、「元々
+	      存在するファイル名」になります。なぜなら、/etc/shadowのほ
+	      うが名前が若いからです。
+	\item ハードリンクされたファイル名を使った設定がどこにも記述され
+	     てないときは、所属ディレクトリ名を比較して、所属ディレクト
+	      リ名が最も大きいものが「元々存在するファイル名」となります。\\
+	      例: /etc/shadow, /var/shadowを使った設定がどこにも記述され
+	      ていない場合、/var/shadowが「元々あるファイル名」となりま
+	      す。なぜなら、/var/ $>$  /etcだからです。
        \end{enumerate}
-       If you are not sure which hardlinke is {\it original}, you can
-       use all names. It means, you can describe
+       しかし、どのハードリンク名が「元々存在するファイル名」か分からな
+       い場合は、全ての名前を使う手もあります。例えば、
 \begin{verbatim}
 allow /etc/shadow r;
 allow /var/shadow r;
 \end{verbatim}
-1 of 2 will be igored, and do no harm.
-  
-       Above treatment of hardlink is necessary to avoid a kind of {\it back door }
-       of path name based configuration. Assume hard link to
-       /etc/shadow is created by some trick under /var/www/html, without this
-       behavior, apache web server can access contents of /etc/shadow
-       via /var/www/html/shadow. To protect this, we must limit way to access
-       hard link to 1.\\
-       http://securityblog.org/brindle/2006/04/19 is good reference.\\
+のように記述した場合、どちらかの設定は無視されるだけで、無害です。\\
+       以上のハードリンクの取り扱いは、パス名ベースのセキュリティの「抜
+       け穴」を防ぐために必要なものです。
+       この取り扱いがなかったとすると、
+       例えば、/etc/shadowのハードリンクが、なんらかの手で
+       /var/www/html/shadowに作られてしまうと、Webサーバーから
+       /etc/shadowの中身を覗けてしまうことになります。これを防ぐために、
+       ハードリンクされたファイルの中身にアクセスするには、「一つのファ
+       イル名」しか使えないようにする必要があるわけです。パス名ベースの
+      セキュリティの問題点については、\\
+       http://securityblog.org/brindle/2006/04/19 \\
+       に詳しいです。
 
-
-
-\section{Access control to devices:allowdev}
+\section{デバイスファイルのアクセス制御:allowdev}
 \subsection{allowdev(1)}
- Device files must be handled carefully. Because device files are
-interface to kernel. When device file is linked to driver that handles
-critical information, read/write to such device will lead to leak of
-confidential information or break of system. Following allowdev
-statements restricts access to device files.
+ デバイスファイルの扱いには注意を要します。なぜなら、デバイスファイルは、
+ カーネルのリソースへのインターフェースとなっているからです。デバイスファ
+ イルが、ハードディスクのデバイスドライバに関連付けられていたら、そのデ
+ バイスファイルへの読み書きは、ディスクの破壊や情報漏洩につながります。
+ \\
+ ここで紹介するallowdevにより、デバイスファイルへのアクセス制限をするこ
+ とができます。
 \begin{enumerate}
- \item syntax
+ \item 書式
       \begin{enumerate}
        \item allowdev -root {\it directory};
       \end{enumerate}
- \item meaning\\
-	By default, when {\it allow} statement is described to file,
-	access to device files are not allowed. The directory that
-	contains devices must be described in advance, by allowdev
-	-root.
+ \item 意味\\
+       デフォルトでは、{\it allow}を使ってファイルへのアクセスを許可した
+       としても、デバイスへのアクセスは許可されません。
+       デバイスへのアクセスを許可するには、この書式を使って、デバイスの
+       位置を明示的に指定しておく必要があります。
+       {\it directory}以下が、デバイスを格納するディレクトリとみなされ、
+       そのディレクトリ以下に対するallowを記述すると、デバイスへのアクセ
+       スが許可されます。
 
- \item Example\\
+ \item 例\\
        \begin{verbatim}
 	{ 
 	domain httpd_t;
 	allow /dev/* r,w;
        \end{verbatim}
-       In above, httpd\_t can access normal files under /dev, but can
-       not access device files.
+       httpd\_tは、/dev以下の普通のファイルにはr,wアクセスできるものの、
+       デバイスに対しては、アクセスできません。
        \begin{verbatim}
 	{ 
 	domain httpd_t;
 	allowdev -root /dev;
 	allow /dev/* r,w;
        \end{verbatim}
-       In above, httpd\_t can access both normal files and devices under
-       /dev.
-       However, in permission {\it w}, creation and remove devices are not granted unless {\it allowpriv devcreate } is described. 
+       httpd\_tは、/dev以下のファイルおよびデバイスファイルにr,wアクセス
+       できます。\\
+       ただし、{\it w}を指定しても、デバイスの生成、消去は{\it allowpriv
+       devcreate }が記述されない限り、許可されません。
 \end{enumerate}
 
-\subsection{allowdev(2)}
-tty devices are device files /dev/tty*, pts devices are devices under
-/dev/pts. tty devices represents local login terminal, and pts devices
-represents terminal in X and ssh terminal. These devices are linked to
-terminal when user logs in, or open X/ssh terminal. If you can write
-other users terminal device files, you can write message to his
-terminal. 
-In SELinux environment, tty/pts device files are given label according to
-login user's role. 
-So tty/pts device files should be treated differently in SPDL.
+\subsection{allowdev(2)(RBAC有効時のみ）)}
+/dev/tty*デバイスファイルは、端末デバイスです。/dev/pts以下のデバイスは、
+疑似端末です。端末デバイスは、ローカルログインの端末を現し、疑似端末は、
+Xやsshログインの端末を表します。これらのデバイスと端末の関連付けはログイ
+ン時に行われます。\\
+　もし、他のログインユーザの端末デバイスに書き込みが行えるとしたら、その
+ユーザの端末に余計な文字列を表示することで、他のユーザの作業を妨害できて
+しまいます。\\
+ SELinuxでは、端末や疑似端末デバイスにログインユーザのロールに応じたラベ
+ ルが割り当てられます。ここで紹介するallowdevは、ラベルを隠蔽しつつ、端
+ 末のアクセス制御を実現します。
 
 \begin{enumerate}
- \item syntax
+ \item 書式
       \begin{enumerate}
        \item allowdev -pts|-tty|-allterm open;
        \item allowdev -pts|-tty|-allterm {\it role} [r],[w];  
        \item allowdev -pts|-tty|-allterm {\it role} admin;
       \end{enumerate}
- \item meaning\\
-       -tty means, tty devices. -pts means, pts devices. -allterms means
-       both tty and pts devices.
+ \item 意味\\
+       -ttyは端末デバイス、 -ptsは疑似端末、-alltermsは端末、疑似端末両
+       方。
        \begin{enumerate}
 	\item This is usually used in role section. Allow role to have
 	      its own tty/pts device. At the time of login, by login

@@ -41,7 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/seedit-template
 %{_libdir}/python%{python_ver}/site-packages/seedit/*
 /etc/pam.d/seedit-gui
-%config /etc/seedit/converter
+%config /etc/seedit/policy
+/etc/seedit/converter
+
 
 %changelog
 * Tue Sep 19 2006 Yuichi Nakamura 2.0.1-1

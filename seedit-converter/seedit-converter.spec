@@ -39,7 +39,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_sbindir}/seedit-restorecon
 %{_bindir}/seedit-unconfined
 %{_bindir}/seedit-template
-%{_libdir}/python%{python_ver}/seedit/*
+%{_libdir}/python%{python_ver}/site-packages/seedit/*
 /etc/pam.d/seedit-gui
 %config /etc/seedit/converter
 

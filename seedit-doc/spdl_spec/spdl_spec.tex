@@ -658,11 +658,11 @@ case,following configuration will be described.
 \begin{verbatim}
 {
 domain a_t;
-allow /tmp r,w;
+allow /tmp/** r,w;
 }
 {
 domain b_t;
-allow /tmp r,w;
+allow /tmp/** r,w;
 }
 \end{verbatim}
 This means, program A can access program B's temporally files, and
@@ -720,26 +720,26 @@ created file. To identify file using label name(httpd\_var\_run\_t).
  \item Example\\
        \begin{verbatim}
 domain httpd_t	;
-allowtmp -dir /var/run -name auto r,w,s;
+allowtmp -dir /var/run -name auto r,w;
        \end{verbatim}
 Files created under /var/run by httpd\_t is labeled as
        httpd\_var\_run\_t and httpd\_t can r,w,s access to such files.
 
 \begin{verbatim}
 domain httpd_t
-allowtmp -dir /var/run -name auto r,w,s;
+allowtmp -dir /var/run -name auto r,w;
 domain named_t
-allowtmp -dir /var/run -name auto r,w,s;
+allowtmp -dir /var/run -name auto r,w;
 domain initrc_t;
-allowtmp -dir /var/run -name all r,w,s;
+allowtmp -dir /var/run -name all r,w;
 \end{verbatim}
 Files created under /var/run by httpd\_t is labeled as
-       httpd\_var\_run\_t and httpd\_t can r,w,s access to such
+       httpd\_var\_run\_t and httpd\_t can r,w access to such
        files(named\_t can not access).
 Files created under /var/run by named\_t is labeled as
-       named\_var\_run\_t and named\_t can r,w,s access to such
+       named\_var\_run\_t and named\_t can r,w access to such
        files(httpd\_t can not access)
-initrc\_t can r,w,s access to above files because {\it -name all} is
+initrc\_t can r,w access to above files because {\it -name all} is
        specified. {\it -name all} is used to administrate files created
        by allowtmp.
 
@@ -775,8 +775,6 @@ domain httpd_t;
 allownet -protocol tcp -port 80,443 server;
 # httpd_t can use TCP/UDP 3306 service(MySQL) as client.
 allownet -protocol tcp,udp 3306 client;
-#Socket usage must be allowd to use port
-allownet -protocol tcp,udp use;
 \end{verbatim}
 \end{enumerate}
 

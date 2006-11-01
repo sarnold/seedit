@@ -7,7 +7,9 @@
 \newpage
 これは、SPDL(Simplified Policy Description Language(単純化ポリシ設定言語))
 の設定要素の解説書です。
-
+SPDLの設定要素を詳しく知らなくても、ポリシ自動生成ツール等により設定を行
+うことはできますが、生成された設定の意味を知る際に有効なドキュメントかと
+思います。
 
 
 \section{概要}
@@ -613,232 +615,250 @@ Xやsshログインの端末を表します。これらのデバイスと端末の関連付けはログイ
        -ttyは端末デバイス、 -ptsは疑似端末、-alltermsは端末、疑似端末両
        方。
        \begin{enumerate}
-	\item This is usually used in role section. Allow role to have
-	      its own tty/pts device. At the time of login, by login
-	      program, role's tty device file is given type {\it {\it role prefix}}\_tty\_device\_t. 
-	\item  Allow to read/write {\it {\it role}}'s tty
-	      device. 
-	\item Allow to change label of tty device, and rename, unlink.
+	\item これは、通常はロールの設定時に使われます。ロールに対して、
+	      自分専用の端末を持つことを許可されます。
+	      
+	      内部的な動作ですが、これを設定しておくと、ログイン時にログインプログラムによっ
+	      て、デバイスにロールに応じたラベルが付与されるようになりま
+	      す。{\it {\it role prefix}}\_tty\_device\_tとい
+	      う名前のラベルです。
+	\item  他ロール専用の端末に、読み込みや書き込みのアクセス権限を
+	      与えます。
+	\item 端末の管理権限を与えます。つまり、端末のラベルを変更したり、
+	      消去したりする権限です。
        \end{enumerate}
-       \item Special role\\
+       \item 特別なロール名\\
+       {\it role}部分には、以下のような特別な名前が使えます。
        \begin{itemize}
 	\item general\\
-	      this means tty/pts before labeled(The type is devtty\_t
-	      and tty\_device\_t, devpts\_t, ptmx\_t). Usually, access
-	      to these are harmless except {\it admin } permission.
+	      ログインプログラムによってラベル付けが行われる前の端末を指
+	      定します。ちなみに、ラベル付け前は、devtty\_t
+	      tty\_device\_t, devpts\_t, ptmx\_tといったラベルがついてい
+	      ます。これらの端末に対するアクセスを許可しても害はありませ
+	      ん（adminパーミッションは除く)
 	\item all\\
-	      All other roles tty/pts
+	      全てのロールの端末を指定します。
 	\item vcs\\
-	      This can be used only in allowdev -tty. Means vcs file(/dev/vcs*, /dev/vcsa*), these provide access to screen-shot of tty terminal. 
+	      allowdev -ttyのみに使える指定です。これは、vcsファイル
+	      (/dev/vcs*, /dev/vcsa*)を指定します。vcsファイルとは、端末
+	      のスクリーンショットを提供するものです。
        \end{itemize}
 
 \end{enumerate}
 
-\section{Access control to files on misc file systems:allowfs}
- SELinux can do fine-grained access control to files on filesystems that
- support extended-attributes, such as ext3, ext2 and xfs. For such files,
- you configure access control using {\it allow} statement. In other
- filesystems, you should configure {\it allowfs} described in this
- section.
+\section{SELinuxがサポートしないファイルシステムへのアクセス制御:
+ allowfs}
+ SELinuxは、拡張属性(xattr)をサポートするファイルシステムに対しては、ファ
+ イル単位でアクセス制御を行うことが可能です。ext3,ext2,xfsなどはxattrを
+ サポートしていますが、サポートしないファイルシステムもあります。
+ こういったファイルシステムに対しては、個々のファイル単位のアクセス制御
+ はできません。「ファイルシステムのファイル全体」に対するアクセス制御に
+ なってしまいます(procファイルシステムについてはもう少し細かくできますが)。allowfsはそういったファイルシステム用の設定要素です。
 
 \begin{itemize}
- \item Syntax
+ \item 書式
        \begin{enumerate}
-	\item  allowfs {\it name\_of\_filesystem} [s],[r],[x],[w];\\
-	       For {\it name\_of\_filesystem} {\it tmpfs sysfs autofs usbfs cdfs romfs
-	       ramfs dosfs smbfs nfs proc proc\_kmsg proc\_kcore xattrfs} can be
-	       used.
+	\item  allowfs {\it name\_of\_filesystem} [s],[r],[x],[w],[o],[a],[t],[c],[e];\\
+	      {\it name\_of\_filesystem}については、 {\it tmpfs sysfs autofs usbfs cdfs romfs
+	       ramfs dosfs smbfs nfs proc proc\_kmsg proc\_kcore
+	       xattrfs}という文字列を利用可能。
        \end{enumerate}      
- \item Meaning\\
+ \item 意味\\
        \begin{enumerate}
 
-	\item Allow access to files in specified system. For example, {\it
-	      allowfs proc s,r;} means to grant s,r access to files on proc
-	      filesystem(/proc). When you see logs whose types are {\it
-	      filesystem\_t }, you may have to use allowfs. This means, if you
-	      find log about {\it read access to sysfs\_t is denied}, you may
-	      add {\it allowfs sysfs s,r;}.
-		
+	\item 指定されたファイルシステムにあるファイルへのアクセスを許可
+	      します。例えば、 {\it
+	      allowfs sysfs s,r;}は、sysfsファイルシステム上のファイル
+	      (普通は/sysfs以下)に
+	      対して、s,rを許可します。 
+	      アクセス拒否ログの中に、{\it filesystem名}\_tという名前の
+	      タイプを発見したら、allowfsを使う必要があるかもしれません。
+	      例えば、{\it sysfs\_t への読み込みが拒否された}というログ
+	      を発見したら、{\it allowfs sysfs s,r;}と設定する必要がある
+	      でしょう。もっとも、自動生成コマンドがやってくれる仕事です
+	      が。		
        \end{enumerate}
        
 
- \item Notice about {\it name\_of\_filesystem}
+ \item {\it name\_of\_filesystem}についての注意点
        \begin{itemize}
-	\item proc filesystem\\
-	      Access control to proc file system is a little
-	      fine-grained. proc\_kmsg means, /proc/kmsg, proc\_kcore
-	      means /proc/kcore. proc\_pid\_self means process information of
-	      own process in /proc/pid/. proc\_pid\_other means process information for all
-	      others. proc means other files on /proc. 
+	\item procファイルシステム\\
+	      procファイルシステムについては、もう少し細かくできます。
+
+	      proc\_kmsg とすると、/proc/kmsgを指定でき、proc\_kcoreとす
+	      ると、/proc/kcoreを指定できます。 proc\_pid\_selfとすると、
+	      /proc/pidにある、自ドメインに属するプロセス情報です。
+ proc\_pid\_otherは他ドメインに属するプロセス情報全てです。
 	\item xattrfs\\
-	      This means filesystem that supports extended-attribute,
-	      but not configured to use SELinux's label. For example, if
-	      you format USB memory as ext3 on non-SELinux machine. Next
-	      you mount the USB memory in SELinux machine, 
-	      the files on it are recognized
-	      as xattrfs. You have to use {\it allowfs xattrfs
-	      permissions} in such case.
+	      これは、xattrをサポートするファイルシステムにも関わらず、
+	      SELinuxのラベルを使うように設定されていないファイルシステ
+	      ムを意味します。例えば、USBメモリを非SELinuxマシンでフォー
+	      マットして、マウントした場合が相当します。
 	\item cdfs\\
-	      This corresponds to iso9660 and udf filesystem.
+	      iso9660およびudfファイルシステムを意味します。
 	\item dosfs\\
-	      This corresponds to fat, vfat, ntfs.
+	      vfat, fat, ntfsを意味します。
 	\item smbfs\\
-	      This corresponds to cifs and smbfs.
+	      cifs, smbfsを意味します。
        \end{itemize}
 \end{itemize}
 
-\section{Access control to temporally file:allowtmp}
-\subsection{Why allowtmp is necessary?}
-{\it allowtmp} is prepared to configure access control to temporally
-files.
-Before going detail, let's see why such configuration element is necessary.
-SELinux identifies files based on inode, not file name. File name based
-configuration does not work correctly when inode number changes or inode
-does not exist at the time of configuration(typically such files are
-temporally files).
-Such files exist under  /var/run, /tmp, /var/tmp.
-For example, assume following configuration exists.\\
+\section{一時ファイルへのアクセス制御:allowtmp}
+\subsection{なぜallowtmpが必要?}
+{\it allowtmp} は、一時ファイルのアクセス制御のために用意された設定要素
+です。その前に、なぜそんなものが必要なのかを見ていきましょう。
+SELinuxは、内部的にファイルをファイル名ではなく、iノードで識別しています
+(正確にはiノードに関連づけられたタイプラベル)。
+seeditは、ファイル名を指定して設定を行いますが、iノード番号が変わって
+しまう、もしくは設定時にファイルが存在しない場合(iノード番号が設定時に分
+からない)は、うまく動かなくなります。
+/var/run, /tmp, /var/tmp等には、そのようなファイルがたくさんあります。\\
+一つ例を見てみましょう。
 \begin{verbatim}
 domain httpd_t
-allow /var/run r,s;
-allow /var/run/httpd.pid r,w,s;
+allow /var/run/httpd.pid r,w;
 \end{verbatim}
-At first, httpd\_t have r,w,s permission to /var/run/httpd.pid.
-However, when httpd is restarted /var/run/httpd.pid is removed and
-created again. In this process, inode number is changed. When inode
-number changes, it inherits parent directory's permission. i.e:
- httpd\_t have r,s permission to /var/run/httpd.pid(the permission of
- /var/run). So to grant r,w,s permission to /var/run/httpd.pid, r,w,s
- permission should be given to parent directory(/var/run).
-However, in this configuration, httpd\_t can r,w,s other daemons pid
-files under /var/run. 
-\\
-In second example, when program creates files randomly under /tmp it is
-a problem. Assume program  A(domain is a\_t) and program B(domain is
-b\_t) creates files whose names are random under /tmp. In such
-case,following configuration will be described.
+設定時には、httpd\_tは、/var/run/httpd.pidに対するr,wパーミッションが許
+可されています。しかし、httpdを再起動すると、httpd.pidファイルは消去され、
+また同じ名前のファイルが生成されます。iノード番号も変わって
+しまっています。そうなると、seedit側では、新しく生成されたファイルを認識
+できなくなり、httpd\_tはhttpd.pidにアクセスできなくなってしまいます。\\
+次の例です。/tmpにランダムにファイルを生成する場合問題になります。
+プログラムA（a\_tドメインで動作する）、プログラムB（b\_tドメインで動作す
+る）があるとします。そして、これらが、/tmp以下にランダムな名前のファイルを作成
+するとします（tmpfsシステムコールで一時ファイルを生成した場合に相当しま
+す）。
+すると、以下のような設定を書かざるをえません。
 \begin{verbatim}
 {
 domain a_t;
-allow /tmp r,w;
+allow /tmp/** r,w;
 }
 {
 domain b_t;
-allow /tmp r,w;
+allow /tmp/** r,w;
 }
 \end{verbatim}
-This means, program A can access program B's temporally files, and
-program B can access program A's temporally files. \\
-In above example, access control configuration can not be described for
-individual files, but for directory what such files belongs.
-If you think it is enough, following will not necessary :-).\\
+これは、プログラムA、Bともお互いの一時ファイルにアクセスできることを意味
+します。一時ファイルに重要な情報が書かれていたら情報漏洩に繋がります。
 
-\subsection{What is allowtmp?}
-To resolve this problem, SELinux has a feature called file type
-transition. {\it allowtmp } is a feature to configure file type
-transition.
-In file type transition, when domain creates files under some directory,
-created file is given a label. The label can be named by policy.
-Following is example  usage of {\it allowtmp}.
+\subsection{allowtmpとは}
+こういった問題を解決するため、SELinuxはファイルタイプ遷移という機能を持っ
+ています。ファイルタイプ遷移を分かりやすく設定するのがallowtmpです。
+ファイルタイプ遷移を使うと、「ドメインAがディレクトリBに生成したファイル」
+のようなラベルを付与し、そのラベルを使ってアクセス制御できます。\\
+例です。
 \begin{verbatim}
 domain httpd_t;
 allow /var/run r,s;
 allowtmp -dir /var/run -name httpd_var_run_t; -(a)
-allow httpd_var_run_t r,w,s; -(b)
+allow httpd_var_run_t r,w; -(b)
 \end{verbatim}
-In (a), when httpd\_t create file under /var/run, it is labeled as {\it
-httpd\_var\_run\_t}. And in (b), httpd\_t can r,w,s access to the
-created file. To identify file using label name(httpd\_var\_run\_t).
+(a)では、httpd\_tドメインのプログラムが/var/runにファイルを生成したとき、
+そのファイルにhttpd\_var\_run\_tのようなラベルを付与します。(b)では、そ
+のラベルが付与されたファイルに読み書きできるようにしています。
+以下のような省略記法もあります。
+\begin{verbatim}
+domain httpd_t;
+allow /var/run r,s;
+allowtmp -dir /var/run -name auto r,w;
+\end{verbatim}
+「/var/runに生成するファイルに読み書き許可」と設定しています。内部的には
+先ほどの(a)(b)を設定しています。
 
-\subsection{Syntax and meaning}
+\subsection{allowtmpの書式と意味}
 \begin{enumerate}
- \item Syntax
+ \item 書式
        \begin{enumerate}
 	\item allowtmp -dir {\it directory} -name {\it label} {\it
 	      permission};
 	\item  allowtmp -fs {\it file system name} -name {\it label} {\it
 	      permission};
-	      {\it permission} is the same as file permission and can be omitted.
+	      {\it permission}は、ファイルのものと同じです。省略して、ラ
+	      ベル付け設定のみを行うこともできます。
        \end{enumerate}
- \item Meaning\\
+ \item 意味\\
        \begin{enumerate}
-	\item When domain create file under {\it directory} it is
-	      labeled as {\it label} and have permission to the created
-	      file specified by {\it permission}. {\it permission} can
-	      be omitted. When omitted, permission can be given by {\it allow}.
-	\item This is used to configure allowtmp under files that do not
-	      support extended attribute, currently, this can be used
-	      only for tmpfs.
-	\item About label
+	\item ドメインが、{\it directory}ディレクトリにファイルを生成す
+	      ると、{\it label}という名前のラベルが付与されます。そして、
+	      そのラベルに対するパーミッションを {\it permission}で指定
+	      します。 {\it permission}は省略可能です。省略すると、パー
+	      ミッション設定は別途allow文を使って行うことになります。
+	\item これは、xattrをサポートしないファイルシステム上のファイル
+	      に対する設定です。今のところ、tmpfsのみのサポートとなりま
+	      す。
+	\item {\it label}の指定について
 	      \begin{itemize}
-	       \item When {\it label} is {\it auto }, label is named
-		     automatically based on domain and directory. For example,
-		     domain is hoge\_t, and {\it directory} is /var/, label
-		     name is hoge\_var\_t.
-	       \item When {\it label} is {\it all} or *, it means all
-		     files under {\it directory} created using allowtmp.
+	       \item  {\it label} が {\it auto }のときは、ラベルの名前は、
+		      自動的に名付けられます（ドメインとディレクトリ名か
+		      ら生成されます）。例えば、hoge\_tドメイン、 {\it
+		      directory} が /var/の場合は、hoge\_var\_tという名
+		      前のラベルが生成されます。
+	       \item {\it label}が{\it all} または *の時は、{\it
+		      directory}ディレクトリ以下の、allowtmp設定
+		      によりラベル付けされた全てのファイルを意味します。
 	      \end{itemize}           
        \end{enumerate}       
- \item Example\\
+ \item 例\\
        \begin{verbatim}
 domain httpd_t	;
-allowtmp -dir /var/run -name auto r,w,s;
+allowtmp -dir /var/run -name auto r,w;
        \end{verbatim}
-Files created under /var/run by httpd\_t is labeled as
-       httpd\_var\_run\_t and httpd\_t can r,w,s access to such files.
+httpd\_tが、/var/runにファイルを生成すると、httpd\_var\_run\_tというラベ
+       ルが付与され、それに対してr,wアクセスができます。
 
 \begin{verbatim}
 domain httpd_t
-allowtmp -dir /var/run -name auto r,w,s;
+allowtmp -dir /var/run -name auto r,w;
 domain named_t
-allowtmp -dir /var/run -name auto r,w,s;
+allowtmp -dir /var/run -name auto r,w;
 domain initrc_t;
-allowtmp -dir /var/run -name all r,w,s;
+allowtmp -dir /var/run -name all r,w;
 \end{verbatim}
-Files created under /var/run by httpd\_t is labeled as
-       httpd\_var\_run\_t and httpd\_t can r,w,s access to such
-       files(named\_t can not access).
-Files created under /var/run by named\_t is labeled as
-       named\_var\_run\_t and named\_t can r,w,s access to such
-       files(httpd\_t can not access)
-initrc\_t can r,w,s access to above files because {\it -name all} is
-       specified. {\it -name all} is used to administrate files created
-       by allowtmp.
+
+httpd\_tが、/var/runにファイルを生成すると、httpd\_var\_run\_tというラベ
+       ルが付与され、それに対してr,wアクセスができます(named\_tなどはア
+       クセス不可)。
+named\_tが、/var/runにファイルを生成すると、named\_var\_run\_tというラベ
+       ルが付与され、それに対してr,wアクセスができます(httpd\_tなどはア
+       クセス不可)。
+initrc\_tは、上記のファイルにr,wアクセスができます。なぜなら、-name all
+       が指定されているからです。
 
 \end{enumerate}
 
 
+\section{ネットワークアクセス制御:allownet}
+{\it allownet}は、ソケット、ポート番号、NIC, IPアドレスなど、ネットワークリソース
+へのアクセス制御を設定するものです。
 
-\section{Access control to network:allownet}
-{\it allownet} statements is prepared to configure network access control.
-It can configure access control to  port , netif(Network
-Interface), node(IP address) and inheritance of socket.
-
-\subsection{Port usage}
+\subsection{ポートのアクセス制御}
 \begin{enumerate}
- \item Syntax\\
+ \item 書式\\
  allownet -protocol {\it protocol} -port {\it port number} {\it permission};\\
- {\it protocol}: tcp,udp can be specified, splitted by ,.\\
- {\it port number}: number and {\it -1023} and {\it 1024-} , and * can
-       be described, splitted by ,.\\
- {\it permission}: {\it client} or {\it server} splitted by , can be
-       described
- \item Meaning\\
-       Allow permissions to be TCP/UDP server/client using port. Port number {\it
-       -1023} means, all unused ports under 1023. {\it 1024-} means all
-       unused ports after 1024. * means all ports. 
- \item Note about udp server\\
-       If you describe allownet -protocol udp -port xxx server;
-       The domain also behave as client to port number over 1024.
- \item Example
+ {\it protocol}: tcp,udpが指定できます。カンマ区切りでtcp,udpのように書
+       くこともできます。\\
+ {\it port number}: ポート番号を指定。数字および {\it -1023},{\it 1024-}
+       ,および* が指定できます。カンマ区切りで数字を列挙できます。
+ {\it permission}: {\it client} または{\it server}を指定可能。カンマ区切
+       りで列挙可能。
+ \item 意味\\
+       TCP、UDPのサーバーまたはクライアントとして、指定されたポートで通
+       信することを許可。{\it
+       -1023}というポート番号は、allownetで指定されていない1023以下のポー
+       ト番号全て。{\it 1024-}は、allownetで指定されていない1024以上のポー
+       ト全て。 *は、全てのポートを意味します。
+ \item UDPサーバの設定について注意\\52
+       allownet -protocol udp -port xxx server;のように設定すると、その
+       ドメインは、1024以上のポートを使ってクライアントとして振る舞うこ
+       とも同時に許可されます。
+ \item 例
 \begin{verbatim}
 domain httpd_t;
-# httpd_t can be server using port 80 and 443.
+# TCP80,443を使ってサーバとして振る舞う
 allownet -protocol tcp -port 80,443 server;
-# httpd_t can use TCP/UDP 3306 service(MySQL) as client.
+# TCP,UDP3306を使ってクライアントとして振る舞う
 allownet -protocol tcp,udp 3306 client;
-#Socket usage must be allowd to use port
-allownet -protocol tcp,udp use;
 \end{verbatim}
 \end{enumerate}
 

@@ -1,6 +1,6 @@
-#! SELinux Policy Editor, a simple editor for SELinux policies
-#! This section of the code is from the NSA SELinux release.
-#! Copyright (C) 2001, 2003 National Security Agency
+# SELinux Policy Editor, a simple editor for SELinux policies
+# This section of the code is from the NSA SELinux release.
+# Copyright (C) 2001, 2003 National Security Agency
 
 # These files are from the NSA SELinux code.  More verbose comments might
 # be a useful addition to describe their exact relationship with SELinux

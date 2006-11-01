@@ -29,7 +29,7 @@ y.tab.c: middle_lang.y
 #install only python lib
 install:
 	mkdir -p $(PYTHON_MODULE_ROOT)/seedit
-	cp -r ./python/seedit $(PYTHON_MODULE_ROOT)
+	install -m 755  ./python/seedit/*.py $(PYTHON_MODULE_ROOT)/seedit
 uninstall:
 	rm -rf $(PYTHON_MODULE_ROOT)/seedit
 

@@ -1,19 +1,19 @@
-#! SELinux Policy Editor, a simple editor for SELinux policies
-#! Copyright (C) 2006 Yuichi Nakamura
-#! 
-#! This program is free software; you can redistribute it and/or modify
-#! it under the terms of the GNU General Public License as published by
-#! the Free Software Foundation; either version 2 of the License, or
-#! (at your option) any later version.
-#! 
-#! This program is distributed in the hope that it will be useful,
-#! but WITHOUT ANY WARRANTY; without even the implied warranty of
-#! MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#! GNU General Public License for more details.
-#! 
-#! You should have received a copy of the GNU General Public License
-#! along with this program; if not, write to the Free Software
-#! Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+# SELinux Policy Editor, a simple editor for SELinux policies
+# Copyright (C) 2006 Yuichi Nakamura
+# 
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 SELINUXTYPE=seedit
 DISTRO=FC5
@@ -33,6 +33,7 @@ MACRODIR=./macros
 OUTDIR =./sepolicy
 FCFILE=./distro/$(DISTRO)/dynamic_contexts
 SPDLSPEC=./base_policy/spdl_spec.xml
+BUILD_ROOT_DIR=$(prefix)/share/seedit
 
 all:conf
 
@@ -53,6 +54,7 @@ conf: macro unsupport
 
 
 install:all	
+	mkdir -p $(CONVERTER_CONF_DIR)/sepolicy
 	mkdir -p $(SEEDITCONFROOT)/policy
 	mkdir -p $(SEEDITCONFROOT)/converter
 	mkdir -p $(SEEDITCONFROOT)/converter/conf
@@ -63,9 +65,9 @@ install:all
 	mkdir -p $(sysconfdir)/pam.d
 	install -m 644 pam.d/seedit-gui.$(DISTRO)   $(sysconfdir)/pam.d/seedit-gui
 	if [ -e makefiles/Makefile.$(DISTRO) ];then \
-		install -m 644 makefiles/Makefile.$(DISTRO) $(SEEDITCONFROOT)/converter/Makefile;\
+		install -m 644 makefiles/Makefile.$(DISTRO) $(BUILD_ROOT_DIR)/Makefile;\
 	else \
-		install -m 644 makefiles/Makefile $(SEEDITCONFROOT)/converter;\
+		install -m 644 makefiles/Makefile $(BUILD_ROOT_DIR);\
 	fi
 
 doc:./doc/permission_integrate.pdf

@@ -24,7 +24,7 @@ import getopt
 import string
 import gettext
 
-gMakeFlags="CONFDIR=/etc/seedit/policy OUTDIR=/etc/seedit/converter/sepolicy BASEPOLICYDIR=/etc/seedit/converter/conf/base_policy MACRODIR=/etc/seedit/converter/conf/macros"
+gMakeFlags="CONFDIR=/etc/seedit/policy OUTDIR=/usr/share/seedit/sepolicy BASEPOLICYDIR=/etc/seedit/converter/conf/base_policy MACRODIR=/etc/seedit/converter/conf/macros"
 gAuditCtl="/sbin/auditctl"
 
 def getConfinedDomains(filename):
@@ -223,16 +223,16 @@ def doCommand(command):
 
     return 0
 def doLoad():
-    loadCommand = "cd /etc/seedit/converter; make diffrelabel "+gMakeFlags+" 2>&1" 
+    loadCommand = "cd /usr/share/seedit; make diffrelabel "+gMakeFlags+" 2>&1" 
     return doCommand(loadCommand)
 
 def doInit():
-    initCommand = "cd /etc/seedit/converter; make relabel "+gMakeFlags+" 2>&1"
+    initCommand = "cd /usr/share/seedit; make relabel "+gMakeFlags+" 2>&1"
     print _("Initializing file labels it takes long time")
     return doCommand(initCommand)
 
 def doTest():
-    testCommand = "cd /etc/seedit/converter; make policy "+gMakeFlags+"  2>&1" 
+    testCommand = "cd /usr/share/seedit; make policy "+gMakeFlags+"  2>&1" 
     return doCommand(testCommand)
 
 ####Main func

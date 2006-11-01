@@ -1,4 +1,5 @@
 DISTRO=COS4
+PYTHON_MODULE_ROOT=/usr/lib/python2.3/site-packages
 
 all:
 	$(MAKE) -C lib

@@ -23,7 +23,6 @@ import getopt
 import gettext
 import string
 import getopt
-sys.path.insert(0,"/usr/lib")
 from  seedit.unconfined import *
 
 def printUsage():

@@ -1,8 +1,10 @@
 %define distro COS4
 %define buildnum 1
+%define python_ver 2.3
+%define python_module_root %{_libdir}/python%{python_ver}/site-packages
 Summary: Compliler for simplified policy
 Name: seedit-converter
-Version: 2.1.0.b3
+Version: 2.1.0.b4
 Release: %{buildnum}.%{distro}
 License: GPL
 Group: System Environment/Base
@@ -18,14 +20,14 @@ Compiler for simplified policy and utilities.
 
 %build
 make clean
-%__make DISTRO=%{distro}
+%__make DISTRO=%{distro} PYTHON_MODULE_ROOT=%{python_module_root}
 
 %install
 rm -rf $RPM_BUILD_ROOT
-%makeinstall DISTRO=%{distro}
+%makeinstall DISTRO=%{distro} PYTHON_MODULE_ROOT=%{python_module_root}
 
 %clean
-rm -rf $RPM_BUILD_ROOT
+rm -rf $RPM_BUILD_ROOT 
 
 %files
 %defattr(-,root,root,-)
@@ -38,7 +40,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_sbindir}/seedit-restorecon
 %{_bindir}/seedit-unconfined
 %{_bindir}/seedit-template
-%{_libdir}/seedit/*
+%{python_module_root}/seedit/*
 /etc/pam.d/seedit-gui
 %config /etc/seedit/converter
 

@@ -7,7 +7,7 @@ INCLUDE = -I../include  -I/usr/include/selinux
 OBJS 	= y.tab.o lex.yy.o parse.o common.o
 TARGET = libseedit.a
 prefix = /usr
-PYTHONROOT = $(prefix)/lib/
+PYTHON_MODULE_ROOT = /usr/lib/python2.3/site-packages/
 all: $(TARGET)
 
 $(TARGET):  $(OBJS)
@@ -27,10 +27,10 @@ y.tab.c: middle_lang.y
 
 #install only python lib
 install:
-	mkdir -p $(PYTHONROOT)/seedit
-	cp -r ./python/seedit $(PYTHONROOT)
+	mkdir -p $(PYTHON_MODULE_ROOT)/seedit
+	cp -r ./python/seedit $(PYTHON_MODULE_ROOT)
 uninstall:
-	rm -rf $(PYTHONROOT)/seedit
+	rm -rf $(PYTHON_MODULE_ROOT)/seedit
 
 clean:
 	rm -f $(OBJS) y.tab.c lex.yy.c y.tab.h $(TARGET)

@@ -7,7 +7,8 @@ INCLUDE = -I../include  -I/usr/include/selinux
 OBJS 	= y.tab.o lex.yy.o parse.o common.o
 TARGET = libseedit.a
 prefix = /usr
-PYTHON_MODULE_ROOT = /usr/lib/python2.3/site-packages/
+PYTHON_VER=2.3
+PYTHON_MODULE_ROOT = $(prefix)/lib/python$(PYTHON_VER)/site-packages/
 all: $(TARGET)
 
 $(TARGET):  $(OBJS)

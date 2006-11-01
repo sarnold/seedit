@@ -1,7 +1,7 @@
 %define distro COS4
 %define buildnum 1
 %define python_ver 2.3
-%define python_module_root %{_libdir}/python%{python_ver}/site-packages
+%define python_module_root %{prefix}/lib/python%{python_ver}/site-packages
 Summary: Compliler for simplified policy
 Name: seedit-converter
 Version: 2.1.0.b4

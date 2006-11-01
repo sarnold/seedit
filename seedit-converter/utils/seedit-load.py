@@ -24,7 +24,7 @@ import getopt
 import string
 import gettext
 
-gMakeFlags="CONFDIR=/etc/seedit/policy OUTDIR=/usr/share/seedit/sepolicy BASEPOLICYDIR=/etc/seedit/converter/conf/base_policy MACRODIR=/etc/seedit/converter/conf/macros"
+gMakeFlags="CONFDIR=/etc/seedit/policy OUTDIR=/usr/share/seedit/sepolicy BASEPOLICYDIR=/usr/share/seedit/base_policy MACRODIR=/usr/share/seedit/macros"
 gAuditCtl="/sbin/auditctl"
 
 def getConfinedDomains(filename):

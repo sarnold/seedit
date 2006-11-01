@@ -26,7 +26,7 @@ FIXFILES=/sbin/fixfiles
 RESTORECON=/sbin/restorecon
 SELINUXCONF=$(sysconfdir)/selinux/config
 POLICYROOT=$(sysconfdir)/selinux/$(SELINUXTYPE)
-SEEDITCONFROOT=$(sysconfdir)/seedit
+SEEDITCONFROOT=$(prefix)/share/seedit
 CONFDIR=./simplified_policy
 BASEPOLICYDIR=./base_policy
 MACRODIR=./macros
@@ -55,12 +55,10 @@ conf: macro unsupport
 
 install:all	
 	mkdir -p $(BUILD_ROOT_DIR)/sepolicy
-	mkdir -p $(SEEDITCONFROOT)/policy
-	mkdir -p $(SEEDITCONFROOT)/converter
-	mkdir -p $(SEEDITCONFROOT)/converter/conf
-	cp -r base_policy $(SEEDITCONFROOT)/converter/conf
-	cp -r macros $(SEEDITCONFROOT)/converter/conf
-	mv $(SEEDITCONFROOT)/converter/conf/base_policy/spdl_spec.xml.expand  $(SEEDITCONFROOT)/converter/conf/base_policy/spdl_spec.xml
+	mkdir -p $(SEEDITCONFROOT)
+	cp -r base_policy $(SEEDITCONFROOT)
+	cp -r macros $(SEEDITCONFROOT)
+	mv $(SEEDITCONFROOT)/base_policy/spdl_spec.xml.expand  $(SEEDITCONFROOT)/base_policy/spdl_spec.xml
 	mkdir -p $(sysconfdir)/pam.d
 	install -m 644 pam.d/seedit-gui.$(DISTRO)   $(sysconfdir)/pam.d/seedit-gui
 	if [ -e makefiles/Makefile.$(DISTRO) ];then \

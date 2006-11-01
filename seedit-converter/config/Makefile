@@ -54,11 +54,10 @@ conf: macro unsupport
 
 
 install:all	
-	mkdir -p $(CONVERTER_CONF_DIR)/sepolicy
+	mkdir -p $(BUILD_ROOT_DIR)/sepolicy
 	mkdir -p $(SEEDITCONFROOT)/policy
 	mkdir -p $(SEEDITCONFROOT)/converter
 	mkdir -p $(SEEDITCONFROOT)/converter/conf
-	mkdir -p $(SEEDITCONFROOT)/converter/sepolicy
 	cp -r base_policy $(SEEDITCONFROOT)/converter/conf
 	cp -r macros $(SEEDITCONFROOT)/converter/conf
 	mv $(SEEDITCONFROOT)/converter/conf/base_policy/spdl_spec.xml.expand  $(SEEDITCONFROOT)/converter/conf/base_policy/spdl_spec.xml

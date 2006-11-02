@@ -39,7 +39,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_sbindir}/seedit-gui-generate-policy
 %{_sbindir}/seedit-gui-edit
 %{_sbindir}/seedit-gui-load
-%{_libdir}/seedit/*
 %{_libdir}/python%{python_ver}/site-packages
 /usr/share/icons/seedit/*
 /usr/share/applications/seedit-gui.desktop

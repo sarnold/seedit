@@ -41,8 +41,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/seedit-template
 %{_libdir}/python%{python_ver}/site-packages/seedit/*
 /etc/pam.d/seedit-gui
-%config /etc/seedit/policy
-%config /etc/seedit/converter
 /usr/share/seedit
 
 

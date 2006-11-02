@@ -1553,11 +1553,11 @@ gFileClass = ["dir","file","lnk_file","sock_file", "fifo_file","chr_file","blk_f
 #Path to simplified policy
 gSPPath="/etc/seedit/policy/all.sp"
 #
-gGeneratedPolicy="/etc/seedit/converter/sepolicy/generated.conf"
+gGeneratedPolicy="/usr/share/seedit/sepolicy/generated.conf"
 #Path to converter.conf
-gConverterConf="/etc/seedit/converter/conf/base_policy/converter.conf"
+gConverterConf="/usr/share/seedit/base_policy/converter.conf"
 #Path to spdl_spec.xml
-gSpecXML="/etc/seedit/converter/conf/base_policy/spdl_spec.xml"
+gSpecXML="/usr/share/seedit/base_policy/spdl_spec.xml"
 #labels defined by allow exclusive rule
 gExcLabelList=getExcLabelList(gGeneratedPolicy)
 

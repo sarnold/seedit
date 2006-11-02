@@ -9,8 +9,8 @@ all:
 install: 
 	mkdir -p $(prefix)/share/icons/seedit
 	install -m 744 ./icons/*  $(prefix)/share/icons/seedit
-	mkdir -p $(prefix)/lib/seedit/ui
-	install -m 744 seedit/ui/*	$(prefix)/lib/python$(PYTHON_VER)/seedit/ui
+	mkdir -p $(prefix)/lib/python$(PYTHON_VER)/site-packages/seedit/ui
+	install -m 744 seedit/ui/*	$(prefix)/lib/python$(PYTHON_VER)/site-packages/seedit/ui
 	mkdir -p $(prefix)/sbin
 	install -m 744 seedit-gui.py $(prefix)/sbin/seedit-gui
 	install -m 744 seedit-gui-status.py $(prefix)/sbin/seedit-gui-status

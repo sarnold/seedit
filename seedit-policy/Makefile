@@ -9,6 +9,7 @@ prefix = /usr
 DISTRO = COS4
 CONVERTER=/usr/local/bin/seedit-converter
 LOADPOLICY=/usr/sbin/load_policy
+SEMODULE_PACKAGE=/usr/bin/semodule_package
 CHECKPOLICY=/usr/bin/checkpolicy
 FIXFILES=/sbin/fixfiles
 RESTORECON=/sbin/restorecon
@@ -46,6 +47,8 @@ policy:
 
 	cd policy ;make 
 	if [ -e $(DYNAMIC_CONTEXTS) ] ; then cat $(DYNAMIC_CONTEXTS) >> policy/sepolicy/file_contexts; fi
+	$(SEMODULE_PACKAGE) -s $(BASEPOLICYDIR)/seusers -m policy/sepolicy/base.mod -f policy/sepolicy/file_contexts -o policy/sepolicy/base.pp
+
 install: policy dir
 	cp -r policy/simplified_policy/*  $(SEEDITCONFROOT)/policy
 	cp src/setrans.conf	$(POLICYROOT)

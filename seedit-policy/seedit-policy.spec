@@ -56,9 +56,7 @@ if [ $1 = 1 ]; then
 	echo "/etc/ld.so.cache" >> /etc/selinux/restorecond.conf
 	
 	if [ %{modular} = "y" ]; then
-		cp /etc/selinux/seedit/contexts/files/file_contexts /etc/selinux/seedit/contexts/files/file_contexts.orig
 		/usr/sbin/semodule -b /usr/share/seedit/sepolicy/base.pp -s seedit -n
-		mv /etc/selinux/seedit/contexts/files/file_contexts.orig /etc/selinux/seedit/contexts/files/file_contexts
 	fi
 
 	# Create bootstrap.sh # Code related to bootstrap is from Yoichi Hirose <yhirose@users.sourceforge.jp>

@@ -29,9 +29,6 @@ dir:
 	mkdir -p $(POLICYROOT)/contexts/files
 	mkdir -p $(POLICYROOT)/contexts/users
 	mkdir -p $(SEEDITCONFROOT)/policy
-	mkdir -p $(SEEDITCONFROOT)/converter
-	mkdir -p $(SEEDITCONFROOT)/converter/conf
-	mkdir -p $(SEEDITCONFROOT)/converter/sepolicy
 
 policy:  
 	mkdir -p policy
@@ -41,16 +38,15 @@ policy:
 		cp -r src/simplified_policy policy/simplified_policy;\
 	fi
 
-	cp -r /etc/seedit/converter/conf/base_policy policy/
-	cp -r /etc/seedit/converter/conf/macros policy/
-	cp /etc/seedit/converter/Makefile policy/Makefile;\
+	cp -r /usr/share/seedit//base_policy policy/
+	cp -r /usr/share/seedit/macros policy/
+	cp /usr/share/seedit/Makefile policy/Makefile;\
 
 
 
 	cd policy ;make 
 	if [ -e $(DYNAMIC_CONTEXTS) ] ; then cat $(DYNAMIC_CONTEXTS) >> policy/sepolicy/file_contexts; fi
 install: policy dir
-	cp policy/Makefile  $(SEEDITCONFROOT)/converter/
 	cp -r policy/simplified_policy/*  $(SEEDITCONFROOT)/policy
 	cp src/setrans.conf	$(POLICYROOT)
 

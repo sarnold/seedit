@@ -14,7 +14,7 @@ Source0: seedit-policy-%{version}-%{buildnum}.tar.gz
 BuildRoot: %{_tmppath}/seedit-policy-%{version}-%{release}-root
 BuildArch: noarch
 Requires: seedit-converter >= 2.1.0, checkpolicy,m4,audit
-BuildRequires: seedit-converter >= 2.1.0
+BuildRequires: seedit-converter >= 2.1.0,checkpolicy,m4
 
 %description
 Simplified policy for SELinux is packed.
@@ -108,7 +108,6 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root,-)
 /etc/selinux/seedit
-/etc/seedit
 %config /etc/seedit/policy
 
 %changelog

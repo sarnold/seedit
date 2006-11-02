@@ -39,7 +39,6 @@ policy:
 	$(SEMODULE_PACKAGE)  -s $(BASEPOLICYDIR)/seusers -m $(OUTDIR)/base.mod -f $(OUTDIR)/file_contexts -o$(OUTDIR)/base.pp
 	
 install: policy
-	cp $(OUTDIR)/base.pp $(POLICYDIR)
 	cp $(OUTDIR)/file_contexts $(CONTEXTSDIR)/files/
 	cp $(OUTDIR)/file_contexts.m4 $(CONTEXTSDIR)/files/
 	cp $(OUTDIR)/customizable_types $(CONTEXTSDIR)

@@ -1,6 +1,7 @@
+%define python_ver 2.4
 Summary: GUI for SELinux  Policy Editor
 Name: seedit-gui
-Version: 2.1.0.b1
+Version: 2.1.0.b4
 Release:  1
 License: GPL
 Group: System Environment/Base
@@ -23,7 +24,7 @@ make clean
 
 %install
 rm -rf $RPM_BUILD_ROOT
-%makeinstall
+%makeinstall PYTHON_VER=%{python_ver}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -39,6 +40,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_sbindir}/seedit-gui-edit
 %{_sbindir}/seedit-gui-load
 %{_libdir}/seedit/*
+%{_libdir}/python%{python_ver}/site-packages
 /usr/share/icons/seedit/*
 /usr/share/applications/seedit-gui.desktop
 /usr/share/locale/*

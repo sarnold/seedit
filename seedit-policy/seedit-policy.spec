@@ -5,7 +5,7 @@
 %define buildnum 1
 Summary: Simplified Policy for SELinux
 Name: seedit-policy
-Version: 2.1.0.b3
+Version: 2.1.0.b4
 Release: %{buildnum}.%{distro}
 License: GPL
 Group:  System Environment/Base

@@ -1,7 +1,7 @@
 prefix = /usr
 sysconfdir = /etc
 SRC = seedit-gui-domain-manager.py seedit-gui-role-manager.py seedit-gui-edit.py seedit-gui-generate-policy.py seedit-gui-status.py seedit-gui.py seedit/ui/GUICommon.py seedit/ui/UILogic.py
-
+PYTHON_VER=2.4
 
 
 all:
@@ -10,7 +10,7 @@ install:
 	mkdir -p $(prefix)/share/icons/seedit
 	install -m 744 ./icons/*  $(prefix)/share/icons/seedit
 	mkdir -p $(prefix)/lib/seedit/ui
-	install -m 744 seedit/ui/*	$(prefix)/lib/seedit/ui
+	install -m 744 seedit/ui/*	$(prefix)/lib/python$(PYTHON_VER)/seedit/ui
 	mkdir -p $(prefix)/sbin
 	install -m 744 seedit-gui.py $(prefix)/sbin/seedit-gui
 	install -m 744 seedit-gui-status.py $(prefix)/sbin/seedit-gui-status

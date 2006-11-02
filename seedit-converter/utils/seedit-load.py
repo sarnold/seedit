@@ -102,7 +102,7 @@ def forkExec(command,verbose=False):
 
 def removeAuditChdir():
      removeAuditChdirFromAuditRulesFile()
-     confinedDomains=getConfinedDomains("/etc/selinux/seedit/policy/confined_domains")
+     confinedDomains=getConfinedDomains("/usr/share/seedit/sepolicy/confined_domains")
      command = gAuditCtl+" -d exit,always -S chdir"+"  >/dev/null 2>&1 "
      
      forkExec(command,gVerboseFlag)
@@ -119,7 +119,7 @@ def removeAuditChdir():
 #audit chdir syscall to obtain full path when program chroots
 #audit only for confined domains
 def doAuditChdir():
-    confinedDomains=getConfinedDomains("/etc/selinux/seedit/policy/confined_domains")
+    confinedDomains=getConfinedDomains("/usr/share/seedit/sepolicy/confined_domains")
     if confinedDomains==None:
         return
 

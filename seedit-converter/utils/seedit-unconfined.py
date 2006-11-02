@@ -38,7 +38,7 @@ if __name__ == '__main__':
 
 gUnconfinedDomains=[] #List of unconfined domains
 
-gUnconfinedDomains = getUnconfinedDomains("/etc/selinux/seedit/policy/unconfined_domains")
+gUnconfinedDomains = getUnconfinedDomains("/usr/share/seedit/sepolicy/unconfined_domains")
 gBehavior=""
 
 try:

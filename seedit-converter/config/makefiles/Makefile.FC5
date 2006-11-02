@@ -43,8 +43,6 @@ policy:
 
 install: policy
 	cp $(OUTDIR)/policy.$(POLICYVER) $(POLICYDIR)
-	cp $(OUTDIR)/unconfined_domains $(POLICYDIR)
-	cp $(OUTDIR)/confined_domains $(POLICYDIR)
 	cp $(OUTDIR)/file_contexts $(CONTEXTSDIR)/files/
 	cp $(OUTDIR)/file_contexts.m4 $(CONTEXTSDIR)/files/
 	cp $(OUTDIR)/customizable_types $(CONTEXTSDIR)

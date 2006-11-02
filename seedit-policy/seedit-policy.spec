@@ -109,6 +109,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 /etc/selinux/seedit
 %config /etc/seedit/policy
+/usr/share/seedit/sepolicy
 
 %changelog
 * Tue Sep 19 2006 Yuichi Nakamura 2.0.1

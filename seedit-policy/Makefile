@@ -49,6 +49,10 @@ policy:
 install: policy dir
 	cp -r policy/simplified_policy/*  $(SEEDITCONFROOT)/policy
 	cp src/setrans.conf	$(POLICYROOT)
+	mkdir -p $(prefix)/share/seedit/sepolicy
+	cp policy/sepolicy/base.pp  $(prefix)/share/seedit/sepolicy
+	cp policy/sepolicy/unconfined_domains  $(prefix)/share/seedit/sepolicy
+	cp policy/sepolicy/confined_domains  $(prefix)/share/seedit/sepolicy
 
 	if [ -e $(POLICYROOT)/contexts/files/file_contexts ]; then \
 		cp $(POLICYROOT)/contexts/files/file_contexts $(POLICYROOT)/contexts/files/file_contexts.old;\

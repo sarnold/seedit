@@ -5,3 +5,6 @@ DISTRO=FC6
 PYTHON_VER=2.4
 AUDITCONF=\\/etc\\/audit\\/audit.rules
 MODULAR=y
+#
+
+

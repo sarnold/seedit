@@ -8,7 +8,7 @@ all:
 
 install: 
 	mkdir -p $(prefix)/share/icons/seedit
-	install -m 744 ./icons/*  $(prefix)/share/icons/seedit
+	install -m 644 ./icons/*  $(prefix)/share/icons/seedit
 	mkdir -p $(prefix)/lib/python$(PYTHON_VER)/site-packages/seedit/ui
 	install -m 744 seedit/ui/*	$(prefix)/lib/python$(PYTHON_VER)/site-packages/seedit/ui
 	mkdir -p $(prefix)/sbin
@@ -22,16 +22,16 @@ install:
 
 	install -m 744 seedit-gui-edit.py $(prefix)/sbin/seedit-gui-edit
 	mkdir -p $(prefix)/share/locale/ja/LC_MESSAGES/
-	install -m 744 po/ja.mo $(prefix)/share/locale/ja/LC_MESSAGES/seedit-gui.mo
+	install -m 644 po/ja.mo $(prefix)/share/locale/ja/LC_MESSAGES/seedit-gui.mo
 
 	mkdir -p $(prefix)/bin
 	ln -sf /usr/bin/consolehelper  $(prefix)/bin/seedit-gui
 	mkdir -p $(sysconfdir)/security/console.apps
-	install -m 744 console.apps/seedit-gui $(sysconfdir)/security/console.apps
+	install -m 644 console.apps/seedit-gui $(sysconfdir)/security/console.apps
 	mkdir -p $(prefix)/share/applications/
-	install -m 744 desktop/seedit-gui.desktop $(prefix)/share/applications
+	install -m 644 desktop/seedit-gui.desktop $(prefix)/share/applications
 	mkdir -p $(prefix)/share/pixmaps/
-	install -m 744 icons/seedit-gui.png $(prefix)/share/pixmaps
+	install -m 644 icons/seedit-gui.png $(prefix)/share/pixmaps
 
 
 clean:

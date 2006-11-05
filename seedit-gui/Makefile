@@ -10,17 +10,17 @@ install:
 	mkdir -p $(prefix)/share/icons/seedit
 	install -m 644 ./icons/*  $(prefix)/share/icons/seedit
 	mkdir -p $(prefix)/lib/python$(PYTHON_VER)/site-packages/seedit/ui
-	install -m 744 seedit/ui/*	$(prefix)/lib/python$(PYTHON_VER)/site-packages/seedit/ui
+	install -m 755 seedit/ui/*	$(prefix)/lib/python$(PYTHON_VER)/site-packages/seedit/ui
 	mkdir -p $(prefix)/sbin
-	install -m 744 seedit-gui.py $(prefix)/sbin/seedit-gui
-	install -m 744 seedit-gui-status.py $(prefix)/sbin/seedit-gui-status
+	install -m 755 seedit-gui.py $(prefix)/sbin/seedit-gui
+	install -m 755 seedit-gui-status.py $(prefix)/sbin/seedit-gui-status
 
-	install -m 744 seedit-gui-domain-manager.py $(prefix)/sbin/seedit-gui-domain-manager
-	install -m 744 seedit-gui-role-manager.py $(prefix)/sbin/seedit-gui-role-manager
-	install -m 744 seedit-gui-generate-policy.py $(prefix)/sbin/seedit-gui-generate-policy
-	install -m 744 seedit-gui-load.py $(prefix)/sbin/seedit-gui-load
+	install -m 755 seedit-gui-domain-manager.py $(prefix)/sbin/seedit-gui-domain-manager
+	install -m 755 seedit-gui-role-manager.py $(prefix)/sbin/seedit-gui-role-manager
+	install -m 755 seedit-gui-generate-policy.py $(prefix)/sbin/seedit-gui-generate-policy
+	install -m 755 seedit-gui-load.py $(prefix)/sbin/seedit-gui-load
 
-	install -m 744 seedit-gui-edit.py $(prefix)/sbin/seedit-gui-edit
+	install -m 755 seedit-gui-edit.py $(prefix)/sbin/seedit-gui-edit
 	mkdir -p $(prefix)/share/locale/ja/LC_MESSAGES/
 	install -m 644 po/ja.mo $(prefix)/share/locale/ja/LC_MESSAGES/seedit-gui.mo
 

@@ -1,6 +1,6 @@
 %define selinuxconf /etc/selinux/config
 %define auditrules  /etc/audit/audit.rules
-%define installhelper /usr/share/seedit/scripts/seedit-installherlper.sh
+%define installhelper /usr/share/seedit/scripts/seedit-installhelper.sh
 %define distro FC6
 %define modular y
 %define buildnum 1

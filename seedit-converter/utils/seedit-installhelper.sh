@@ -60,11 +60,11 @@ uninstall_seedit() {
 
 }
 
-if [ $1 eq "install"]; then
+if [ $1 = "install" ]; then
     install_seedit
 fi
 
 
-if [ $1 eq "uninstall"]; then
+if [ $1 = "uninstall" ]; then
     uninstall_seedit
 fi

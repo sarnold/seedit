@@ -53,6 +53,8 @@ policy:
 	fi
 
 install: policy dir
+	mkdir -p $(prefix)/share/seedit/scripts
+	install -m 755 seedit-installhelper.sh $(prefix)/share/seedit/scripts
 	cp -r policy/simplified_policy/*  $(SEEDITCONFROOT)/policy
 	cp src/setrans.conf	$(POLICYROOT)
 	mkdir -p $(prefix)/share/seedit/sepolicy

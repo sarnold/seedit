@@ -50,7 +50,7 @@ if [ -e /etc/seedit/policy/sysadm_r.sp ]; then
 	touch /etc/seedit/policy/rbac_flag
 fi
 
-%postun
+%preun
 export SELINUXCONF=%{selinuxconf}
 export AUDITRULES=%{auditrules}
 export MODULAR=%{modular}

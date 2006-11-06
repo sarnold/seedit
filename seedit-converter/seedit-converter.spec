@@ -40,6 +40,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/python%{python_ver}/site-packages/seedit/*
 %config /etc/pam.d/seedit-gui
 /usr/share/seedit
+%doc README
+%doc Changelog
+%doc COPYING
 
 
 %changelog

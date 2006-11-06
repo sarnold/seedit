@@ -1,5 +1,6 @@
 %define selinuxconf /etc/selinux/config
 %define auditrules  /etc/audit/audit.rules
+%define installhelper /usr/share/seedit/scripts/seedit-installherlper.sh
 %define distro FC6
 %define modular y
 %define buildnum 1
@@ -36,66 +37,29 @@ if [ -e /etc/selinux/seedit/contexts/files/file_contexts.all.old ] ; then
 fi
 
 %post
-if [ $1 = 1 ]; then
-	cat %{selinuxconf} |sed -e 's/^SELINUX=.*$/SELINUX=permissive/'|sed -e 's/^SELINUXTYPE=.*$/SELINUXTYPE=seedit/' >%{selinuxconf}.tmp
-	mv %{selinuxconf} %{selinuxconf}.orig
-	mv  %{selinuxconf}.tmp %{selinuxconf}
-	touch /.autorelabel
-
-	echo "/var/tmp/bootstrap.sh" >> /etc/rc.d/rc.local
-	if [ -e %{auditrules} ]; then
-	        cat %{auditrules} | sed -e 's!-a exit,always -S chroot!!g' > %{auditrules}.tmp
-		mv %{auditrules}.tmp %{auditrules}
-	 			
-		echo "-a exit,always -S chroot" >> %{auditrules}
-	fi
-	if [ -e /etc/selinux/restorecond.conf ];then 
-		cat /etc/selinux/restorecond.conf |sed -e 's/^\/etc\/ld.so.cache.*$//'>/etc/selinux/restorecond.conf.tmp
-		cp /etc/selinux/restorecond.conf.tmp /etc/selinux/restorecond.conf
-	fi
-	echo "/etc/ld.so.cache" >> /etc/selinux/restorecond.conf
-	
-	if [ %{modular} = "y" ]; then
-		/usr/sbin/semodule -b /usr/share/seedit/sepolicy/base.pp -s seedit -n
-	fi
-
-	# Create bootstrap.sh # Code related to bootstrap is from Yoichi Hirose <yhirose@users.sourceforge.jp>
-	cat << __EOF >/var/tmp/bootstrap.sh
-
-#!/bin/sh
-/usr/sbin/seedit-restorecon -R /etc -v
-/usr/sbin/seedit-load -v
-cat /etc/rc.d/rc.local | sed -e 's!/var/tmp/bootstrap.sh!!g' > /etc/rc.d/rc.local.tmp
-rm -f /etc/rc.d/rc.local
-mv /etc/rc.d/rc.local.tmp /etc/rc.d/rc.local
-/usr/sbin/seedit-restorecon  /etc/rc.d/rc.local -v
-chmod 0755 /etc/rc.d/rc.local
-init 6
-
-__EOF
-	chmod 755 /var/tmp/bootstrap.sh
-	/sbin/chkconfig auditd on
-
+export SELINUXCONF=%{selinuxconf}
+export AUDITRULES=%{auditrules}
+if [ $1 = 1 ]; then	
+	%{installhelper} install
 fi
 
 if [ -e /etc/seedit/policy/sysadm_r.sp ]; then
 	/usr/sbin/seedit-rbac off -n
+	touch /etc/seedit/policy/rbac_flag
 fi
 
 %postun
+export SELINUXCONF=%{selinuxconf}
+export AUDITRULES=%{auditrules}
+
 if [ $1 = 0 ]; then
-	cat %{selinuxconf} |sed -e 's/^SELINUX=.*$/SELINUX=permissive/'|sed -e 's/^SELINUXTYPE=.*$/SELINUXTYPE=targeted/' >%{selinuxconf}.tmp
-	mv %{selinuxconf} %{selinuxconf}.orig
-	mv %{selinuxconf}.tmp %{selinuxconf}
-	touch /.autorelabel
-	if [ -e %{auditrules} ]; then
-	        cat %{auditrules} | sed -e 's!-a exit,always -S chroot!!g' > %{auditrules}.tmp
-		mv %{auditrules}.tmp %{auditrules}
-	fi
+	%{installhelper} uninstall
+
 else
 	mv /etc/selinux/seedit/contexts/files/file_contexts.all.old2 /etc/selinux/seedit/contexts/files/file_contexts.all.old
-	if [ -e /etc/seedit/policy/sysadm_r.sp ]; then
+	if [ -e /etc/seedit/policy/rbac_flag ]; then
 		/usr/sbin/seedit-rbac on -n
+		rm /etc/seedit/policy/rbac_flag
 	fi
 	/usr/sbin/seedit-load -v
 fi

@@ -1,8 +1,9 @@
 #!/bin/sh
 # Helper to install/uninstall seedit
-SELINUXCONF=/etc/selinux/config
-AUDITRULES=/etc/audit/audit.rules
-MODULAR=n
+#define below
+#SELINUXCONF=/etc/selinux/config
+#AUDITRULES=/etc/audit/audit.rules
+#MODULAR=n
 
 install_seedit() {
 

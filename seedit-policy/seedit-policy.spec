@@ -28,8 +28,9 @@ Simplified policy is converted into usual SELinux policy by seedit-converter.
 
 %install
 rm -rf $RPM_BUILD_ROOT
-DISTRO=%{distro}
-%makeinstall CONVERTER=/usr/bin/seedit-converter DISTRO=$DISTRO  DEVELFLAG=0 SELINUXTYPE=seedit
+DISTRO=%{distro} 
+MODULAR=%{modular}
+%makeinstall CONVERTER=/usr/bin/seedit-converter DISTRO=$DISTRO  DEVELFLAG=0 SELINUXTYPE=seedit MODULAR=$MODULAR
 
 %pre
 if [ -e /etc/selinux/seedit/contexts/files/file_contexts.all.old ] ; then
@@ -52,6 +53,7 @@ fi
 %postun
 export SELINUXCONF=%{selinuxconf}
 export AUDITRULES=%{auditrules}
+export MODULAR=%{modular}
 
 if [ $1 = 0 ]; then
 	%{installhelper} uninstall
@@ -75,6 +77,7 @@ rm -rf $RPM_BUILD_ROOT
 /etc/selinux/seedit
 %config /etc/seedit/policy
 /usr/share/seedit/sepolicy
+/usr/share/seedit/scripts
 %doc README
 %doc Changelog
 %doc COPYING

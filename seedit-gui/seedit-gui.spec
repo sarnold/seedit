@@ -45,8 +45,11 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/icons/seedit/*
 /usr/share/applications/seedit-gui.desktop
 /usr/share/locale/*
-%config /etc/security/console.apps/seedit-gui
+%config(noreplace) /etc/security/console.apps/seedit-gui
 /usr/share/pixmaps/seedit-gui.png
+%doc README
+%doc Changelog
+%doc COPYING
 
 %changelog
 * Tue Sep 26 2006 Yuichi Nakamura 2.0.2

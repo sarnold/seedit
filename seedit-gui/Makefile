@@ -25,7 +25,7 @@ install:
 	install -m 644 po/ja.mo $(prefix)/share/locale/ja/LC_MESSAGES/seedit-gui.mo
 
 	mkdir -p $(prefix)/bin
-	ln -sf /usr/bin/consolehelper  $(prefix)/bin/seedit-gui
+	ln -sf   consolehelper  $(prefix)/bin/seedit-gui
 	mkdir -p $(sysconfdir)/security/console.apps
 	install -m 644 console.apps/seedit-gui $(sysconfdir)/security/console.apps
 	mkdir -p $(prefix)/share/applications/

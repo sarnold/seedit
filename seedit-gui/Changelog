@@ -1,4 +1,5 @@
-
+* 2006/11/03
+Changed install path of python lib to /usr/lib/python2.4/site-packages/
 * 2006/09/26 
 Merged language changes from Shane M. Coughlan.
 

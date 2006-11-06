@@ -39,6 +39,7 @@ fi
 %post
 export SELINUXCONF=%{selinuxconf}
 export AUDITRULES=%{auditrules}
+export MODULAR=%{modular}
 if [ $1 = 1 ]; then	
 	%{installhelper} install
 fi

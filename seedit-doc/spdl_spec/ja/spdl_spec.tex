@@ -862,44 +862,49 @@ allownet -protocol tcp,udp 3306 client;
 \end{verbatim}
 \end{enumerate}
 
-\subsection{Usage of RAW socket}
-Usage of RAW socket must be restricted, because RAW socket can be used
-for IP spoofing and eavesdropping.
+\subsection{RAWソケットの利用}
+RAWソケットは、通信の盗聴などに利用されるため、利用を制限しなくてはなり
+ません。
 \begin{enumerate}
- \item Syntax\\
+ \item 書式\\
        allownet -protocol raw use;\\
-        {\it permission}: {\it client} or {\it server} or * splitted by , can be
-       described.
- \item Meaning\\
-       The domain is allowed to use RAW socket.
+        {\it permission}: {\it client} 、{\it server} 、 * がコンマ区切
+       り指定可能。
+ \item 意味\\
+       RAWソケットを使ったデータの受信（server)、送信(client)が許可され
+       ます。
 \end{enumerate}
 
-\subsection{Usage of Network Interface(netif) and IP address(node)}
-Usage of netif/node is allowed by this. In default policy, it is allowed
-to all domains.
+\subsection{NIC(netif)またはIPアドレス(node)の利用制限}
+netifやnodeの利用制限ができます。なお、デフォルトで用意されているポリシ
+では、common-relaxed.spファイルにより、全ドメインに許可されてます。
 \begin{enumerate}
- \item Syntax\\
+ \item 書式\\
        \begin{enumerate}
 	\item allownet -protocol {\it protocol} -netif {\it name of NIC} {\it
 	      permission};\\
-	      {\it protocol}: tcp,udp,raw and * can be specified, splitted by ,.\\
-	      {\it name of NIC}: NIC name(such as lo,eth0,eth1) splitted by ,.\\
-	      {\it permission}: {\it send} or {\it recv} splitted by , can
-	      be described.       
+	      {\it protocol}: tcp,udp,raw、 * がカンマ区切りで指定可能。\\
+	      {\it name of NIC}: NICの名前(lo,eth0,eth1等)がカンマ区切り
+	      で指定可能\\
+	      {\it permission}: {\it send}、{\it recv}がカンマ区切りで指
+	      定可能       
 	\item allownet -protocol {\it protocol} -node {\it address} {\it
 	      permission};\\
-	      {\it protocol}: tcp,udp,raw and * can be specified, splitted by ,.\\
-	      {\it address}: {\it ipv4address}/{\it netmask} or * splitted by
-	      ,. Example: 192.168.0.1/255.255.255.0 . And * means all address.\\
-	      {\it permission}: {\it send} or {\it recv} splitted by , can
-	      be described. 
+	      {\it protocol}: tcp,udp,raw、 * がカンマ区切りで指定可能。\\
+	      {\it address}: {\it ipv4address}/{\it netmask} または * が
+	      カンマ区切りで指定可能\\
+	      例： 192.168.0.1/255.255.255.0。なお*は、全てのアドレスを
+	      意味します.\\
+	      {\it permission}: {\it send} または{\it recv}をカンマ区切
+	      りで指定可能。
        \end{enumerate}
- \item Meaning\\
+ \item 意味\\
        \begin{enumerate}
-	\item    Allows to send or receive packet to/from NIC. 
-	\item  Allows to send or receive packet to/from IP address. 
+	\item  NICを通してデータを送信、受信することを許可。
+	\item  IPアドレス宛にデータを送信、IPアドレスからデータを受信す
+	       ることを許可。
        \end{enumerate}
- \item Example\\
+ \item 例\\
 
 \begin{verbatim}
 {
@@ -908,108 +913,111 @@ allownet -protocol tcp  use;
 allownet -protocol tcp -port 80 server;
 allownet -netif eth0 send,recv;
 }
---> httpd_t can use tcp socket and be server using TCP 80 port.
-And can send/recv packet to/from eth0.
+--> httpd_tは80番ポートを通してサーバとして振る舞える。
+eth0を通してパケットを送受信できる。
+(lo0,eth1は使えない）
 \end{verbatim}
 \end{enumerate}
 
-\subsection{Inherit socket from other domain}\label{sec:socket}
-Following syntax allows using socket of other domain. It is rare to configure.
+\subsection{他ドメインからのソケット継承}\label{sec:socket}
+他ドメインで動作するプロセスからソケットを継承して使う権限を与えます（滅
+多にないことですが。。）
 \begin{enumerate}
- \item  Syntax 
+ \item  書式
 	\begin{enumerate}
 	 \item allownet -protocol {\it protocol}  -domain {\it domain} use;
-	       {\it protocol}, tcp,udp can be specified, splitted by ,.
+	       {\it protocol}, tcp,udpをカンマ区切りで指定可能。
 	\end{enumerate}
 
- \item Meaning\\
+ \item 意味\\
 	\begin{enumerate}
-	 \item This enables to restrict inheriting socket from other
-	       domain. This configures from where the domain can
-	       inherit socket. When {\it domain} is {\it self}, the domain can
-	       use socket which is created by its own domain. 
+	 \item 他ドメインで動作するプロセスからソケットを継承することを
+	       許可します。どのドメインから継承可能かを{\it domain}で指
+	       定します。{\it domain}として{\it self}を指定することで、
+	       自分自身が作成したソケットの利用権限を与えます(こちらはデ
+	       フォルトのポリシのcommon-relaxed.spで許可されてます)
 	\end{enumerate}
-\item Example
+\item 例
 \begin{verbatim}
 domain foo_t;
-# foo_t can inherit UDP socket from bar_t
+# foo_tはUDPソケットをbar_tから継承可能
 allownet -protocol udp -domain bar_t; 
 \end{verbatim}
 \end{enumerate}
-\section{Access control of process communication:allowcom}
+\section{プロセス間通信のアクセス制御:allowcom}
 \subsection{allowcom (IPC)}
 \begin{enumerate}
- \item Syntax(1)\\
-       allowcom -ipc {\it to domain} [r],[w];
- \item Syntax(2)\\
-       allowcom -unix$\mid$-sem$\mid$-msg$\mid$-msgq$\mid$-shm$\mid$-pipe {\it to
+ \item 書式\\
+       allowcom -ipc$\mid$-unix$\mid$-sem$\mid$-msg$\mid$-msgq$\mid$-shm$\mid$-pipe {\it to
        domain} [r],[w];
- \item Meaning\\
-       Allow to communicate with {\it  to domain } by specified IPC.\\
-       If {\it to domain } is {\it self}, this means IPC within
-       domain. If {\it  to domain } is {\it *} the domain can IPC
-       to every domain.
-       -ipc is allowing all kinds of IPCs, it is simplified
-       configuration. If you want to specify specific kind of ipc, you
-       can use following.      
-       -unix is unix domain socket, -sem is semaphore, -msg is message,
-       -msgq is message queue, -shm is shared memory, -pipe is pipe.
+
+
+ \item 意味\\
+       指定されたIPCで {\it  to domain }と通信することを許可します。{\it
+       to domain }が{\it self}の場合は、自ドメインないの通信を意味します。
+       {\it  to domain } として {\it *}とすると、全ドメインを指定します。
+       -ipcは、全種類のIPCをまとめて許可しています。\\
+       個々のIPCを制限したい場合は、以下を使えます。\\
+       -unix は、UNIXドメインソケットです。-semはセマフォです。-msgはメッ
+       セージ、-msgqはメッセージキュー、 -shmは共有メモリ、 -pipeはパイ
+       プです。
 \end{enumerate}
 
-\subsection{allowcom(Signal)}
+\subsection{allowcom(シグナルの制限)}
 \begin{enumerate}
- \item Syntax\\
+ \item 書式\\
        allowcom -sig {\it to domain} [c],[k],[s],[n],[o];
- \item Meaning\\
-       Allow to send signal to {\it to domain}. [c] is sigchld, [k] is
-       sigkill, [s] is sigstop, [n] is signull, [o] is other signals. signull is not
-       supported, this means all domains are allowed to use signull.
+ \item 意味\\
+        {\it to domain}に指定されたシグナルを送信することを許可します。\\
+       cはsigchld、 kはsigkill, sはsigstop, nはsignull, o はそ
+       の他のシグナルです。
 \end{enumerate}
 
 
 
-\section{Access control other administrative access
-  rights:allowpriv}
+\section{他の特権のアクセス制御:allowpriv}
+これまで出てきた以外にも、OSにはセキュリティ上重要な操作（攻撃者にとられ
+たら危ない権限）があります。これらを制限するのがallowprivです。
 \begin{itemize}
- \item Syntax \\
+ \item 書式 \\
        allowpriv {\it string};\\
-       {\it string} is name  of privilege. It is described in next section.
- \item Meaning \\
-       Allow access rights represented by        {\it string}.
+       {\it string}に権限名を書いていきます。どんな名前が指定可能かは、
+       後述します。
+ \item 意味 \\
+       {\it string}で指定した権限を許可。
 \end{itemize}
-Next, 
-what can be configured for {\it string} can be categorized into
-following.
+さて、{\it string}に記述可能な権限は、以下のように分類できます。この分類
+ にそって紹介していきます。
 \begin{itemize}
  \item POSIX capability\\
- \item Related to kernel\\
- \item Related to SELinux operations\\
- \item Others
+ \item カーネル関連\\
+ \item SELinux管理操作\\
+ \item その他
 \end{itemize}
 
 
-\subsection{allowpriv: POSIX capability}
-Strings that begin with {\it cap\_} is POSIX capability. You can see
-detailed meaning by man capabilities.
+\subsection{POSIX capability}
+ {\it cap\_}で始まる文字列は、POSIX capability(ケーパビリティ)です。
+POSIX Capabilityは、特権を分割して与えるものです。
+POSIX capabilityの詳細は、man capabilitiesを参考にしてください。
 
-\subsubsection{Capabilities that can not be configured}
-Following POSIX capabilities can not be configured, because it can be
-configured in different place. \\
+\subsubsection{設定不能なPOSIX capability}
+以下のものは、設定ができないようになっています（デフォルトで許可されま
+す）。なぜなら、他のallow文と完全に重なるからです。
 \begin{itemize}
  \item CAP\_NET\_BIND\_SERVICE\\
-       This restricts usage of wellknown ports, but by allownet, you can
-       configure better. So this is omitted.
+       wellknownポートの利用制限ですが、allownetでもっと細かく制限できる
+       ので省略します。
  \item CAP\_MKNOD\\
-       This is allowed in allowpriv devcreate.
+       allowpriv devcreateと重なるので省略。
  \item CAP\_AUDIT\_WRITE\\
-       Operations that is restricted by this is the same as
-       allowpriv audit\_write ,so this  is omitted.
+       allowpriv audit\_writeと重なるので省略。
  \item CAP\_AUDIT\_CONTROL\\
-       Operations that is  restricted by this is the same as allowpriv
-       audit\_control, so this is  omitted.
+       allowpriv audit\_controlと重なるので省略。
 \end{itemize}
 
-\subsubsection{Configurable capabilities}
+\subsubsection{設定可能なcapability}
+詳細は、man capabilitiesを参照してください。
 \begin{itemize}
  \item cap\_sys\_pacct\\
        Configures kernel accounting(see acct(2)).
@@ -1062,33 +1070,25 @@ configured in different place. \\
 \end{itemize}
 
 
-\subsection{allowpriv: related to kernel}
-Configures privileges to communicate and administrate kernel. 
-Following strings can be used.
+\subsection{カーネル関連操作}
+カーネルとの通信、管理する特権を許可します。
        \begin{enumerate}
 	\item netlink\\
-	      Allows to communicate with kernel by netlink socket. 
+	      netlinkソケットを使ってカーネルと通信することを許可
 	\item klog\_read\\
-	      Allows to read kernel messages by syslog(2) call. Usually
-	      it is required to use dmesg command.
+	      syslog(2)システムコールを使ってカーネルメッセージを読むこ
+	      とを許可。
 	\item klog\_adm\\
-	      Allows to change configuration of kernel message output.
+	      カーネルメッセージ出力設定の変更を許可
 	\item audit\_read\\
-	      Allows to read status and configuration of kernel audit
-           subsystem.
+	      カーネル内のauditサブシステムのステータス読み出しを許可。
 	\item audit\_write\\
-	      Allows to send log message to audit subsystem in
-	      kernel.
+	      auditサブシステムにメッセージを送ることを許可。
 	\item audit\_adm\\
-	      Change configuration of kernel audit subsystem.
-	\item klog\_adm\\
-	      Allows to change configuration of audit in kernel. The
-	      same as capability audit\_control,sys\_pacct.
-	      
-       
+	      auditサブシステムの設定変更を許可。
        \end{enumerate}
 
-\subsection{allowpriv: related to SELinux operations}
+\subsection{SELinux管理操作}
        Allow privileges to administrate SELinux.
        \begin{enumerate}
 	\item relabel\\
@@ -1111,7 +1111,7 @@ Following strings can be used.
 	      Get security information(such as domain, stored in /proc/pid/attr) of other processes.
        \end{enumerate}
 
-\subsection{allowpriv: other privileges}
+\subsection{その他}
        Allow other privileges.
        \begin{enumerate}
 

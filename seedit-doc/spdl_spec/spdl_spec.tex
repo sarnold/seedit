@@ -855,10 +855,8 @@ allownet -protocol udp -domain bar_t;
 \section{Access control of process communication:allowcom}
 \subsection{allowcom (IPC)}
 \begin{enumerate}
- \item Syntax(1)\\
-       allowcom -ipc {\it to domain} [r],[w];
- \item Syntax(2)\\
-       allowcom -unix$\mid$-sem$\mid$-msg$\mid$-msgq$\mid$-shm$\mid$-pipe {\it to
+ \item Syntax\\
+       allowcom -ipc$\mid$-unix$\mid$-sem$\mid$-msg$\mid$-msgq$\mid$-shm$\mid$-pipe {\it to
        domain} [r],[w];
  \item Meaning\\
        Allow to communicate with {\it  to domain } by specified IPC.\\
@@ -869,7 +867,8 @@ allownet -protocol udp -domain bar_t;
        configuration. If you want to specify specific kind of ipc, you
        can use following.      
        -unix is unix domain socket, -sem is semaphore, -msg is message,
-       -msgq is message queue, -shm is shared memory, -pipe is pipe.
+       -msgq is message queue, -shm is shared memory, -pipe is pipe.\\
+    
 \end{enumerate}
 
 \subsection{allowcom(Signal)}
@@ -878,8 +877,7 @@ allownet -protocol udp -domain bar_t;
        allowcom -sig {\it to domain} [c],[k],[s],[n],[o];
  \item Meaning\\
        Allow to send signal to {\it to domain}. [c] is sigchld, [k] is
-       sigkill, [s] is sigstop, [n] is signull, [o] is other signals. signull is not
-       supported, this means all domains are allowed to use signull.
+       sigkill, [s] is sigstop, [n] is signull, [o] is other signals. 
 \end{enumerate}
 
 
@@ -997,10 +995,6 @@ Following strings can be used.
 	      kernel.
 	\item audit\_adm\\
 	      Change configuration of kernel audit subsystem.
-	\item klog\_adm\\
-	      Allows to change configuration of audit in kernel. The
-	      same as capability audit\_control,sys\_pacct.
-	      
        
        \end{enumerate}
 

@@ -7,6 +7,7 @@ SELINUXTYPE=seedit
 sysconfdir = /etc
 prefix = /usr
 DISTRO = COS4
+MODULAR=n
 CONVERTER=/usr/local/bin/seedit-converter
 LOADPOLICY=/usr/sbin/load_policy
 SEMODULE_PACKAGE=/usr/bin/semodule_package
@@ -47,13 +48,21 @@ policy:
 
 	cd policy ;make 
 	if [ -e $(DYNAMIC_CONTEXTS) ] ; then cat $(DYNAMIC_CONTEXTS) >> policy/sepolicy/file_contexts; fi
-	$(SEMODULE_PACKAGE) -s $(BASEPOLICYDIR)/seusers -m policy/sepolicy/base.mod -f policy/sepolicy/file_contexts -o policy/sepolicy/base.pp
+	if [ $(MODULAR) = "y" ]; then \
+		$(SEMODULE_PACKAGE) -s $(BASEPOLICYDIR)/seusers -m policy/sepolicy/base.mod -f policy/sepolicy/file_contexts -o policy/sepolicy/base.pp;\
+	fi
 
 install: policy dir
 	cp -r policy/simplified_policy/*  $(SEEDITCONFROOT)/policy
 	cp src/setrans.conf	$(POLICYROOT)
 	mkdir -p $(prefix)/share/seedit/sepolicy
-	cp policy/sepolicy/base.pp  $(prefix)/share/seedit/sepolicy
+	if [ $(MODULAR) = "y" ];then \
+		cp policy/sepolicy/base.pp  $(prefix)/share/seedit/sepolicy;\
+	fi
+	if [ $(MODULAR) = "n" ];then \
+		cp policy/sepolicy/policy.*  $(prefix)/share/seedit/sepolicy;\
+	fi
+
 	cp policy/sepolicy/unconfined_domains  $(prefix)/share/seedit/sepolicy
 	cp policy/sepolicy/confined_domains  $(prefix)/share/seedit/sepolicy
 

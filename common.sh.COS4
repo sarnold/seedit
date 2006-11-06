@@ -1,0 +1,10 @@
+#!/bin/sh
+VERSION=2.1.0.b4
+RELEASE=1
+DISTRO=COS4
+PYTHON_VER=2.3
+AUDITCONF=\\/etc\\/audit.rules
+MODULAR=n
+#
+
+

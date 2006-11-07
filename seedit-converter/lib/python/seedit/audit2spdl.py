@@ -568,6 +568,12 @@ def genFileAllow(rule,lines,index,domdoc):
     path = guessFilePath(rule,lines,index)
     if rule["secclass"]=="lnk_file":
         pass
+        #if os.path.exists(path) and os.path.islink(path):
+           # p = os.path.readlink(path)
+            #if rule["name"] == os.path.basename(path):
+            #    path = p
+            #else:
+            #    pass
     else:
         if os.path.exists(path):
             path = os.path.realpath(path)

@@ -1,6 +1,7 @@
 %define distro COS4
 %define buildnum 1
 %define python_ver 2.3
+%define customizable_types n
 Summary: Compliler for simplified policy
 Name: seedit-converter
 Version: 2.1.0.b4
@@ -19,11 +20,11 @@ Compiler for simplified policy and utilities.
 
 %build
 make clean
-%__make DISTRO=%{distro} PYTHON_VER=%{python_ver}
+%__make DISTRO=%{distro} PYTHON_VER=%{python_ver} CUSTOMIZABLE_TYPES=%{customizable_types}
 
 %install
 rm -rf $RPM_BUILD_ROOT
-%makeinstall DISTRO=%{distro} PYTHON_VER=%{python_ver}
+%makeinstall DISTRO=%{distro} PYTHON_VER=%{python_ver} CUSTOMIZABLE_TYPES=%{customizable_types}
 
 %clean
 rm -rf $RPM_BUILD_ROOT 

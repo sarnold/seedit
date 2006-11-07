@@ -5,6 +5,8 @@ DISTRO=COS4
 PYTHON_VER=2.3
 AUDITCONF=\\/etc\\/audit.rules
 MODULAR=n
-#
+CUSTOMIZABLE_TYPES=n
+
+
 
 

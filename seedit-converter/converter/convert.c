@@ -267,7 +267,7 @@ static void out_node_type(FILE *outfp){
   num = table->element_num;
   for(i=0;i<num;i++){
     type = node_array[i]->data;
-    fprintf(outfp, "type %s node_type;\n", type);
+    fprintf(outfp, "type %s, node_type;\n", type);
   }  
   fprintf(outfp,"###End of node type declare\n");
 
@@ -695,7 +695,7 @@ void out_nodecon(FILE *outfp){
     *p ='\0';
     addr = s;
     netmask = p+1;
-    fprintf(outfp, "nodecon %s %s gen_context(system_u:object_r:%s,s0);\n",addr,netmask, type);
+    fprintf(outfp, "nodecon %s %s gen_context(system_u:object_r:%s,s0)\n",addr,netmask, type);
     free(s);
   }  
 

@@ -146,7 +146,11 @@ class seeditGeneratePolicyWindow(seeditCommon):
 				allow = l[1]
 
 				tmp = l[2] ##To eleminate same log
+							
 				tmp = re.sub("^type=AVC.*avc:","",tmp)
+				tmp = re.sub("\[","\\[",tmp)
+				tmp = re.sub("]","\\]",tmp)
+							
 				if re.search(tmp, log):
 					m = re.search("^type=AVC msg=audit\(.+\):",l[2])
 					if m:

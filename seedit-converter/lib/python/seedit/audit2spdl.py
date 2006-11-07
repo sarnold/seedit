@@ -1389,16 +1389,22 @@ def restoreconStr(spRule,allowFileStr):
     if type == logType:
         return ""
 
+    if os.path.realpath(path)!=path:
+        return ""
+
     #check hardlink
     if not os.path.isdir(path):
         if os.path.exists(path):
+            if os.path.islink(path):
+                return ""
+
             s = os.stat(path)
             if s.st_nlink > 1:
                 result = _("%s is hardlinked.\n #Nothing generated for safety.\n") % (path)
                 result = result +"#"+allowFileStr
-                
                 return result
 
+   
                 
     result = "restorecon -R "+path
     return result
@@ -1487,11 +1493,14 @@ def allownetStr(spRule):
     if suboption=="client":
         port = dest
         if string.atoi(dest) > 1023:
-            port = "1024-"
+            if spRule["type"] in ("unpriv_tcp_port_t", "unpriv_udp_port_t"):
+                port = "1024-"
+
     if suboption =="server":
         port =src
         if string.atoi(port) > 10000:
-            port = "1024-"
+            if spRule["type"] in ("unpriv_tcp_port_t", "unpriv_udp_port_t"):
+                port = "1024-"
 
     if spRule["option"] == "tcp":
         if suboption in ("server","client"):         

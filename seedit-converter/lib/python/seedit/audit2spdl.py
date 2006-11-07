@@ -323,7 +323,10 @@ def guessPathByPATHEntry(lines,index):
 
             if(string.find(l,"type=PATH")>=0 or string.find(l,"type=AVC_PATH")>=0):
 
-
+                m=re.compile("name=\(null\)").search(l)
+                if m:
+                    continue
+                    
                 m=re.compile("name=\S+").search(l)
                 if (m==None):
                     m = re.compile("path=\S+").search(l)
@@ -334,7 +337,7 @@ def guessPathByPATHEntry(lines,index):
                     if path.find("\"") == -1: #It is but of audit
                         path = ""
                     path = string.replace(path,"\"","")
-
+                    
                     if path[0]==".":
                         continue
 

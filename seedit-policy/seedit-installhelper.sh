@@ -27,6 +27,7 @@ install_seedit() {
 	
 	if [ $MODULAR = "y" ]; then
 		/usr/sbin/semodule -b /usr/share/seedit/sepolicy/base.pp -s seedit -n
+		cp /usr/share/seedit/sepolicy/file_contexts /etc/selinux/seedit/contexts/files
 	fi
 
 	# Create bootstrap.sh # Code related to bootstrap is from Yoichi Hirose <yhirose@users.sourceforge.jp>

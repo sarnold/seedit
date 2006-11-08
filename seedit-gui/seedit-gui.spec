@@ -27,11 +27,13 @@ make
 %install
 rm -rf $RPM_BUILD_ROOT
 make install DESTDIR="%{buildroot}" PYTHON_VER=%{python_ver}
+%find_lang %{name}
+
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%files
+%files -f %{name}.lang
 %defattr(-,root,root,-)
 %{_bindir}/seedit-gui
 %{_sbindir}/seedit-gui
@@ -44,7 +46,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/python%{python_ver}/site-packages
 /usr/share/icons/seedit/*
 /usr/share/applications/seedit-gui.desktop
-/usr/share/locale/*
 %config(noreplace) /etc/security/console.apps/seedit-gui
 /usr/share/pixmaps/seedit-gui.png
 %doc README

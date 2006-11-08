@@ -240,6 +240,7 @@ def guessPathByLocate(line):
     ino = getInode(line)
     name = getName(line)
     comm = "locate "+name
+    print "##Guessing fullpath by locate:%s" % (line)
 
     result=os.popen(comm)
     locates = result.readlines()
@@ -316,7 +317,7 @@ def getPATHEntry(logs,inode):
                     print "Warning name=(null) in PATH:%s" % (l)
             
             m=re.compile("name=\S+").search(l)
-            if (m==None):
+            if not m:
                 m = re.compile("path=\S+").search(l)
 
             if m:
@@ -326,6 +327,10 @@ def getPATHEntry(logs,inode):
                 if numPATH==1 or inode==-1:
                     return path
 
+
+                if string.find(l,"type=AVC_PATH") >=0:
+                    return path
+                
                 ##Multiple PATH Entry
                 inodeInPATH=getInode(l)
                 if inodeInPATH == inode:
@@ -383,15 +388,16 @@ def guessPathByPATHEntry(lines,index):
         return ""
 
     path = getPATHEntry(logs,inode)
+
     if path=="":
         return ""
 
     if path[0]=="/":
         realpath = getPathWithChroot(path, inode,pid,ppid)
         if realpath =="":
-            print "Warning: inode number does not match %s" % (logs)
-            print "All candidate paths"
-            print getCandidatePathWithChroot(path,inode,pid,ppid)
+            #print "Warning: inode number does not match %s" % (logs)
+            #print "All candidate paths"
+            #print getCandidatePathWithChroot(path,inode,pid,ppid)
             return path
         else:
             return realpath
@@ -408,9 +414,9 @@ def guessPathByPATHEntry(lines,index):
         if realpath=="//":
             return ""
         if realpath=="":
-            print "Warning: inode number does not match %s" % (logs)
-            print "All candidate paths"
-            print getCandidatePathWithChroot(path,inode,pid,ppid)
+            #print "Warning: inode number does not match %s" % (logs)
+            #print "All candidate paths"
+            #print getCandidatePathWithChroot(path,inode,pid,ppid)
             return path
         return realpath
 
@@ -646,31 +652,32 @@ def genFileAllow(rule,lines,index,domdoc):
     line = lines[index]
 
     path = guessFilePath(rule,lines,index)
+  
     #for lnk_file class, need special treatment to obtain real fullpath
     if rule["secclass"]=="lnk_file":
         if not os.path.islink(path):
-            path = findNameInPath(path,rule["name"])     
+            p2 = findNameInPath(path,rule["name"])
+            if p2:
+                path=p2
         elif os.path.islink(path):
             if "create" in rule["permission"]:
                 ##if creating link, now we have real full path
-                print "####"
-                print path
-                print "????"
                 pass
             else:
                 p = os.readlink(path)
                 if rule["name"] == os.path.basename(p):
                     path = p
                 else:
-                    pass
-    else:
-      
-        if os.path.exists(path):
+                    path = guessPathByLocate(line)
+                    updateInoPath(path,line)
+
+    else:       
+        if path[0]=="/":
             path = os.path.realpath(path)
-
-   
-
-
+  
+            
+  
+    
     permList = findFilePermission(domdoc,rule,"allowfile")
     if not permList:
         permList = findFilePermission(domdoc,rule,"allowdev")
@@ -686,6 +693,7 @@ def genFileAllow(rule,lines,index,domdoc):
     spRule["name"]=rule["name"]
     spRule["secclass"]=rule["secclass"]
 
+         
     ##make grab
     if rule["secclass"] == "dir":
         pass    

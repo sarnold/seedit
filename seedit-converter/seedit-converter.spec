@@ -2,18 +2,22 @@
 %define buildnum 1
 %define python_ver 2.3
 %define customizable_types n
-Summary: Compliler for simplified policy
+Summary: SELinux Policy Editor:SPDL compiler
 Name: seedit-converter
 Version: 2.1.0.b4
 Release: %{buildnum}.%{distro}
 License: GPL
 Group: System Environment/Base
-URL: http://sedit.sourceforge.net/
+URL: http://seedit.sourceforge.net/
 Source0: %{name}-%{version}-%{buildnum}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
 %description
-SPDL compiler and utilities
+This is component of SELinux Policy Editor(seedit).
+seedit is a tool to make SELinux easy.
+SPDL compiler and utilities are packed.
+SPDL is a easy configuration language for SELinux,
+SPDL is converted by SPDL compiler.
 
 %prep
 %setup -q

@@ -1,7 +1,7 @@
 %define python_ver 2.3
 %define distro COS4
 %define buildnum 1
-Summary: GUI for SELinux  Policy Editor
+Summary: GUI for SELinux Policy Editor
 Name: seedit-gui
 Version: 2.1.0.b4
 Release:  %{buildnum}.%{distro}
@@ -12,7 +12,6 @@ Source0: %{name}-%{version}-%{buildnum}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 BuildArch: noarch
 Requires: seedit-converter >= 2.1.0, seedit-policy >= 2.1.0,audit,pygtk2
-
 
 %description
 X Window based GUI for SELinux Policy Editor

@@ -4,7 +4,7 @@
 %define distro FC6
 %define modular y
 %define buildnum 1
-Summary: Simplified Policy for SELinux
+Summary: SELinux Policy Editor: Simplified Policy
 Name: seedit-policy
 Version: 2.1.0.b4
 Release: %{buildnum}.%{distro}
@@ -18,10 +18,14 @@ Requires: seedit-converter >= 2.1.0, checkpolicy,m4,audit
 BuildRequires: seedit-converter >= 2.1.0,checkpolicy,m4
 
 %description
-Simplified policy for SELinux is packed.
+Component of SELinux Policy Editor(seedit).
+seedit makes SELinux easy. 
+This package is about
+Simplified policy for SELinux.
 Simplified policy is written by SPDL.
 SPDL provides simplified syntax to describe SELinux policy,
-it is converted into usual SELinux policy by commands included in seedit-converter.
+it is converted into usual SELinux policy by commands 
+included in seedit-converter.
 
 %prep
 %setup -q -n seedit-policy-%{version}

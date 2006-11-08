@@ -30,7 +30,7 @@ Simplified policy is converted into usual SELinux policy by seedit-converter.
 rm -rf $RPM_BUILD_ROOT
 DISTRO=%{distro} 
 MODULAR=%{modular}
-%makeinstall CONVERTER=/usr/bin/seedit-converter DISTRO=$DISTRO  DEVELFLAG=0 SELINUXTYPE=seedit MODULAR=$MODULAR
+make install DESTDIR="%{buildroot}" CONVERTER=/usr/bin/seedit-converter DISTRO=$DISTRO  DEVELFLAG=0 SELINUXTYPE=seedit MODULAR=$MODULAR
 
 %pre
 if [ -e /etc/selinux/seedit/contexts/files/file_contexts.all.old ] ; then

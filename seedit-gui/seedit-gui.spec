@@ -22,11 +22,11 @@ X Window based GUI for SELinux Policy Editor
 
 %build
 make clean
-%__make 
+make
 
 %install
 rm -rf $RPM_BUILD_ROOT
-%makeinstall PYTHON_VER=%{python_ver}
+make install DESTDIR="%{buildroot}" PYTHON_VER=%{python_ver}
 
 %clean
 rm -rf $RPM_BUILD_ROOT

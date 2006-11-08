@@ -1,32 +1,30 @@
+prefix=$(DESTDIR)/usr
+sysconfdir=$(DESTDIR)/etc
 DISTRO=COS4
 PYTHON_VER=2.3
 
 all:
 	$(MAKE) -C lib
 	$(MAKE) -C converter
-#	$(MAKE) -C xml
 	$(MAKE) -C utils
 	$(MAKE) -C restorecon
 	$(MAKE) -C config
 
 install: all
-	$(MAKE) -C lib install
-	$(MAKE) -C converter install
-#	$(MAKE) -C xml install
-	$(MAKE) -C utils install 
-	$(MAKE) -C restorecon install
-	$(MAKE) -C config install
+	$(MAKE) -C lib install prefix=$(prefix) sysconfdir=$(sysconfdir)
+	$(MAKE) -C converter install  prefix=$(prefix) sysconfdir=$(sysconfdir)
+	$(MAKE) -C utils install   prefix=$(prefix) sysconfdir=$(sysconfdir)
+	$(MAKE) -C restorecon install  prefix=$(prefix) sysconfdir=$(sysconfdir)
+	$(MAKE) -C config install  prefix=$(prefix) sysconfdir=$(sysconfdir)
 
 uninstall:
-	$(MAKE) -C lib uninstall
-	$(MAKE) -C converter uninstall
-#	$(MAKE) -C xml uninstall
-	$(MAKE) -C utils uninstall 
+	$(MAKE) -C lib uninstall  prefix=$(prefix) sysconfdir=$(sysconfdir)
+	$(MAKE) -C converter uninstall  prefix=$(prefix) sysconfdir=$(sysconfdir)
+	$(MAKE) -C utils uninstall   prefix=$(prefix) sysconfdir=$(sysconfdir)
 
 clean:
 	$(MAKE) -C lib clean
 	$(MAKE) -C converter clean
-#	$(MAKE) -C xml clean
 	$(MAKE) -C utils clean
 	$(MAKE) -C restorecon clean
 

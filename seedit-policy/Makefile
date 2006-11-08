@@ -4,8 +4,8 @@
 #! Copyright (C) 2006 Yuichi Nakamura
 
 SELINUXTYPE=seedit
-sysconfdir = /etc
-prefix = /usr
+sysconfdir = $(DESTDIR)/etc
+prefix = $(DESTDIR)/usr
 DISTRO = COS4
 MODULAR=n
 CONVERTER=/usr/local/bin/seedit-converter
@@ -50,7 +50,6 @@ policy:
 	if [ -e $(DYNAMIC_CONTEXTS) ] ; then cat $(DYNAMIC_CONTEXTS) >> policy/sepolicy/file_contexts; fi
 	if [ $(MODULAR) = "y" ]; then \
 		$(SEMODULE_PACKAGE) -s $(BASEPOLICYDIR)/seusers -m policy/sepolicy/base.mod -f policy/sepolicy/file_contexts -o policy/sepolicy/base.pp;\
-		
 	fi
 
 install: policy dir
@@ -72,7 +71,7 @@ install: policy dir
 	if [ -e $(POLICYROOT)/contexts/files/file_contexts ]; then \
 		cp $(POLICYROOT)/contexts/files/file_contexts $(POLICYROOT)/contexts/files/file_contexts.old;\
 	fi
-	cd policy;make install 
+	cd policy;make install DESTDIR=$(DESTDIR)
 	if [ -e $(DYNAMIC_CONTEXTS) ] ; then cat $(DYNAMIC_CONTEXTS) >> policy/sepolicy/file_contexts; fi
 	cp policy/sepolicy/file_contexts  $(POLICYROOT)/contexts/files/file_contexts
 

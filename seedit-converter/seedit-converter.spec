@@ -20,11 +20,11 @@ Compiler for simplified policy and utilities.
 
 %build
 make clean
-%__make DISTRO=%{distro} PYTHON_VER=%{python_ver} CUSTOMIZABLE_TYPES=%{customizable_types}
+make DISTRO=%{distro} PYTHON_VER=%{python_ver} CUSTOMIZABLE_TYPES=%{customizable_types}
 
 %install
 rm -rf $RPM_BUILD_ROOT
-%makeinstall DISTRO=%{distro} PYTHON_VER=%{python_ver} CUSTOMIZABLE_TYPES=%{customizable_types}
+make install  DESTDIR="%{buildroot}" DISTRO=%{distro} PYTHON_VER=%{python_ver} CUSTOMIZABLE_TYPES=%{customizable_types}
 
 %clean
 rm -rf $RPM_BUILD_ROOT 

@@ -2,7 +2,7 @@
 
 #! SELinux Policy Editor, a simple editor for SELinux policies
 #! Copyright (C) 2006 Yuichi Nakamura
-sysconfdir =/etc
+sysconfdir =$(DESTDIR)/etc
 CONVERTER=/usr/bin/seedit-converter
 CHECKMODULE=/usr/bin/checkmodule
 SEMODULE_PACKAGE=/usr/bin/semodule_package

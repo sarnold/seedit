@@ -276,14 +276,95 @@ def getPathWithChroot(name, inode,pid, ppid):
     
     return ""
 
+# return all candidate path with chroot
+def getCandidatePathWithChroot(name, inode,pid, ppid):
+    candidatePath=[]
+    candidatePath.append(os.path.normpath(name))
+    
+    if gChrootStatus.has_key(pid) : #may chroot
+        cpath = gChrootStatus[pid]+"/"+name
+        candidatePath.append(os.path.normpath(cpath))
+
+    if gChrootStatus.has_key(ppid):
+        cpath = gChrootStatus[ppid]+"/"+name
+        candidatePath.append(os.path.normpath(cpath))
+
+    return candidatePath
+
+##Number of PATH Entry
+def countPATHEntry(logs):
+    i = 0
+    for l in logs:        
+        if(string.find(l,"type=PATH")>=0 or string.find(l,"type=AVC_PATH")>=0):
+            i = i+1
+    return i
+             
+##Guess full path from PATH Entry
+def getPATHEntry(logs,inode):
+    numPATH=countPATHEntry(logs)
+    if numPATH==0:
+        return ""
+        
+    for l in logs:        
+        if(string.find(l,"type=PATH")>=0 or string.find(l,"type=AVC_PATH")>=0):
+            m=re.compile("name=\(null\)").search(l)
+            if m:
+                if numPATH>1:
+                    #Search another PATH
+                    continue
+                else:
+                    print "Warning name=(null) in PATH:%s" % (l)
+            
+            m=re.compile("name=\S+").search(l)
+            if (m==None):
+                m = re.compile("path=\S+").search(l)
+
+            if m:
+                path = string.split(m.group(),"=").pop()
+                #remove "
+                path = string.replace(path,"\"","")
+                if numPATH==1 or inode==-1:
+                    return path
+
+                ##Multiple PATH Entry
+                inodeInPATH=getInode(l)
+                if inodeInPATH == inode:
+                    return path
+
+                ##else find other PATH entry
+    return ""
+                
+def getCWDEntry(logs):
+    for l in logs:
+        
+        if(string.find(l,"type=CWD")>=0):
+            m=re.compile("cwd=\S+").search(l)
+            if m:
+                cwd = string.split(m.group(),"=").pop()
+                #remove "
+                cwd = string.replace(cwd,"\"","")
+                return cwd
+    return ""
+
+def jointCWDPATH(cwd,path):
+
+    path = cwd+"/"+path
+    path = os.path.normpath(path)
+    realpath = getPathWithChroot(path, inode, pid,ppid)
+    if realpath=="//":
+        return ""
+    if realpath=="":
+        return path
+    return realpath
+    
+    
 
 def guessPathByPATHEntry(lines,index):
 
     """
     First, guess full path by PATH entry
     And return guessed path
-    If not exist file is returned, notexist_|filename| is returned
-    Can not be guessed, "" is returned
+    When can not be guessed, "" is returned
     """
 
     line = lines[index]
@@ -297,64 +378,41 @@ def guessPathByPATHEntry(lines,index):
 
         path =""
         cwd=""
-
-        for l in logs:
-
-            if(string.find(l,"type=CWD")>=0):
-                m=re.compile("cwd=\S+").search(l)
-                if m:
-                    cwd = string.split(m.group(),"=").pop()
-                    cwd = string.replace(cwd,"\"","")
-                if path!="":
-                    if path[0]!="/":
-                        candidatePath=[]
-                        path = cwd+"/"+path
-                        path = os.path.normpath(path)
-                        realpath = getPathWithChroot(path, inode, pid,ppid)
-                        if realpath=="//":
-                            return ""
-                        if realpath=="":
-                            return path
-                        return realpath
-                    else:
-                        return path
-                else:
-                    return ""
-
-            if(string.find(l,"type=PATH")>=0 or string.find(l,"type=AVC_PATH")>=0):
-
-                m=re.compile("name=\(null\)").search(l)
-                if m:
-                    continue
-                    
-                m=re.compile("name=\S+").search(l)
-                if (m==None):
-                    m = re.compile("path=\S+").search(l)
-
-                if m:
-                    path = string.split(m.group(),"=").pop()
-
-                    if path.find("\"") == -1: #It is but of audit
-                        path = ""
-                    path = string.replace(path,"\"","")
-                    
-                    if path[0]==".":
-                        continue
-
-                    realpath = getPathWithChroot(path, inode,pid,ppid)
-                    if realpath =="":
-                        continue
-                    else:
-                        return realpath
-
-            if path==".":
-                path=""
-
-            return path   
-           
     else:
-        #audit event id is not available..
+        print "Warning no auid in line:%s" % (line)
         return ""
+
+    path = getPATHEntry(logs,inode)
+    if path=="":
+        return ""
+
+    if path[0]=="/":
+        realpath = getPathWithChroot(path, inode,pid,ppid)
+        if realpath =="":
+            print "Warning: inode number does not match %s" % (logs)
+            print "All candidate paths"
+            print getCandidatePathWithChroot(path,inode,pid,ppid)
+            return path
+        else:
+            return realpath
+    else:
+        #need to joint CWD
+        cwd = getCWDEntry(logs)
+        if cwd=="":
+            print "Warning: no CWD %s"
+            print logs
+            return ""
+        path = cwd+"/"+path
+        path = os.path.normpath(path)
+        realpath = getPathWithChroot(path, inode, pid,ppid)
+        if realpath=="//":
+            return ""
+        if realpath=="":
+            print "Warning: inode number does not match %s" % (logs)
+            print "All candidate paths"
+            print getCandidatePathWithChroot(path,inode,pid,ppid)
+            return path
+        return realpath
 
     return ""
 
@@ -550,7 +608,29 @@ def genAllowfs(rule,domdoc):
         return spRuleList
     else:
         return None
-    
+
+"""
+Example:
+path:/usr/share/foo/bar 
+name:foo
+returns /usr/share/foo
+
+Example:
+path:/usr/foo/share/foo/bar 
+name:foo
+returns /usr/foo/share/foo
+
+Error: returns None
+"""
+def findNameInPath(path,name):
+   
+    (head,tail)=os.path.split(path)
+    while head!="/":
+        if os.path.basename(head)==name:
+            return  head
+        (head,tail)=os.path.split(head)
+
+    return None
 
 def genFileAllow(rule,lines,index,domdoc):
     """
@@ -566,18 +646,31 @@ def genFileAllow(rule,lines,index,domdoc):
     line = lines[index]
 
     path = guessFilePath(rule,lines,index)
+    #for lnk_file class, need special treatment to obtain real fullpath
     if rule["secclass"]=="lnk_file":
-        pass
-        #if os.path.exists(path) and os.path.islink(path):
-           # p = os.path.readlink(path)
-            #if rule["name"] == os.path.basename(path):
-            #    path = p
-            #else:
-            #    pass
+        if not os.path.islink(path):
+            path = findNameInPath(path,rule["name"])     
+        elif os.path.islink(path):
+            if "create" in rule["permission"]:
+                ##if creating link, now we have real full path
+                print "####"
+                print path
+                print "????"
+                pass
+            else:
+                p = os.readlink(path)
+                if rule["name"] == os.path.basename(p):
+                    path = p
+                else:
+                    pass
     else:
+      
         if os.path.exists(path):
             path = os.path.realpath(path)
-        
+
+   
+
+
     permList = findFilePermission(domdoc,rule,"allowfile")
     if not permList:
         permList = findFilePermission(domdoc,rule,"allowdev")

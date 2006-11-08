@@ -65,22 +65,18 @@ install: policy dir
 		cp policy/sepolicy/policy.*  $(prefix)/share/seedit/sepolicy;\
 	fi
 
-	cp policy/sepolicy/unconfined_domains  $(prefix)/share/seedit/sepolicy
-	cp policy/sepolicy/confined_domains  $(prefix)/share/seedit/sepolicy
+	cp policy/sepolicy/*			$(prefix)/share/seedit/sepolicy
 
-	if [ -e $(POLICYROOT)/contexts/files/file_contexts ]; then \
-		cp $(POLICYROOT)/contexts/files/file_contexts $(POLICYROOT)/contexts/files/file_contexts.old;\
-	fi
 	cd policy;make install DESTDIR=$(DESTDIR)
 	if [ -e $(DYNAMIC_CONTEXTS) ] ; then cat $(DYNAMIC_CONTEXTS) >> policy/sepolicy/file_contexts; fi
 	cp policy/sepolicy/file_contexts  $(POLICYROOT)/contexts/files/file_contexts
 
-	if [ ! -e $(POLICYROOT)/contexts/files/file_contexts.old ]; then \
-		cp $(POLICYROOT)/contexts/files/file_contexts $(POLICYROOT)/contexts/files/file_contexts.old;\
+	if [ ! -e $(DESTDIR)/usr/share/seedit/sepolicy/file_contexts.m4.old ]; then \
+		cp $(DESTDIR)/usr/share/seedit/sepolicy/file_contexts.m4 $(DESTDIR)/usr/share/seedit/sepolicy/file_contexts.m4.old;\
 	fi
 	rm $(SEEDITCONFROOT)/policy/all.sp
-	touch $(POLICYROOT)/users/system.users
-	touch $(POLICYROOT)/users/local.users
+	echo "#" >  $(POLICYROOT)/users/system.users
+	echo "#" >  $(POLICYROOT)/users/local.users
 
 
 postconfig: install

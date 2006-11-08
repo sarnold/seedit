@@ -39,9 +39,7 @@ MODULAR=%{modular}
 make install DESTDIR="%{buildroot}" CONVERTER=/usr/bin/seedit-converter DISTRO=$DISTRO  DEVELFLAG=0 SELINUXTYPE=seedit MODULAR=$MODULAR
 
 %pre
-if [ -e /etc/selinux/seedit/contexts/files/file_contexts.all.old ] ; then
-	cp /etc/selinux/seedit/contexts/files/file_contexts.all.old /etc/selinux/seedit/contexts/files/file_contexts.all.old2
-fi
+
 
 %post
 export SELINUXCONF=%{selinuxconf}
@@ -65,7 +63,7 @@ if [ $1 = 0 ]; then
 	%{installhelper} uninstall
 
 else
-	mv /etc/selinux/seedit/contexts/files/file_contexts.all.old2 /etc/selinux/seedit/contexts/files/file_contexts.all.old
+
 	if [ -e /etc/seedit/policy/rbac_flag ]; then
 		/usr/sbin/seedit-rbac on -n
 		rm /etc/seedit/policy/rbac_flag
@@ -80,7 +78,9 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root,-)
-/etc/selinux/seedit
+%config /etc/selinux/seedit
+%config(noreplace) /etc/selinux/seedit/contexts/files/file_contexts
+%config(noreplace) /etc/selinux/seedit/contexts/files/file_contexts.m4
 %config /etc/seedit/policy
 /usr/share/seedit/sepolicy
 /usr/share/seedit/scripts

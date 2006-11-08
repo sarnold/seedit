@@ -668,9 +668,15 @@ def genFileAllow(rule,lines,index,domdoc):
                 if rule["name"] == os.path.basename(p):
                     path = p
                 else:
-                    path = guessPathByLocate(line)
-                    updateInoPath(path,line)
-
+                    if rule["type"]=="bin_sh_t":
+                        #for /bin/sh, sometimes fails to guess
+                        if rule["name"]=="sh":
+                            path ="/bin/sh"
+                        else:
+                            path = guessPathByLocate(line)
+                        updateInoPath(path,line)
+                    pass
+                   
     else:       
         if path[0]=="/":
             path = os.path.realpath(path)

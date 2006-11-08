@@ -19,7 +19,9 @@ BuildRequires: seedit-converter >= 2.1.0,checkpolicy,m4
 
 %description
 Simplified policy for SELinux is packed.
-Simplified policy is converted into usual SELinux policy by seedit-converter.
+Simplified policy is written by SPDL.
+SPDL provides simplified syntax to describe SELinux policy,
+it is converted into usual SELinux policy by commands included in seedit-converter.
 
 %prep
 %setup -q -n seedit-policy-%{version}

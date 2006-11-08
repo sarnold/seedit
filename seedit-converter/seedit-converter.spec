@@ -13,7 +13,7 @@ Source0: %{name}-%{version}-%{buildnum}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
 %description
-Compiler for simplified policy and utilities.
+SPDL compiler and utilities
 
 %prep
 %setup -q

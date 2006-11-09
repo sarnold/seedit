@@ -8,7 +8,7 @@ sysconfdir = $(DESTDIR)/etc
 prefix = $(DESTDIR)/usr
 DISTRO = COS4
 MODULAR=n
-CONVERTER=/usr/local/bin/seedit-converter
+CONVERTER=/usr/bin/seedit-converter
 LOADPOLICY=/usr/sbin/load_policy
 SEMODULE_PACKAGE=/usr/bin/semodule_package
 CHECKPOLICY=/usr/bin/checkpolicy
@@ -44,13 +44,12 @@ policy:
 	cp -r /usr/share/seedit/macros policy/
 	cp /usr/share/seedit/Makefile policy/Makefile;\
 
-
-
 	cd policy ;make 
 	if [ -e $(DYNAMIC_CONTEXTS) ] ; then cat $(DYNAMIC_CONTEXTS) >> policy/sepolicy/file_contexts; fi
 	if [ $(MODULAR) = "y" ]; then \
 		$(SEMODULE_PACKAGE) -s $(BASEPOLICYDIR)/seusers -m policy/sepolicy/base.mod -f policy/sepolicy/file_contexts -o policy/sepolicy/base.pp;\
 	fi
+	if [ -e $(DYNAMIC_CONTEXTS) ] ; then cat $(DYNAMIC_CONTEXTS) >> policy/sepolicy/file_contexts; fi
 
 install: policy dir
 	mkdir -p $(prefix)/share/seedit/scripts
@@ -58,18 +57,17 @@ install: policy dir
 	cp -r policy/simplified_policy/*  $(SEEDITCONFROOT)/policy
 	cp src/setrans.conf	$(POLICYROOT)
 	mkdir -p $(prefix)/share/seedit/sepolicy
-	if [ $(MODULAR) = "y" ];then \
-		cp policy/sepolicy/base.pp  $(prefix)/share/seedit/sepolicy;\
-	fi
+
+	cp policy/sepolicy/*	$(prefix)/share/seedit/sepolicy
 	if [ $(MODULAR) = "n" ];then \
-		cp policy/sepolicy/policy.*  $(prefix)/share/seedit/sepolicy;\
+		cp policy/sepolicy/policy.$(POLICYVER) $(POLICYROOT)/policy;\
 	fi
-
-	cp policy/sepolicy/*			$(prefix)/share/seedit/sepolicy
-
-	cd policy;make install DESTDIR=$(DESTDIR)
-	if [ -e $(DYNAMIC_CONTEXTS) ] ; then cat $(DYNAMIC_CONTEXTS) >> policy/sepolicy/file_contexts; fi
-	cp policy/sepolicy/file_contexts  $(POLICYROOT)/contexts/files/file_contexts
+	cp policy/sepolicy/file_contexts $(POLICYROOT)/contexts/files/
+	cp policy/sepolicy/file_contexts.m4 $(POLICYROOT)/contexts/files/
+	cp policy/sepolicy/customizable_types $(POLICYROOT)/contexts/files/
+	cp policy/sepolicy/userhelper_context $(POLICYROOT)/contexts/files/
+	cp -r policy/base_policy/contexts/*  $(POLICYROOT)/contexts/files/
+	echo "" >  $(POLICYROOT)/contexts/files/file_contexts.homedirs
 
 	if [ ! -e $(DESTDIR)/usr/share/seedit/sepolicy/file_contexts.m4.old ]; then \
 		cp $(DESTDIR)/usr/share/seedit/sepolicy/file_contexts.m4 $(DESTDIR)/usr/share/seedit/sepolicy/file_contexts.m4.old;\
@@ -77,14 +75,6 @@ install: policy dir
 	rm $(SEEDITCONFROOT)/policy/all.sp
 	echo "#" >  $(POLICYROOT)/users/system.users
 	echo "#" >  $(POLICYROOT)/users/local.users
-
-
-postconfig: install
-	cat $(SELINUXCONF) |sed -e 's/^SELINUX=.*$$/SELINUX=permissive/'|sed -e 's/^SELINUXTYPE=.*$$/SELINUXTYPE=$(SELINUXTYPE)/' >$(SELINUXCONF).tmp
-	mv $(SELINUXCONF) $(SELINUXCONF).orig
-	mv $(SELINUXCONF).tmp $(SELINUXCONF)
-	touch /.autorelabel
-	$(RESTORECON) $(SELINUXCONF)
 
 
 clean:

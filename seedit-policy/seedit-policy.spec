@@ -38,9 +38,6 @@ DISTRO=%{distro}
 MODULAR=%{modular}
 make install DESTDIR="%{buildroot}" CONVERTER=/usr/bin/seedit-converter DISTRO=$DISTRO  DEVELFLAG=0 SELINUXTYPE=seedit MODULAR=$MODULAR
 
-%pre
-
-
 %post
 export SELINUXCONF=%{selinuxconf}
 export AUDITRULES=%{auditrules}
@@ -78,10 +75,9 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root,-)
-%config /etc/selinux/seedit
-%config(noreplace) /etc/selinux/seedit/contexts/files/file_contexts
-%config(noreplace) /etc/selinux/seedit/contexts/files/file_contexts.m4
+%config(noreplace) /etc/selinux/seedit
 %config /etc/seedit/policy
+
 /usr/share/seedit/sepolicy
 /usr/share/seedit/scripts
 %doc README

@@ -28,7 +28,8 @@ install:
 	ln -sf   consolehelper  $(prefix)/bin/seedit-gui
 	mkdir -p $(sysconfdir)/security/console.apps
 	install -m 644 console.apps/seedit-gui $(sysconfdir)/security/console.apps
-
+	mkdir -p $(sysconfdir)/pam.d
+	install -m 644 pam.d/seedit-gui.$(DISTRO)   $(sysconfdir)/pam.d/seedit-gui
 clean:
 
 

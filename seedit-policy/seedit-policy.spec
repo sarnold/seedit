@@ -42,7 +42,7 @@ MODULAR=%{modular}
 make install DESTDIR="%{buildroot}" CONVERTER=/usr/bin/seedit-converter DISTRO=$DISTRO  DEVELFLAG=0 SELINUXTYPE=seedit MODULAR=$MODULAR
 
 %pre
-if [ $2 = 2 ]; then
+if [ $1 = 2 ]; then
 	# If rbac is enabled in upgrade, should be disabled temporally
 	# After uninstall of previous package, enabled. 
 	if [ -e /etc/seedit/policy/sysadm_r.sp ]; then

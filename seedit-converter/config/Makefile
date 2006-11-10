@@ -56,6 +56,13 @@ conf: macro unsupport
 install:all	
 	mkdir -p $(BUILD_ROOT_DIR)/sepolicy
 	mkdir -p $(SEEDITCONFROOT)
+
+	if [ -e base_policy/contexts/dynamic_contexts.$(DISTRO) ];then\
+		cp base_policy/contexts/dynamic_contexts.$(DISTRO) base_policy/contexts/dynamic_contexts;\
+	else \
+		echo "#" > base_policy/contexts/dynamic_contexts;\
+	fi
+
 	cp -r base_policy $(SEEDITCONFROOT)
 	cp -r macros $(SEEDITCONFROOT)
 	mv $(SEEDITCONFROOT)/base_policy/spdl_spec.xml.expand  $(SEEDITCONFROOT)/base_policy/spdl_spec.xml
@@ -65,6 +72,8 @@ install:all
 	else \
 		install -m 644 makefiles/Makefile $(BUILD_ROOT_DIR);\
 	fi
+
+
 
 doc:./doc/permission_integrate.pdf
 

@@ -45,6 +45,9 @@ install: policy
 	cp $(OUTDIR)/userhelper_context $(CONTEXTSDIR)
 	cp -r $(BASEPOLICYDIR)/contexts/*  $(CONTEXTSDIR) 
 	echo "" > $(CONTEXTSDIR)/files/file_contexts.homedirs
+	echo "" >  $(POLICYROOT)/users/system.users
+	echo "" >  $(POLICYROOT)/users/local.users
+
 
 relabel: install
 	$(SEMODULE) -b $(POLICYDIR)/base.pp

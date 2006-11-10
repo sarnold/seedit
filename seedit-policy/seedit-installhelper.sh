@@ -7,13 +7,16 @@
 POLICYROOT=/etc/selinux/seedit
 SEPOLICYDIR=/usr/share/seedit/sepolicy
 
+
 initialize_seedit() {
 
         ### Make binary policy to fit user's environment
         # Make binary policy into /usr/share/seedit/sepolicy
 	/usr/sbin/seedit-load -tv -n
 	# This is needed to label files that need file type transition configuration
+	if [ -e 
 	cat /usr/share/seedit/sepolicy/base_policy/contexts/dynamic_contexts >> $(SEPOLICYDIR)/file_contexts
+
 	#Copy related file to /etc/selinux
 	if [ $(MODULAR) = "n" ];then \
 		cp $(SEPOLICYDIR)/policy.* $(POLICYROOT)/policy;\

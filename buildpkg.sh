@@ -11,12 +11,17 @@ if [ -z $name ]; then
     echo "Usage buildpkg <packagename> "
 fi
 
+rm -rf $name
+svn export $SVNROOT/$name $name
 mkdir -p archive
+rm archive/$name*
 
 cd $name
 cat $name.spec|sed -e "s/^%define distro.*\$/%define distro $DISTRO/"|sed -e "s/^%define auditrules.*\$/%define auditrules $AUDITCONF/"|sed -e "s/^%define modular.*\$/%define modular $MODULAR/"|sed -e "s/^%define python_ver.*\$/%define python_ver $PYTHON_VER/"|sed -e "s/^%define customizable_types.*\$/%define customizable_types $CUSTOMIZABLE_TYPES/">$name.spec.tmp
 mv $name.spec.tmp $name.spec
 cd ..
+
+
 
 if [ -e $name-$VERSION ]
 then 
@@ -25,35 +30,23 @@ fi
 
 cp -r $name $name-$VERSION
 
-if [ -e $name-$VERSION-$RELEASE.tar.gz ]
+if [ -e $name-$VERSION.tar.gz ]
 then
-	rm $name-$VERSION-$RELEASE.tar.gz
+	rm $name-$VERSION.tar.gz
 fi
-tar czvf $name-$VERSION-$RELEASE.tar.gz $name-$VERSION
-mv $name-$VERSION-$RELEASE.tar.gz archive
+tar czvf $name-$VERSION$BETA.tar.gz $name-$VERSION
+mv $name-$VERSION$BETA.tar.gz archive
 rm -rf $name-$VERSION
 
+if [ $name = "seedit-gui" ]
+then
+	cp seedit-gui/desktop/seedit-gui.desktop archive
+	cp seedit-gui/icons/seedit-gui.png archive
+fi
+
 cd archive
-rpmbuild -ta $name-$VERSION-$RELEASE.tar.gz
+rpmbuild -ta $name-$VERSION$BETA.tar.gz
 
-if [ -e ~/rpm/RPMS/i386/$name-$VERSION-$RELEASE.i386.rpm ]; then
-    mv ~/rpm/RPMS/i386/$name-$VERSION-$RELEASE.i386.rpm .
-fi
-if [ -e ~/rpm/RPMS/noarch/$name-$VERSION-$RELEASE.noarch.rpm ]; then
-    mv ~/rpm/RPMS/noarch/$name-$VERSION-$RELEASE.noarch.rpm .
-fi
-if [ -e ~/rpm/SRPMS/$name-$VERSION-$RELEASE.src.rpm ]; then
-    mv ~/rpm/SRPMS/$name-$VERSION-$RELEASE.src.rpm .
-fi
-
-if [ -e ~/rpm/RPMS/i386/$name-$VERSION-$RELEASE.$distro.i386.rpm ]; then
-    mv ~/rpm/RPMS/i386/$name-$VERSION-$RELEASE.$distro.i386.rpm .
-fi
-if [ -e ~/rpm/RPMS/noarch/$name-$VERSION-$RELEASE.$distro.noarch.rpm ]; then
-    mv ~/rpm/RPMS/noarch/$name-$VERSION-$RELEASE.$distro.noarch.rpm .
-fi
-if [ -e ~/rpm/SRPMS/$name-$VERSION-$RELEASE.$distro.src.rpm ]; then
-    mv ~/rpm/SRPMS/$name-$VERSION-$RELEASE.$distro.src.rpm .
-fi
-
-
+cp  ~/rpm/RPMS/i386/$name-$VERSION-*$DISTRO.i386.rpm .
+cp  ~/rpm/RPMS/noarch/$name-$VERSION-*$DISTRO.noarch.rpm .
+cp  ~/rpm/SRPMS/$name-$VERSION-*$DISTRO.src.rpm .

@@ -28,11 +28,6 @@ install:
 	ln -sf   consolehelper  $(prefix)/bin/seedit-gui
 	mkdir -p $(sysconfdir)/security/console.apps
 	install -m 644 console.apps/seedit-gui $(sysconfdir)/security/console.apps
-	mkdir -p $(prefix)/share/applications/
-	install -m 644 desktop/seedit-gui.desktop $(prefix)/share/applications
-	mkdir -p $(prefix)/share/pixmaps/
-	install -m 644 icons/seedit-gui.png $(prefix)/share/pixmaps
-
 
 clean:
 

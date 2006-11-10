@@ -1,15 +1,20 @@
-%define python_ver 2.3
 %define distro COS4
 %define buildnum 1
+%define betatag beta4
+
+%define python_ver 2.3
+
 Summary: GUI for SELinux Policy Editor
 Name: seedit-gui
-Version: 2.1.0.b4
-Release:  %{buildnum}.%{distro}
+Version: 2.1.0
+Release:  0.%{buildnum}.%{distro}
 License: GPL
 Group: System Environment/Base
 URL: http://sedit.sourceforge.net/
-Source0: %{name}-%{version}-%{buildnum}.tar.gz
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
+Source0: %{name}-%{version}-%{betatag}.tar.gz
+Source1: seedit-gui.desktop
+Source2: seedit-gui.png
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{betatag}-root-%(%{__id_u} -n)
 BuildArch: noarch
 Requires: seedit-converter >= 2.1.0, seedit-policy >= 2.1.0,audit,pygtk2
 
@@ -26,6 +31,13 @@ make
 %install
 rm -rf $RPM_BUILD_ROOT
 make install DESTDIR="%{buildroot}" PYTHON_VER=%{python_ver}
+
+install -d -m 755 ${RPM_BUILD_ROOT}%{_datadir}/applications
+install -m 664 %{SOURCE1} ${RPM_BUILD_ROOT}%{_datadir}/applications/seedit-gui.desktop
+mkdir -p $RPM_BUILD_ROOT/usr/share/pixmaps
+install -m 664 %{SOURCE2} ${RPM_BUILD_ROOT}/usr/share/pixmaps/seedit-gui.png
+
+
 %find_lang %{name}
 
 
@@ -42,8 +54,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_sbindir}/seedit-gui-generate-policy
 %{_sbindir}/seedit-gui-edit
 %{_sbindir}/seedit-gui-load
-%{_libdir}/python%{python_ver}/site-packages
-/usr/share/icons/seedit/*
+%{_libdir}/python%{python_ver}/site-packages/seedit/ui
+/usr/share/icons/seedit
 /usr/share/applications/seedit-gui.desktop
 %config(noreplace) /etc/security/console.apps/seedit-gui
 /usr/share/pixmaps/seedit-gui.png
@@ -52,6 +64,10 @@ rm -rf $RPM_BUILD_ROOT
 %doc COPYING
 
 %changelog
+* Fri Nov 10 2006 Yuichi Nakamura<ynakam@hitachisoft.jp> 2.1.0-0.1.beta4
+ Clean ups to submit FE.
+ Merged icons from Shane M. Coughlan.
+
 * Tue Sep 26 2006 Yuichi Nakamura 2.0.2
 Merged changes(about lanugage changes) from Shane M. Coughlan.
 

@@ -1,16 +1,18 @@
-%define distro COS4
 %define buildnum 1
+%define betatag beta4
+%define distro COS4
 %define python_ver 2.3
 %define customizable_types n
+
 Summary: SELinux Policy Editor:SPDL compiler
 Name: seedit-converter
-Version: 2.1.0.b4
-Release: %{buildnum}.%{distro}
+Version: 2.1.0
+Release: 0.%{buildnum}.%{betatag}.%{distro}
 License: GPL
 Group: System Environment/Base
 URL: http://seedit.sourceforge.net/
-Source0: %{name}-%{version}-%{buildnum}.tar.gz
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
+Source0: %{name}-%{version}-%{betatag}.tar.gz
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{betatag}-root-%(%{__id_u} -n)
 
 %description
 This is component of SELinux Policy Editor(seedit).
@@ -51,6 +53,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Nov 10 2006 Yuichi Nakamura<ynakam@hitachisoft.jp> 2.1.0-0.1.beta4
+Change of install path, clean ups to submit FE.
+
 * Tue Sep 19 2006 Yuichi Nakamura 2.0.1-1
 Fixed bug for RBAC(default_cotnexts)
 Converter will generate userhelper_contexts

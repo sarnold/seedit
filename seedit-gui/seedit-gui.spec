@@ -58,6 +58,7 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/icons/seedit
 /usr/share/applications/seedit-gui.desktop
 %config(noreplace) /etc/security/console.apps/seedit-gui
+%config(noreplace) /etc/pam.d/seedit-gui
 /usr/share/pixmaps/seedit-gui.png
 %doc README
 %doc Changelog

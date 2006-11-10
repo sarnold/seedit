@@ -45,7 +45,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/seedit-unconfined
 %{_bindir}/seedit-template
 %{_libdir}/python%{python_ver}/site-packages/seedit/*
-%config(noreplace) /etc/pam.d/seedit-gui
 /usr/share/seedit
 %doc README
 %doc Changelog

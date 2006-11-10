@@ -1,9 +1,9 @@
-%define distro FC6
+%define distro fc6
 %define betatag beta4
 %define buildnum 1
 
 %define selinuxconf /etc/selinux/config
-%define auditrules  /etc/audit/audit.rules
+%define auditrules /etc/audit/audit.rules
 %define installhelper /usr/share/seedit/scripts/seedit-installhelper.sh
 %define modular y
 
@@ -56,7 +56,7 @@ if [ $1 = 1 ]; then
 	export SELINUXCONF=%{selinuxconf}
 	export AUDITRULES=%{auditrules}
 	export MODULAR=%{modular}
-	#Convert to binary policy, setup /etc/selinux/config, automatic relabel, initialization at boot
+	#Initialize SELinux Policy Editor
 	%{installhelper} install
 
 fi

@@ -14,17 +14,19 @@ initialize_seedit() {
         # Make binary policy into /usr/share/seedit/sepolicy
 	/usr/sbin/seedit-load -tv -n
 	# This is needed to label files that need file type transition configuration
-	if [ -e 
-	cat /usr/share/seedit/sepolicy/base_policy/contexts/dynamic_contexts >> $(SEPOLICYDIR)/file_contexts
+	cat /usr/share/seedit/base_policy/contexts/dynamic_contexts >> $SEPOLICYDIR/file_contexts
 
 	#Copy related file to /etc/selinux
-	if [ $(MODULAR) = "n" ];then \
-		cp $(SEPOLICYDIR)/policy.* $(POLICYROOT)/policy;\
+	if [ $MODULAR = "n" ];then \
+		cp $SEPOLICYDIR/policy.* $POLICYROOT/policy;\
 	fi
-	cp $(SEPOLICYDIR)/file_contexts $(POLICYROOT)/contexts/files/
-	cp $(SEPOLICYDIR)/customizable_types $(POLICYROOT)/contexts/files/
-	cp $(SEPOLICYDIR)/userhelper_context $(POLICYROOT)/contexts/files/
-	echo "" >  $(POLICYROOT)/contexts/files/file_contexts.homedirs
+	cp $SEPOLICYDIR/file_contexts $POLICYROOT/contexts/files/
+	cp $SEPOLICYDIR/customizable_types $POLICYROOT/contexts/files/
+	cp $SEPOLICYDIR/userhelper_context $POLICYROOT/contexts/files/
+	echo "" >  $POLICYROOT/contexts/files/file_contexts.homedirs
+	echo "" >  $(POLICYROOT)/users/system.users
+	echo "" >  $(POLICYROOT)/users/local.users
+
 	if [ ! -e /usr/share/seedit/sepolicy/file_contexts.m4.old ]; then \
 		cp /usr/share/seedit/sepolicy/file_contexts.m4 /usr/share/seedit/sepolicy/file_contexts.m4.old;\
 	fi	

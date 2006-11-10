@@ -29,7 +29,19 @@ dir:
 	mkdir -p $(POLICYROOT)/users/
 	mkdir -p $(POLICYROOT)/contexts/files
 	mkdir -p $(POLICYROOT)/contexts/users
-	mkdir -p $(SEEDITCONFROOT)/policy
+	mkdir -p $(SEEDITCONFROOT)
+
+install: dir
+	mkdir -p $(prefix)/share/seedit/scripts
+	install -m 755 seedit-installhelper.sh $(prefix)/share/seedit/scripts
+	if [ -e src/simplified_policy.$(DISTRO) ];then \
+		cp  -r src/simplified_policy.$(DISTRO)  $(SEEDITCONFROOT)/policy;\
+	else \
+		cp  -r src/simplified_policy  $(SEEDITCONFROOT)/policy;\
+	fi
+
+	cp src/setrans.conf	$(POLICYROOT)
+	mkdir -p $(prefix)/share/seedit/sepolicy
 
 convert_test:  
 	mkdir -p policy
@@ -50,19 +62,6 @@ convert_test:
 	fi
 	if [ -e $(DYNAMIC_CONTEXTS) ] ; then cat $(DYNAMIC_CONTEXTS) >> policy/sepolicy/file_contexts; fi
 
-install: dir
-	mkdir -p $(prefix)/share/seedit/scripts
-	install -m 755 seedit-installhelper.sh $(prefix)/share/seedit/scripts
-	if [ -e src/simplified_policy.$(DISTRO) ];then \
-		cp -r src/simplified_policy.$(DISTRO)  $(SEEDITCONFROOT)/policy/simplified_policy;\
-	else \
-		cp -r src/simplified_policy  $(SEEDITCONFROOT)/policy/simplified_policy;\
-	fi
-
-	cp src/setrans.conf	$(POLICYROOT)
-	mkdir -p $(prefix)/share/seedit/sepolicy
-
-
 clean:
-	rm -rf policy doc/*.aux doc/*.toc doc/*.pdf src/base_policy/unsupported.te src/macros/seedit_macros.te
+	rm -rf policy
 

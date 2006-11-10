@@ -18,7 +18,7 @@ Source0: seedit-policy-%{version}-%{betatag}.tar.gz
 BuildRoot: %{_tmppath}/seedit-policy-%{version}-%{betatag}-root-%(%{__id_u} -n)
 BuildArch: noarch
 Requires: seedit-converter >= 2.1.0, checkpolicy,m4,audit
-BuildRequires:m4
+BuildRequires: seedit-converter >= 2.1.0,checkpolicy,m4
 
 %description
 Component of SELinux Policy Editor(seedit).
@@ -53,12 +53,11 @@ fi
 
 %post
 if [ $1 = 1 ]; then
+	#Setup /etc/selinux/config, automatic relabel, initialization at boot
 	export SELINUXCONF=%{selinuxconf}
 	export AUDITRULES=%{auditrules}
 	export MODULAR=%{modular}
-	#Convert to binary policy, setup /etc/selinux/config, automatic relabel, initialization at boot
 	%{installhelper} install
-
 fi
 
 

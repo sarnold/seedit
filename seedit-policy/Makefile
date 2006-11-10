@@ -32,7 +32,7 @@ dir:
 	mkdir -p $(POLICYROOT)/contexts/users
 	mkdir -p $(SEEDITCONFROOT)/policy
 
-policy:  
+convert_test:  
 	mkdir -p policy
 	if [ -e src/simplified_policy.$(DISTRO) ];then \
 		cp -r src/simplified_policy.$(DISTRO) policy/simplified_policy;\
@@ -51,31 +51,19 @@ policy:
 	fi
 	if [ -e $(DYNAMIC_CONTEXTS) ] ; then cat $(DYNAMIC_CONTEXTS) >> policy/sepolicy/file_contexts; fi
 
-install: policy dir
+install: dir
 	mkdir -p $(prefix)/share/seedit/scripts
 	install -m 755 seedit-installhelper.sh $(prefix)/share/seedit/scripts
 	cp -r policy/simplified_policy/*  $(SEEDITCONFROOT)/policy
 	cp src/setrans.conf	$(POLICYROOT)
-	mkdir -p $(prefix)/share/seedit/sepolicy
-
-	cp policy/sepolicy/*	$(prefix)/share/seedit/sepolicy
-	if [ $(MODULAR) = "n" ];then \
-		cp policy/sepolicy/policy.$(POLICYVER) $(POLICYROOT)/policy;\
-	fi
-	cp policy/sepolicy/file_contexts $(POLICYROOT)/contexts/files/
-	cp policy/sepolicy/file_contexts.m4 $(POLICYROOT)/contexts/files/
-	cp policy/sepolicy/customizable_types $(POLICYROOT)/contexts/files/
-	cp policy/sepolicy/userhelper_context $(POLICYROOT)/contexts/files/
-	cp -r policy/base_policy/contexts/*  $(POLICYROOT)/contexts/files/
-	echo "" >  $(POLICYROOT)/contexts/files/file_contexts.homedirs
-
-	if [ ! -e $(DESTDIR)/usr/share/seedit/sepolicy/file_contexts.m4.old ]; then \
-		cp $(DESTDIR)/usr/share/seedit/sepolicy/file_contexts.m4 $(DESTDIR)/usr/share/seedit/sepolicy/file_contexts.m4.old;\
-	fi
-	rm $(SEEDITCONFROOT)/policy/all.sp
 	echo "#" >  $(POLICYROOT)/users/system.users
 	echo "#" >  $(POLICYROOT)/users/local.users
-
+	mkdir -p $(prefix)/share/seedit/sepolicy
+	if [ -e $(DYNAMIC_CONTEXTS) ] ; then \
+		cp $(DYNAMIC_CONTEXTS)  $(prefix)/share/seedit/sepolicy/base_policy/contexts;\
+	else \
+		echo "#" > $(prefix)/share/seedit/sepolicy/base_policy/contexts/dynamic_contexts;\
+	fi
 
 clean:
 	rm -rf policy doc/*.aux doc/*.toc doc/*.pdf src/base_policy/unsupported.te src/macros/seedit_macros.te

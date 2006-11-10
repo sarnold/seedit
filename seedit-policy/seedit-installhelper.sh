@@ -4,33 +4,61 @@
 #SELINUXCONF=/etc/selinux/config
 #AUDITRULES=/etc/audit/audit.rules
 #MODULAR=n
+POLICYROOT=/etc/selinux/seedit
+SEPOLICYDIR=/usr/share/seedit/sepolicy
 
-install_seedit() {
+initialize_seedit() {
 
-	cat $SELINUXCONF |sed -e 's/^SELINUX=.*$/SELINUX=permissive/'|sed -e 's/^SELINUXTYPE=.*$/SELINUXTYPE=seedit/' >$SELINUXCONF.tmp
-	mv $SELINUXCONF $SELINUXCONF.orig
-	mv  $SELINUXCONF.tmp $SELINUXCONF
-	touch /.autorelabel
-
-	echo "/var/tmp/bootstrap.sh" >> /etc/rc.d/rc.local
+        ### Make binary policy to fit user's environment
+        # Make binary policy into /usr/share/seedit/sepolicy
+	/usr/sbin/seedit-load -tv -n
+	# This is needed to label files that need file type transition configuration
+	cat /usr/share/seedit/sepolicy/base_policy/contexts/dynamic_contexts >> $(SEPOLICYDIR)/file_contexts
+	#Copy related file to /etc/selinux
+	if [ $(MODULAR) = "n" ];then \
+		cp $(SEPOLICYDIR)/policy.* $(POLICYROOT)/policy;\
+	fi
+	cp $(SEPOLICYDIR)/file_contexts $(POLICYROOT)/contexts/files/
+	cp $(SEPOLICYDIR)/customizable_types $(POLICYROOT)/contexts/files/
+	cp $(SEPOLICYDIR)/userhelper_context $(POLICYROOT)/contexts/files/
+	echo "" >  $(POLICYROOT)/contexts/files/file_contexts.homedirs
+	if [ ! -e /usr/share/seedit/sepolicy/file_contexts.m4.old ]; then \
+		cp /usr/share/seedit/sepolicy/file_contexts.m4 /usr/share/seedit/sepolicy/file_contexts.m4.old;\
+	fi	
+	#When using modular policy, we have to install policy.<version> here.
+	if [ $MODULAR = "y" ]; then
+		/usr/sbin/semodule -b /usr/share/seedit/sepolicy/base.pp -s seedit -n
+	fi
+	
+	###Setup auditd
+	#Register dummy audit rule, this is necessary to display PATH entry in log 
 	if [ -e $AUDITRULES ]; then
 	        cat $AUDITRULES | sed -e 's!-a exit,always -S chroot!!g' > $AUDITRULES.tmp
 		mv $AUDITRULES.tmp $AUDITRULES
 	 			
 		echo "-a exit,always -S chroot" >> $AUDITRULES
 	fi
+	/sbin/chkconfig auditd on
+
+	### Config restorecond
+	# label of ld.so.cache can be broken, so have to watch
 	if [ -e /etc/selinux/restorecond.conf ];then 
 		cat /etc/selinux/restorecond.conf |sed -e 's/^\/etc\/ld.so.cache.*$//'>/etc/selinux/restorecond.conf.tmp
 		cp /etc/selinux/restorecond.conf.tmp /etc/selinux/restorecond.conf
 	fi
 	echo "/etc/ld.so.cache" >> /etc/selinux/restorecond.conf
-	
-	if [ $MODULAR = "y" ]; then
-		/usr/sbin/semodule -b /usr/share/seedit/sepolicy/base.pp -s seedit -n
-		cp /usr/share/seedit/sepolicy/file_contexts /etc/selinux/seedit/contexts/files
-	fi
 
-	# Create bootstrap.sh # Code related to bootstrap is from Yoichi Hirose <yhirose@users.sourceforge.jp>
+	#### Config boot option
+        ##setup /etc/selinux/conf and automatic relabel
+	cat $SELINUXCONF |sed -e 's/^SELINUX=.*$/SELINUX=permissive/'|sed -e 's/^SELINUXTYPE=.*$/SELINUXTYPE=seedit/' >$SELINUXCONF.tmp
+	mv $SELINUXCONF $SELINUXCONF.orig
+	mv  $SELINUXCONF.tmp $SELINUXCONF
+	touch /.autorelabel
+
+	
+	#Setup initialization at boot
+	echo "/var/tmp/bootstrap.sh" >> /etc/rc.d/rc.local
+	# Code related to bootstrap is from Yoichi Hirose <yhirose@users.sourceforge.jp>
 	cat << __EOF >/var/tmp/bootstrap.sh
 
 #!/bin/sh
@@ -46,7 +74,7 @@ init 6
 __EOF
 
 	chmod 755 /var/tmp/bootstrap.sh
-	/sbin/chkconfig auditd on
+
 }
 
 uninstall_seedit() {
@@ -63,7 +91,7 @@ uninstall_seedit() {
 }
 
 if [ $1 = "install" ]; then
-    install_seedit
+    initialize_seedit
 fi
 
 

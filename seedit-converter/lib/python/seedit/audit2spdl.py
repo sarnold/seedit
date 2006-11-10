@@ -41,6 +41,10 @@ gChdirInoPathDir = dict()
 gChrootStatus = dict()
 
 
+def clearDict():
+    gInoPathDir.clear()
+    gChdirInoPathDir.clear()
+
 
 def errorExit(msg):
     sys.stderr.write(msg)

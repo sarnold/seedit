@@ -43,38 +43,24 @@ make install DESTDIR="%{buildroot}" CONVERTER=/usr/bin/seedit-converter DISTRO=$
 
 %pre
 if [ $1 = 2 ]; then
-	# If rbac is enabled in upgrade, should be disabled temporally
-	# After uninstall of previous package, enabled. 
-	if [ -e /etc/seedit/policy/sysadm_r.sp ]; then
-		/usr/sbin/seedit-rbac off -n
-		touch /etc/seedit/policy/rbac_flag
-	fi
+	touch /usr/share/seedit/sepolicy/need-rbac-init
 fi
 
 %post
 if [ $1 = 1 ]; then
-	#Initialize SELinux Policy Editor
-	%{installhelper} install
-
+	#Mark to initialize SELinux Policy Editor
+	touch /usr/share/seedit/sepolicy/need-init
 fi
 
 
 %preun
 
 if [ $1 = 0 ]; then
-	touch /usr/share/seedit/sepolicy/need-init
 	#Go back to targeted policy, automatic relabel
 	%{installhelper} uninstall
 fi
 
-if [ $1 = 2 ]; then 
-	#If RBAC is disabled temporally at upgrade, enable it again
-	if [ -e /etc/seedit/policy/rbac_flag ]; then
-		/usr/sbin/seedit-rbac on -n
-		rm /etc/seedit/policy/rbac_flag
-	fi
-	/usr/sbin/seedit-load -v
-fi
+
 
 
 %clean

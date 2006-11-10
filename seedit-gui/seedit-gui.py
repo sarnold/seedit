@@ -147,16 +147,19 @@ class seeditMainWindow(seeditCommon):
         vbox.pack_end(label,False,False)
         window.show_all()
 
+
+     
+    
 class seeditInitializeWindow(seeditCommon):
     def initializeButtonCallBack(self, widget, data=None):
-        title = _("Initializing")
-        message =  _("Initializing seedit")
-        command = gInitCommand
-        print command
+        title = self.mTitle
+        message =  self.mMessage
+        command = self.mCommand
+
         ld = loadPolicyDialog(self,False,title,message,command)
         (s,data)=ld.do()
         if s == SEEDIT_SUCCESS:
-            self.showMessageDialog(gtk.MESSAGE_INFO, _("Successfully initialized. Please reboot.\n"))
+            self.showMessageDialog(gtk.MESSAGE_INFO, self.mSuccessMessage)
             self.mWindow.destroy()
         else:
             self.showMessageDialog(gtk.MESSAGE_INFO, _("Error\n"))
@@ -180,13 +183,29 @@ class seeditInitializeWindow(seeditCommon):
 
         window.show_all()
                                      
-    
-
+class seeditInitializeInstallWindow(seeditInitializeWindow):
+    def __init__(self):
+        self.mTitle = _("Initializing")
+        self.mMessage =  _("Initializing seedit")
+        self.mCommand = gInitCommand+" install"
+        self.mSuccessMessage = _("Successfully initialized. Please reboot.\n")
+        seeditInitializeWindow.__init__(self)
+        
+class seeditInitializeRBACWindow(seeditInitializeWindow):
+    def __init__(self):
+        self.mTitle = _("Initializing")
+        self.mMessage =  _("Initializing RBAC")
+        self.mCommand = gInitCommand+" upgrade"
+        self.mSuccessMessage = _("Successfully initialized RBAC.\n")
+        seeditInitializeWindow.__init__(self)
+        
 if __name__ == '__main__':
     gettext.install("seedit-gui","/usr/share/locale")
 
-    if os.path.exists(gNeedinit):
-        seeditInitializeWindow()
+    if os.path.exists(gNeedInit):
+        seeditInitializeInstallWindow()
+    elif os.path.exists(gNeedRBACInit):
+        seeditInitializeRBACWindow()
     else:
         seeditMainWindow()
     gtk.gdk.threads_init()

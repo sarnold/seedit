@@ -59,7 +59,7 @@ for opt,arg in opts:
 if os.path.exists("/usr/share/seedit/sepolicy/need-init"):
     print "You must initialize SELinux Policy Editor."
     print "Type \"seedit-init\" and reboot to initialize."
-    system.exit(1)
+    sys.exit(1)
 
 if gBehavior=="":
     printUsage()

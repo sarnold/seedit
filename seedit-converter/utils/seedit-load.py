@@ -277,6 +277,11 @@ for opt,arg in opts:
 if gBehavior=="":
     gBehavior="load"
 
+if os.path.exists("/usr/share/seedit/sepolicy/seedit-rbac-init"):
+    print "Error: You have to initialize RBAC."
+    print "Type /usr/share/seedit/script/seedit-installhelper.sh upgrade"
+    sys.exit(1)
+
 #Handles logging for chdir syscall
 if gBehavior != "test":
     removeAuditChdir()

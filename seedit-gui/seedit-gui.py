@@ -147,16 +147,50 @@ class seeditMainWindow(seeditCommon):
         vbox.pack_end(label,False,False)
         window.show_all()
 
-     
+class seeditInitializeWindow(seeditCommon):
+    def initializeButtonCallBack(self, widget, data=None):
+        title = _("Initializing")
+        message =  _("Initializing seedit")
+        command = gInitCommand
+        print command
+        ld = loadPolicyDialog(self,False,title,message,command)
+        (s,data)=ld.do()
+        if s == SEEDIT_SUCCESS:
+            self.showMessageDialog(gtk.MESSAGE_INFO, _("Successfully initialized. Please reboot.\n"))
+            self.mWindow.destroy()
+        else:
+            self.showMessageDialog(gtk.MESSAGE_INFO, _("Error\n"))
+            self.mWindow.destroy()
 
-           
-                
+    def __init__(self):
+        window = gtk.Window()
+        self.mWindow = window
+        window.set_title(_("Need initialization"))
+        window.connect('destroy', lambda w: gtk.main_quit())
 
+        vbox = gtk.VBox()
+        window.add(vbox)
+        label = gtk.Label(_("You have to initialize policy before using SELinux Policy Editor"))
+        vbox.pack_start(label,False,False,5)
+        hbox = gtk.HBox()
+        button1 = gtk.Button(_("Initialize"))
+        button1.connect("clicked", self.initializeButtonCallBack)
+        hbox.pack_start(button1, False, False,5)
+        vbox.pack_start(hbox, False, False,5)
+
+        window.show_all()
+                                     
+    
 
 if __name__ == '__main__':
     gettext.install("seedit-gui","/usr/share/locale")
-    seeditMainWindow()
 
+    if os.path.exists(gNeedinit):
+        seeditInitializeWindow()
+    else:
+        seeditMainWindow()
+    gtk.gdk.threads_init()
+    gtk.gdk.threads_enter()
     gtk.main()
+    gtk.gdk.threads_leave()
 
-    

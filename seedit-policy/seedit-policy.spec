@@ -53,9 +53,6 @@ fi
 
 %post
 if [ $1 = 1 ]; then
-	export SELINUXCONF=%{selinuxconf}
-	export AUDITRULES=%{auditrules}
-	export MODULAR=%{modular}
 	#Initialize SELinux Policy Editor
 	%{installhelper} install
 
@@ -65,9 +62,7 @@ fi
 %preun
 
 if [ $1 = 0 ]; then
-	export SELINUXCONF=%{selinuxconf}
-	export AUDITRULES=%{auditrules}
-	export MODULAR=%{modular}
+	touch /usr/share/seedit/sepolicy/need-init
 	#Go back to targeted policy, automatic relabel
 	%{installhelper} uninstall
 fi
@@ -92,6 +87,8 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) /etc/seedit/policy
 /usr/share/seedit/sepolicy
 /usr/share/seedit/scripts/seedit-installhelper.sh
+/usr/share/seedit/scripts/seedit-installhelper-include.sh
+/usr/sbin/seedit-init
 %doc README
 %doc Changelog
 %doc COPYING

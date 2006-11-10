@@ -31,9 +31,17 @@ dir:
 	mkdir -p $(POLICYROOT)/contexts/users
 	mkdir -p $(SEEDITCONFROOT)
 
-install: dir
+installhelper-include:
+	echo "#! /bin/sh" > seedit-installhelper-include.sh
+	echo "export SELINUXCONF=$SELINUXCONF" >> seedit-installhelper-include.sh
+	echo "export AUDITRULES=$AUDITRULES" >> seedit-installhelper-include.sh
+	echo "export MODULAR=$MODULAR" >> seedit-installhelper-include.sh
+
+install: dir installhelper-include
 	mkdir -p $(prefix)/share/seedit/scripts
 	install -m 755 seedit-installhelper.sh $(prefix)/share/seedit/scripts
+	install -m 755 seedit-installhelper-include.sh $(prefix)/share/seedit/scripts
+
 	if [ -e src/simplified_policy.$(DISTRO) ];then \
 		cp  -r src/simplified_policy.$(DISTRO)  $(SEEDITCONFROOT)/policy;\
 	else \
@@ -42,6 +50,8 @@ install: dir
 
 	cp src/setrans.conf	$(POLICYROOT)
 	mkdir -p $(prefix)/share/seedit/sepolicy
+	mkdir -p $(prefix)/sbin
+	install -m 755 seedit-init.sh $(prefix)/sbin
 
 convert_test:  
 	mkdir -p policy

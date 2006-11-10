@@ -4,6 +4,9 @@
 #SELINUXCONF=/etc/selinux/config
 #AUDITRULES=/etc/audit/audit.rules
 #MODULAR=n
+. seedit-installhelper-include.sh
+
+
 POLICYROOT=/etc/selinux/seedit
 SEPOLICYDIR=/usr/share/seedit/sepolicy
 
@@ -74,11 +77,13 @@ rm -f /etc/rc.d/rc.local
 mv /etc/rc.d/rc.local.tmp /etc/rc.d/rc.local
 /usr/sbin/seedit-restorecon  /etc/rc.d/rc.local -v
 chmod 0755 /etc/rc.d/rc.local
+rm /usr/share/seedit/sepolicy/need-init
 init 6
 
 __EOF
 
 	chmod 755 /var/tmp/bootstrap.sh
+
 
 }
 

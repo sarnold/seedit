@@ -41,6 +41,8 @@ gSeedit_load= "/usr/sbin/seedit-load"
 gSetsebool="/usr/sbin/setsebool"
 gGetsebool="/usr/sbin/getsebool"
 gRestorecon="/sbin/restorecon"
+gNeedinit="/usr/share/seedit/sepolicy/need-init"
+gInitCommand="/usr/sbin/seedit-init"
 
 gCoreDomainList=["crond_t", "rpm_t", "gdm_t", "initrc_t", "init_t", "login_t", "unconfined_t", "rpm_script_t",  "system_crond_t", "kernel_t", "unconfined_su_t"]
 

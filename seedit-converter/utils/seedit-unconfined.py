@@ -38,7 +38,6 @@ if __name__ == '__main__':
 
 gUnconfinedDomains=[] #List of unconfined domains
 
-gUnconfinedDomains = getUnconfinedDomains("/usr/share/seedit/sepolicy/unconfined_domains")
 gBehavior=""
 
 try:
@@ -61,6 +60,7 @@ if os.path.exists("/usr/share/seedit/sepolicy/need-init"):
     print "Type \"seedit-init\" and reboot to initialize."
     sys.exit(1)
 
+gUnconfinedDomains = getUnconfinedDomains("/usr/share/seedit/sepolicy/unconfined_domains")
 if gBehavior=="":
     printUsage()
 

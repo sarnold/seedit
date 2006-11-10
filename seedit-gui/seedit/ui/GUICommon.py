@@ -246,8 +246,9 @@ class loadPolicyThread(threading.Thread):
             self.mDialog.destroy()
         else:
             self.mDialog.set_response_sensitive(gtk.RESPONSE_CANCEL,True)
-
-        return SEEDIT_SUCCESS
+            self.mDialog.response(gtk.RESPONSE_OK)
+            self.mDialog.destroy()
+        return gtk.RESPONSE_OK
 
 
 

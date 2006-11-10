@@ -14,7 +14,7 @@ SEMODULE_PACKAGE=/usr/bin/semodule_package
 CHECKPOLICY=/usr/bin/checkpolicy
 FIXFILES=/sbin/fixfiles
 RESTORECON=/sbin/restorecon
-SELINUXCONF=$(sysconfdir)/selinux/config
+SELINUXCONF=/etc/selinux/config
 POLICYROOT=$(sysconfdir)/selinux/$(SELINUXTYPE)
 SEEDITCONFROOT=$(sysconfdir)/seedit
 CONFDIR=./policy/simplified_policy
@@ -33,9 +33,9 @@ dir:
 
 installhelper-include:
 	echo "#! /bin/sh" > seedit-installhelper-include.sh
-	echo "export SELINUXCONF=$SELINUXCONF" >> seedit-installhelper-include.sh
-	echo "export AUDITRULES=$AUDITRULES" >> seedit-installhelper-include.sh
-	echo "export MODULAR=$MODULAR" >> seedit-installhelper-include.sh
+	echo "export SELINUXCONF=$(SELINUXCONF)" >> seedit-installhelper-include.sh
+	echo "export AUDITRULES=$(AUDITRULES)" >> seedit-installhelper-include.sh
+	echo "export MODULAR=$(MODULAR)" >> seedit-installhelper-include.sh
 
 install: dir installhelper-include
 	mkdir -p $(prefix)/share/seedit/scripts
@@ -51,7 +51,7 @@ install: dir installhelper-include
 	cp src/setrans.conf	$(POLICYROOT)
 	mkdir -p $(prefix)/share/seedit/sepolicy
 	mkdir -p $(prefix)/sbin
-	install -m 755 seedit-init.sh $(prefix)/sbin
+	install -m 755 seedit-init.sh $(prefix)/sbin/seedit-init
 
 convert_test:  
 	mkdir -p policy

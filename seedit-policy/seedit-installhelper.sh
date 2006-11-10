@@ -4,7 +4,7 @@
 #SELINUXCONF=/etc/selinux/config
 #AUDITRULES=/etc/audit/audit.rules
 #MODULAR=n
-. seedit-installhelper-include.sh
+. /usr/share/seedit/scripts/seedit-installhelper-include.sh
 
 
 POLICYROOT=/etc/selinux/seedit
@@ -18,7 +18,6 @@ initialize_seedit() {
 	/usr/sbin/seedit-load -tv -n
 	# This is needed to label files that need file type transition configuration
 	cat /usr/share/seedit/base_policy/contexts/dynamic_contexts >> $SEPOLICYDIR/file_contexts
-
 	#Copy related file to /etc/selinux
 	if [ $MODULAR = "n" ];then \
 		cp $SEPOLICYDIR/policy.* $POLICYROOT/policy;\
@@ -27,8 +26,8 @@ initialize_seedit() {
 	cp $SEPOLICYDIR/customizable_types $POLICYROOT/contexts/files/
 	cp $SEPOLICYDIR/userhelper_context $POLICYROOT/contexts/files/
 	echo "" >  $POLICYROOT/contexts/files/file_contexts.homedirs
-	echo "" >  $(POLICYROOT)/users/system.users
-	echo "" >  $(POLICYROOT)/users/local.users
+	echo "" >  $POLICYROOT/users/system.users
+	echo "" >  $POLICYROOT/users/local.users
 
 	if [ ! -e /usr/share/seedit/sepolicy/file_contexts.m4.old ]; then \
 		cp /usr/share/seedit/sepolicy/file_contexts.m4 /usr/share/seedit/sepolicy/file_contexts.m4.old;\
@@ -47,6 +46,7 @@ initialize_seedit() {
 		echo "-a exit,always -S chroot" >> $AUDITRULES
 	fi
 	/sbin/chkconfig auditd on
+	
 
 	### Config restorecond
 	# label of ld.so.cache can be broken, so have to watch

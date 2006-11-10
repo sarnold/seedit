@@ -39,7 +39,7 @@ included in seedit-converter.
 rm -rf $RPM_BUILD_ROOT
 DISTRO=%{distro} 
 MODULAR=%{modular}
-make install DESTDIR="%{buildroot}" CONVERTER=/usr/bin/seedit-converter DISTRO=$DISTRO  DEVELFLAG=0 SELINUXTYPE=seedit MODULAR=$MODULAR
+make install DESTDIR="%{buildroot}" CONVERTER=/usr/bin/seedit-converter DISTRO=$DISTRO  DEVELFLAG=0 SELINUXTYPE=seedit MODULAR=$MODULAR AUDITRULES=%{auditrules}
 
 %pre
 if [ $1 = 2 ]; then

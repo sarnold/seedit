@@ -91,7 +91,7 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) /etc/selinux/seedit
 %config(noreplace) /etc/seedit/policy
 /usr/share/seedit/sepolicy
-/usr/share/seedit/scripts
+/usr/share/seedit/scripts/seedit-install-helper.sh
 %doc README
 %doc Changelog
 %doc COPYING

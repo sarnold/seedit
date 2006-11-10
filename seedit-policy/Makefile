@@ -60,9 +60,9 @@ install: dir
 	echo "#" >  $(POLICYROOT)/users/local.users
 	mkdir -p $(prefix)/share/seedit/sepolicy
 	if [ -e $(DYNAMIC_CONTEXTS) ] ; then \
-		cp $(DYNAMIC_CONTEXTS)  $(prefix)/share/seedit/sepolicy/base_policy/contexts;\
+		cp $(DYNAMIC_CONTEXTS)  $(prefix)/share/seedit/base_policy/contexts;\
 	else \
-		echo "#" > $(prefix)/share/seedit/sepolicy/base_policy/contexts/dynamic_contexts;\
+		echo "#" > $(prefix)/share/seedit/base_policy/contexts/dynamic_contexts;\
 	fi
 
 clean:

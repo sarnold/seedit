@@ -30,7 +30,7 @@ make
 
 %install
 rm -rf $RPM_BUILD_ROOT
-make install DESTDIR="%{buildroot}" PYTHON_VER=%{python_ver}
+make install DESTDIR="%{buildroot}" PYTHON_VER=%{python_ver} DISTRO=%{distro}
 
 install -d -m 755 ${RPM_BUILD_ROOT}%{_datadir}/applications
 install -m 664 %{SOURCE1} ${RPM_BUILD_ROOT}%{_datadir}/applications/seedit-gui.desktop

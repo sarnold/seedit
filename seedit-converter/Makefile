@@ -1,6 +1,6 @@
 prefix=$(DESTDIR)/usr
 sysconfdir=$(DESTDIR)/etc
-DISTRO=COS4
+DISTRO=cos4
 PYTHON_VER=2.3
 
 all:

@@ -16,7 +16,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 SELINUXTYPE=seedit
-DISTRO=FC5
+DISTRO=fc6
 sysconfdir = /etc
 prefix = /usr
 CONVERTER=/usr/local/bin/seedit-converter
@@ -59,8 +59,7 @@ install:all
 	cp -r base_policy $(SEEDITCONFROOT)
 	cp -r macros $(SEEDITCONFROOT)
 	mv $(SEEDITCONFROOT)/base_policy/spdl_spec.xml.expand  $(SEEDITCONFROOT)/base_policy/spdl_spec.xml
-	mkdir -p $(sysconfdir)/pam.d
-	install -m 644 pam.d/seedit-gui.$(DISTRO)   $(sysconfdir)/pam.d/seedit-gui
+
 	if [ -e makefiles/Makefile.$(DISTRO) ];then \
 		install -m 644 makefiles/Makefile.$(DISTRO) $(BUILD_ROOT_DIR)/Makefile;\
 	else \

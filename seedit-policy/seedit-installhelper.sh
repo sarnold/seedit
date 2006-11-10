@@ -35,6 +35,7 @@ initialize_seedit() {
 	#When using modular policy, we have to install policy.<version> here.
 	if [ $MODULAR = "y" ]; then
 		/usr/sbin/semodule -b /usr/share/seedit/sepolicy/base.pp -s seedit -n
+		cp /usr/share/seedit/sepolicy/file_contexts $POLICYROOT/contexts/files
 	fi
 	
 	###Setup auditd

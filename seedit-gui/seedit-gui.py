@@ -162,18 +162,18 @@ class seeditInitializeWindow(seeditCommon):
             self.showMessageDialog(gtk.MESSAGE_INFO, self.mSuccessMessage)
             self.mWindow.destroy()
         else:
-            self.showMessageDialog(gtk.MESSAGE_INFO, _("Error\n"))
+            self.showMessageDialog(gtk.MESSAGE_INFO, _("Error in  initializing process. Contact author.\n"))
             self.mWindow.destroy()
 
     def __init__(self):
         window = gtk.Window()
         self.mWindow = window
-        window.set_title(_("Need initialization"))
+        window.set_title(_("Initialize seedit"))
         window.connect('destroy', lambda w: gtk.main_quit())
 
         vbox = gtk.VBox()
         window.add(vbox)
-        label = gtk.Label(_("You have to initialize policy before using SELinux Policy Editor"))
+        label = gtk.Label(_("You have to initialize before using SELinux Policy Editor. If OK, press initialize button."))
         vbox.pack_start(label,False,False,5)
         hbox = gtk.HBox()
         button1 = gtk.Button(_("Initialize"))
@@ -188,7 +188,7 @@ class seeditInitializeInstallWindow(seeditInitializeWindow):
         self.mTitle = _("Initializing")
         self.mMessage =  _("Initializing seedit")
         self.mCommand = gInitCommand+" install"
-        self.mSuccessMessage = _("Successfully initialized. Please reboot.\n")
+        self.mSuccessMessage = _("Successfully initialized. Please reboot.\nAfter reboot, label will be initialized.\n")
         seeditInitializeWindow.__init__(self)
         
 class seeditInitializeRBACWindow(seeditInitializeWindow):

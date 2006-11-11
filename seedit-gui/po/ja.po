@@ -647,3 +647,44 @@ msgstr "設定を生成"
 msgid "Skip reading denied searches for the 'tclass=dir' value"
 msgstr "tclass=dirに対するsearchの拒否ログを読み込まない"
 
+
+#: seedit-gui.py:165
+msgid ""
+"Error in  initializing process. Contact author.\n"
+msgstr "初期化にエラーがありました。開発元に連絡してください。\n"
+
+#: seedit-gui.py:171
+msgid "Initialize seedit"
+msgstr "seeditを初期化中"
+
+#: seedit-gui.py:176
+msgid "You have to initialize before using SELinux Policy Editor. If OK, press initialize button."
+msgstr "SELinux Policy Editorを使う前に、初期化が必要です。準備ができたら、初期化ボタンを押してください。"
+
+#: seedit-gui.py:179
+msgid "Initialize"
+msgstr "初期化"
+
+#: seedit-gui.py:188 seedit-gui.py:196
+msgid "Initializing"
+msgstr "初期化しています"
+
+#: seedit-gui.py:189
+msgid "Initializing seedit"
+msgstr "seeditを初期化中"
+
+#: seedit-gui.py:191
+msgid ""
+"Successfully initialized. Please reboot.\n"
+"After reboot, label will be initialized.\n"
+msgstr "初期化が成功しました。システムを再起動して下さい。\n"
+"再起動後、今度はラベルが自動的に初期化されます。"
+
+#: seedit-gui.py:197
+msgid "Initializing RBAC"
+msgstr "RBACを初期化中"
+
+#: seedit-gui.py:199
+msgid ""
+"Successfully initialized RBAC.\n"
+msgstr "RBACの初期化が成功しました。"

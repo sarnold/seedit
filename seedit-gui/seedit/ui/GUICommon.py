@@ -120,18 +120,7 @@ class seeditCommon:
         argv=[]
         argv.append("/usr/bin/firefox")
         
-        lang = locale.getlocale()[0]
-        if lang == "ja_JP":
-            helpFile="/usr/share/doc/seedit/manual/ja/index.html"
-        else:
-            helpFile="/usr/share/doc/seedit/manual/en/index.html"
-        if os.path.exists(helpFile):
-            uri = "file://"+helpFile
-        else:
-            if lang == "ja_JP":
-                uri = "http://seedit.sourceforge.net/doc/2.0/tutorial_jp/"
-            else:
-                uri = "http://seedit.sourceforge.net/doc/2.0/tutorial/"
+        uri = "http://seedit.sourceforge.net/"
                 
         argv.append(uri)
         

@@ -49,7 +49,6 @@ install: dir installhelper-include
 	fi
 
 	cp src/setrans.conf	$(POLICYROOT)
-	mkdir -p $(prefix)/share/seedit/sepolicy
 	mkdir -p $(prefix)/sbin
 	install -m 755 seedit-init.sh $(prefix)/sbin/seedit-init
 

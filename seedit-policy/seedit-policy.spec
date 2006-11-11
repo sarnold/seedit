@@ -61,8 +61,6 @@ if [ $1 = 0 ]; then
 fi
 
 
-
-
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -71,7 +69,6 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %config(noreplace) /etc/selinux/seedit
 %config(noreplace) /etc/seedit/policy
-/usr/share/seedit/sepolicy
 /usr/share/seedit/scripts/seedit-installhelper.sh
 /usr/share/seedit/scripts/seedit-installhelper-include.sh
 /usr/sbin/seedit-init

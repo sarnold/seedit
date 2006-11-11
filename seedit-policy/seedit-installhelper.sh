@@ -24,7 +24,7 @@ initialize_seedit() {
 	fi
 	cp $SEPOLICYDIR/file_contexts $POLICYROOT/contexts/files/
 	cp $SEPOLICYDIR/customizable_types $POLICYROOT/contexts/files/
-	cp $SEPOLICYDIR/userhelper_context $POLICYROOT/contexts/files/
+	cp $SEPOLICYDIR/userhelper_context $POLICYROOT/contexts
 	echo "" >  $POLICYROOT/contexts/files/file_contexts.homedirs
 	echo "" >  $POLICYROOT/users/system.users
 	echo "" >  $POLICYROOT/users/local.users

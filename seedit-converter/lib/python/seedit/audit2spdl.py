@@ -51,6 +51,27 @@ def errorExit(msg):
     sys.exit(1)
     return
 
+
+# 
+def popNum(buf):
+    maxPop=4 #Max number of pop, if delim of auditlog is changed, all log is poped, so need max nunber of pop.
+    result=1
+    
+    if len(buf)==0:
+        return 0
+
+    if len(buf)<4:
+        maxPop=len(buf)
+
+    for i in range(maxPop):
+        line = buf[-1-i]
+        if line[0] == '-': #Delim of auditlog
+            break
+        result = result + 1
+
+    return result
+
+
 '''
 loadPolicyFlag is for -l option
 '''
@@ -65,12 +86,13 @@ def readLog(input, loadPolicyFlag):
         for line in lines:
             m3 = reg3.search(line)
             if m3:
-                #Eleminate unneeded logs(sycall=12 for unconfined domains)
+                #Eleminate unneeded logs(syscall=12 for unconfined domains)
                 if getSubjDomain(line) in ("unconfined_t", "system_crond_t"):
-                    lineBuf.pop()
-                    lineBuf.pop()
-                    lineBuf.pop()
-                    lineBuf.pop()
+                    n = popNum(line) # Count number of related log
+                    if  n > 0:
+                        for lp in range(n):
+                            linebuf.pop()
+                    
                     continue            
             
             lineBuf.append(line)

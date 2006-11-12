@@ -659,7 +659,7 @@ msgstr "seeditを初期化中"
 
 #: seedit-gui.py:176
 msgid "You have to initialize before using SELinux Policy Editor. If OK, press initialize button."
-msgstr "SELinux Policy Editorを使う前に、初期化が必要です。準備ができたら、初期化ボタンを押してください。"
+msgstr "SELinux Policy Editorを使う前に、初期化が必要です。\n準備ができたら、初期化ボタンを押してください。"
 
 #: seedit-gui.py:179
 msgid "Initialize"

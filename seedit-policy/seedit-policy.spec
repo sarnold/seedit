@@ -41,23 +41,22 @@ DISTRO=%{distro}
 MODULAR=%{modular}
 make install DESTDIR="%{buildroot}" CONVERTER=/usr/bin/seedit-converter DISTRO=$DISTRO  DEVELFLAG=0 SELINUXTYPE=seedit MODULAR=$MODULAR AUDITRULES=%{auditrules}
 
-%pre
-if [ $1 = 2 ]; then
-	touch /usr/share/seedit/sepolicy/need-rbac-init
-fi
-
 %post
 if [ $1 = 1 ]; then
-	#Mark to initialize SELinux Policy Editor
+	#Mark to initialize SELinux Policy Editor, when new install
 	touch /usr/share/seedit/sepolicy/need-init
 fi
 
+if [ $1 = 2 ]; then
+	#Mark to initialize RBAC config when upgrade
+	touch /usr/share/seedit/sepolicy/need-rbac-init
+fi
 
-%preun
-
+%postun
 if [ $1 = 0 ]; then
-	#Go back to targeted policy, automatic relabel
-	%{installhelper} uninstall
+	sed -i 's/^SELINUX=.*/SELINUX=permissive/g' /etc/selinux/config
+	sed -i 's/^SELINUXTYPE=.*/SELINUXTYPE=targeted/g' /etc/selinux/config
+	touch /.autorelabel
 fi
 
 

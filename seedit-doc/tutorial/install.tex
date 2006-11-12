@@ -2,8 +2,7 @@
 \usepackage[dvipdfm]{graphicx}
 \usepackage[dvipdfm]{hyperref}
 
-
-\title{SELinux Policy Editor Install Guide(for Ver 2.0))}
+\title{SELinux Policy Editor Install Guide(for Ver 2.1))}
 \begin{document}
 \def\labelenumi{(\theenumi)}
 \maketitle
@@ -13,7 +12,7 @@
 This document shows how to install SELinux Policy Editor.
 
 \section{Install from RPMs}\label{sec:rpm}
-Supported Platforms are Fedora Core5 and Cent OS 4.3(should work in Redhat
+Supported Platforms are Fedora Core 6 and Cent OS 4.3(should work in Fedora Core 5, Redhat
 Enterprise Linux 4).\\
 
 You can easily install from RPM
@@ -25,28 +24,23 @@ You can easily install from RPM
 \end{verbatim}
 
     \item Obtain files\\
-Download seedit-converter-2.0.x.rpm and seedit-policy-2.0.x-(your
-	  distro).rpm,seedit-gui-2.0.x.rpm, seedit-doc-2.0.x.rpm 
-from below URL.
+Download seedit-converter, seedit-policy,seedit-gui RPM packages from below URL.
 \begin{verbatim}
 http://seedit.sourceforge.net/download.html
 \end{verbatim}
 If you do not have X Window System, you do not need seedit-gui package.
 
  \item Install rpms
-Install rpm and restart by following commands.
+Install rpm and initialize SELinux Policy Editor by following commands.
 \begin{verbatim}
 $ su 
 # rpm -ivh seedit-*.rpm
+# /usr/sbin/seedit-init
 # reboot
 \end{verbatim}
- \item Initialization\\ \label{item:init}
+ /usr/bin/seedit-init is command that will prepare system to use seedit. It edits /etc/selinux/config, initialize policy , launch auditd service, etc.\\
 When system restarts, some relabeling process run. It takes some
 	  minutes. \\
-After install, auditd service is also running. auditd service is to take
-     detailed  SELinux log in /var/log/audit/audit.log.
-
-
 \item Notice about CentOS 4\\ 
 If you are using CentOS4, there is a bug in SELinux's relabel command.
 If you have installed strict policy, or have enabled RBAC before, 
@@ -66,6 +60,10 @@ Mode from config file:          permissive
 ...
 Policy from config file:        seedit
 \end{verbatim}
+
+Policy used in seedit is {\it seedit}.
+/etc/seedit/policy, simplified policy is installed, we edit it.
+And it is converted to usual SELinux Policy, and installed under  /etc/selinux/seedit.\\
 Note that simplified policy is installed as {\it permissive} mode.
 In {\it permissive} mode, SELinux is not protecting your system. It is
  only a test mode. To be a enforcing mode, see \ref{sec:mode}.\\
@@ -89,57 +87,6 @@ If you want to uninstall. Do following.
 \end{verbatim}
 You system will restart as SELinux targeted policy(Fedora Core5 default)
 and permissive mode(SELinux is effectively disabled).
-
-
-
-\section{Installing from source}
-\begin{enumerate}
- \item Obtain files\\
-Download seedit-converter-2.0.x.tgz and seedit-policy-2.0.x.tgz
-From below URL.
-\begin{verbatim}
-http://sourceforge.net/project/showfiles.php?group_id=135756	
-\end{verbatim}
- \item Build and install\\
-\begin{verbatim}
-# tar czvf seedit-*.tgz
-# cd seedit-converter
-# make install DISTRO=(FC5 or COS4)
-# cd .. 
-# cd seedit-policy
-# make install DISTRO=(FC5 or COS4)
-# cd seedit-gui
-# make install
-# touch /.autorelabel
-# reboot
-\end{verbatim}
-
-At first login do following.
-\begin{verbatim}
-#seedit-restorecon -R /etc
-#seedit-load 
-#reboot	
-\end{verbatim}
-
-
- \item uninstall\\
-You can go back to Fedora Core5 default by following.\\
-Modify /etc/selinux/config like below.
-\begin{verbatim}
-SELINUXTYPE=seedit
--->
-SELINUXTYPE=targeted
-\end{verbatim}
-And 
-\begin{verbatim}
-#touch /.autorelabel
-#reboot	
-\end{verbatim}
-
-
-\end{enumerate}
-
-
 
 \section{Make sure seedit is installed}\label{sec:makesure}
 

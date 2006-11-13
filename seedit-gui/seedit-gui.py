@@ -24,7 +24,6 @@ import sys
 import os
 import gettext
 import gobject
-sys.path.insert(0,"/usr/lib")
 from  seedit.ui.GUICommon import *
 from seedit.ui.UILogic import *
 

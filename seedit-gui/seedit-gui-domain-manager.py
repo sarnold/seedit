@@ -26,7 +26,6 @@ import sys
 import gettext
 import string
 import re
-sys.path.insert(0,"/usr/lib")
 from  seedit.ui.GUICommon import *
 from  seedit.ui.UILogic import *
 from  seedit.unconfined import *

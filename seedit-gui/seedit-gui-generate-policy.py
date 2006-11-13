@@ -26,7 +26,6 @@ import gettext
 import threading
 import time
 import pango
-sys.path.insert(0,"/usr/lib")
 from  seedit.ui.GUICommon import *
 from  seedit.ui.UILogic import *
 from  seedit.audit2spdl import *

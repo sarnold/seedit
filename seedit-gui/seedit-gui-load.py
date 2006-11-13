@@ -23,7 +23,6 @@ import gtk
 import gobject
 import sys
 import gettext
-sys.path.insert(0,"/usr/lib")
 from  seedit.ui.GUICommon import *
 from  seedit.ui.UILogic import *
 

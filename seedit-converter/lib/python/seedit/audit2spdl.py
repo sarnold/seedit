@@ -681,7 +681,11 @@ def genFileAllow(rule,lines,index,domdoc):
   
     #for lnk_file class, need special treatment to obtain real fullpath
     if rule["secclass"]=="lnk_file":
-        if not os.path.islink(path):
+        if rule["type"]=="bin_sh_t":
+            #for /bin/sh, sometimes fails to guess
+            if rule["name"]=="sh":
+                path ="/bin/sh"
+        elif not os.path.islink(path):
             p2 = findNameInPath(path,rule["name"])
             if p2:
                 path=p2
@@ -694,14 +698,9 @@ def genFileAllow(rule,lines,index,domdoc):
                 if rule["name"] == os.path.basename(p):
                     path = p
                 else:
-                    if rule["type"]=="bin_sh_t":
-                        #for /bin/sh, sometimes fails to guess
-                        if rule["name"]=="sh":
-                            path ="/bin/sh"
-                        else:
-                            path = guessPathByLocate(line)
-                        updateInoPath(path,line)
-                    pass
+                    path = guessPathByLocate(line)
+                    updateInoPath(path,line)
+                    
                    
     else:       
         if path[0]=="/":

@@ -700,11 +700,11 @@ def genFileAllow(rule,lines,index,domdoc):
                 else:
                     path = guessPathByLocate(line)
                     updateInoPath(path,line)
-                    
                    
-    else:       
-        if path[0]=="/":
-            path = os.path.realpath(path)
+    else:
+        if path:
+            if path[0]=="/":
+                path = os.path.realpath(path)
   
             
   

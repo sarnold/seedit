@@ -1,4 +1,4 @@
-DISTRO          =COS4
+DISTRO          ?= fc6
 CC		= gcc
 CFLAGS		= -Wall -O2 -g -DDEBUG=1 -DDIRSEARCH=1 -D$(DISTRO)
 LD		= -ll -lselinux 
@@ -7,7 +7,7 @@ LDPATH		= -L/usr/lib
 CONVERTEROBJS	=  action.o  file_label.o convert.o security_class.o initial_policy.o out_file_acl.o seedit-converter.o hashtab.o preprocess_include.o
 LIBSEEDIT = ../lib/libseedit.a
 
-prefix = /usr
+prefix ?= /usr
 INSTALL_PATH	= $(prefix)
 
 all: seedit-converter

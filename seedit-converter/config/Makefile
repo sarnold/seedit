@@ -16,10 +16,10 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 SELINUXTYPE=seedit
-DISTRO=fc6
+DISTRO ?= fc6
 sysconfdir = /etc
-prefix = /usr
-CONVERTER=/usr/local/bin/seedit-converter
+prefix ?= /usr
+CONVERTER=/usr/bin/seedit-converter
 LOADPOLICY=/usr/sbin/load_policy
 CHECKPOLICY=/usr/bin/checkpolicy
 FIXFILES=/sbin/fixfiles
@@ -34,7 +34,7 @@ OUTDIR =./sepolicy
 FCFILE=./distro/$(DISTRO)/dynamic_contexts
 SPDLSPEC=./base_policy/spdl_spec.xml
 BUILD_ROOT_DIR=$(prefix)/share/seedit
-MODULAR=n
+MODULAR ?= y
 
 all:conf
 
@@ -61,7 +61,7 @@ install:all
 	if [ -e base_policy/contexts/dynamic_contexts.$(DISTRO) ];then\
 		cp base_policy/contexts/dynamic_contexts.$(DISTRO) base_policy/contexts/dynamic_contexts;\
 	else \
-		echo "#" > base_policy/contexts/dynamic_contexts;\
+		cp base_policy/contexts/dynamic_contexts  base_policy/contexts/dynamic_contexts;\
 	fi
 
 	cp -r base_policy $(SEEDITCONFROOT)

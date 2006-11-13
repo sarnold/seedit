@@ -1,9 +1,9 @@
-prefix = $(DESTDIR)/usr
-sysconfdir = $(DESTDIR)/etc
+prefix ?= $(DESTDIR)/usr
+sysconfdir ?= $(DESTDIR)/etc
 SRC = seedit-gui-domain-manager.py seedit-gui-role-manager.py seedit-gui-edit.py seedit-gui-generate-policy.py seedit-gui-status.py seedit-gui.py seedit/ui/GUICommon.py seedit/ui/UILogic.py
-PYTHON_VER=2.4
-DISTRO=fc6
-PAM_INCLUDE_SUPPORT=y
+PYTHON_VER ?= 2.4
+DISTRO ?= fc6
+PAM_INCLUDE_SUPPORT ?= y
 
 all:
 

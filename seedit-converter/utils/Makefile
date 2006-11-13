@@ -1,5 +1,5 @@
 
-prefix = /usr
+prefix ?= /usr
 INSTALL_PATH	= $(prefix)
 
 all:

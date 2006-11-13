@@ -1,7 +1,7 @@
-prefix=$(DESTDIR)/usr
-sysconfdir=$(DESTDIR)/etc
-DISTRO=cos4
-PYTHON_VER=2.3
+prefix ?= $(DESTDIR)/usr
+sysconfdir ?= $(DESTDIR)/etc
+DISTRO ?= fc6
+PYTHON_VER ?= 2.4
 
 all:
 	$(MAKE) -C lib

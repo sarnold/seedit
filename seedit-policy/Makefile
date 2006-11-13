@@ -5,9 +5,11 @@
 
 SELINUXTYPE=seedit
 sysconfdir = $(DESTDIR)/etc
-prefix = $(DESTDIR)/usr
-DISTRO = COS4
-MODULAR=n
+prefix ?= $(DESTDIR)/usr
+DISTRO ?= fc6
+MODULAR ?= y
+AUDITRULES ?= /etc/audit/audit.rules
+
 CONVERTER=/usr/bin/seedit-converter
 LOADPOLICY=/usr/sbin/load_policy
 SEMODULE_PACKAGE=/usr/bin/semodule_package

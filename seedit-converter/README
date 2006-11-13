@@ -50,6 +50,7 @@ This directory contains core component of SELinux Policy Editor
 - lib:
   - C language library(libseedit.a) code 
   - python module seedit
+
 - include:
   - include file for libseedit.a
 

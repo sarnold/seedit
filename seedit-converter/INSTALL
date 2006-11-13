@@ -1,0 +1,8 @@
+This document describes how to install SELinux Policy Editor from source file.
+
+DISTRO
+PYTHON_VER
+CUSTOMIZABLE_TYPES
+AUDITCONF
+MODULAR
+

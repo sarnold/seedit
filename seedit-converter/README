@@ -4,7 +4,6 @@ There is a manual at the site.
 If you find bug, or have suggestions, 
 please e-mail to himainu-ynakam@miomio.jp(Yuichi Nakamura).
 
-
 1. Installed contents
 seedit-conveter includes SPDL compiler and command-line utilities.
 
@@ -56,6 +55,7 @@ This directory contains core component of SELinux Policy Editor
 
 - xml:
  XML support of simplified policy see xml/README_XML
+ Notice:This feature is not supported in version 2.1
 
 - utils:
   Misc utilities that handles simplified policy. 

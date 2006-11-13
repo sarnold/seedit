@@ -34,6 +34,7 @@ OUTDIR =./sepolicy
 FCFILE=./distro/$(DISTRO)/dynamic_contexts
 SPDLSPEC=./base_policy/spdl_spec.xml
 BUILD_ROOT_DIR=$(prefix)/share/seedit
+MODULAR=n
 
 all:conf
 
@@ -67,10 +68,10 @@ install:all
 	cp -r macros $(SEEDITCONFROOT)
 	mv $(SEEDITCONFROOT)/base_policy/spdl_spec.xml.expand  $(SEEDITCONFROOT)/base_policy/spdl_spec.xml
 
-	if [ -e makefiles/Makefile.$(DISTRO) ];then \
-		install -m 644 makefiles/Makefile.$(DISTRO) $(BUILD_ROOT_DIR)/Makefile;\
+	if [ $(MODULAR) = "y" ];then \
+		install -m 644 makefiles/Makefile.modular $(BUILD_ROOT_DIR)/Makefile;\
 	else \
-		install -m 644 makefiles/Makefile $(BUILD_ROOT_DIR);\
+		install -m 644 makefiles/Makefile.mono $(BUILD_ROOT_DIR)/Makefile;\
 	fi
 
 

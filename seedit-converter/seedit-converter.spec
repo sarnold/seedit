@@ -3,6 +3,7 @@
 %define distro cos4
 %define python_ver 2.3
 %define customizable_types n
+%define modular n
 
 Summary: SELinux Policy Editor:SPDL compiler
 Name: seedit-converter
@@ -26,11 +27,11 @@ SPDL is converted by SPDL compiler.
 
 %build
 make clean
-make DISTRO=%{distro} PYTHON_VER=%{python_ver} CUSTOMIZABLE_TYPES=%{customizable_types}
+make DISTRO=%{distro} PYTHON_VER=%{python_ver} CUSTOMIZABLE_TYPES=%{customizable_types} MODULAR=%{modular}
 
 %install
 rm -rf $RPM_BUILD_ROOT
-make install  DESTDIR="%{buildroot}" DISTRO=%{distro} PYTHON_VER=%{python_ver} CUSTOMIZABLE_TYPES=%{customizable_types}
+make install  DESTDIR="%{buildroot}" DISTRO=%{distro} PYTHON_VER=%{python_ver} CUSTOMIZABLE_TYPES=%{customizable_types}  MODULAR=%{modular}
 
 %clean
 rm -rf $RPM_BUILD_ROOT 

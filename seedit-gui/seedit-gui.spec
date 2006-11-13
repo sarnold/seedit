@@ -3,6 +3,7 @@
 %define betatag beta4
 
 %define python_ver 2.3
+%define pam_include_support n
 
 Summary: GUI for SELinux Policy Editor
 Name: seedit-gui
@@ -30,7 +31,7 @@ make
 
 %install
 rm -rf $RPM_BUILD_ROOT
-make install DESTDIR="%{buildroot}" PYTHON_VER=%{python_ver} DISTRO=%{distro}
+make install DESTDIR="%{buildroot}" PYTHON_VER=%{python_ver} DISTRO=%{distro} PAM_INCLUDE_SUPPORT=%{pam_include_support}
 
 install -d -m 755 ${RPM_BUILD_ROOT}%{_datadir}/applications
 install -m 664 %{SOURCE1} ${RPM_BUILD_ROOT}%{_datadir}/applications/seedit-gui.desktop

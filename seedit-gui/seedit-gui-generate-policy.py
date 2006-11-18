@@ -326,7 +326,7 @@ class seeditGeneratePolicyWindow(seeditCommon):
 				iter = next
 
 	def doRestorecon(self,line):
-		line  = re.sub("#restorecon","",line)
+		line  = re.sub("#restorecon"," ",line)
 		command = gRestorecon + line
 		input = os.popen(command,'r')
 		print command
@@ -402,19 +402,34 @@ class seeditGeneratePolicyWindow(seeditCommon):
 			value = model.get_value(iter,2)
 			prevValue = value
 			log = model.get_value(iter,3)
-			if re.search("^allow[\s\t]+",value):
-				path = value.split()[1]
+			isAllow = re.search("^allow[\s\t]+",value)
+			isRestorecon = re.search("#restorecon",value)
+
+			if isAllow or isRestorecon:
+				if isAllow:
+					path = value.split()[1]
+				if isRestorecon:
+					path = value.split()[2]
+
 				dirFlag=False
 				if os.path.isdir(path):
 					dirFlag=True
 
 				value = re.sub("/[^/*]+\/\*\*","/**",value)
-				value = re.sub("/\*[\s\t]+","/** ",value)
+				if  isAllow:
+					value = re.sub("/\*[\s\t]+","/** ",value)
+				if isRestorecon:
+					value = re.sub("/\*[\s\t]*$","/** ",value)
+					
+				print value
 				if dirFlag:
 					value = re.sub(path ,path+"/* ",value)
 
-				else:	
-					value = re.sub("/[^/*]*[\s\t]+","/* ",value)
+				else:
+					if isAllow:
+						value = re.sub("/[^/*]*[\s\t]+","/* ",value)
+					if isRestorecon:
+						value = re.sub("/[^/*]*$","/* ",value)
 
 				
 				model.set_value(iter,2,value)

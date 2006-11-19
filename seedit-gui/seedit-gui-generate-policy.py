@@ -149,7 +149,9 @@ class seeditGeneratePolicyWindow(seeditCommon):
 				tmp = re.sub("^type=AVC.*avc:","",tmp)
 				tmp = re.sub("\[","\\[",tmp)
 				tmp = re.sub("]","\\]",tmp)
-							
+				tmp = re.sub("pid=\d+",".*",tmp)
+				tmp = re.sub("ino=\d+",".*",tmp)
+				print tmp
 				if re.search(tmp, log):
 					m = re.search("^type=AVC msg=audit\(.+\):",l[2])
 					if m:

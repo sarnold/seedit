@@ -1,4 +1,4 @@
-%define buildnum 1
+%define buildnum 2
 %define betatag beta4
 %define distro cos4
 %define python_ver 2.3

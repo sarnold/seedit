@@ -1556,6 +1556,13 @@ def allowfileStr(spRule):
         str = "allow "+spRule["name"]+" "
     else:
         str="allow "+spRule["path"]+" "
+
+    if os.path.isdir(spRule["path"]):
+        if spRule["secclass"]=="dir" and "w" in spRule["permission"]:
+            if  gHighSecurityFlag == False:
+                str="allow "+spRule["path"]+"/* "
+        
+    
     permList=spRule["permission"]
     if "dummy" in permList:
         str = _("#allow:Nothing generated for safety\n")

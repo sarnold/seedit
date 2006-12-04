@@ -259,6 +259,7 @@ class createDomainTab(seeditCommon):
             
             self.mEditFrame.mToBeSavedFile= gSPPath+domain+".sp"
             self.mEditFrame.mToBeSavedFileLabel.set_label(self.mEditFrame.mToBeSavedFile)
+            self.mEditFrame.mPath = program
 
    
  

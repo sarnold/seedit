@@ -46,6 +46,8 @@ gNeedRBACInit="/usr/share/seedit/sepolicy/need-rbac-init"
 gInitCommand="/usr/share/seedit/scripts/seedit-installhelper.sh"
 
 gCoreDomainList=["crond_t", "rpm_t", "gdm_t", "initrc_t", "init_t", "login_t", "unconfined_t", "rpm_script_t",  "system_crond_t", "kernel_t", "unconfined_su_t"]
+gRpmPath="/bin/rpm"
+gSkipPatternString = ["^/usr/share/doc/.*", "^/usr/share/man/.*","^/etc/rc.d/.*","^/etc/logrotate.d/.*"]
 
 def getMode():
     try:
@@ -666,4 +668,76 @@ def createRoleTemplate(user, role, remoteLoginFlag,dacSkipFlag):
     result = result + "\n#Write access control here....\n\n"
 
     result = result + "}\n"
+    return result
+
+
+
+def getRelatedFileList(path,skipPatternReg):
+    result = []
+    command = gRpmPath+" -ql `"+gRpmPath+" -qf "+path+"`"
+    try:
+        input=os.popen(command, "r")
+    except:
+        return None
+
+    lines = input.readlines()
+    for r in skipPatternReg:
+        newLines=[]
+        for l in lines:
+            m = r.search(l)
+            if m:
+                pass
+            else:
+                newLines.append(l)
+        lines = newLines
+        
+    for l in lines:
+       l = l.replace("\n","")
+       result.append(l)
+
+    return result
+
+def removeChildDir(list):
+    result = []
+    list.sort(key=str.lower)
+    r = re.compile(list[0])
+    result.append(list[0])
+    for l in list:
+        m = r.search(l)
+        if m:
+            pass
+        else:
+            result.append(l)
+            r = re.compile("^"+l)
+    return result
+
+
+#Guess files related to program(path is |path|) by rpm command
+def guessRelatedFile(path):
+    result = []
+    skipPatternReg = []
+    for s in gSkipPatternString:
+        r = re.compile(s)
+        skipPatternReg.append(r)
+
+    list = getRelatedFileList(path,skipPatternReg)
+    if list == None:
+        return None
+    list = removeChildDir(list)
+    for l in list:
+        if os.path.isdir(l):
+            result.append(l+"/**")
+        else:
+            result.append(l)
+    return result
+
+
+def guessRelatedFileAllow(path):
+    result = ""
+    list = guessRelatedFile(path)
+    if list:
+        for l in list:
+            s = "allow "+l+" r,s;\n"
+            result = result +s
+    
     return result

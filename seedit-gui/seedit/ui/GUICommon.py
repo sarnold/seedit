@@ -188,7 +188,25 @@ class seeditCommon:
         model = widget.get_model()
         text = model[index][0]
         return text
- 
+
+    def getInsertPointOfTextBuf(self,textBuffer):
+        buf = textBuffer
+        iter = buf.get_start_iter()
+        
+        while not iter.is_end():
+            iter.forward_char()
+            char = iter.get_char()
+            if char == '}':
+                return iter
+        return None
+
+    def insertStrAtTextBuf(self,textBuffer,str):
+        buf = self.mTextBuffer
+        iter = self.getInsertPointOfTextBuf(buf)
+        if iter:
+            buf.insert(iter,str)
+        else:
+            buf.insert_at_cursor(str)
 
 
 class loadPolicyThread(threading.Thread):
@@ -546,7 +564,6 @@ class insertPolicyWindow(seeditCommon):
 		dirType =  tab.mDir
 		permission = tab.mPermission
 
-
 		str = allowFileStr(file,dirType,permission)
 		return str
 
@@ -672,6 +689,12 @@ class editTemplateFrame(seeditCommon):
     def addButtonCallBack(self,data=None):
         window = insertPolicyWindow(self,self.mTextBuffer)
 
+    #Guess policy by rpm -ql command
+    def generateButtonCallBack(self,data=None):
+        if self.mPath:
+            addString = guessRelatedFileAllow(self.mPath)
+            if addString != "":
+                self.insertStrAtTextBuf(self.mTextBuffer,addString)
         
     def __init__(self,parentWindow,frameTitle,textBufferTitle):
         self.mParentWindow = parentWindow
@@ -685,6 +708,7 @@ class editTemplateFrame(seeditCommon):
         label = gtk.Label("")
         self.mToBeSavedFileLabel= label
         self.mToBeSavedFile=None
+        self.mPath = None
         
         hbox.pack_start(label,False,False,5)
         vbox.pack_start(hbox,False,False,0)
@@ -702,6 +726,10 @@ class editTemplateFrame(seeditCommon):
         button = gtk.Button(_("Add policy"))
         hbox.pack_start(button, False, False, 5)
         button.connect("clicked", self.addButtonCallBack)
+        button = gtk.Button(_("Generate more policy"))
+        hbox.pack_start(button, False, False, 5)
+        button.connect("clicked", self.generateButtonCallBack)
+        
         button = gtk.Button(_("Save and Apply"))
         hbox.pack_start(button, False, False, 5)
         button.connect("clicked", self.saveButtonCallBack)

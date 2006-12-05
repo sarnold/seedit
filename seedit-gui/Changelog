@@ -1,5 +1,5 @@
 * 2006/12/04
-Merged patch for seedit-gui.desktop by Pino Toscano. 
+Fixed problem of seedit-gui.desktop, thanks to Pino Toscano. 
 
 * 2006/11/03
 Changed install path of python lib to /usr/lib/python2.4/site-packages/

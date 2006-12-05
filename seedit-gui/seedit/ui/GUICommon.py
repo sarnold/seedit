@@ -726,9 +726,10 @@ class editTemplateFrame(seeditCommon):
         button = gtk.Button(_("Add policy"))
         hbox.pack_start(button, False, False, 5)
         button.connect("clicked", self.addButtonCallBack)
-        button = gtk.Button(_("Generate more policy"))
-        hbox.pack_start(button, False, False, 5)
-        button.connect("clicked", self.generateButtonCallBack)
+        
+#        button = gtk.Button(_("Generate more policy"))
+#        hbox.pack_start(button, False, False, 5)
+#        button.connect("clicked", self.generateButtonCallBack)
         
         button = gtk.Button(_("Save and Apply"))
         hbox.pack_start(button, False, False, 5)

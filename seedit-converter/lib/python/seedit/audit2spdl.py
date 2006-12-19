@@ -1438,6 +1438,7 @@ def getExcLabelList(generatedPolicy):
         m=reg.search(line)
         if m:
             str = string.replace(m.group(),")","")
+            str = string.replace(str," ","")            
             label.append(string.split(str,",").pop())
             
         line=fp.readline()

@@ -2,7 +2,7 @@
 \usepackage[dvipdfm]{graphicx}
 \usepackage[dvipdfm]{hyperref}
 
-\title{SELinux Policy Editor(seedit) Administration Guide}
+\title{SELinux Policy Editor(SEEdit) Administration Guide 2.1}
 \author{Yuichi Nakamura \thanks{himainu-ynakam@miomio.jp}}
 \begin{document}
 \def\labelenumi{(\theenumi)}
@@ -875,6 +875,16 @@ After adding configuration, press {\it Save and Apply} button.
 \includegraphics*{images/add-network.png}
 \end{figure}
 
+If you are installing target application from rpm package, you can save
+time to create policy by {\it Generate more policy} button. By pressing
+this button, some policy is generated using information in rpm package.
+In this example case, following will be generated.
+\begin{verbatim}
+allow /etc/pam.d/vsftpd r,s;
+allow /etc/vsftpd/** r,s;
+allow /usr/sbin/vsftpd r,s;
+allow /var/ftp/** r,s;
+\end{verbatim}
 
 %% chroot環境でのパス提示の注意
 

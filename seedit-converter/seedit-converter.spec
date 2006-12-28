@@ -1,5 +1,5 @@
-%define buildnum 2
-%define betatag beta4
+%define buildnum 1
+%define betatag beta5
 %define distro cos4
 %define python_ver 2.3
 %define customizable_types n

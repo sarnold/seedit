@@ -1,6 +1,6 @@
 %define distro COS4
-%define buildnum 4
-%define betatag beta4
+%define buildnum 1
+%define betatag beta5
 
 %define python_ver 2.3
 %define pam_include_support n
@@ -66,6 +66,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc COPYING
 
 %changelog
+* Thu Dec 28 2006 Yuichi Nakamura<ynakam@hitachisoft.jp> 2.1.0-0.1.beta5
+  Added Generate more policy button.
+
 * Fri Nov 10 2006 Yuichi Nakamura<ynakam@hitachisoft.jp> 2.1.0-0.1.beta4
  Clean ups to submit FE.
  Merged icons from Shane M. Coughlan.

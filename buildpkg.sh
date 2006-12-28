@@ -2,9 +2,9 @@
 
 #Fix these valuables for your environment
 VERSION=2.1.0
-BETA=-beta4
+BETA=-beta5
 DISTRO=fc6
-RELEASE=0
+RELEASE=1
 PYTHON_VER=2.4
 AUDITCONF=\\/etc\\/audit\\/audit.rules
 MODULAR=y

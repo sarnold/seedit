@@ -1,5 +1,5 @@
 %define distro fc6
-%define betatag beta4
+%define betatag beta5
 %define buildnum 1
 
 %define selinuxconf /etc/selinux/config

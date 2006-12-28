@@ -2,7 +2,7 @@
 \usepackage[dvipdfm]{graphicx}
 \usepackage[dvipdfm]{hyperref}
 \AtBeginDvi{\special{pdf:tounicode EUC-UCS2}}
-\title{SELinux Policy Editor(seedit)管理ガイド（マニュアル) 2.0}
+\title{SELinux Policy Editor(seedit)管理ガイド（マニュアル) 2.1}
 \author{中村　雄一\thanks{himainu-ynakam@miomio.jp}}
 \begin{document}
 \def\labelenumi{(\theenumi)}
@@ -1055,11 +1055,21 @@ vsftpdにvsftpd\_tドメインを割り当てます。
 {\it　テンプレートを作成}ボタンを押すと、{\it 作成されたテンプレート}に
 設定が生成されます。\\
 
-
 \begin{figure}
 \caption{新規ドメイン作成画面}\label{fig:template}
 \includegraphics*{images/template.png}
 \end{figure}
+ちなみに、対象アプリをrpmパッケージでインストールしている場合は、「必要
+なポリシを推測」ボタン使うことで、時間を節約できます。このボタンを押すと、
+rpmパッケージの情報を参照することで、ある程度必要なポリシが生成されます。
+今回の例の場合、
+\begin{verbatim}
+allow /etc/pam.d/vsftpd r,s;
+allow /etc/vsftpd/** r,s;
+allow /usr/sbin/vsftpd r,s;
+allow /var/ftp/** r,s;
+\end{verbatim}
+といったポリシが生成されます。
 
 \subsubsection{アクセスすると分かっている設定を追加} 
  アプリケーションについての知識がある場合、あらかじめどんなアクセス権限

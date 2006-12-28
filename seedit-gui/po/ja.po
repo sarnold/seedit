@@ -688,3 +688,7 @@ msgstr "RBACを初期化中"
 msgid ""
 "Successfully initialized RBAC.\n"
 msgstr "RBACの初期化が成功しました。"
+
+#: seedit/ui/GUICommon.py:730
+msgid "Generate more policy"
+msgstr "必要なポリシを推測"

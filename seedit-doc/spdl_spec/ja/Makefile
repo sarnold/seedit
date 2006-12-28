@@ -17,7 +17,7 @@ pdf: dvi
 	mv spdl_spec.pdf spdl_spec_jp.pdf
 
 
-dvi: *.tex bb
+dvi: *.tex 
 	platex spdl_spec.tex
 	platex spdl_spec.tex
 	platex spdl_spec.tex

@@ -199,7 +199,7 @@ class seeditInitializeRBACWindow(seeditInitializeWindow):
         seeditInitializeWindow.__init__(self)
         
 if __name__ == '__main__':
-    gettext.install("seedit-gui","/usr/share/locale")
+    gettext.install("seedit","/usr/share/locale")
 
     if os.path.exists(gNeedInit):
         seeditInitializeInstallWindow()

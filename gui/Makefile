@@ -23,7 +23,7 @@ install:
 
 	install -m 755 seedit-gui-edit.py $(prefix)/sbin/seedit-gui-edit
 	mkdir -p $(prefix)/share/locale/ja/LC_MESSAGES/
-	install -m 644 po/ja.mo $(prefix)/share/locale/ja/LC_MESSAGES/seedit-gui.mo
+	install -m 644 po/ja.mo $(prefix)/share/locale/ja/LC_MESSAGES/seedit.mo
 
 	mkdir -p $(prefix)/bin
 	ln -sf   consolehelper  $(prefix)/bin/seedit-gui

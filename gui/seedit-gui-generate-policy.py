@@ -609,7 +609,7 @@ class seeditGeneratePolicyWindow(seeditCommon):
 if __name__ == '__main__':
 	seedit.audit2spdl.gRestoreconFlag = True
 	seedit.audit2spdl.gHighSecurityFlag = True
-	gettext.install("seedit-gui","/usr/share/locale")
+	gettext.install("seedit","/usr/share/locale")
 	seeditGeneratePolicyWindow()
 	gtk.gdk.threads_init()
 	gtk.gdk.threads_enter()

@@ -113,7 +113,7 @@ class seeditLoadWindow(seeditCommon):
 
             
 if __name__ == '__main__':
-	gettext.install("seedit-gui","/usr/share/locale")
+	gettext.install("seedit","/usr/share/locale")
 	seeditLoadWindow()
 	gtk.gdk.threads_init()
 	gtk.gdk.threads_enter()

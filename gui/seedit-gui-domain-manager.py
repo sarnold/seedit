@@ -378,7 +378,7 @@ class seeditDomainManageWindow(seeditCommon):
 
 
 if __name__ == '__main__':
-    gettext.install("seedit-gui","/usr/share/locale")
+    gettext.install("seedit","/usr/share/locale")
   
     seeditDomainManageWindow()
     gtk.gdk.threads_init()

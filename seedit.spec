@@ -60,13 +60,13 @@ install -d -m 755 ${RPM_BUILD_ROOT}%{_datadir}/applications
 install -m 664 %{SOURCE1} ${RPM_BUILD_ROOT}%{_datadir}/applications/seedit-gui.desktop
 mkdir -p $RPM_BUILD_ROOT/usr/share/pixmaps
 install -m 664 %{SOURCE2} ${RPM_BUILD_ROOT}/usr/share/pixmaps/seedit-gui.png
-%find_lang seedit-gui
 cd ..
+%find_lang %{name}
 
 %clean
 rm -rf $RPM_BUILD_ROOT 
 
-%files
+%files -f %{name}.lang
 %defattr(-,root,root,-)
 %{_bindir}/seedit-converter
 %{_bindir}/audit2spdl
@@ -117,12 +117,15 @@ fi
 /usr/sbin/seedit-init
 
 %package gui
+Summary: GUI for SELinux Policy Editor
 Group: System Environment/Base
 URL: http://sedit.sourceforge.net/
-Source0: %{name}-%{version}-%{betatag}.tar.gz
 Requires: seedit >= 2.1.0, seedit-policy >= 2.1.0,audit,pygtk2
 
-%files gui -f seedit-gui.lang
+%description gui
+X based GUI for SELinux Policy Editor
+
+%files gui 
 %defattr(-,root,root,-)
 %{_bindir}/seedit-gui
 %{_sbindir}/seedit-gui

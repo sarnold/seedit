@@ -15,49 +15,44 @@ SVNROOT=~/seedit/trunk/
 
 mkdir -p archive
 
-name=$1
+#name=$1
 distro=$DISTRO
 
-if [ -z $name ]; then 
-    echo "Usage buildpkg <packagename> "
-fi
+#if [ -z $name ]; then 
+#    echo "Usage buildpkg <packagename> "
+#fi
 
-rm -rf $name
-svn export $SVNROOT/$name $name
-mkdir -p archive
-rm archive/$name*
+#rm -rf $name
+rm -rf seedit
+svn export $SVNROOT seedit
+#mkdir -p archive
+#rm archive/$name*
 
-cd $name
-cat $name.spec|sed -e "s/^%define distro.*\$/%define distro $DISTRO/"|sed -e "s/^%define auditrules.*\$/%define auditrules $AUDITCONF/"|sed -e "s/^%define modular.*\$/%define modular $MODULAR/"|sed -e "s/^%define python_ver.*\$/%define python_ver $PYTHON_VER/"|sed -e "s/^%define customizable_types.*\$/%define customizable_types $CUSTOMIZABLE_TYPES/"|sed -e "s/^%define pam_include_support.*\$/%define pam_include_support $PAM_INCLUDE_SUPPORT/">$name.spec.tmp
-mv $name.spec.tmp $name.spec
+cd seedit
+cat seedit.spec|sed -e "s/^%define distro.*\$/%define distro $DISTRO/"|sed -e "s/^%define auditrules.*\$/%define auditrules $AUDITCONF/"|sed -e "s/^%define modular.*\$/%define modular $MODULAR/"|sed -e "s/^%define python_ver.*\$/%define python_ver $PYTHON_VER/"|sed -e "s/^%define customizable_types.*\$/%define customizable_types $CUSTOMIZABLE_TYPES/"|sed -e "s/^%define pam_include_support.*\$/%define pam_include_support $PAM_INCLUDE_SUPPORT/">seedit.spec.tmp
+mv seedit.spec.tmp seedit.spec
 cd ..
 
-
-
-if [ -e $name-$VERSION ]
+if [ -e seedit-$VERSION ]
 then 
-rm -rf $name-$VERSION
+rm -rf seedit-$VERSION
 fi
 
-cp -r $name $name-$VERSION
+cp -r seedit seedit-$VERSION
 
-if [ -e $name-$VERSION.tar.gz ]
+if [ -e seedit-$VERSION.tar.gz ]
 then
-	rm $name-$VERSION.tar.gz
+	rm seedit-$VERSION.tar.gz
 fi
-tar czvf $name-$VERSION$BETA.tar.gz $name-$VERSION
-mv $name-$VERSION$BETA.tar.gz archive
-rm -rf $name-$VERSION
-
-if [ $name = "seedit-gui" ]
-then
-	cp seedit-gui/desktop/seedit-gui.desktop archive
-	cp seedit-gui/icons/seedit-gui.png archive
-fi
+tar czvf seedit-$VERSION$BETA.tar.gz seedit-$VERSION
+mv seedit-$VERSION$BETA.tar.gz archive
+rm -rf seedit-$VERSION
+cp gui/desktop/seedit-gui.desktop archive
+cp gui/icons/seedit-gui.png archive
 
 cd archive
-rpmbuild -ta $name-$VERSION$BETA.tar.gz
-
-cp  ~/rpm/RPMS/i386/$name-$VERSION-*$DISTRO.i386.rpm .
-cp  ~/rpm/RPMS/noarch/$name-$VERSION-*$DISTRO.noarch.rpm .
-cp  ~/rpm/SRPMS/$name-$VERSION-*$DISTRO.src.rpm .
+rpmbuild -ta seedit-$VERSION$BETA.tar.gz
+cd ..
+#cp  ~/rpm/RPMS/i386/seedit-$VERSION-*$DISTRO.i386.rpm .
+#cp  ~/rpm/RPMS/noarch/seedit-$VERSION-*$DISTRO.noarch.rpm .
+#cp  ~/rpm/SRPMS/seedit-$VERSION-*$DISTRO.src.rpm .

@@ -1,0 +1,9 @@
+
+2007/01/09 
+* Merged 3 spec files into 1 spec file
+* Changed directory name
+  seedit-converter -> core
+  seedit-policy -> policy
+  seedit-gui -> gui
+
+

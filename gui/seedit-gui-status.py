@@ -309,7 +309,7 @@ class seeditStatusWindow(seeditCommon):
 
 
 if __name__ == '__main__':
-    gettext.install("seedit-gui","/usr/share/locale")
+    gettext.install("seedit","/usr/share/locale")
     gUnconfinedDomains=[] #List of unconfined domains
     gUnconfinedDomains = getUnconfinedDomains("/usr/share/seedit/sepolicy/unconfined_domains")
     seeditStatusWindow()

@@ -16,10 +16,10 @@ mkdir -p archive
 
 distro=$DISTRO
 
-rm -rf seedit
-svn export $SVNROOT seedit
+rm -rf build
+svn export $SVNROOT build
 
-cd seedit
+cd build
 cat seedit.spec|sed -e "s/^%define distro.*\$/%define distro $DISTRO/"|sed -e "s/^%define auditrules.*\$/%define auditrules $AUDITCONF/"|sed -e "s/^%define modular.*\$/%define modular $MODULAR/"|sed -e "s/^%define python_ver.*\$/%define python_ver $PYTHON_VER/"|sed -e "s/^%define customizable_types.*\$/%define customizable_types $CUSTOMIZABLE_TYPES/"|sed -e "s/^%define pam_include_support.*\$/%define pam_include_support $PAM_INCLUDE_SUPPORT/">seedit.spec.tmp
 mv seedit.spec.tmp seedit.spec
 cd ..
@@ -29,7 +29,7 @@ then
 rm -rf seedit-$VERSION
 fi
 
-cp -r seedit seedit-$VERSION
+cp -r build seedit-$VERSION
 
 if [ -e seedit-$VERSION.tar.gz ]
 then

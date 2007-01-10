@@ -173,16 +173,9 @@ X based GUI for SELinux Policy Editor
 %endif
 
 %changelog
-* Thu Jan 10 2006 Yuichi Nakamura<ynakam@hitachisoft.jp> 2.1.0-0.1.beta6
-- Merged 3 spec files to 1 spec file(seedit.spec).
- -- So, there is only 1 src.rpm package "seedit"
-    3 packages(seedit,seedit-policy,seedit-gui) are generated from this.
-- Changed directory name of source files.
-  seedit-converter -> core
-  seedit-policy -> policy
-  seedit-gui -> gui
-- Changed rpm package name from seedit-converter -> seedit
-
+* Wed Jan 10 2007 Yuichi Nakamura<ynakam@hitachisoft.jp> 2.1.0-0.1.beta6
+ - Merged 3 spec files to 1 spec file(seedit.spec).
+ 
 * Thu Dec 28 2006 Yuichi Nakamura<ynakam@hitachisoft.jp> 2.1.0-0.1.beta5
   Added Generate more policy button.
   Fixed bug of audit2spdl module.

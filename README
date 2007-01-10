@@ -1,0 +1,140 @@
+SELinux Policy Editor is a tool to make SELinux easy.
+For how to use, 
+see documentation at http://seedit.sourceforge.net/. 
+If you have question, please e-mail to himainu-ynakam@miomio.jp(Yuichi Nakamura).
+1. Installed contents
+(1) Commands
+- /usr/bin/audit2spdl
+ SPDL generator. Generate SPDL from log.
+
+- /usr/bin/seedit-converter
+ SPDL compiler itself. This is not usually used by user, but used by seedit-load command.
+
+- /usr/bin/seedit-template
+ Generate policy template
+
+- /usr/bin/seedit-unconfined
+ Display status
+
+- /usr/sbin/seedit-load
+ Run bunch of commands to compile SPDL , load policy, relabel related to file.
+
+- /usr/sbin/seedit-rbac
+ ON/OFF RBAC
+
+- /usr/sbin/seedit-restorecon
+ This is internally used by seedit-load.
+
+(2)Libraries
+- /usr/lib/python2.4/site-packages/seedit/*.py
+Python modules used in utility commands and gui
+
+(3) Parameter files
+- /usr/share/seedit
+ This is used to convert SPDL into SELinux language. Do not touch this.
+
+(4) Sample policy
+- /etc/seedit/policy
+
+(5) GUI
+Following is executable files for GUI. Usually they are called from "/usr/bin/seedit-gui" .
+
+/usr/sbin/seedit-gui
+/usr/sbin/seedit-gui-domain-manager
+/usr/sbin/seedit-gui-edit
+/usr/sbin/seedit-gui-generate-policy
+/usr/sbin/seedit-gui-load
+/usr/sbin/seedit-gui-role-manager
+/usr/sbin/seedit-gui-status
+
+2. Source directory structure
+If you have tar ball, you may want to know the structure of source.
+
+(1) core/
+  Core component. Converter for simplified policy and its utilities.
+  -converter:
+   A SPDL(Simplified Policy Description Lanuguage) Compiler.
+   It converts simplified policy into SELinux Policy.
+   For detail, see converter/README
+  - lib:
+   - C language library(libseedit.a) code 
+   - python module seedit
+  - include:
+   - include file for libseedit.a
+
+  - xml:
+   XML support of simplified policy see xml/README_XML
+   Notice:This feature is not supported in version 2.1
+
+  - utils:
+   Misc utilities that handles simplified policy. 
+   Now audit2spdl is included this read audit log and generates simplified policy
+  - Makefile
+   make all builds everything, make install install everything
+
+
+(2) policy/
+  Sample Simplified policy files
+
+(3) doc/
+  Documents
+
+(4) gui/
+  GUI
+
+2. How to build from tar ball.
+See INSTALL file included in tar ball.
+
+
+3. How to build rpm package.
+For this purpose, buildpkg.sh is prepared.
+
+You must customize following value in buildpkg.sh
+
+VERSION=2.1.0
+-> version
+
+BETA=-beta5
+-> when beta release beta number is here. Do not forget "-" 
+
+DISTRO=fc6
+-> DISTRO. fc6,fc5,cos4 is supported.
+
+RELEASE=1
+-> This is not used..
+
+PYTHON_VER=2.4
+-> Version of python. Such as 2.4,2.3.
+For FC5,FC6, it is 2.4.
+For Cent OS 4, it is 2.3.
+
+AUDITCONF=\\/etc\\/audit\\/audit.rules
+-> Path to audit.rules file. "\\" is used for escape in shell script, do not forget.
+For FC5,6: \\/etc\\/audit\\/audit.rules
+For Cent OS 4: \\/etc\\/audit.rules
+
+MODULAR=y
+-> Whether modular policy is supported or not.
+For FC5,6: y
+For Cent OS 4: n
+
+CUSTOMIZABLE_TYPES=y
+-> Whether customizable_types file is supported or not
+For FC5,6: y
+For Cent OS 4: n
+
+PAM_INCLUDE_SUPPORT=y
+-> Whether "include" syntax for pam is supported.
+For FC5,6: y
+For Cent OS 4: n
+
+SVNROOT=~/seedit/trunk/
+-> The path to subversion repo.
+
+After customize, run this script.
+./buildpkg.sh  
+
+"seedit" directory is created for build, result is generated into archive/ dir.
+
+
+

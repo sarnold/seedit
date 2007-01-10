@@ -81,6 +81,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc Changelog
 %doc COPYING
 %doc AUTHORS
+%doc NEWS
+%doc AUTHORS
+%doc TODO
 
 %package policy
 Summary: SELinux Policy Editor: Sample simplified policy

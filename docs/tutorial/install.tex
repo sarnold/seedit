@@ -82,7 +82,7 @@ except that.
 \subsection{Uninstall}
 If you want to uninstall. Do following.
 \begin{verbatim}
-# rpm -e seedit-policy seedit-converter	
+# rpm -e seedit-policy seedit	
 # reboot
 \end{verbatim}
 You system will restart as SELinux targeted policy(Fedora Core5 default)
@@ -91,9 +91,11 @@ and permissive mode(SELinux is effectively disabled).
 \section{Make sure seedit is installed}\label{sec:makesure}
 
 If you are using X Window System,  from  Gnome menu, 
-. Choose Desktop $\rightarrow$ Manage $\rightarrow$ SELinux
-Policy Editor.
-You will see window like \ref{fig:controlpanel}
+. Choose System $\rightarrow$ Configuration $\rightarrow$ SELinux
+Policy Editor, or type seedit-gui from Gnome terminal.
+You will see window like \ref{fig:controlpanel}.
+
+
 \begin{figure}
 \caption{SELinux Policy Editor Control Panel}\label{fig:controlpanel}
 \includegraphics*{images/controlpanel.png}

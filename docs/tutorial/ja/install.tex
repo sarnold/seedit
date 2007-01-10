@@ -34,9 +34,10 @@ X Window Systemが入ってない場合は、seedit-guiはダウンロードしません。
 http://seedit.sourceforge.net/ja/download.html
 \end{verbatim}
 
-seedit-converterには、Simplified PolicyをSELinuxのポリシに変換するツールと、Simplified
-	  Policy管理ツールが同梱されています。seedit-policyには、
-	  simplified policyが格納されています。seedit-guiは、GUIです。
+seeditパッケージには、SEEditの中核をなすライブラリやコマンド群が入ってい
+	ます。
+seedit-policyには、サンプルのポリシ(SPDLで書かれた単純化ポリシ)が入って
+	います。seedit-guiには、GUIが入っています。
 
  \item rpmパッケージをインストール\\
 入手したrpmパッケージを以下のようにインストールし,リブートします。
@@ -78,7 +79,7 @@ CentOS 4のSELinuxパッケージに含まれるラベル初期化コマンド(fixfiles)のバ
 \item アンインストール方法\\
 アンインストールは簡単です。
 \begin{verbatim}
-# rpm -e seedit-policy seedit-converter	
+# rpm -e seedit-policy seedit
 # reboot
 \end{verbatim}
 再起動時、SELinuxのtargeted policy(Fedora Coreデフォルト)の、permissive
@@ -99,8 +100,12 @@ seeditが正しくインストールされているか否かは、GUIおよびコマンドラインか
 ら確認可能です。
 
 \subsection{GUIで動作確認}
-Gnomeのメニューから、デスクトップ $\rightarrow$ 管理 $\rightarrow$ SELinux
-Policy Editor、を選択します。rootユーザーのパスワードを入力すると、図 \ref{fig:controlpanel}のような画面が現れます。
+Gnomeのメニューから、システム $\rightarrow$ 設定 $\rightarrow$ SELinux
+Policy Editor、を選択します(Fedora Core6の場合。何か端
+末を開き「seedit-gui」と入力しても起動します)。rootユーザーのパスワードを入力すると、図
+\ref{fig:controlpanel}のような画面が現れます。
+
+
 \begin{figure}
 \caption{SELinux Policy Editor コントロールパネル}\label{fig:controlpanel}
 \includegraphics*{images/controlpanel.png}

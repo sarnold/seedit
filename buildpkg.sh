@@ -43,6 +43,8 @@ cp gui/icons/seedit-gui.png archive
 
 cd archive
 rpmbuild -ta seedit-$VERSION$BETA.tar.gz
-cp  ~/rpm/RPMS/i386/seedit-$VERSION-*$DISTRO.i386.rpm .
-cp  ~/rpm/RPMS/noarch/seedit-$VERSION-*$DISTRO.noarch.rpm .
-cp  ~/rpm/SRPMS/seedit-$VERSION-*$DISTRO.src.rpm .
+rpmbuild -ta seedit-$VERSION$BETA.tar.gz --target noarch
+cp  ~/rpm/RPMS/i386/seedit-$VERSION*$DISTRO.i386.rpm .
+cp  ~/rpm/RPMS/noarch/seedit-*$VERSION*$DISTRO.noarch.rpm .
+cp  ~/rpm/SRPMS/seedit-$VERSION*$DISTRO.src.rpm .
+rm *debuginfo*.rpm seedit-gui.desktop seedit-gui.png

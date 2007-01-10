@@ -52,13 +52,13 @@ $ export PAM_INCLUDE_SUPPORT=y
 
 
 And 
-$ cd seedit-converter
+$ cd core
 $ make
 $ su    <--- Note if you "su -", you have to define values again.
 # make install
-# cd ../seedit-policy
+# cd ../policy
 # make install
-# cd ../seedit-gui
+# cd ../gui
 # make install
 # cp desktop/seedit.gui.desktop /usr/share/applications/seedit-gui.desktop
 

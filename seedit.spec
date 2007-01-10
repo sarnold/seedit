@@ -135,7 +135,6 @@ X based GUI for SELinux Policy Editor
 %{_sbindir}/seedit-gui-generate-policy
 %{_sbindir}/seedit-gui-edit
 %{_sbindir}/seedit-gui-load
-%{_libdir}/python%{python_ver}/site-packages/seedit/ui
 /usr/share/icons/seedit
 /usr/share/applications/seedit-gui.desktop
 %config(noreplace) /etc/security/console.apps/seedit-gui
@@ -143,12 +142,22 @@ X based GUI for SELinux Policy Editor
 /usr/share/pixmaps/seedit-gui.png
 
 %changelog
+* Thu Dec 28 2006 Yuichi Nakamura<ynakam@hitachisoft.jp> 2.1.0-0.1.beta5
+  Added Generate more policy button.
+  Fixed bug of audit2spdl module.
+
 * Fri Nov 10 2006 Yuichi Nakamura<ynakam@hitachisoft.jp> 2.1.0-0.1.beta4
-Change of install path, clean ups to submit FE.
+ Change of install path, clean ups to submit FE.
+ Merged icons from Shane M. Coughlan.
+
+* Tue Sep 26 2006 Yuichi Nakamura 2.0.2
+Merged changes(about lanugage changes) from Shane M. Coughlan.
 
 * Tue Sep 19 2006 Yuichi Nakamura 2.0.1-1
 Fixed bug for RBAC(default_cotnexts)
-Converter will generate userhelper_contexts
+seedit-converter generates userhelper_contexts
+Fixed bug for Cent OS 4
+Merged clean up about copyright statement from Shane M. Coughlan.
 
 * Fri Aug 25 2006 Yuichi Nakamura 2.0.0-2
 Fixed bug. rename was integrated into c permission, e is correct.

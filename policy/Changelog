@@ -1,42 +1,6 @@
-2006/10/21 Yuichi Nakamura
-Moved src/Makefile to seedit-converter
-
-2006/10/09 Yuichi Nakamura
-Modified to build base.pp 
-
-2006/09/28 Yuichi Nakamura
-Modified for MCS
 
 
-2006/04/10 1.4.0 Yuichi Nakamura
-Re-wrote from zero.
-Relaxed policy only.
 
-2006/1/17 1.3.1 Yuichi Nakamura
-Fix spdl_spec.xml to remove overlap permission
-2006/1/12 1.3.0 Yuichi Nakamura
-* Develpped genmacro.py.
-It Generates required macro and document about Simplified Policy Description Language(SPDL) from specification file written in XML(spdl_spec.xml).
-
-2005/12/25 1.2.1 Yuichi Nakamura
-Fix for latest Fedora Core4
-
-2005/08/30 1.2.0 Yuichi Nakamura
-- Add developer's policy(meta-Simplified Policy)
-- Support for FC4, Asianux2, TurboLinux 10Server
-
-2005/08/17 1.1.2 Yuichi Nakamura
-- Add more sample poilcy
-
-2005/7/27 Yuichi Nakamura(ynakam@gwu.edu)
-- eleminated unused macros
-- all macros are in macros/seedit_macros.te
-- ./restorecon is for distribution that does not have restorecon "-R" option.
-
-2005/7/20 Yuichi Nakamura(ynakam@gwu.edu)
-Add policies for crond, X.
-Now you can login root,sysadm_r at run-level 5 in enforcing mode.
-Add genmacros.pl for developpers.
 
 2005/07/13 1.0.0
 Initial release.

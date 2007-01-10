@@ -1,26 +1,25 @@
-%define buildnum 1
 %define betatag beta6
-%define distro cos4
-%define python_ver 2.3
-%define customizable_types n
+%define buildnum 6
+#Configure these values according to target distro, see INSTALL for detail
+%define distro fc6
+%define python_ver 2.4
+%define customizable_types y
 %define selinuxconf /etc/selinux/config
 %define auditrules /etc/audit/audit.rules
 %define modular y
-%define pam_include_support n
+%define pam_include_support y
 
 #policy,gui subpackages are build only when arch is "noarch"
 %define buildpolicy 0
 %define buildgui 0
 %define buildcore 1
-
 %ifarch noarch
 %define buildpolicy 1 
 %define buildgui 1
 %define buildcore 0
 %endif
 
-
-Summary: SELinux Policy Editor:SPDL compiler
+Summary: SELinux Policy Editor:Core component
 Name: seedit
 Version: 2.1.0
 Release: 0.%{buildnum}.%{betatag}.%{distro}
@@ -31,11 +30,13 @@ Source0: %{name}-%{version}-%{betatag}.tar.gz
 Source1: seedit-gui.desktop
 Source2: seedit-gui.png
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{betatag}-root-%(%{__id_u} -n)
-Obsoletes: seedit-converter
+Provides:  seedit-converter = %{version}-%{release}
+Obsoletes: seedit-converter <= 2.0.0-0.5
 
 %description
 SELinux Policy Editor(SEEdit) is a tool to make SELinux easy.
-Command line utils of SEEdit is packed here.
+Command line utils of SEEdit is provided by this package
+For detail, visit http://seedit.sourceforge.net/.
 
 %prep
 %setup -q
@@ -173,8 +174,8 @@ X based GUI for SELinux Policy Editor
 %endif
 
 %changelog
-* Wed Jan 10 2007 Yuichi Nakamura<ynakam@hitachisoft.jp> 2.1.0-0.1.beta6
- - Merged 3 spec files to 1 spec file(seedit.spec).
+* Wed Jan 10 2007 Yuichi Nakamura<ynakam@hitachisoft.jp> 2.1.0-0.6.beta6
+ - Merged 3 spec files into 1 spec file(seedit.spec).
  
 * Thu Dec 28 2006 Yuichi Nakamura<ynakam@hitachisoft.jp> 2.1.0-0.1.beta5
   Added Generate more policy button.

@@ -1,5 +1,5 @@
 %define buildnum 1
-%define betatag beta5
+%define betatag beta6
 %define distro cos4
 %define python_ver 2.3
 %define customizable_types n
@@ -7,6 +7,18 @@
 %define auditrules /etc/audit/audit.rules
 %define modular y
 %define pam_include_support n
+
+#policy,gui subpackages are build only when arch is "noarch"
+%define buildpolicy 0
+%define buildgui 0
+%define buildcore 1
+
+%ifarch noarch
+%define buildpolicy 1 
+%define buildgui 1
+%define buildcore 0
+%endif
+
 
 Summary: SELinux Policy Editor:SPDL compiler
 Name: seedit
@@ -31,28 +43,38 @@ Command line utils of SEEdit is packed here.
 %build
 DISTRO=%{distro} 
 MODULAR=%{modular}
+%if %{buildcore}
 cd core
 make clean
 make DISTRO=%{distro} PYTHON_VER=%{python_ver} CUSTOMIZABLE_TYPES=%{customizable_types} MODULAR=%{modular}
 cd ..
+%endif
 
+%if %{buildgui}
 cd gui
 make clean
 make 
 cd ..
+%endif
 
 %install
 DISTRO=%{distro} 
 MODULAR=%{modular}
-rm -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}
+
+%if %{buildcore}
 cd core
 make install  DESTDIR="%{buildroot}" DISTRO=%{distro} PYTHON_VER=%{python_ver} CUSTOMIZABLE_TYPES=%{customizable_types}  MODULAR=%{modular}
 cd ..
+%endif
 
+%if %{buildpolicy}
 cd policy
 make install DESTDIR="%{buildroot}" CONVERTER=/usr/bin/seedit-converter DISTRO=$DISTRO  DEVELFLAG=0 SELINUXTYPE=seedit MODULAR=$MODULAR AUDITRULES=%{auditrules}
 cd ..
+%endif
 
+%if %{buildgui}
 cd gui
 make install DESTDIR="%{buildroot}" PYTHON_VER=%{python_ver} DISTRO=%{distro} PAM_INCLUDE_SUPPORT=%{pam_include_support}
 
@@ -62,11 +84,13 @@ mkdir -p $RPM_BUILD_ROOT/usr/share/pixmaps
 install -m 664 %{SOURCE2} ${RPM_BUILD_ROOT}/usr/share/pixmaps/seedit-gui.png
 cd ..
 %find_lang %{name}
+%endif
 
 %clean
-rm -rf $RPM_BUILD_ROOT 
+rm -rf %{buildroot}
 
-%files -f %{name}.lang
+%if %{buildcore}
+%files
 %defattr(-,root,root,-)
 %{_bindir}/seedit-converter
 %{_bindir}/audit2spdl
@@ -82,8 +106,8 @@ rm -rf $RPM_BUILD_ROOT
 %doc COPYING
 %doc AUTHORS
 %doc NEWS
-%doc AUTHORS
 %doc TODO
+%endif
 
 %package policy
 Summary: SELinux Policy Editor: Sample simplified policy
@@ -111,6 +135,7 @@ if [ $1 = 0 ]; then
 	touch /.autorelabel
 fi
 
+%if %{buildpolicy}
 %files policy
 %defattr(-,root,root,-)
 %config(noreplace) /etc/selinux/seedit
@@ -118,17 +143,18 @@ fi
 /usr/share/seedit/scripts/seedit-installhelper.sh
 /usr/share/seedit/scripts/seedit-installhelper-include.sh
 /usr/sbin/seedit-init
+%endif
 
 %package gui
 Summary: GUI for SELinux Policy Editor
 Group: System Environment/Base
-URL: http://sedit.sourceforge.net/
 Requires: seedit >= 2.1.0, seedit-policy >= 2.1.0,audit,pygtk2
 
 %description gui
 X based GUI for SELinux Policy Editor
 
-%files gui 
+%if %{buildgui}
+%files gui -f %{name}.lang
 %defattr(-,root,root,-)
 %{_bindir}/seedit-gui
 %{_sbindir}/seedit-gui
@@ -138,11 +164,13 @@ X based GUI for SELinux Policy Editor
 %{_sbindir}/seedit-gui-generate-policy
 %{_sbindir}/seedit-gui-edit
 %{_sbindir}/seedit-gui-load
+%{_libdir}/python%{python_ver}/site-packages/seedit/ui
 /usr/share/icons/seedit
 /usr/share/applications/seedit-gui.desktop
 %config(noreplace) /etc/security/console.apps/seedit-gui
 %config(noreplace) /etc/pam.d/seedit-gui
 /usr/share/pixmaps/seedit-gui.png
+%endif
 
 %changelog
 * Thu Dec 28 2006 Yuichi Nakamura<ynakam@hitachisoft.jp> 2.1.0-0.1.beta5

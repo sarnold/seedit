@@ -47,6 +47,7 @@ Following is executable files for GUI. Usually they are called from "/usr/bin/se
 /usr/sbin/seedit-gui-role-manager
 /usr/sbin/seedit-gui-status
 
+
 2. Source directory structure
 If you have tar ball, you may want to know the structure of source.
 

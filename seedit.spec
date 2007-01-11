@@ -182,7 +182,7 @@ X based GUI for SELinux Policy Editor
 
 %changelog
 * Fri Jan 12 2007 Yuichi Nakamura<ynakam@hitachisoft.jp> 2.1.0-0.7.beta6
-
+ - Fixed spec file to use desktop-file-install
 
 * Wed Jan 10 2007 Yuichi Nakamura<ynakam@hitachisoft.jp> 2.1.0-0.6.beta6
  - Merged 3 spec files into 1 spec file(seedit.spec).

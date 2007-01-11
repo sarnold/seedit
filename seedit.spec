@@ -31,8 +31,6 @@ Source1: seedit-gui.desktop
 Source2: seedit-gui.png
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{betatag}-root-%(%{__id_u} -n)
 Requires:  checkpolicy, m4, audit
-Provides:  seedit-converter = %{version}-%{release}
-Obsoletes: seedit-converter <= 2.0.0-0.5
 
 %description
 SELinux Policy Editor(SEEdit) is a tool to make SELinux easy.
@@ -72,7 +70,7 @@ cd ..
 
 %if %{buildpolicy}
 cd policy
-make install DESTDIR="%{buildroot}" CONVERTER=/usr/bin/seedit-converter DISTRO=$DISTRO  DEVELFLAG=0 SELINUXTYPE=seedit MODULAR=$MODULAR AUDITRULES=%{auditrules}
+make install DESTDIR="%{buildroot}" DISTRO=$DISTRO  DEVELFLAG=0 SELINUXTYPE=seedit MODULAR=$MODULAR AUDITRULES=%{auditrules}
 cd ..
 %endif
 
@@ -80,12 +78,10 @@ cd ..
 cd gui
 make install DESTDIR="%{buildroot}" PYTHON_VER=%{python_ver} DISTRO=%{distro} PAM_INCLUDE_SUPPORT=%{pam_include_support}
 
-desktop-file-install --vendor fedora                            \
-	--dir ${RPM_BUILD_ROOT}%{_datadir}/applications         \
-	%{SOURCE1}
+desktop-file-install --vendor fedora --dir ${RPM_BUILD_ROOT}%{_datadir}/applications %{SOURCE1}
 
-mkdir -p $RPM_BUILD_ROOT/usr/share/pixmaps
-install -m 664 %{SOURCE2} ${RPM_BUILD_ROOT}/usr/share/pixmaps/seedit-gui.png
+mkdir -p $RPM_BUILD_ROOT%{_datadir}/pixmaps
+install -m 664 %{SOURCE2} ${RPM_BUILD_ROOT}%{_datadir}/pixmaps/seedit-gui.png
 cd ..
 %find_lang %{name}
 %endif
@@ -104,7 +100,7 @@ rm -rf %{buildroot}
 %{_bindir}/seedit-unconfined
 %{_bindir}/seedit-template
 %{_libdir}/python%{python_ver}/site-packages/seedit/*
-/usr/share/seedit
+%{_datadir}/seedit
 %doc README
 %doc Changelog
 %doc COPYING
@@ -124,29 +120,29 @@ Sample simplified policy for SEEdit.
 %post policy
 if [ $1 = 1 ]; then
 	#Mark to initialize SELinux Policy Editor, when new install
-	touch /usr/share/seedit/sepolicy/need-init
+	touch %{_datadir}/share/seedit/sepolicy/need-init
 fi
 
 if [ $1 = 2 ]; then
 	#Mark to initialize RBAC config when upgrade
-	touch /usr/share/seedit/sepolicy/need-rbac-init
+	touch %{_datadir}/share/seedit/sepolicy/need-rbac-init
 fi
 
 %postun policy
 if [ $1 = 0 ]; then
-	sed -i 's/^SELINUX=.*/SELINUX=permissive/g' /etc/selinux/config
-	sed -i 's/^SELINUXTYPE=.*/SELINUXTYPE=targeted/g' /etc/selinux/config
+	sed -i 's/^SELINUX=.*/SELINUX=permissive/g' %{_sysconfdir}/selinux/config
+	sed -i 's/^SELINUXTYPE=.*/SELINUXTYPE=targeted/g' %{_sysconfdir}/selinux/config
 	touch /.autorelabel
 fi
 
 %if %{buildpolicy}
 %files policy
 %defattr(-,root,root,-)
-%config(noreplace) /etc/selinux/seedit
-%config(noreplace) /etc/seedit/policy
-/usr/share/seedit/scripts/seedit-installhelper.sh
-/usr/share/seedit/scripts/seedit-installhelper-include.sh
-/usr/sbin/seedit-init
+%config(noreplace) %{_sysconfdir}/selinux/seedit
+%config(noreplace) %{_sysconfdir}/seedit/policy
+%{_datadir}/seedit/scripts/seedit-installhelper.sh
+%{_datadir}/seedit/scripts/seedit-installhelper-include.sh
+%{_sbindir}/seedit-init
 %endif
 
 %package gui
@@ -173,16 +169,17 @@ X based GUI for SELinux Policy Editor
 %{_sbindir}/seedit-gui-edit
 %{_sbindir}/seedit-gui-load
 %{_libdir}/python%{python_ver}/site-packages/seedit/ui
-/usr/share/icons/seedit
-/usr/share/applications/fedora-seedit-gui.desktop
-%config(noreplace) /etc/security/console.apps/seedit-gui
-%config(noreplace) /etc/pam.d/seedit-gui
-/usr/share/pixmaps/seedit-gui.png
+%{_datadir}/icons/seedit
+%{_datadir}/applications/fedora-seedit-gui.desktop
+%config(noreplace) %{_sysconfdir}/security/console.apps/seedit-gui
+%config(noreplace) %{_sysconfdir}/pam.d/seedit-gui
+%{_datadir}/pixmaps/seedit-gui.png
 %endif
 
 %changelog
 * Fri Jan 12 2007 Yuichi Nakamura<ynakam@hitachisoft.jp> 2.1.0-0.7.beta6
  - Fixed spec file to use desktop-file-install
+ - Modified paths to use macros
 
 * Wed Jan 10 2007 Yuichi Nakamura<ynakam@hitachisoft.jp> 2.1.0-0.6.beta6
  - Merged 3 spec files into 1 spec file(seedit.spec).

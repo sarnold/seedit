@@ -1,5 +1,5 @@
 %define betatag beta6
-%define buildnum 6
+%define buildnum 7
 #Configure these values according to target distro, see INSTALL for detail
 %define distro fc6
 %define python_ver 2.4
@@ -30,6 +30,7 @@ Source0: %{name}-%{version}-%{betatag}.tar.gz
 Source1: seedit-gui.desktop
 Source2: seedit-gui.png
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{betatag}-root-%(%{__id_u} -n)
+Requires:  checkpolicy, m4, audit
 Provides:  seedit-converter = %{version}-%{release}
 Obsoletes: seedit-converter <= 2.0.0-0.5
 
@@ -79,8 +80,10 @@ cd ..
 cd gui
 make install DESTDIR="%{buildroot}" PYTHON_VER=%{python_ver} DISTRO=%{distro} PAM_INCLUDE_SUPPORT=%{pam_include_support}
 
-install -d -m 755 ${RPM_BUILD_ROOT}%{_datadir}/applications
-install -m 664 %{SOURCE1} ${RPM_BUILD_ROOT}%{_datadir}/applications/seedit-gui.desktop
+desktop-file-install --vendor fedora                            \
+	--dir ${RPM_BUILD_ROOT}%{_datadir}/applications         \
+	%{SOURCE1}
+
 mkdir -p $RPM_BUILD_ROOT/usr/share/pixmaps
 install -m 664 %{SOURCE2} ${RPM_BUILD_ROOT}/usr/share/pixmaps/seedit-gui.png
 cd ..
@@ -113,7 +116,7 @@ rm -rf %{buildroot}
 %package policy
 Summary: SELinux Policy Editor: Sample simplified policy
 Group:  System Environment/Base
-Requires: seedit >= 2.1.0, checkpolicy,m4,audit
+Requires: seedit >= 2.1.0
 
 %description policy
 Sample simplified policy for SEEdit.
@@ -149,7 +152,11 @@ fi
 %package gui
 Summary: GUI for SELinux Policy Editor
 Group: System Environment/Base
-Requires: seedit >= 2.1.0, seedit-policy >= 2.1.0,audit,pygtk2
+Requires: python >= 2.3
+Requires: gnome-python2, pygtk2
+BuildRequires: desktop-file-utils, gettext
+Requires: seedit >= 2.1.0, seedit-policy >= 2.1.0
+
 
 %description gui
 X based GUI for SELinux Policy Editor
@@ -167,13 +174,16 @@ X based GUI for SELinux Policy Editor
 %{_sbindir}/seedit-gui-load
 %{_libdir}/python%{python_ver}/site-packages/seedit/ui
 /usr/share/icons/seedit
-/usr/share/applications/seedit-gui.desktop
+/usr/share/applications/fedora-seedit-gui.desktop
 %config(noreplace) /etc/security/console.apps/seedit-gui
 %config(noreplace) /etc/pam.d/seedit-gui
 /usr/share/pixmaps/seedit-gui.png
 %endif
 
 %changelog
+* Fri Jan 12 2007 Yuichi Nakamura<ynakam@hitachisoft.jp> 2.1.0-0.7.beta6
+
+
 * Wed Jan 10 2007 Yuichi Nakamura<ynakam@hitachisoft.jp> 2.1.0-0.6.beta6
  - Merged 3 spec files into 1 spec file(seedit.spec).
  

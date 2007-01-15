@@ -53,4 +53,5 @@ cd archive
 cp  $RPMROOT/RPMS/i386/seedit-$VERSION*$DISTRO.i386.rpm .
 cp  $RPMROOT/RPMS/noarch/seedit-*$VERSION*$DISTRO.noarch.rpm .
 cp  $RPMROOT/SRPMS/seedit-$VERSION*$DISTRO.src.rpm .
+cp $RPMROOT/SPECS/seedit.spec .
 rm *debuginfo*.rpm seedit-gui.desktop seedit-gui.png

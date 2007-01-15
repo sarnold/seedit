@@ -34,8 +34,10 @@ Requires:  checkpolicy, m4, audit
 
 %description
 SELinux Policy Editor(SEEdit) is a tool to make SELinux easy.
-Command line utils of SEEdit is provided by this package
+SEEdit is composed of Simplified Policy, command line utils and GUI.
+The main feature is Simplified Policy. Simplified Policy is written in Simplified Policy Description Language(SPDL). SPDL hides detail of SELinux.
 For detail, visit http://seedit.sourceforge.net/.
+Command line utils is included in seedit package.
 
 %prep
 %setup -q

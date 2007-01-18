@@ -58,11 +58,7 @@ install:all
 	mkdir -p $(BUILD_ROOT_DIR)/sepolicy
 	mkdir -p $(SEEDITCONFROOT)
 
-	if [ -e base_policy/contexts/dynamic_contexts.$(DISTRO) ];then\
-		cp base_policy/contexts/dynamic_contexts.$(DISTRO) base_policy/contexts/dynamic_contexts;\
-	else \
-		cp base_policy/contexts/dynamic_contexts  base_policy/contexts/dynamic_contexts;\
-	fi
+
 
 	cp -r base_policy $(SEEDITCONFROOT)
 	cp -r macros $(SEEDITCONFROOT)

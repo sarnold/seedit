@@ -1,36 +1,30 @@
-%define betatag beta6
-%define buildnum 7
-#Configure these values according to target distro, see INSTALL for detail
-%define distro fc6
+%define betatag beta6.1
+%define buildnum 8
 %define python_ver 2.4
-%define customizable_types y
 %define selinuxconf /etc/selinux/config
 %define auditrules /etc/audit/audit.rules
+#Whether SELinux supports customizable_types, after FC5 "y"
+%define customizable_types y
+#Whether SELinux supports modular policy, after FC5 "y"
 %define modular y
-%define pam_include_support y
+#Whether pam supports include syntax, after FC5 "y"
+%define pam_include_support y  
+#Version of sample policy file
+%define sample_policy_type fc6 
 
-#policy,gui subpackages are build only when arch is "noarch"
-%define buildpolicy 0
-%define buildgui 0
-%define buildcore 1
-%ifarch noarch
-%define buildpolicy 1 
-%define buildgui 1
-%define buildcore 0
-%endif
-
-Summary: SELinux Policy Editor:Core component
-Name: seedit
+Name: seedit         
 Version: 2.1.0
-Release: 0.%{buildnum}.%{betatag}.%{distro}
-License: GPL
-Group: System Environment/Base
+Release: 0.%{buildnum}.%{betatag}%{?dist}
+Summary: SELinux Policy Editor:Core component
+Group:  System Environment/Base        
+License: GPL       
 URL: http://seedit.sourceforge.net/
-Source0: %{name}-%{version}-%{betatag}.tar.gz
+Source0: http://prdownloads.sourceforge.jp/selpe/23577/%{name}-%{version}-%{betatag}.tar.gz
 Source1: seedit-gui.desktop
 Source2: seedit-gui.png
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{betatag}-root-%(%{__id_u} -n)
-Requires:  checkpolicy, m4, audit
+BuildRequires:  libselinux-devel >= 1.19, libsepol-devel >= 1.1.1
+Requires:  checkpolicy, m4, audit, libselinux >= 1.19, libsepol >= 1.1.1
 
 %description
 SELinux Policy Editor(SEEdit) is a tool to make SELinux easy.
@@ -45,55 +39,36 @@ Command line utils is included in seedit package.
 %setup -q
 
 %build
-DISTRO=%{distro} 
-MODULAR=%{modular}
-%if %{buildcore}
-cd core
+pushd core
 make clean
-make DISTRO=%{distro} PYTHON_VER=%{python_ver} CUSTOMIZABLE_TYPES=%{customizable_types} MODULAR=%{modular}
-cd ..
-%endif
-
-%if %{buildgui}
-cd gui
-make clean
-make 
-cd ..
-%endif
+make %{?_smp_mflags} PYTHON_VER=%{python_ver} CUSTOMIZABLE_TYPES=%{customizable_types} MODULAR=%{modular}
+popd
 
 %install
-DISTRO=%{distro} 
-MODULAR=%{modular}
-rm -rf %{buildroot}
+rm -rf $RPM_BUILD_ROOT
 
-%if %{buildcore}
-cd core
-make install  DESTDIR="%{buildroot}" DISTRO=%{distro} PYTHON_VER=%{python_ver} CUSTOMIZABLE_TYPES=%{customizable_types}  MODULAR=%{modular}
-cd ..
-%endif
+pushd core
+make install  DESTDIR=$RPM_BUILD_ROOT  PYTHON_VER=%{python_ver} CUSTOMIZABLE_TYPES=%{customizable_types}  MODULAR=%{modular}
+popd
 
-%if %{buildpolicy}
-cd policy
-make install DESTDIR="%{buildroot}" DISTRO=$DISTRO  DEVELFLAG=0 SELINUXTYPE=seedit MODULAR=$MODULAR AUDITRULES=%{auditrules}
-cd ..
-%endif
+pushd policy
+make install DESTDIR=$RPM_BUILD_ROOT  DISTRO=%{sample_policy_type} SELINUXTYPE=seedit MODULAR=$MODULAR AUDITRULES=%{auditrules}
+popd
 
-%if %{buildgui}
-cd gui
-make install DESTDIR="%{buildroot}" PYTHON_VER=%{python_ver} DISTRO=%{distro} PAM_INCLUDE_SUPPORT=%{pam_include_support}
+pushd gui
+make install DESTDIR=$RPM_BUILD_ROOT PYTHON_VER=%{python_ver} PAM_INCLUDE_SUPPORT=%{pam_include_support}
 
-desktop-file-install --vendor fedora --dir ${RPM_BUILD_ROOT}%{_datadir}/applications %{SOURCE1}
+desktop-file-install --vendor fedora --dir ${RPM_BUILD_ROOT}%{_datadir}/applications  --add-category X-Fedora %{SOURCE1}
 
 mkdir -p $RPM_BUILD_ROOT%{_datadir}/pixmaps
 install -m 664 %{SOURCE2} ${RPM_BUILD_ROOT}%{_datadir}/pixmaps/seedit-gui.png
-cd ..
+popd
+
 %find_lang %{name}
-%endif
 
 %clean
-rm -rf %{buildroot}
+rm -rf $RPM_BUILD_ROOT
 
-%if %{buildcore}
 %files
 %defattr(-,root,root,-)
 %{_bindir}/seedit-converter
@@ -111,7 +86,6 @@ rm -rf %{buildroot}
 %doc AUTHORS
 %doc NEWS
 %doc TODO
-%endif
 
 %package policy
 Summary: SELinux Policy Editor: Sample simplified policy
@@ -139,15 +113,14 @@ if [ $1 = 0 ]; then
 	touch /.autorelabel
 fi
 
-%if %{buildpolicy}
 %files policy
 %defattr(-,root,root,-)
 %config(noreplace) %{_sysconfdir}/selinux/seedit
 %config(noreplace) %{_sysconfdir}/seedit/policy
 %{_datadir}/seedit/scripts/seedit-installhelper.sh
 %{_datadir}/seedit/scripts/seedit-installhelper-include.sh
+%{_datadir}/seedit/base_policy/contexts/dynamic_contexts
 %{_sbindir}/seedit-init
-%endif
 
 %package gui
 Summary: GUI for SELinux Policy Editor
@@ -161,7 +134,6 @@ Requires: seedit >= 2.1.0, seedit-policy >= 2.1.0
 %description gui
 X based GUI for SELinux Policy Editor
 
-%if %{buildgui}
 %files gui -f %{name}.lang
 %defattr(-,root,root,-)
 %{_bindir}/seedit-gui
@@ -178,9 +150,12 @@ X based GUI for SELinux Policy Editor
 %config(noreplace) %{_sysconfdir}/security/console.apps/seedit-gui
 %config(noreplace) %{_sysconfdir}/pam.d/seedit-gui
 %{_datadir}/pixmaps/seedit-gui.png
-%endif
+
 
 %changelog
+* Thu Jan 18 2007 Yuichi Nakamura<ynakam@hitachisoft.jp> 2.1.0-0.8.beta6.1
+ - Cleaned spec file 
+   
 * Fri Jan 12 2007 Yuichi Nakamura<ynakam@hitachisoft.jp> 2.1.0-0.7.beta6
  - Fixed spec file to use desktop-file-install
  - Modified paths to use macros

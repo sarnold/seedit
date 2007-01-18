@@ -54,6 +54,15 @@ install: dir installhelper-include
 	mkdir -p $(prefix)/sbin
 	install -m 755 seedit-init.sh $(prefix)/sbin/seedit-init
 
+	echo $(DISTRO)
+	echo $(DISTRO)
+	mkdir -p $(prefix)/share/seedit/base_policy/contexts/
+	if [ -e src/dynamic_contexts/dynamic_contexts.$(DISTRO) ];then\
+		install -m 644 src/dynamic_contexts/dynamic_contexts.$(DISTRO) $(prefix)/share/seedit/base_policy/contexts/dynamic_contexts;\
+	else \
+		install -m 644 src/dynamic_contexts/dynamic_contexts $(prefix)/share/seedit/base_policy/contexts/dynamic_contexts;\
+	fi
+
 convert_test:  
 	mkdir -p policy
 	if [ -e src/simplified_policy.$(DISTRO) ];then \

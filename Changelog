@@ -1,3 +1,8 @@
+* 2007/01/18
+- Clean up of spec file.
+- Not include spec file and seedit.desktop file and seedit-gui.png in tar ball.
+- Moved all distro specific files to policy subdir.
+
 * 2007/01/09 
 - Merged 3 spec files to 1 spec file(seedit.spec).
  -- So, there is only 1 src.rpm package "seedit"

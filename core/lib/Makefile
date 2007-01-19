@@ -2,13 +2,14 @@
 CC		= gcc
 LEX		= lex
 YACC		= yacc
-CFLAGS		= -Wall -O2 -g -DDEBUG=1
+CFLAGS		?= -Wall -O2 -g -DDEBUG=1
 INCLUDE = -I../include  -I/usr/include/selinux
 OBJS 	= y.tab.o lex.yy.o parse.o common.o
 TARGET = libseedit.a
 prefix ?= /usr
-PYTHON_VER ?= 2.4
-PYTHON_MODULE_ROOT = $(prefix)/lib/python$(PYTHON_VER)/site-packages/
+PYTHON_SITELIB ?=  $(prefix)/lib/python2.4/site-packages/
+PYTHON_MODULE_ROOT = $(PYTHON_SITELIB)
+
 all: $(TARGET)
 
 $(TARGET):  $(OBJS)

@@ -1,3 +1,6 @@
+/*This is from libselinux 1.30
+ code of libselinux is public domain software.
+*/
 #include <unistd.h>
 #include <errno.h>
 #include <stdio.h>

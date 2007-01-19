@@ -1,3 +1,7 @@
+*2007/01/19
+- Cleaned Makefiles, removed unused flags
+- Cleaned spec file
+
 * 2007/01/18
 - Clean up of spec file.
 - Not include spec file and seedit.desktop file and seedit-gui.png in tar ball.

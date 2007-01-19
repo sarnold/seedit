@@ -2,7 +2,7 @@
 
 #Fix these valuables for your environment
 VERSION=2.1.0
-BETA=-beta6.1
+BETA=-beta6.2
 DISTRO=fc6
 SAMPLE_POLICY_TYPE=fc6
 RELEASE=1
@@ -51,8 +51,7 @@ rm -rf seedit-$VERSION
 
 rpmbuild -ba $RPMROOT/SPECS/seedit.spec
 cd archive
-cp  $RPMROOT/RPMS/i386/seedit-$VERSION*.i386.rpm .
-cp  $RPMROOT/RPMS/noarch/seedit-*$VERSION*.noarch.rpm .
+cp  $RPMROOT/RPMS/i386/seedit*$VERSION*.i386.rpm .
 cp  $RPMROOT/SRPMS/seedit-$VERSION*.src.rpm .
 cp $RPMROOT/SPECS/seedit.spec .
 rm *debuginfo*.rpm seedit-gui.desktop seedit-gui.png

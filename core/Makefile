@@ -1,6 +1,5 @@
 prefix ?= $(DESTDIR)/usr
 sysconfdir ?= $(DESTDIR)/etc
-DISTRO ?= fc6
 PYTHON_VER ?= 2.4
 
 all:

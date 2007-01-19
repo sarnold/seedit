@@ -1,6 +1,7 @@
-%define betatag beta6.1
-%define buildnum 8
-%define python_ver 2.4
+%define betatag beta6.2
+%define buildnum 9
+%define python_sitelib %(%{__python} -c 'from distutils import sysconfig; print sysconfig.get_python_lib()')
+
 %define selinuxconf /etc/selinux/config
 %define auditrules /etc/audit/audit.rules
 #Whether SELinux supports customizable_types, after FC5 "y"
@@ -41,14 +42,14 @@ Command line utils is included in seedit package.
 %build
 pushd core
 make clean
-make %{?_smp_mflags} PYTHON_VER=%{python_ver} CUSTOMIZABLE_TYPES=%{customizable_types} MODULAR=%{modular}
+make %{?_smp_mflags} CFLAGS="%{optflags}" CUSTOMIZABLE_TYPES=%{customizable_types} MODULAR=%{modular}
 popd
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
 pushd core
-make install  DESTDIR=$RPM_BUILD_ROOT  PYTHON_VER=%{python_ver} CUSTOMIZABLE_TYPES=%{customizable_types}  MODULAR=%{modular}
+make install  DESTDIR=$RPM_BUILD_ROOT  PYTHON_SITELIB=%{buildroot}/%{python_sitelib} CUSTOMIZABLE_TYPES=%{customizable_types}  MODULAR=%{modular}
 popd
 
 pushd policy
@@ -56,9 +57,9 @@ make install DESTDIR=$RPM_BUILD_ROOT  DISTRO=%{sample_policy_type} SELINUXTYPE=s
 popd
 
 pushd gui
-make install DESTDIR=$RPM_BUILD_ROOT PYTHON_VER=%{python_ver} PAM_INCLUDE_SUPPORT=%{pam_include_support}
+make install DESTDIR=$RPM_BUILD_ROOT  PYTHON_SITELIB=%{buildroot}/%{python_sitelib} PAM_INCLUDE_SUPPORT=%{pam_include_support}
 
-desktop-file-install --vendor fedora --dir ${RPM_BUILD_ROOT}%{_datadir}/applications  --add-category X-Fedora %{SOURCE1}
+desktop-file-install --vendor "" --dir ${RPM_BUILD_ROOT}%{_datadir}/applications  --add-category X-Fedora %{SOURCE1}
 
 mkdir -p $RPM_BUILD_ROOT%{_datadir}/pixmaps
 install -m 664 %{SOURCE2} ${RPM_BUILD_ROOT}%{_datadir}/pixmaps/seedit-gui.png
@@ -69,8 +70,9 @@ popd
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%files
+%files -f %{name}.lang
 %defattr(-,root,root,-)
+%doc README Changelog COPYING AUTHORS NEWS TODO
 %{_bindir}/seedit-converter
 %{_bindir}/audit2spdl
 %{_sbindir}/seedit-rbac
@@ -78,14 +80,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sbindir}/seedit-restorecon
 %{_bindir}/seedit-unconfined
 %{_bindir}/seedit-template
-%{_libdir}/python%{python_ver}/site-packages/seedit/*
-%{_datadir}/seedit
-%doc README
-%doc Changelog
-%doc COPYING
-%doc AUTHORS
-%doc NEWS
-%doc TODO
+%{python_sitelib}/%{name}
+%{_datadir}/%{name}
+
 
 %package policy
 Summary: SELinux Policy Editor: Sample simplified policy
@@ -98,12 +95,12 @@ Sample simplified policy for SEEdit.
 %post policy
 if [ $1 = 1 ]; then
 	#Mark to initialize SELinux Policy Editor, when new install
-	touch %{_datadir}/share/seedit/sepolicy/need-init
+	touch %{_datadir}/%{name}/sepolicy/need-init
 fi
 
 if [ $1 = 2 ]; then
 	#Mark to initialize RBAC config when upgrade
-	touch %{_datadir}/share/seedit/sepolicy/need-rbac-init
+	touch %{_datadir}/%{name}/sepolicy/need-rbac-init
 fi
 
 %postun policy
@@ -115,17 +112,17 @@ fi
 
 %files policy
 %defattr(-,root,root,-)
-%config(noreplace) %{_sysconfdir}/selinux/seedit
-%config(noreplace) %{_sysconfdir}/seedit/policy
-%{_datadir}/seedit/scripts/seedit-installhelper.sh
-%{_datadir}/seedit/scripts/seedit-installhelper-include.sh
-%{_datadir}/seedit/base_policy/contexts/dynamic_contexts
+%config(noreplace) %{_sysconfdir}/%{name}
+%config(noreplace) %{_sysconfdir}/selinux/%{name}
+%{_datadir}/%{name}/scripts/seedit-installhelper.sh
+%{_datadir}/%{name}/scripts/seedit-installhelper-include.sh
+%{_datadir}/%{name}/base_policy/contexts/dynamic_contexts
 %{_sbindir}/seedit-init
 
 %package gui
 Summary: GUI for SELinux Policy Editor
 Group: System Environment/Base
-Requires: python >= 2.3
+Requires: python >= 2.3, usermode
 Requires: gnome-python2, pygtk2
 BuildRequires: desktop-file-utils, gettext
 Requires: seedit >= 2.1.0, seedit-policy >= 2.1.0
@@ -144,17 +141,20 @@ X based GUI for SELinux Policy Editor
 %{_sbindir}/seedit-gui-generate-policy
 %{_sbindir}/seedit-gui-edit
 %{_sbindir}/seedit-gui-load
-%{_libdir}/python%{python_ver}/site-packages/seedit/ui
-%{_datadir}/icons/seedit
-%{_datadir}/applications/fedora-seedit-gui.desktop
+%{python_sitelib}/%{name}/ui
+%{_datadir}/icons/%{name}
+%{_datadir}/applications/seedit-gui.desktop
 %config(noreplace) %{_sysconfdir}/security/console.apps/seedit-gui
 %config(noreplace) %{_sysconfdir}/pam.d/seedit-gui
 %{_datadir}/pixmaps/seedit-gui.png
 
 
 %changelog
+* Thu Jan 18 2007 Yuichi Nakamura<ynakam@hitachisoft.jp> 2.1.0-0.9.beta6.2
+ - Fixed spec file, Makefiles, to more fit Fedora Extras.
+   
 * Thu Jan 18 2007 Yuichi Nakamura<ynakam@hitachisoft.jp> 2.1.0-0.8.beta6.1
- - Cleaned spec file 
+ - Cleaned spec file , to fit Fedora Extras.
    
 * Fri Jan 12 2007 Yuichi Nakamura<ynakam@hitachisoft.jp> 2.1.0-0.7.beta6
  - Fixed spec file to use desktop-file-install

@@ -1,17 +1,17 @@
 prefix ?= $(DESTDIR)/usr
 sysconfdir ?= $(DESTDIR)/etc
 SRC = seedit-gui-domain-manager.py seedit-gui-role-manager.py seedit-gui-edit.py seedit-gui-generate-policy.py seedit-gui-status.py seedit-gui.py seedit/ui/GUICommon.py seedit/ui/UILogic.py
-PYTHON_VER ?= 2.4
 DISTRO ?= fc6
 PAM_INCLUDE_SUPPORT ?= y
+PYTHON_SITELIB ?=  $(prefix)/lib/python2.4/site-packages/
 
 all:
 
 install: 
 	mkdir -p $(prefix)/share/icons/seedit
 	install -m 644 ./icons/*  $(prefix)/share/icons/seedit
-	mkdir -p $(prefix)/lib/python$(PYTHON_VER)/site-packages/seedit/ui
-	install -m 755 seedit/ui/*	$(prefix)/lib/python$(PYTHON_VER)/site-packages/seedit/ui
+	mkdir -p $(PYTHON_SITELIB)/seedit/ui
+	install -m 755 seedit/ui/*  $(PYTHON_SITELIB)/seedit/ui
 	mkdir -p $(prefix)/sbin
 	install -m 755 seedit-gui.py $(prefix)/sbin/seedit-gui
 	install -m 755 seedit-gui-status.py $(prefix)/sbin/seedit-gui-status

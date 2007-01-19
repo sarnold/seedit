@@ -1,8 +1,8 @@
-DISTRO          ?= fc6
 CC		= gcc
-CFLAGS		= -Wall -O2 -g -DDEBUG=1 -DDIRSEARCH=1 -D$(DISTRO)
+CFLAGS		?= -Wall -O2 -g -DDEBUG=1
+override CFLAGS	        += -DDIRSEARCH=1
 LD		= -ll -lselinux 
-INCLUDE		= -I/usr/include/selinux -I/usr/include/libxml2/ -I../include
+INCLUDE		= -I/usr/include/selinux -I../include
 LDPATH		= -L/usr/lib
 CONVERTEROBJS	=  action.o  file_label.o convert.o security_class.o initial_policy.o out_file_acl.o seedit-converter.o hashtab.o preprocess_include.o
 LIBSEEDIT = ../lib/libseedit.a

@@ -40,9 +40,9 @@ installhelper-include:
 	echo "export MODULAR=$(MODULAR)" >> seedit-installhelper-include.sh
 
 install: dir installhelper-include
-	mkdir -p $(prefix)/share/seedit/scripts
-	install -m 755 seedit-installhelper.sh $(prefix)/share/seedit/scripts
-	install -m 755 seedit-installhelper-include.sh $(prefix)/share/seedit/scripts
+	mkdir -p $(prefix)/share/seedit/initialize
+	install -m 755 seedit-installhelper.sh $(prefix)/share/seedit/initialize
+	install -m 755 seedit-installhelper-include.sh $(prefix)/share/seedit/initialize
 
 	if [ -e src/simplified_policy.$(DISTRO) ];then \
 		cp  -r src/simplified_policy.$(DISTRO)  $(SEEDITCONFROOT)/policy;\
@@ -58,9 +58,9 @@ install: dir installhelper-include
 	echo $(DISTRO)
 	mkdir -p $(prefix)/share/seedit/base_policy/contexts/
 	if [ -e src/dynamic_contexts/dynamic_contexts.$(DISTRO) ];then\
-		install -m 644 src/dynamic_contexts/dynamic_contexts.$(DISTRO) $(prefix)/share/seedit/base_policy/contexts/dynamic_contexts;\
+		install -m 644 src/dynamic_contexts/dynamic_contexts.$(DISTRO) $(prefix)/share/seedit/initialize/dynamic_contexts;\
 	else \
-		install -m 644 src/dynamic_contexts/dynamic_contexts $(prefix)/share/seedit/base_policy/contexts/dynamic_contexts;\
+		install -m 644 src/dynamic_contexts/dynamic_contexts $(prefix)/share/seedit/initialize/dynamic_contexts;\
 	fi
 
 convert_test:  

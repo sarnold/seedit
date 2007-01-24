@@ -2,7 +2,7 @@
 
 #Fix these valuables for your environment
 VERSION=2.1.0
-BETA=-beta6.2
+BETA=-beta6.3
 DISTRO=fc6
 SAMPLE_POLICY_TYPE=fc6
 RELEASE=1

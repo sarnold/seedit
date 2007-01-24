@@ -1,3 +1,8 @@
+*2007/01/24
+- Cleaned spec file 
+- Modified path /usr/share/seedit/scripts -> /usr/share/seedit/initialize
+
+
 *2007/01/19
 - Cleaned Makefiles, removed unused flags
 - Cleaned spec file

@@ -43,7 +43,7 @@ gGetsebool="/usr/sbin/getsebool"
 gRestorecon="/sbin/restorecon"
 gNeedInit="/usr/share/seedit/sepolicy/need-init"
 gNeedRBACInit="/usr/share/seedit/sepolicy/need-rbac-init"
-gInitCommand="/usr/share/seedit/scripts/seedit-installhelper.sh"
+gInitCommand="/usr/share/seedit/initialize/seedit-installhelper.sh"
 
 gCoreDomainList=["crond_t", "rpm_t", "gdm_t", "initrc_t", "init_t", "login_t", "unconfined_t", "rpm_script_t",  "system_crond_t", "kernel_t", "unconfined_su_t"]
 gRpmPath="/bin/rpm"

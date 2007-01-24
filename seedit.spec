@@ -1,5 +1,5 @@
-%define betatag beta6.3
-%define buildnum 11
+%define betatag beta6.4
+%define buildnum 12
 %define python_sitelib %(%{__python} -c 'from distutils import sysconfig; print sysconfig.get_python_lib()')
 
 %define selinuxconf /etc/selinux/config
@@ -153,6 +153,9 @@ X based GUI for SELinux Policy Editor
 
 
 %changelog
+* Thu Jan 25 2007 Yuichi Nakamura<ynakam@hitachisoft.jp> 2.1.0-0.12.beta6.4
+ - Fixed bug in upgrade.
+
 * Wed Jan 24 2007 Yuichi Nakamura<ynakam@hitachisoft.jp> 2.1.0-0.11.beta6.3
  - Fixed bug that seedit-gui does not start.
 

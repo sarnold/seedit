@@ -102,9 +102,11 @@ uninstall_seedit() {
 }
 
 if [ $1 = "upgrade" ]; then
-#Initialization when RBAC enabled
-   /usr/sbin/seedit-rbac off -n
-   /usr/sbin/seedit-rbac on -n
+   #Initialization when RBAC enabled
+    if [ -e /etc/seedit/policy/sysadm_r.sp ]; then
+	/usr/sbin/seedit-rbac off -n
+	/usr/sbin/seedit-rbac on -n
+   fi
    rm /usr/share/seedit/sepolicy/need-rbac-init
    /usr/sbin/seedit-load -v	
    exit 0

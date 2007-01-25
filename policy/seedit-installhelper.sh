@@ -15,7 +15,11 @@ initialize_seedit() {
 	
 	#If RBAC related file is remaining, remove it. RBAC is disabled by default.
 	if [ -e /etc/seedit/policy/sysadm_r.sp ]; then
-		/usr/sbin/seedit-rbac off -n
+		/usr/sbin/seedit-rbac off -n    
+		rm -rf /usr/share/seedit/rbac-on
+	fi
+	if [ -e /usr/share/seedit/rbac-on ]; then
+		/usr/sbin/seedit-rbac off -n    
 	fi
         ### Make binary policy to fit user's environment
         # Make binary policy into /usr/share/seedit/sepolicy
@@ -107,9 +111,11 @@ uninstall_seedit() {
 
 if [ $1 = "upgrade" ]; then
    #Initialization when RBAC enabled
-    if [ -e /etc/seedit/policy/sysadm_r.sp ]; then
+   if [ -e /usr/share/seedit/rbac-on ]; then
 	/usr/sbin/seedit-rbac off -n
 	/usr/sbin/seedit-rbac on -n
+   else
+       	/usr/sbin/seedit-rbac off -n
    fi
    rm /usr/share/seedit/sepolicy/need-rbac-init
    /usr/sbin/seedit-load -v	

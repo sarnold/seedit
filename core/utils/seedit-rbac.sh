@@ -32,6 +32,7 @@ if [ $1 = "on" ]; then
     mv unconfined_t.sp extras
     mv unconfined_su_t.sp extras
     echo "root:sysadm_r:sysadm_t" >  /etc/selinux/seedit/contexts/userhelper_context
+    touch /usr/share/seedit/rbac-on
 elif [ $1 = "off" ]; then
     echo "Disabling RBAC"
     echo "Going to permissive mode"
@@ -41,7 +42,7 @@ elif [ $1 = "off" ]; then
     mv extras/unconfined_t.sp .
     mv extras/unconfined_su_t.sp .
     echo "system_u:system_r:unconfined_t" >  /etc/selinux/seedit/contexts/userhelper_context
-
+    rm -rf /usr/share/seedit/rbac-on
 else
     echo "usage:seedit-rbac on|off [-n]"
     exit

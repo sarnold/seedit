@@ -193,9 +193,9 @@ class seeditInitializeInstallWindow(seeditInitializeWindow):
 class seeditInitializeRBACWindow(seeditInitializeWindow):
     def __init__(self):
         self.mTitle = _("Initializing")
-        self.mMessage =  _("Initializing RBAC")
+        self.mMessage =  _("Initializing seedit for upgrade")
         self.mCommand = gInitCommand+" upgrade"
-        self.mSuccessMessage = _("Successfully initialized RBAC.\n")
+        self.mSuccessMessage = _("Successfully initialized.\n")
         seeditInitializeWindow.__init__(self)
         
 if __name__ == '__main__':

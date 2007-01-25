@@ -53,7 +53,7 @@ make install  DESTDIR=$RPM_BUILD_ROOT  PYTHON_SITELIB=%{buildroot}/%{python_site
 popd
 
 pushd policy
-make install DESTDIR=$RPM_BUILD_ROOT  DISTRO=%{sample_policy_type} SELINUXTYPE=seedit MODULAR=$MODULAR AUDITRULES=%{auditrules}
+make install DESTDIR=$RPM_BUILD_ROOT  DISTRO=%{sample_policy_type} SELINUXTYPE=seedit MODULAR=%{modular} AUDITRULES=%{auditrules}
 popd
 
 pushd gui

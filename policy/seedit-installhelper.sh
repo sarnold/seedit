@@ -12,7 +12,11 @@ SEPOLICYDIR=/usr/share/seedit/sepolicy
 
 
 initialize_seedit() {
-
+	
+	#If RBAC related file is remaining, remove it. RBAC is disabled by default.
+	if [ -e /etc/seedit/policy/sysadm_r.sp ]; then
+		/usr/sbin/seedit-rbac off -n
+	fi
         ### Make binary policy to fit user's environment
         # Make binary policy into /usr/share/seedit/sepolicy
 	/usr/sbin/seedit-load -tv -n

@@ -41,7 +41,7 @@ action.h: global.h
 install: seedit-converter
 	mkdir -p $(INSTALL_PATH)
 	mkdir -p $(INSTALL_PATH)/bin
-	install -m 755 seedit-converter $(INSTALL_PATH)/bin
+	install -p -m 755 seedit-converter $(INSTALL_PATH)/bin
 
 uninstall:
 	rm  $(INSTALL_PATH)/bin/seedit-converter

@@ -41,27 +41,29 @@ installhelper-include:
 
 install: dir installhelper-include
 	mkdir -p $(prefix)/share/seedit/initialize
-	install -m 755 seedit-installhelper.sh $(prefix)/share/seedit/initialize
-	install -m 755 seedit-installhelper-include.sh $(prefix)/share/seedit/initialize
+	install -p -m 755 seedit-installhelper.sh $(prefix)/share/seedit/initialize
+	install -p -m 755 seedit-installhelper-include.sh $(prefix)/share/seedit/initialize
 
 	if [ -e src/simplified_policy.$(DISTRO) ];then \
-		cp  -r src/simplified_policy.$(DISTRO)  $(SEEDITCONFROOT)/policy;\
+		cp -p -r src/simplified_policy.$(DISTRO)  $(SEEDITCONFROOT)/policy;\
 	else \
-		cp  -r src/simplified_policy  $(SEEDITCONFROOT)/policy;\
+		cp -p -r src/simplified_policy  $(SEEDITCONFROOT)/policy;\
 	fi
 
-	cp src/setrans.conf	$(POLICYROOT)
+	cp -p src/setrans.conf	$(POLICYROOT)
 	mkdir -p $(prefix)/sbin
-	install -m 755 seedit-init.sh $(prefix)/sbin/seedit-init
+	install -p -m 755 seedit-init.sh $(prefix)/sbin/seedit-init
 
 	echo $(DISTRO)
 	echo $(DISTRO)
 	mkdir -p $(prefix)/share/seedit/base_policy/contexts/
 	if [ -e src/dynamic_contexts/dynamic_contexts.$(DISTRO) ];then\
-		install -m 644 src/dynamic_contexts/dynamic_contexts.$(DISTRO) $(prefix)/share/seedit/initialize/dynamic_contexts;\
+		install -p -m 644 src/dynamic_contexts/dynamic_contexts.$(DISTRO) $(prefix)/share/seedit/initialize/dynamic_contexts;\
 	else \
-		install -m 644 src/dynamic_contexts/dynamic_contexts $(prefix)/share/seedit/initialize/dynamic_contexts;\
+		install -p -m 644 src/dynamic_contexts/dynamic_contexts $(prefix)/share/seedit/initialize/dynamic_contexts;\
 	fi
+
+
 
 convert_test:  
 	mkdir -p policy

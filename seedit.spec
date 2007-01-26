@@ -1,9 +1,9 @@
-%define betatag beta6.5
-%define buildnum 13
+%define betatag beta6.6
+%define buildnum 14
 %define python_sitelib %(%{__python} -c 'from distutils import sysconfig; print sysconfig.get_python_lib()')
 
-%define selinuxconf /etc/selinux/config
-%define auditrules /etc/audit/audit.rules
+%define selinuxconf %{_sysconfdir}/selinux/config
+%define auditrules %{_sysconfdir}/audit/audit.rules
 #Whether SELinux supports customizable_types, after FC5 "y"
 %define customizable_types y
 #Whether SELinux supports modular policy, after FC5 "y"
@@ -46,29 +46,33 @@ make %{?_smp_mflags} CFLAGS="%{optflags}" CUSTOMIZABLE_TYPES=%{customizable_type
 popd
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}
 
 pushd core
-make install  DESTDIR=$RPM_BUILD_ROOT  PYTHON_SITELIB=%{buildroot}/%{python_sitelib} CUSTOMIZABLE_TYPES=%{customizable_types}  MODULAR=%{modular}
+make install  DESTDIR=%{buildroot}  PYTHON_SITELIB=%{buildroot}/%{python_sitelib} CUSTOMIZABLE_TYPES=%{customizable_types}  MODULAR=%{modular}
 popd
 
 pushd policy
-make install DESTDIR=$RPM_BUILD_ROOT  DISTRO=%{sample_policy_type} SELINUXTYPE=seedit MODULAR=%{modular} AUDITRULES=%{auditrules}
+make install DESTDIR=%{buildroot}  DISTRO=%{sample_policy_type} SELINUXTYPE=seedit MODULAR=%{modular} AUDITRULES=%{auditrules}
 popd
 
 pushd gui
-make install DESTDIR=$RPM_BUILD_ROOT  PYTHON_SITELIB=%{buildroot}/%{python_sitelib} PAM_INCLUDE_SUPPORT=%{pam_include_support}
+make install DESTDIR=%{buildroot}  PYTHON_SITELIB=%{buildroot}/%{python_sitelib} PAM_INCLUDE_SUPPORT=%{pam_include_support}
 
 desktop-file-install --vendor "" --dir ${RPM_BUILD_ROOT}%{_datadir}/applications %{SOURCE1}
 
-mkdir -p $RPM_BUILD_ROOT%{_datadir}/pixmaps
-install -m 0644 %{SOURCE2} ${RPM_BUILD_ROOT}%{_datadir}/pixmaps/seedit-gui.png
+mkdir -p %{buildroot}%{_datadir}/pixmaps
+install -p -m 0644 %{SOURCE2} ${RPM_BUILD_ROOT}%{_datadir}/pixmaps/seedit-gui.png
 popd
+
+#touch ghost files
+touch ${RPM_BUILD_ROOT}%{_datadir}/%{name}/sepolicy/need-rbac-init
+touch ${RPM_BUILD_ROOT}%{_datadir}/%{name}/sepolicy/need-init
 
 %find_lang %{name}
 
 %clean
-rm -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}
 
 %files -f %{name}.lang
 %defattr(-,root,root,-)
@@ -88,13 +92,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/%{name}/Makefile
 %{_datadir}/%{name}/macros
 %{_datadir}/%{name}/base_policy
-%{_datadir}/%{name}/sepolicy
-
+%dir %{_datadir}/%{name}/sepolicy
 
 %package policy
 Summary: SELinux Policy Editor: Sample simplified policy
 Group:  System Environment/Base
-Requires: seedit >= 2.1.0
+Requires: %{name} = %{version}-%{release}
 
 %description policy
 Sample simplified policy for SEEdit.
@@ -122,14 +125,17 @@ fi
 %config(noreplace) %{_sysconfdir}/selinux/%{name}
 %{_datadir}/%{name}/initialize/
 %{_sbindir}/seedit-init
+%ghost %{_datadir}/%{name}/sepolicy/need-init
+%ghost %{_datadir}/%{name}/sepolicy/need-rbac-init
 
 %package gui
 Summary: GUI for SELinux Policy Editor
 Group: System Environment/Base
 Requires: usermode
-Requires: gnome-python2, pygtk2
+Requires: pygtk2
+Requires: pam >= 0.80
 BuildRequires: desktop-file-utils, gettext
-Requires: seedit >= 2.1.0, seedit-policy >= 2.1.0
+Requires: %{name}= %{version}-%{release}, %{name}-policy = %{version}-%{release}
 
 %description gui
 X based GUI for SELinux Policy Editor
@@ -153,6 +159,10 @@ X based GUI for SELinux Policy Editor
 
 
 %changelog
+* Fri Jan 26 2007 Yuichi Nakamura<ynakam@hitachisoft.jp> 2.1.0-0.14.beta6.6
+ - Fixed spec file, to more fit Fedora Extras.
+ - Fixed makefiles to preserve timestamps.
+
 * Thu Jan 25 2007 Yuichi Nakamura<ynakam@hitachisoft.jp> 2.1.0-0.13.beta6.5
  - Prepared rbac-on flag.
 

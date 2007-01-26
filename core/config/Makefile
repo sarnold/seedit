@@ -35,6 +35,7 @@ FCFILE=./distro/$(DISTRO)/dynamic_contexts
 SPDLSPEC=./base_policy/spdl_spec.xml
 BUILD_ROOT_DIR=$(prefix)/share/seedit
 MODULAR ?= y
+GHOST_FILES="base.mod file_contexts policy.conf base.pp file_contexts.m4 unconfined_domains confined_domains  file_contexts.m4.old  userhelper_context customizable_types  generated.conf userhelper_context.m4"
 
 all:conf
 
@@ -70,7 +71,9 @@ install:all
 		install -m 644 makefiles/Makefile.mono $(BUILD_ROOT_DIR)/Makefile;\
 	fi
 
-
+#touch files for rpm package(%ghost section)
+#	cd $(BUILD_ROOT_DIR)/sepolicy;\
+#	touch $GHOST_FILES
 
 doc:./doc/permission_integrate.pdf
 

@@ -1,3 +1,7 @@
+*2007/01/26
+* Fixed makefiles to preserve timestamps
+
+
 *2007/01/25
 - prepared /usr/share/seedit/sepolicy/rbac-on
  - if this exists, rbac is enabled. This file is created/deleted by seedit-rbac

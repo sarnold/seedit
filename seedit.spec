@@ -97,7 +97,7 @@ rm -rf %{buildroot}
 %package policy
 Summary: SELinux Policy Editor: Sample simplified policy
 Group:  System Environment/Base
-Requires: %{name} = %{version}-%{release}
+Requires: %{name} >= %{version}-%{release}
 
 %description policy
 Sample simplified policy for SEEdit.
@@ -135,7 +135,7 @@ Requires: usermode
 Requires: pygtk2
 Requires: pam >= 0.80
 BuildRequires: desktop-file-utils, gettext
-Requires: %{name}= %{version}-%{release}, %{name}-policy = %{version}-%{release}
+Requires: %{name} >= %{version}-%{release}, %{name}-policy >= %{version}-%{release}
 
 %description gui
 X based GUI for SELinux Policy Editor

@@ -61,14 +61,14 @@ install:all
 
 
 
-	cp -r base_policy $(SEEDITCONFROOT)
-	cp -r macros $(SEEDITCONFROOT)
+	cp -p -r base_policy $(SEEDITCONFROOT)
+	cp -p -r macros $(SEEDITCONFROOT)
 	mv $(SEEDITCONFROOT)/base_policy/spdl_spec.xml.expand  $(SEEDITCONFROOT)/base_policy/spdl_spec.xml
 
 	if [ $(MODULAR) = "y" ];then \
-		install -m 644 makefiles/Makefile.modular $(BUILD_ROOT_DIR)/Makefile;\
+		install -p -m 644 makefiles/Makefile.modular $(BUILD_ROOT_DIR)/Makefile;\
 	else \
-		install -m 644 makefiles/Makefile.mono $(BUILD_ROOT_DIR)/Makefile;\
+		install -p -m 644 makefiles/Makefile.mono $(BUILD_ROOT_DIR)/Makefile;\
 	fi
 
 #touch files for rpm package(%ghost section)

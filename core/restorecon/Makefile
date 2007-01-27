@@ -24,7 +24,7 @@ seedit-restorecon:  seedit-restorecon.o is_customizable_type.o
 
 
 install: all
-	install -m 755 seedit-restorecon $(prefix)/sbin 
+	install -p -m 755 seedit-restorecon $(prefix)/sbin 
 
 
 clean:

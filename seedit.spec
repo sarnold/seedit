@@ -1,5 +1,5 @@
-%define betatag beta6.6
-%define buildnum 14
+%define betatag beta6.7
+%define buildnum 15
 %define python_sitelib %(%{__python} -c 'from distutils import sysconfig; print sysconfig.get_python_lib()')
 
 %define selinuxconf %{_sysconfdir}/selinux/config
@@ -97,7 +97,7 @@ rm -rf %{buildroot}
 %package policy
 Summary: SELinux Policy Editor: Sample simplified policy
 Group:  System Environment/Base
-Requires: %{name} >= %{version}-%{release}
+Requires: %{name} = %{version}-%{release}
 
 %description policy
 Sample simplified policy for SEEdit.
@@ -133,9 +133,9 @@ Summary: GUI for SELinux Policy Editor
 Group: System Environment/Base
 Requires: usermode
 Requires: pygtk2
-Requires: pam >= 0.80
+Requires: pam >= 0.80-9
 BuildRequires: desktop-file-utils, gettext
-Requires: %{name} >= %{version}-%{release}, %{name}-policy >= %{version}-%{release}
+Requires: %{name} = %{version}-%{release}, %{name}-policy = %{version}-%{release}
 
 %description gui
 X based GUI for SELinux Policy Editor
@@ -159,6 +159,10 @@ X based GUI for SELinux Policy Editor
 
 
 %changelog
+* Sat Jan 27 2007 Yuichi Nakamura<ynakam@hitachisoft.jp> 2.1.0-0.15.beta6.7
+ - Fixed Requires
+ - Fixed makefiles to preserve timestamps.
+
 * Fri Jan 26 2007 Yuichi Nakamura<ynakam@hitachisoft.jp> 2.1.0-0.14.beta6.6
  - Fixed spec file, to more fit Fedora Extras.
  - Fixed makefiles to preserve timestamps.

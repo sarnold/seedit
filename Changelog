@@ -1,6 +1,9 @@
+*2007/01/31 Beta7
+- Merged to Fedora Extras.
+ -- Removed bugs in rpm packages, cleaned up spec file, thanks to reviewers in Fedora Project!
+
 *2007/01/26
 * Fixed makefiles to preserve timestamps
-
 
 *2007/01/25
 - prepared /usr/share/seedit/sepolicy/rbac-on

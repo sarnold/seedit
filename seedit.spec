@@ -1,5 +1,5 @@
-%define betatag beta6.7
-%define buildnum 15
+%define betatag beta7
+%define buildnum 16
 %define python_sitelib %(%{__python} -c 'from distutils import sysconfig; print sysconfig.get_python_lib()')
 
 %define selinuxconf %{_sysconfdir}/selinux/config
@@ -85,9 +85,7 @@ rm -rf %{buildroot}
 %{_bindir}/seedit-unconfined
 %{_bindir}/seedit-template
 %dir %{python_sitelib}/%{name}
-%{python_sitelib}/%{name}/*.py
-%{python_sitelib}/%{name}/*.pyo
-%{python_sitelib}/%{name}/*.pyc
+%{python_sitelib}/%{name}/*.*
 %dir %{_datadir}/%{name}
 %{_datadir}/%{name}/Makefile
 %{_datadir}/%{name}/macros
@@ -159,6 +157,9 @@ X based GUI for SELinux Policy Editor
 
 
 %changelog
+* Wed Jan 31 2007 Yuichi Nakamura<ynakam@hitachisoft.jp> 2.1.0-0.16.beta7
+ - Fixed for CentOS4, package build failed.
+
 * Sat Jan 27 2007 Yuichi Nakamura<ynakam@hitachisoft.jp> 2.1.0-0.15.beta6.7
  - Fixed Requires
  - Fixed makefiles to preserve timestamps.

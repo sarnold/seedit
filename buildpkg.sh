@@ -2,9 +2,9 @@
 
 #Fix these valuables for your environment
 VERSION=2.1.0
-BETA=-beta6.7
+BETA=-beta7
+DISTRO=cos4
 SAMPLE_POLICY_TYPE=cos4
-RELEASE=1
 #AUDITCONF=\\%\\{_sysconfdir\\}\\/audit\\/audit.rules
 AUDITCONF=\\%\\{_sysconfdir\\}\\/audit.rules
 MODULAR=n
@@ -55,7 +55,7 @@ cp seedit-$VERSION$BETA.tar.gz archive
 mv seedit-$VERSION$BETA.tar.gz $RPMROOT/SOURCES
 rm -rf seedit-$VERSION
 
-rpmbuild -ba $RPMROOT/SPECS/seedit.spec
+rpmbuild -ba $RPMROOT/SPECS/seedit.spec --define "dist.$DISTRO"
 cd archive
 cp  $RPMROOT/RPMS/i386/seedit*$VERSION*.i386.rpm .
 cp  $RPMROOT/SRPMS/seedit-$VERSION*.src.rpm .

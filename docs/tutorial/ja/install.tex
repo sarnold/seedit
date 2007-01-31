@@ -13,10 +13,40 @@
 
 \section{動作環境}
 Fedora Core6およびCent OS 4.3での動作を確認しています。
-Fedora Core 5でもうごく可能性は高いです。
+Fedora Core 5でも動く可能性は高いです。
 
-\section{RPMから導入}  \label{sec:rpm}
+\section{インストール}  \label{sec:rpm}
+利用ディストリビューションによってインストール方法は違います。
 
+\subsection{rpmパッケージのインストール(Fedora Coreの場合)}
+SEEditは、Fedora Extrasに含まれているため、簡単にインストールできます。
+ \begin{verbatim}
+#yum install seedit-gui
+(seedit,seedit-policy,seedit-guiパッケージが導入されます)
+ \end{verbatim}
+GUIが不要な場合は、以下のようにします。
+\begin{verbatim}
+#yum install seedit-policy	
+(seedit,seedit-policyパッケージが導入されます)
+\end{verbatim}
+SEEditを初期化し、リブートします。
+\begin{verbatim}
+# /usr/sbin/seedit-init
+# reboot
+\end{verbatim}
+/usr/sbin/seedit-initはseeditを使うための初期化作業をしてくれるコマンドです。/etc/selinux/configの編集、auditdの起動、ポリシの初期化などを行ってくれます。\\
+再起動時、ファイルのラベルが自動的に付与され直しされます。数分かかります。
+	その後、リブートされます。
+Fedora Core 6の場合、さらにもう一度リブートがかかります(途中で画面が青くなっても問題はありません)。
+
+無事ログイン
+	  できたら、完了です。\\
+なお、auditdサービスが起動するようになっています。これは詳細なSELinuxの
+	ログを/var/log/audit/audit.logに取ることができ、ポリシ自動生成機
+	能をより便利に使うために必要ですので、このサービスは有効にしてお
+	  くことを強く薦めます。\\
+これでインストールは終わりです。インストールされているか確認するには、\ref{sec:makesure}章を参照してください。
+\subsection{rpmパッケージのインストール(Cent OSの場合)}
 RPMパッケージを使うことで簡単にインストールできます
 \begin{enumerate}
  \item  必要なパッケージ\\
@@ -73,10 +103,9 @@ CentOS 4のSELinuxパッケージに含まれるラベル初期化コマンド(fixfiles)のバ
  \item インストールは終わりです\\
 インストールされているか確認するには、\ref{sec:makesure}章を参照してくだ
 	さい。
+\end{enumerate}
 
-
-
-\item アンインストール方法\\
+\subsection{アンインストール}
 アンインストールは簡単です。
 \begin{verbatim}
 # rpm -e seedit-policy seedit
@@ -84,7 +113,7 @@ CentOS 4のSELinuxパッケージに含まれるラベル初期化コマンド(fixfiles)のバ
 \end{verbatim}
 再起動時、SELinuxのtargeted policy(Fedora Coreデフォルト)の、permissive
 	  モードで起動します。
-\end{enumerate}
+
 
 \section{何が影響されるか？}
 インストールによって、

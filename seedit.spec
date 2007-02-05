@@ -10,6 +10,8 @@
 %define modular y
 #Whether pam supports include syntax, after FC5 "y"
 %define pam_include_support y  
+#Whether audit support obj_type field, after FC6 "y"
+%audit_obj_type_support  y
 #Version of sample policy file
 %define sample_policy_type fc6 
 
@@ -50,11 +52,11 @@ popd
 rm -rf %{buildroot}
 
 pushd core
-make install  DESTDIR=%{buildroot}  PYTHON_SITELIB=%{buildroot}/%{python_sitelib} CUSTOMIZABLE_TYPES=%{customizable_types}  MODULAR=%{modular}
+make install  DESTDIR=%{buildroot}  PYTHON_SITELIB=%{buildroot}/%{python_sitelib} CUSTOMIZABLE_TYPES=%{customizable_types}  MODULAR=%{modular}  AUDIT_OBJ_TYPE_SUPPORT=%{audit_obj_type_support}
 popd
 
 pushd policy
-make install DESTDIR=%{buildroot}  DISTRO=%{sample_policy_type} SELINUXTYPE=seedit MODULAR=%{modular} AUDITRULES=%{auditrules}
+make install DESTDIR=%{buildroot}  DISTRO=%{sample_policy_type} SELINUXTYPE=seedit MODULAR=%{modular} AUDITRULES=%{auditrules} 
 popd
 
 pushd gui

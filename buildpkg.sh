@@ -10,6 +10,7 @@ AUDITCONF=\\%\\{_sysconfdir\\}\\/audit.rules
 MODULAR=n
 CUSTOMIZABLE_TYPES=n
 PAM_INCLUDE_SUPPORT=n
+AUDIT_OBJ_TYPE_SUPPORT=n
 SVNROOT=~/seedit/trunk/
 RPMROOT=~/rpm
 
@@ -26,7 +27,7 @@ if [ $DISTRO = "ax2" ]
 then 
 cp seedit.spec.asianux seedit.spec
 fi
-cat seedit.spec|sed -e "s/^%define auditrules.*\$/%define auditrules $AUDITCONF/"|sed -e "s/^%define modular.*\$/%define modular $MODULAR/"|sed -e "s/^%define customizable_types.*\$/%define customizable_types $CUSTOMIZABLE_TYPES/"|sed -e "s/^%define pam_include_support.*\$/%define pam_include_support $PAM_INCLUDE_SUPPORT/"|sed -e "s/^%define sample_policy_type.*\$/%define sample_policy_type $SAMPLE_POLICY_TYPE/">seedit.spec.tmp
+cat seedit.spec|sed -e "s/^%define auditrules.*\$/%define auditrules $AUDITCONF/"|sed -e "s/^%define modular.*\$/%define modular $MODULAR/"|sed -e "s/^%define customizable_types.*\$/%define customizable_types $CUSTOMIZABLE_TYPES/"|sed -e "s/^%define pam_include_support.*\$/%define pam_include_support $PAM_INCLUDE_SUPPORT/"|sed -e "s/^%define sample_policy_type.*\$/%define sample_policy_type $SAMPLE_POLICY_TYPE/"|sed -e "s/^%define audit_obj_type_support.*\$/%define audit_obj_type_support $AUDIT_OBJ_TYPE_SUPPORT/">seedit.spec.tmp
 mv seedit.spec.tmp seedit.spec
 
 if [ $PAM_INCLUDE_SUPPORT = "n" ]
@@ -50,7 +51,7 @@ cp -r build seedit-$VERSION
 
 if [ -e seedit-$VERSION.tar.gz ]
 then
-	rm seedit-$VERSION.tar.gz
+ rm seedit-$VERSION.tar.gz
 fi
 mv seedit-$VERSION/gui/desktop/seedit-gui.desktop $RPMROOT/SOURCES
 mv seedit-$VERSION/gui/icons/seedit-gui.png $RPMROOT/SOURCES

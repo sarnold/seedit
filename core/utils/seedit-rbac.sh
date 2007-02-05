@@ -18,7 +18,9 @@
 #! Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 POLICY_ROOT=/etc/seedit/policy/
-
+CONTEXTSDIR=/etc/selinux/seedit/contexts
+FILE_CONTEXTS=  $(CONTEXTSDIR)/files/file_contexts.m4
+OLD_FILE_CONTEXTS=  $(CONTEXTSDIR)/files/file_contexts.m4.old
 
 cd $POLICY_ROOT
 pwd
@@ -60,6 +62,7 @@ if [ $skip = "y" ];then
 else
     /usr/sbin/seedit-load -tv
     /usr/sbin/semodule -b /usr/share/seedit/sepolicy/base.pp -s seedit -n
+    cp $(FILE_CONTEXTS) $(OLD_FILE_CONTEXTS)
     touch /.autorelabel
     echo "Done, please reboot"
 fi

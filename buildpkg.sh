@@ -3,8 +3,8 @@
 #Fix these valuables for your environment
 VERSION=2.1.0
 BETA=-beta7
-DISTRO=cos4
-SAMPLE_POLICY_TYPE=cos4
+DISTRO=ax2
+SAMPLE_POLICY_TYPE=ax2
 #AUDITCONF=\\%\\{_sysconfdir\\}\\/audit\\/audit.rules
 AUDITCONF=\\%\\{_sysconfdir\\}\\/audit.rules
 MODULAR=n
@@ -22,6 +22,10 @@ rm -rf build
 svn export $SVNROOT build
 
 cd build
+if [ $DISTRO = "ax2" ]
+then 
+cp seedit.spec.asianux seedit.spec
+fi
 cat seedit.spec|sed -e "s/^%define auditrules.*\$/%define auditrules $AUDITCONF/"|sed -e "s/^%define modular.*\$/%define modular $MODULAR/"|sed -e "s/^%define customizable_types.*\$/%define customizable_types $CUSTOMIZABLE_TYPES/"|sed -e "s/^%define pam_include_support.*\$/%define pam_include_support $PAM_INCLUDE_SUPPORT/"|sed -e "s/^%define sample_policy_type.*\$/%define sample_policy_type $SAMPLE_POLICY_TYPE/">seedit.spec.tmp
 mv seedit.spec.tmp seedit.spec
 

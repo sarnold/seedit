@@ -47,7 +47,7 @@ if [ $DISTRO = "fc6" ]
 then
     HAVE_DESKTOP_FILE_UTILS=y
     SAMPLE_POLICY_TYPE=fc6
-    AUDITCONF=\\%\\{_sysconfdir\\}\\/audit.rules
+    AUDITCONF=\\%\\{_sysconfdir\\}\\/audit\\/audit.rules
     MODULAR=y
     CUSTOMIZABLE_TYPES=y
     PAM_INCLUDE_SUPPORT=y

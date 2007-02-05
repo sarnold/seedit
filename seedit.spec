@@ -28,7 +28,7 @@ Source2: seedit-gui.png
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{betatag}-root-%(%{__id_u} -n)
 BuildRequires:  libselinux-devel >= 1.19, libsepol-devel >= 1.1.1, byacc, flex
 Requires:  checkpolicy, m4, audit, libselinux >= 1.19, libsepol >= 1.1.1
-Obsoletes: seedit-converter
+Provides: seedit-converter
 
 %description
 SELinux Policy Editor(SEEdit) is a tool to make SELinux easy.

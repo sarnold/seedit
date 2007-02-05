@@ -24,7 +24,7 @@ import getopt
 import string
 import gettext
 
-gSeeditLoadConf=/etc/seedit/seedit-load.conf
+gSeeditLoadConf="/etc/seedit/seedit-load.conf"
 gMakeFlags="CONFDIR=/etc/seedit/policy OUTDIR=/usr/share/seedit/sepolicy BASEPOLICYDIR=/usr/share/seedit/base_policy MACRODIR=/usr/share/seedit/macros"
 gAuditCtl="/sbin/auditctl"
 
@@ -249,18 +249,22 @@ gAuditChdirAllFlag = False #-a option
 # Check audit_chdir field in /etc/seedit/seedit-load.conf
 try:
     input = open(gSeeditLoadConf, 'r')
+    
     lines = input.readlines()
     for line in lines:
-        list = string.split(m.group())
+        list = string.split(line)
         try:
             if list[0] == "audit_chdir":
                 if list[1] == "n":
                     gAuditChdirFlag = False
         except:
             pass
-    input.close()
-    except:
-        print "File Open Error:"+gSeeditLoadConf+" Skipped.\n"
+        input.close()
+except:
+    print "File Open Error:"+gSeeditLoadConf+" Skipped.\n"
+
+print "Audit chdir:"
+print gAuditChdirFlag
 
 try:
     opts, args = getopt.getopt(sys.argv[1:], "atnvei", ["audit","test","noaudit","verbose","init"])

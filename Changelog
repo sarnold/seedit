@@ -1,6 +1,7 @@
 *2007/02/05
 - Fixed installhelper-include.sh for asianux 2
-- Add seedit-load.conf
+- Add seedit-load.conf to customize obj_type filed of audit
+- Fixed RBAC bug
 
 *2007/01/31 Beta7
 - Merged to Fedora Extras.

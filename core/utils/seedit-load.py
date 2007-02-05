@@ -114,7 +114,8 @@ def removeAuditChdir():
           
      for domain in confinedDomains:
          command = gAuditCtl+" -d exit,always -S chdir -F obj_type="+domain+" >/dev/null 2>&1 "
-         forkExec(command,gVerboseFlag)
+         if gAuditChdirFlag==True:
+             forkExec(command,gVerboseFlag)
      return
 
 #audit chdir syscall to obtain full path when program chroots

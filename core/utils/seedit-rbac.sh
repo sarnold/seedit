@@ -48,9 +48,18 @@ else
     exit
 fi
 
-if [ $2 = "-n" ]; then
+skip="n"
+if [ $# -gt 2 ]; then  
+    if [ $2 = "-n" ]; then
+	skip=y
+    fi
+fi
+
+if [ $skip = "y" ];then
     echo "seedit-load skipped"
 else
-    /usr/sbin/seedit-load -v
-    echo "done, reboot"
+    /usr/sbin/seedit-load -tv
+    /usr/sbin/semodule -b /usr/share/seedit/sepolicy/base.pp -s seedit -n
+    touch /.autorelabel
+    echo "Done, please reboot"
 fi

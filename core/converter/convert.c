@@ -1884,7 +1884,13 @@ void out_mcs(FILE *outfp){
 
   fprintf(outfp,"ifdef(`enable_mcs',`\n"); 
   fprintf(outfp, "typeattribute initrc_t mcssetcats,mcsptraceall,mcskillall;\n");
-  fprintf(outfp, "typeattribute unconfined_t mcssetcats,mcsptraceall,mcskillall;\n");
+  if( search_element(domain_hash_table, "unconfined_t") != NULL ){
+	  fprintf(outfp, "typeattribute unconfined_t mcssetcats,mcsptraceall,mcskillall;\n");
+  }else{/*RBAC enabled*/
+	  fprintf(outfp, "typeattribute sysadm_t mcssetcats,mcsptraceall,mcskillall;\n");
+  }
+  
+
   fprintf(outfp, "typeattribute init_t mcssetcats,mcsptraceall,mcskillall;\n");
   fprintf(outfp, "typeattribute kernel_t mcssetcats,mcsptraceall,mcskillall;\n");
   
@@ -2083,6 +2089,8 @@ out_one_user_role(void *u)
 	str_a = ur->role_name_array;
 
 	fprintf(rbac_out, "gen_user(%s,,", ur->username);
+
+
 	//	fprintf(rbac_out, "user %s roles {", ur->username);
 
 	for (i = 0; i < max; i++)
@@ -2091,7 +2099,7 @@ out_one_user_role(void *u)
 	}
 	
 	//	fprintf(rbac_out,"system_r };\n");
-	fprintf(rbac_out,"system_r , s0,s0)\n");
+	fprintf(rbac_out,"system_r ,s0, s0 - s15:c0.c1023, c0.c1023)\n");
 
 	return 0;
 }
@@ -2220,11 +2228,7 @@ out_rbac(FILE *outfp)
 
 	if (rbac_hash_table == NULL){
 	  fprintf(rbac_out,"gen_user(system_u, , system_r, s0, s0 - s15:c0.c1023, c0.c1023)\n");
-
 	  fprintf(rbac_out,"gen_user(user_u, , system_r, s0, s0 - s15:c0.c1023, c0.c1023)\n");
-
-
-
 	  fprintf(rbac_out,"gen_user(root, , system_r, s0, s0 - s15:c0.c1023, c0.c1023)\n");
 
 	  return;
@@ -2240,8 +2244,7 @@ out_rbac(FILE *outfp)
 
 	 /* print "user" */
 	 fprintf(rbac_out,"gen_user(system_u, , system_r, s0, s0 - s15:c0.c1023, c0.c1023)\n");
-	 fprintf(rbac_out, "gen_user(user_u,, system_r,s0, s0)\n");
-
+	 fprintf(rbac_out,"gen_user(user_u, , system_r, s0, s0 - s15:c0.c1023, c0.c1023)\n");
 	 handle_all_element(user_hash_table, out_one_user_role);
 
 

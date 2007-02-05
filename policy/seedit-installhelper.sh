@@ -75,7 +75,7 @@ initialize_seedit() {
 
  ### Initialize for Asianux 2
  if [ $DISTRO = "ax2" ]; then
-      if [ $SELINUXENABLED ]; then
+      if   $SELINUXENABLED ; then
    echo "Do nothing"
       else
    echo "Initializing SELinux label, it will take some minutes"

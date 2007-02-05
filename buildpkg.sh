@@ -80,11 +80,11 @@ cd build
 
 if [ $HAVE_DESKTOP_FILE_UTILS = "n" ]
 then 
-cat seedit.spec|sed -e "s/^Requires:.*desktop-file-utils.*\$//">seedit.spec.tmp
+cat seedit.spec|sed -e "s/^BuildRequires:.*desktop-file-utils.*\$//">seedit.spec.tmp
 mv seedit.spec.tmp seedit.spec
 cat seedit.spec|sed -e "s/^desktop-file-install.*\$//">seedit.spec.tmp
 mv seedit.spec.tmp seedit.spec
-cat seedit.spec|sed -e "s/^#AX2\$//">seedit.spec.tmp
+cat seedit.spec|sed -e "s/^#AX2//">seedit.spec.tmp
 mv seedit.spec.tmp seedit.spec
 fi
 if [ $PAM_INCLUDE_SUPPORT = "n" ]

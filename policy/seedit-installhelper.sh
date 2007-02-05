@@ -9,7 +9,7 @@
 
 POLICYROOT=/etc/selinux/seedit
 SEPOLICYDIR=/usr/share/seedit/sepolicy
-SETFILES=/sbin/setfiles
+SETFILES=/usr/sbin/setfiles
 SELINUXENABLED=/usr/sbin/selinuxenabled
 
 initialize_seedit() {

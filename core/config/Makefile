@@ -35,6 +35,7 @@ FCFILE=./distro/$(DISTRO)/dynamic_contexts
 SPDLSPEC=./base_policy/spdl_spec.xml
 BUILD_ROOT_DIR=$(prefix)/share/seedit
 MODULAR ?= y
+AUDIT_OBJ_TYPE_SUPPORT ?= y
 GHOST_FILES="base.mod file_contexts policy.conf base.pp file_contexts.m4 unconfined_domains confined_domains  file_contexts.m4.old  userhelper_context customizable_types  generated.conf userhelper_context.m4"
 
 all:conf
@@ -55,12 +56,14 @@ conf: macro unsupport
 	./scripts/genmacro.py -i base_policy/spdl_spec.xml -m expand > base_policy/spdl_spec.xml.expand
 
 
-install:all	
+seedit-load.conf:
+	echo "audit_chdir $(AUDIT_OBJ_TYPE_SUPPORT)">seedit-load.conf
+
+install:all seedit-load.conf
 	mkdir -p $(BUILD_ROOT_DIR)/sepolicy
 	mkdir -p $(SEEDITCONFROOT)
-
-
-
+	mkdir -p $(sysconfdir)/seedit
+	install -m -p 0644 seedit-load.conf  $(sysconfdir)/seedit
 	cp -p -r base_policy $(SEEDITCONFROOT)
 	cp -p -r macros $(SEEDITCONFROOT)
 	mv $(SEEDITCONFROOT)/base_policy/spdl_spec.xml.expand  $(SEEDITCONFROOT)/base_policy/spdl_spec.xml

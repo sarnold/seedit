@@ -23,9 +23,16 @@ rm -rf build
 svn export $SVNROOT build
 
 cd build
+
+#Asianux2 specific
 if [ $DISTRO = "ax2" ]
 then 
-cp seedit.spec.asianux seedit.spec
+cat seedit.spec|sed -e "s/^Requires:.*desktop-file-utils.*\$//">seedit.spec.tmp
+mv seedit.spec.tmp seedit.spec
+cat seedit.spec|sed -e "s/^desktop-file-install.*\$//">seedit.spec.tmp
+mv seedit.spec.tmp seedit.spec
+cat seedit.spec|sed -e "s/^#AX2\$//">seedit.spec.tmp
+mv seedit.spec.tmp seedit.spec
 fi
 cat seedit.spec|sed -e "s/^%define auditrules.*\$/%define auditrules $AUDITCONF/"|sed -e "s/^%define modular.*\$/%define modular $MODULAR/"|sed -e "s/^%define customizable_types.*\$/%define customizable_types $CUSTOMIZABLE_TYPES/"|sed -e "s/^%define pam_include_support.*\$/%define pam_include_support $PAM_INCLUDE_SUPPORT/"|sed -e "s/^%define sample_policy_type.*\$/%define sample_policy_type $SAMPLE_POLICY_TYPE/"|sed -e "s/^%define audit_obj_type_support.*\$/%define audit_obj_type_support $AUDIT_OBJ_TYPE_SUPPORT/">seedit.spec.tmp
 mv seedit.spec.tmp seedit.spec

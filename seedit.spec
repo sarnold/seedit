@@ -13,7 +13,7 @@
 #Whether audit support obj_type field, after FC6 "y"
 %audit_obj_type_support  y
 #Version of sample policy file
-%define sample_policy_type fc6 
+%define sample_policy_type fc6
 
 Name: seedit         
 Version: 2.1.0
@@ -62,7 +62,11 @@ popd
 pushd gui
 make install DESTDIR=%{buildroot}  PYTHON_SITELIB=%{buildroot}/%{python_sitelib} PAM_INCLUDE_SUPPORT=%{pam_include_support}
 
+#For Asianux2
+#AX2 mkdir -p ${RPM_BUILD_ROOT}%{_datadir}/applications
+#AX2 install -p -m 0644 %{SOURCE1} ${RPM_BUILD_ROOT}%{_datadir}/applications
 desktop-file-install --vendor "" --dir ${RPM_BUILD_ROOT}%{_datadir}/applications %{SOURCE1}
+
 
 mkdir -p %{buildroot}%{_datadir}/pixmaps
 install -p -m 0644 %{SOURCE2} ${RPM_BUILD_ROOT}%{_datadir}/pixmaps/seedit-gui.png
@@ -94,6 +98,8 @@ rm -rf %{buildroot}
 %{_datadir}/%{name}/macros
 %{_datadir}/%{name}/base_policy
 %dir %{_datadir}/%{name}/sepolicy
+%dir %{_sysconfdir}/%{name}
+%{_sysconfdir}/%{name}/seedit-load.conf
 
 %package policy
 Summary: SELinux Policy Editor: Sample simplified policy
@@ -122,7 +128,7 @@ fi
 
 %files policy
 %defattr(-,root,root,-)
-%config(noreplace) %{_sysconfdir}/%{name}
+%config(noreplace) %{_sysconfdir}/%{name}/policy
 %config(noreplace) %{_sysconfdir}/selinux/%{name}
 %{_datadir}/%{name}/initialize/
 %{_sbindir}/seedit-init
@@ -135,7 +141,8 @@ Group: System Environment/Base
 Requires: usermode
 Requires: pygtk2
 Requires: pam >= 0.80-9
-BuildRequires: desktop-file-utils, gettext
+BuildRequires: desktop-file-utils
+BuildRequres:  gettext
 Requires: %{name} = %{version}-%{release}, %{name}-policy = %{version}-%{release}
 
 %description gui

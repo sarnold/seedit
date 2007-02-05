@@ -9,6 +9,7 @@
 
 POLICYROOT=/etc/selinux/seedit
 SEPOLICYDIR=/usr/share/seedit/sepolicy
+SETFILES=/sbin/setfiles
 
 
 initialize_seedit() {
@@ -72,7 +73,17 @@ initialize_seedit() {
 	mv  $SELINUXCONF.tmp $SELINUXCONF
 	touch /.autorelabel
 
-	
+	### Initialize for Asianux 2
+	if [ $DISTRO = "ax2" ]; then
+	     if [ selinuxenabled ]; then
+		 echo "Do nothing"
+	     else
+		 echo "Initializing SELinux label, it will take some minutes"
+		 FILESYSTEMS=`mount | grep -v "context=" | egrep -v '\((|.*,)bind(,.*|)\)' | awk '/(ext[23]| xfs | jfs ).*\(rw/{print $3}';`
+		 $SETFILES /etc/selinux/seedit/contexts/files/file_contexts $FILESYSTEMS
+	     fi
+	fi
+
 	#Setup initialization at boot
 	echo "/var/tmp/bootstrap.sh" >> /etc/rc.d/rc.local
 	# Code related to bootstrap is from Yoichi Hirose <yhirose@users.sourceforge.jp>

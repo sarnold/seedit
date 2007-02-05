@@ -38,6 +38,7 @@ installhelper-include:
 	echo "export SELINUXCONF=$(SELINUXCONF)" >> seedit-installhelper-include.sh
 	echo "export AUDITRULES=$(AUDITRULES)" >> seedit-installhelper-include.sh
 	echo "export MODULAR=$(MODULAR)" >> seedit-installhelper-include.sh
+	echo "export DISTRO=$(DISTRO)" >>  seedit-installhelper-include.sh
 
 install: dir installhelper-include
 	mkdir -p $(prefix)/share/seedit/initialize

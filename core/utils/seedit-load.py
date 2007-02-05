@@ -24,6 +24,7 @@ import getopt
 import string
 import gettext
 
+gSeeditLoadConf=/etc/seedit/seedit-load.conf
 gMakeFlags="CONFDIR=/etc/seedit/policy OUTDIR=/usr/share/seedit/sepolicy BASEPOLICYDIR=/usr/share/seedit/base_policy MACRODIR=/usr/share/seedit/macros"
 gAuditCtl="/sbin/auditctl"
 
@@ -244,6 +245,15 @@ gVerboseFlag = False
 gBehavior = "" #load,test,init
 gAuditChdirFlag = True  #-n option
 gAuditChdirAllFlag = False #-a option
+
+try:
+ input = open(gSeeditLoadConf, 'r')
+ lines = input.readlines()
+ for line in lines:
+  
+ input.close()
+except:
+ print "File Open Error:"+gSeeditLoadConf+" Skipped.\n"
 
 try:
     opts, args = getopt.getopt(sys.argv[1:], "atnvei", ["audit","test","noaudit","verbose","init"])

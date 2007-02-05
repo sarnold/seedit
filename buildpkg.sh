@@ -4,6 +4,11 @@
 VERSION=2.1.0
 BETA=-beta7
 DISTRO=ax2
+SVNROOT=~/seedit/trunk/
+RPMROOT=~/rpm
+
+#Followign values differs from distro
+#For, cos4, ax2, fc6 , they are configured later
 SAMPLE_POLICY_TYPE=ax2
 #AUDITCONF=\\%\\{_sysconfdir\\}\\/audit\\/audit.rules
 AUDITCONF=\\%\\{_sysconfdir\\}\\/audit.rules
@@ -11,8 +16,55 @@ MODULAR=n
 CUSTOMIZABLE_TYPES=n
 PAM_INCLUDE_SUPPORT=n
 AUDIT_OBJ_TYPE_SUPPORT=n
-SVNROOT=~/seedit/trunk/
-RPMROOT=~/rpm
+#If distro have DESKTOP_FILE_UTILS, then y
+HAVE_DESKTOP_FILE_UTILS=y
+
+
+#Asianux2 specific
+if [ $DISTRO = "ax2" ]
+then
+    SAMPLE_POLICY_TYPE=ax2
+    AUDITCONF=\\%\\{_sysconfdir\\}\\/audit.rules
+    MODULAR=n
+    CUSTOMIZABLE_TYPES=n
+    PAM_INCLUDE_SUPPORT=n
+    AUDIT_OBJ_TYPE_SUPPORT=n
+    HAVE_DESKTOP_FILE_UTILS=n
+fi
+#CentOS4 specific
+if [ $DISTRO = "cos4" ]
+then
+    HAVE_DESKTOP_FILE_UTILS=y
+    SAMPLE_POLICY_TYPE=cos4
+    AUDITCONF=\\%\\{_sysconfdir\\}\\/audit.rules
+    MODULAR=n
+    CUSTOMIZABLE_TYPES=n
+    PAM_INCLUDE_SUPPORT=n
+    AUDIT_OBJ_TYPE_SUPPORT=n
+fi
+#Fedora Core6 specific
+if [ $DISTRO = "fc6" ]
+then
+    HAVE_DESKTOP_FILE_UTILS=y
+    SAMPLE_POLICY_TYPE=fc6
+    AUDITCONF=\\%\\{_sysconfdir\\}\\/audit.rules
+    MODULAR=y
+    CUSTOMIZABLE_TYPES=y
+    PAM_INCLUDE_SUPPORT=y
+    AUDIT_OBJ_TYPE_SUPPORT=y
+fi
+#Fedora Core5 specific
+if [ $DISTRO = "fc5" ]
+then
+    HAVE_DESKTOP_FILE_UTILS=y
+    SAMPLE_POLICY_TYPE=fc5
+    AUDITCONF=\\%\\{_sysconfdir\\}\\/audit.rules
+    MODULAR=y
+    CUSTOMIZABLE_TYPES=y
+    PAM_INCLUDE_SUPPORT=y
+    AUDIT_OBJ_TYPE_SUPPORT=y
+fi
+
 
 
 mkdir -p archive
@@ -24,8 +76,9 @@ svn export $SVNROOT build
 
 cd build
 
-#Asianux2 specific
-if [ $DISTRO = "ax2" ]
+
+
+if [ $HAVE_DESKTOP_FILE_UTILS = "n" ]
 then 
 cat seedit.spec|sed -e "s/^Requires:.*desktop-file-utils.*\$//">seedit.spec.tmp
 mv seedit.spec.tmp seedit.spec
@@ -34,14 +87,14 @@ mv seedit.spec.tmp seedit.spec
 cat seedit.spec|sed -e "s/^#AX2\$//">seedit.spec.tmp
 mv seedit.spec.tmp seedit.spec
 fi
-cat seedit.spec|sed -e "s/^%define auditrules.*\$/%define auditrules $AUDITCONF/"|sed -e "s/^%define modular.*\$/%define modular $MODULAR/"|sed -e "s/^%define customizable_types.*\$/%define customizable_types $CUSTOMIZABLE_TYPES/"|sed -e "s/^%define pam_include_support.*\$/%define pam_include_support $PAM_INCLUDE_SUPPORT/"|sed -e "s/^%define sample_policy_type.*\$/%define sample_policy_type $SAMPLE_POLICY_TYPE/"|sed -e "s/^%define audit_obj_type_support.*\$/%define audit_obj_type_support $AUDIT_OBJ_TYPE_SUPPORT/">seedit.spec.tmp
-mv seedit.spec.tmp seedit.spec
-
 if [ $PAM_INCLUDE_SUPPORT = "n" ]
 then
 cat seedit.spec|sed -e "s/^Requires:.*pam.*\$//">seedit.spec.tmp
 mv seedit.spec.tmp seedit.spec
 fi
+cat seedit.spec|sed -e "s/^%define auditrules.*\$/%define auditrules $AUDITCONF/"|sed -e "s/^%define modular.*\$/%define modular $MODULAR/"|sed -e "s/^%define customizable_types.*\$/%define customizable_types $CUSTOMIZABLE_TYPES/"|sed -e "s/^%define pam_include_support.*\$/%define pam_include_support $PAM_INCLUDE_SUPPORT/"|sed -e "s/^%define sample_policy_type.*\$/%define sample_policy_type $SAMPLE_POLICY_TYPE/"|sed -e "s/^%define audit_obj_type_support.*\$/%define audit_obj_type_support $AUDIT_OBJ_TYPE_SUPPORT/">seedit.spec.tmp
+mv seedit.spec.tmp seedit.spec
+
 
 
 mv seedit.spec $RPMROOT/SPECS

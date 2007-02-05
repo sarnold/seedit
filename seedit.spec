@@ -11,7 +11,7 @@
 #Whether pam supports include syntax, after FC5 "y"
 %define pam_include_support y  
 #Whether audit support obj_type field, after FC6 "y"
-%audit_obj_type_support  y
+%define audit_obj_type_support  y
 #Version of sample policy file
 %define sample_policy_type fc6
 
@@ -142,7 +142,7 @@ Requires: usermode
 Requires: pygtk2
 Requires: pam >= 0.80-9
 BuildRequires: desktop-file-utils
-BuildRequres:  gettext
+BuildRequires:  gettext
 Requires: %{name} = %{version}-%{release}, %{name}-policy = %{version}-%{release}
 
 %description gui

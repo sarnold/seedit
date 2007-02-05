@@ -80,7 +80,7 @@ initialize_seedit() {
       else
    echo "Initializing SELinux label, it will take some minutes"
    FILESYSTEMS=`mount | grep -v "context=" | egrep -v '\((|.*,)bind(,.*|)\)' | awk '/(ext[23]| xfs | jfs ).*\(rw/{print $3}';`
-   $SETFILES /etc/selinux/seedit/contexts/files/file_contexts $FILESYSTEMS
+   $SETFILES -v /etc/selinux/seedit/contexts/files/file_contexts $FILESYSTEMS
       fi
  fi
 

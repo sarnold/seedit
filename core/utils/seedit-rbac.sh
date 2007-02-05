@@ -19,8 +19,8 @@
 
 POLICY_ROOT=/etc/seedit/policy/
 CONTEXTSDIR=/etc/selinux/seedit/contexts
-FILE_CONTEXTS=  $(CONTEXTSDIR)/files/file_contexts.m4
-OLD_FILE_CONTEXTS=  $(CONTEXTSDIR)/files/file_contexts.m4.old
+FILE_CONTEXTS=  $CONTEXTSDIR/files/file_contexts.m4
+OLD_FILE_CONTEXTS=  $CONTEXTSDIR/files/file_contexts.m4.old
 
 cd $POLICY_ROOT
 pwd

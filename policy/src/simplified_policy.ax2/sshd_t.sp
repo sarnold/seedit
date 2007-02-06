@@ -44,4 +44,6 @@ allow initrc_var_run_t  r,o,s;
 allowfs proc_pid_self r,w,s;
 allowpriv netlink;
 allowpriv audit_write;
+#Add by seedit-generator
+allowpriv cap_sys_resource;
 }

@@ -26,4 +26,8 @@ allow /var/www/cgi-bin/** r,x,s;
 allownet -protocol tcp -port 80,443 server;
 
 allowpriv netlink;
+#Add by seedit-generator
+allow /etc/krb5.conf  w,r,s;
+allow /usr/share/snmp/mibs/** w,r,s;
+allow /etc/snmp/** s,r;
 }

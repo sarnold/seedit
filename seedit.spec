@@ -1,5 +1,4 @@
-%define betatag beta7
-%define buildnum 18
+%define buildnum 1
 %define python_sitelib %(%{__python} -c 'from distutils import sysconfig; print sysconfig.get_python_lib()')
 
 %define selinuxconf %{_sysconfdir}/selinux/config
@@ -17,12 +16,12 @@
 
 Name: seedit         
 Version: 2.1.0
-Release: 0.%{buildnum}.%{betatag}%{?dist}
+Release: %{buildnum}%{?dist}
 Summary: SELinux Policy Editor:Core component
 Group:  System Environment/Base        
 License: GPL       
 URL: http://seedit.sourceforge.net/
-Source0: http://osdn.dl.sourceforge.jp/selpe/23577/%{name}-%{version}-%{betatag}.tar.gz
+Source0: http://osdn.dl.sourceforge.jp/selpe/23577/%{name}-%{version}.tar.gz
 Source1: seedit-gui.desktop
 Source2: seedit-gui.png
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{betatag}-root-%(%{__id_u} -n)
@@ -167,6 +166,10 @@ X based GUI for SELinux Policy Editor
 
 
 %changelog
+* Tue Feb 6 2007 Yuichi Nakamura<ynakam@hitachisoft.jp> 2.1.0-1
+ - Fixed bug in RBAC
+ - Fixed installer for Asianux
+
 * Wed Jan 31 2007 Yuichi Nakamura<ynakam@hitachisoft.jp> 2.1.0-0.16.beta7
  - Fixed for CentOS4, package build failed.
 

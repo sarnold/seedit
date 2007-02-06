@@ -2,8 +2,8 @@
 
 #Fix these valuables for your environment
 VERSION=2.1.0
-BETA=-beta7
-DISTRO=ax2
+#BETA=-beta7
+DISTRO=fc6
 SVNROOT=~/seedit/trunk/
 RPMROOT=~/rpm
 

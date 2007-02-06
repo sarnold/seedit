@@ -5,15 +5,17 @@ Basically, by typing make, make install programs are compiled.
 However, before make, you have to configure following valuables.
 
 DISTRO
-PYTHON_VER
+PYTHON_SITELIB
 CUSTOMIZABLE_TYPES
 AUDITCONF
 MODULAR
 PAM_INCLUDE_SUPPORT
+AUDIT_OBJ_TYPE_SUPPORT
+
 
 * DISTRO: targeted distribution. 
 Distribution specific files are installed according to $DISTRO.
-Now, fc6, cos4 are suppported.
+Now, fc6, cos4, ax2 are suppported.
 For other distributions, default files are used.
 
 Distribution specific files are following:
@@ -23,8 +25,8 @@ Distribution specific files are following:
 - seedit-converter/config/base_policy/contexts/dynamic_contexts.$DISTRO
   This is to label files that is created at boot time correctly at initial boot.  seedit-converter/config/base_policy/contexts/dynamic_contexts is default.
 
-* PYTHON_VER
-  Python lib files are installed in /usr/lib/python$PYTHON_VER/site-packages/seedit .
+* PYTHON_SITELIB
+  Python lib files are installed in $PYTHON_SITELIB/seedit .
 
 * CUSTOMIZABLE_TYPE
   If your libselinux does not have is_context_customizable function, "n", else "y".
@@ -41,14 +43,19 @@ Distribution specific files are following:
   If you pam supports include syntax, use "y".
   For Fedora Core 5 or later, use "y". For Cent OS4 "n".
 
+* AUDIT_OBJ_TYPE_SUPPORT
+ If auditctl command suports obj_type, use "y".
+ For Fedora 6 and later, "y".
+
 2. Build
 For example of Fedora Core 6, you have to define values like below.
 $ export DISTRO=fc6
-$ export PYTHON_VER=2.4
+$ export PYTHON_SITELIB=/usr/lib/python2.4/site-packages/
 $ export CUSTOMIZABLE_TYPE=y
 $ export AUDITRULES=/etc/audit/audit.rules
 $ export MODULAR=y
 $ export PAM_INCLUDE_SUPPORT=y
+% export AUDIT_OBJ_TYPE_SUPPORT=y
 
 
 And 

@@ -699,7 +699,7 @@ def getRelatedFileList(path,skipPatternReg):
 
 def removeChildDir(list):
     result = []
-    list.sort(key=str.lower)
+    list.sort()
     r = re.compile(list[0])
     result.append(list[0])
     for l in list:

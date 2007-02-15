@@ -1,4 +1,4 @@
-%define buildnum 1
+%define buildnum 3
 %define python_sitelib %(%{__python} -c 'from distutils import sysconfig; print sysconfig.get_python_lib()')
 
 %define selinuxconf %{_sysconfdir}/selinux/config
@@ -24,6 +24,7 @@ URL: http://seedit.sourceforge.net/
 Source0: http://osdn.dl.sourceforge.jp/selpe/23577/%{name}-%{version}.tar.gz
 Source1: seedit-gui.desktop
 Source2: seedit-gui.png
+Patch0: 2.1.0-4.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{betatag}-root-%(%{__id_u} -n)
 BuildRequires:  libselinux-devel >= 1.19, libsepol-devel >= 1.1.1, byacc, flex
 Requires:  checkpolicy, m4, audit, libselinux >= 1.19, libsepol >= 1.1.1
@@ -40,6 +41,7 @@ Command line utils is included in seedit package.
 
 %prep
 %setup -q
+%patch0 -p0
 
 %build
 pushd core
@@ -166,6 +168,15 @@ X based GUI for SELinux Policy Editor
 
 
 %changelog
+* Thu Feb 15 2007 Yuichi Nakamura<ynakam@hitachisoft.jp> 2.1.0-4
+ - Fixed bug, seedit-converter did not work when "//" is included in path
+
+* Fri Feb 9 2007 Yuichi Nakamura<ynakam@hitachisoft.jp> 2.1.0-3
+ - Fixed build failure
+
+* Fri Feb 9 2007 Yuichi Nakamura<ynakam@hitachisoft.jp> 2.1.0-2
+ - Fixed build failure
+
 * Tue Feb 6 2007 Yuichi Nakamura<ynakam@hitachisoft.jp> 2.1.0-1
  - Fixed bug in RBAC
  - Fixed installer for Asianux

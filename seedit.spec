@@ -1,5 +1,6 @@
-%define buildnum 4
+%define buildnum 5
 %define python_sitelib %(%{__python} -c 'from distutils import sysconfig; print sysconfig.get_python_lib()')
+%define selinuxenabled /usr/sbin/selinuxenabled
 
 %define selinuxconf %{_sysconfdir}/selinux/config
 %define auditrules %{_sysconfdir}/audit/audit.rules
@@ -24,11 +25,11 @@ URL: http://seedit.sourceforge.net/
 Source0: http://osdn.dl.sourceforge.jp/selpe/23577/%{name}-%{version}.tar.gz
 Source1: seedit-gui.desktop
 Source2: seedit-gui.png
-Patch0: 2.1.0-4.patch
+Patch0: 2.1.0-5.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{betatag}-root-%(%{__id_u} -n)
 BuildRequires:  libselinux-devel >= 1.19, libsepol-devel >= 1.1.1, byacc, flex
 Requires:  checkpolicy, m4, audit, libselinux >= 1.19, libsepol >= 1.1.1
-Provides: seedit-converter
+Provides: seedit-converter = %{version}-%{release}
 
 %description
 SELinux Policy Editor(SEEdit) is a tool to make SELinux easy.
@@ -99,8 +100,7 @@ rm -rf %{buildroot}
 %{_datadir}/%{name}/macros
 %{_datadir}/%{name}/base_policy
 %dir %{_datadir}/%{name}/sepolicy
-%dir %{_sysconfdir}/%{name}
-%{_sysconfdir}/%{name}/seedit-load.conf
+%{_datadir}/%{name}/seedit-load.conf
 
 %package policy
 Summary: SELinux Policy Editor: Sample simplified policy
@@ -124,6 +124,9 @@ fi
 %postun policy
 if [ $1 = 0 ]; then
 	sed -i 's/^SELINUXTYPE=.*/SELINUXTYPE=targeted/g' %{_sysconfdir}/selinux/config
+	if [ %{selinuxenabled} ]; then
+		sed -i 's/^SELINUX=.*/SELINUX=permissive/g' %{_sysconfdir}/selinux/config
+	fi
 	touch /.autorelabel
 fi
 
@@ -168,6 +171,11 @@ X based GUI for SELinux Policy Editor
 
 
 %changelog
+* Fri Feb 16 2007 Yuichi Nakamura<ynakam@hitachisoft.jp> 2.1.0-5
+ - SELINUX= is set permissive when uninstall,
+because relabel fails in enforcing mode.
+ - Modified path to seedit-load.conf
+
 * Thu Feb 15 2007 Yuichi Nakamura<ynakam@hitachisoft.jp> 2.1.0-4
  - Fixed bug, seedit-converter did not work when "//" is included in path
 

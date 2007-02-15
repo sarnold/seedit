@@ -63,7 +63,7 @@ install:all seedit-load.conf
 	mkdir -p $(BUILD_ROOT_DIR)/sepolicy
 	mkdir -p $(SEEDITCONFROOT)
 	mkdir -p $(sysconfdir)/seedit
-	install -p -m 0644 seedit-load.conf  $(sysconfdir)/seedit
+	install -p -m 0644 seedit-load.conf  $(SEEDITCONFROOT)
 	cp -p -r base_policy $(SEEDITCONFROOT)
 	cp -p -r macros $(SEEDITCONFROOT)
 	mv $(SEEDITCONFROOT)/base_policy/spdl_spec.xml.expand  $(SEEDITCONFROOT)/base_policy/spdl_spec.xml

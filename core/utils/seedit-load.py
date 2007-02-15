@@ -24,7 +24,7 @@ import getopt
 import string
 import gettext
 
-gSeeditLoadConf="/etc/seedit/seedit-load.conf"
+gSeeditLoadConf="/usr/share/seedit/seedit-load.conf"
 gMakeFlags="CONFDIR=/etc/seedit/policy OUTDIR=/usr/share/seedit/sepolicy BASEPOLICYDIR=/usr/share/seedit/base_policy MACRODIR=/usr/share/seedit/macros"
 gAuditCtl="/sbin/auditctl"
 

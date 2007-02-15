@@ -516,12 +516,42 @@ void add_file_user_list(char *path){
 
 }
 
+/*replace '//' with '/' */
+char *remove_slash(char *path) {
+	char *buf;
+	char *result;
+	int len;
+	int i;
+	int j;
+	result = strdup(path);	
+	len = strlen(path);
+	buf = (char *)my_malloc(sizeof(char) * (len + 1));
+	memset(buf, 0, sizeof(char) * (len + 1));
+
+	j = 0;
+	for (i=0; i < len; i++) {
+		if(path[i] == '/') {
+			if (i > 0 && path[i-1] == '/'){
+				/*do nothing*/
+			} else {
+				buf[j] = path[i];
+				j++;
+			}			
+		} else {
+			buf[j] = path[i];
+			j++;
+		}
+	}
+	memcpy(result,buf,len+1);
+	free(buf);
+	return result;
+}
+
 int register_file_rule(char *path){
   char **dir_list;
-  char *filename;
-  
+  char *filename;  
   int state;
-
+  path = remove_slash(path);
   state = get_file_state(path); 
   filename = get_filename(path, state);  
   add_file_user_list(filename);
@@ -540,7 +570,8 @@ int register_file_rule(char *path){
     /* when allow <dir>* is described, add dummy permission to dummy domain. */
     label_child_dir(filename);
   }
-  
+
+  free(path);
   return 0;
 
 }

@@ -1,0 +1,19 @@
+#Macros used for size optimization
+define(`allow_file_wrs',`
+allow_file_w($1,$2)
+allow_file_r($1,$2)
+allow_file_s($1,$2)
+')
+define(`allow_file_rs',`
+allow_file_r($1,$2)
+allow_file_s($1,$2)
+')
+define(`allow_file_dev_wrs',`
+allow_file_dev_w($1,$2)
+allow_file_dev_r($1,$2)
+allow_file_dev_s($1,$2)
+')
+define(`allow_file_dev_rs',`
+allow_file_dev_r($1,$2)
+allow_file_dev_s($1,$2)
+')

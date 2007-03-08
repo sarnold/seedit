@@ -837,7 +837,7 @@
     
     
    <option category="priv" value="cap_fowner">
-      <macro value="allow_admin_cap_fownerp"/>
+      <macro value="allow_admin_cap_fowner"/>
       <rules>
 	<rule value="allow">
 	  <domain value="domain"/>

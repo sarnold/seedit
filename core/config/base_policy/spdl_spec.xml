@@ -703,6 +703,12 @@
 	  <permission value="ioctl"/>
 	  <permission value="lock"/>
 	</rule>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="file_type"/>
+	  <secclass value="dir"/>
+	  <permission value="search"/>
+	</rule>
       </rules>
     </option>
     <option category="priv" value="write">

@@ -26,7 +26,7 @@
 
 /*max filename length*/
 #define MAX_FILENAME 4048
-#define MAX_TMP_FILE 256
+#define MAX_TMP_FILE 1024
 
 
 /**

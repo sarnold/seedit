@@ -1,4 +1,4 @@
-# SELinux Policy Editor, a simple editor for SELinux policies
+h	# SELinux Policy Editor, a simple editor for SELinux policies
 # Copyright (C) 2006 Yuichi Nakamura
 
 ## minimum types used in converter
@@ -33,3 +33,5 @@ type wellknown_udp_port_t,port_type;
 ##labels for unreserved 1024 over ports
 type unpriv_tcp_port_t,port_type;
 type unpriv_udp_port_t,port_type;
+typeattribute unpriv_tcp_port_t unpriv_port_type;
+typeattribute unpriv_udp_port_t unpriv_port_type;

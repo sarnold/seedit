@@ -1,4 +1,4 @@
-%define buildnum 5
+%define buildnum 1
 %define python_sitelib %(%{__python} -c 'from distutils import sysconfig; print sysconfig.get_python_lib()')
 %define selinuxenabled /usr/sbin/selinuxenabled
 
@@ -16,7 +16,7 @@
 %define sample_policy_type fc6
 
 Name: seedit         
-Version: 2.1.0
+Version: 2.1.1
 Release: %{buildnum}%{?dist}
 Summary: SELinux Policy Editor:Core component
 Group:  System Environment/Base        
@@ -25,7 +25,6 @@ URL: http://seedit.sourceforge.net/
 Source0: http://osdn.dl.sourceforge.jp/selpe/23577/%{name}-%{version}.tar.gz
 Source1: seedit-gui.desktop
 Source2: seedit-gui.png
-Patch0: 2.1.0-5.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{betatag}-root-%(%{__id_u} -n)
 BuildRequires:  libselinux-devel >= 1.19, libsepol-devel >= 1.1.1, byacc, flex
 Requires:  checkpolicy, m4, audit, libselinux >= 1.19, libsepol >= 1.1.1
@@ -42,7 +41,6 @@ Command line utils is included in seedit package.
 
 %prep
 %setup -q
-%patch0 -p0
 
 %build
 pushd core
@@ -171,6 +169,10 @@ X based GUI for SELinux Policy Editor
 
 
 %changelog
+* Thu Apr 12 2007 Yuichi Nakamura<ynakam@hitachisoft.jp> 2.1.1-0
+ - Merged bug fix until 2.1.0-5
+ - Other bug fixes
+
 * Fri Feb 16 2007 Yuichi Nakamura<ynakam@hitachisoft.jp> 2.1.0-5
  - SELINUX= is set permissive when uninstall,
 because relabel fails in enforcing mode.

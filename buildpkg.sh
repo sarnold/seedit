@@ -1,15 +1,15 @@
 #!/bin/sh
 
 #Fix these valuables for your environment
-VERSION=2.1.0
+VERSION=2.1.1
 #BETA=-beta7
 DISTRO=fc6
-SVNROOT=~/seedit/trunk/
+SVNROOT=~/seedit.sourceforge/trunk/
 RPMROOT=~/rpm
 
 #Followign values differs from distro
 #For, cos4, ax2, fc6 , they are configured later
-SAMPLE_POLICY_TYPE=ax2
+SAMPLE_POLICY_TYPE=fc6
 #AUDITCONF=\\%\\{_sysconfdir\\}\\/audit\\/audit.rules
 AUDITCONF=\\%\\{_sysconfdir\\}\\/audit.rules
 MODULAR=n

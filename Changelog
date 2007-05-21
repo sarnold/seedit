@@ -1,3 +1,6 @@
+*2007/05/19
+ Fixed bug of RBAC for CentOS5.
+
 *2007/02/14
  - Fixed bug
   -- seedit-converter did not work when "//" is included in path

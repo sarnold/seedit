@@ -1,7 +1,7 @@
 #!/bin/sh
 
 #Fix these valuables for your environment
-VERSION=2.1.1
+VERSION=2.1.2
 #BETA=-beta7
 DISTRO=fc6
 SVNROOT=~/seedit.sourceforge/trunk/
@@ -10,11 +10,11 @@ RPMROOT=~/rpm
 #Followign values differs from distro
 #For, cos4, ax2, fc6 , they are configured later
 SAMPLE_POLICY_TYPE=fc6
-#AUDITCONF=\\%\\{_sysconfdir\\}\\/audit\\/audit.rules
-AUDITCONF=\\%\\{_sysconfdir\\}\\/audit.rules
-MODULAR=n
-CUSTOMIZABLE_TYPES=n
-PAM_INCLUDE_SUPPORT=n
+AUDITCONF=\\%\\{_sysconfdir\\}\\/audit\\/audit.rules
+#AUDITCONF=\\%\\{_sysconfdir\\}\\/audit.rules
+MODULAR=y
+CUSTOMIZABLE_TYPES=y
+PAM_INCLUDE_SUPPORT=y
 AUDIT_OBJ_TYPE_SUPPORT=n
 #If distro have DESKTOP_FILE_UTILS, then y
 HAVE_DESKTOP_FILE_UTILS=y

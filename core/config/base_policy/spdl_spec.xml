@@ -281,6 +281,13 @@
 	  <secclass value="key_socket"/>
 	  <permission value="ioctl"/><permission value="read"/><permission value="write"/><permission value="create"/><permission value="getattr"/><permission value="setattr"/><permission value="lock"/><permission value="relabelfrom"/><permission value="relabelto"/><permission value="append"/><permission value="bind"/><permission value="connect"/><permission value="listen"/><permission value="accept"/><permission value="getopt"/><permission value="setopt"/><permission value="shutdown"/><permission value="recvfrom"/><permission value="sendto"/><permission value="recv_msg"/><permission value="send_msg"/><permission value="name_bind"/>
 	</rule>
+	<rule>
+	  <domain value="global"/>
+	  <type value="self"/>
+	  <secclass value="dccp_socket"/>
+	  <permission value="ioctl"/><permission value="read"/><permission value="write"/><permission value="create"/><permission value="getattr"/><permission value="setattr"/><permission value="lock"/><permission value="relabelfrom"/><permission value="relabelto"/><permission value="append"/><permission value="bind"/><permission value="connect"/><permission value="listen"/><permission value="accept"/><permission value="getopt"/><permission value="setopt"/><permission value="shutdown"/><permission value="recvfrom"/><permission value="sendto"/><permission value="recv_msg"/><permission value="send_msg"/><permission value="name_bind"/><permission value="node_bind"/><permission value="name_connect"/>
+	</rule>
+
       </rules>
 
 
@@ -324,6 +331,18 @@
 	  <type value="unlabeled_t"/>
 	  <secclass value="association"/>
 	  <permission value="*"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="global"/>
+	  <type value="self"/>
+	  <secclass value="context"/>
+	  <permission value="contains"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="global"/>
+	  <type value="global"/>
+	  <secclass value="context"/>
+	  <permission value="translate"/>
 	</rule>
       </rules>
       

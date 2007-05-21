@@ -63,8 +63,8 @@ class xinput			# userspace
 class xserver			# userspace
 class xextension		# userspace
 
-# pax flags
-class pax
+# pax flags; deprecated--can be reclaimed
+class pax			# userspace
 
 # extended netlink sockets
 class netlink_route_socket
@@ -92,5 +92,9 @@ class packet
 
 # Kernel access key retention
 class key
+
+class context			# userspace
+
+class dccp_socket
 
 # FLASK

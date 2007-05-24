@@ -866,3 +866,16 @@ char *get_type_from_context(security_context_t context){
   free(work);
   return type;
 }
+
+
+char *get_name_from_path(char *path) {
+	char *s;
+	s = strrchr(path, '/');
+	if (!s)
+		return NULL;
+	if (*(s+1) != '\0') {
+		s++;
+		return strdup(s);
+	}
+	return NULL;
+}

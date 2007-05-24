@@ -354,8 +354,8 @@ extern int g_entry_point_array_num;
 /**
  *  domain transition
  */
-extern TRANS_RULE *rulebuf;			/* the body is in action.c			*/
-extern int domain_trans_rule_num;
+extern TRANS_RULE *gDomain_trans_rules;			/* the body is in action.c			*/
+extern int gDomain_trans_rule_num;
 
 /**
  *  relationship between user adn role
@@ -414,5 +414,19 @@ FILE *TMP_fp;
 
 
 #define MAX_COMMENT 256
+
+/*This indicates -t 1option*/
+extern int gDiet_by_attr;
+/*If macro is used more than that value, use attribute instead of attribute*/
+#define OPTIMIZE_THRESHOLD 3
+/*-p option*/
+extern int gProfile;
+/*--busybox option*/
+extern int gBusybox;
+
+/* whether dir search permission is supported or not */
+extern int gDir_search;
+#define bug_and_die(msg) { fprintf(stderr,"Bug in file %s in line %d, message:%s,exitting..\n",__FILE__, __LINE__, msg);exit(1);}
+
 
 #endif

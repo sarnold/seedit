@@ -35,6 +35,7 @@
 #include <seedit/common.h>
 #include <seedit/parse.h>
 #include "security_class.h"
+#include "out_macro.h"
 
 static void modify_rules();
 static void make_dir_list();
@@ -84,6 +85,44 @@ FILE *openfile(char *outdir, char *filename){
   return fp;
 }
 
+void out_busybox_contexts(FILE *fp) {
+	int i;
+	TRANS_RULE t;
+	FILE_LABEL *label;
+	for (i = 0; i < gDomain_trans_rule_num; i++) {
+		char *applet_name;
+		t = gDomain_trans_rules[i];		
+		label = search_element(file_label_table, t.path);
+		if (label == NULL){
+			fprintf(stderr, "bug line %d,%s\n", __LINE__,__FILE__);
+			exit(1);
+		}
+		applet_name = get_name_from_path(label->filename);
+		if(applet_name) {
+			fprintf(fp, "%s\tgen_context(system_u:object_r:%s,s0)\n", applet_name, label->labelname);
+			free(applet_name);
+		}
+	}
+}
+
+/*Declare macros useful for size optimization*/
+void declare_optimize_macro(FILE *policy_fp) {
+	fprintf(policy_fp, "define(`allow_file_wrs',`\n" \
+		"allow_file_w($1,$2)\n" \
+		"allow_file_r($1,$2)\n" \
+		"allow_file_s($1,$2)\n')\n");
+	fprintf(policy_fp, "define(`allow_file_rs',`\n"	\
+		"allow_file_r($1,$2)\n"	\
+		"allow_file_s($1,$2)\n')\n");
+	fprintf(policy_fp, "define(`allow_file_dev_wrs',`\n" \
+		"allow_file_dev_w($1,$2)\n" \
+		"allow_file_dev_r($1,$2)\n" \
+		"allow_file_dev_s($1,$2)\n')\n");
+	fprintf(policy_fp, "define(`allow_file_dev_rs',`\n" \
+		"allow_file_dev_r($1,$2)\n" \
+		"allow_file_dev_s($1,$2)\n')\n");
+
+}
 
 /**
  *  @name:	convert
@@ -92,76 +131,84 @@ FILE *openfile(char *outdir, char *filename){
  *  @args:	file_context_fp (FILE *) -> :FILE pointer to print file_contexts.
  *  @return:	none
  */
-void convert(char *outdir){
-  FILE *policy_fp=stdout;
-  FILE *file_context_fp=stdout;
-  FILE *unconfined_fp=stdout;
-  FILE *confined_fp = stdout;
-  FILE *customizable_types_fp=stdout;
-  FILE *homedir_template_fp=stdout;
-  FILE *userhelper_context_fp=stdout;
+void convert(char *outdir) {
+	FILE *policy_fp = stdout;
+	FILE *file_context_fp = stdout;
+	FILE *unconfined_fp = stdout;
+	FILE *confined_fp = stdout;
+	FILE *customizable_types_fp = stdout;
+	FILE *homedir_template_fp = stdout;
+	FILE *userhelper_context_fp = stdout;
+	FILE *profile_fp = stdout;
+	FILE *busybox_fp = stdout;
 
-  if(outdir!=NULL){
-    policy_fp= openfile(outdir,"generated.conf");
-    file_context_fp = openfile(outdir,"file_contexts.m4");
-    unconfined_fp = openfile(outdir,"unconfined_domains");
-    confined_fp = openfile(outdir,"confined_domains");
-    customizable_types_fp=openfile(outdir,"customizable_types");
-    userhelper_context_fp=openfile(outdir,"userhelper_context.m4");
-    
-  }  
+	if(outdir != NULL) {
+		policy_fp= openfile(outdir,"generated.conf");
+		file_context_fp = openfile(outdir,"file_contexts.m4");
+		unconfined_fp = openfile(outdir,"unconfined_domains");
+		confined_fp = openfile(outdir,"confined_domains");
+		customizable_types_fp=openfile(outdir,"customizable_types");
+		userhelper_context_fp=openfile(outdir,"userhelper_context.m4");
+		if(gProfile)
+			profile_fp = openfile(outdir, "profile.data");
+		if(gBusybox)
+			busybox_fp = openfile(outdir, "busybox_contexts.m4");
+	}  
 
- /* print default files */
+	/* print default files */
+	include_file(get_base_policy_files()->security_class, policy_fp);
+	include_file(get_base_policy_files()->initial_sids, policy_fp);
+	include_file(get_base_policy_files()->access_vectors, policy_fp);
+	include_file(get_base_policy_files()->mcs, policy_fp);
+  
+	if(gDiet_by_attr || gProfile)
+		declare_optimize_macro(policy_fp);
 
-  include_file(get_base_policy_files()->security_class, policy_fp);
-  include_file(get_base_policy_files()->initial_sids, policy_fp);
-  include_file(get_base_policy_files()->access_vectors, policy_fp);
-  include_file(get_base_policy_files()->mcs, policy_fp);
+	/* print default all attribute */
+	declare_attributes(policy_fp);
+	/* print initial types */
+	declare_initial_types(policy_fp);
+	/* print "allow" at least necessary to configuration */
+	default_allow(policy_fp);
+	/**/
+	if(!gDir_search) {
+		fprintf(policy_fp,"###Dir search is not supported.\n");
+		fprintf(policy_fp,"allow domain file_type:dir { search };\n");
+	}
+	
+	/*used to sort file_context*/
+	TMP_fp = tmpfile();
+	if (TMP_fp == NULL) {
+		fprintf(stderr,"Error opening tmpfile\n");
+		exit(1);
+	}
 
-  /* print default all attribute */
-  declare_attributes(policy_fp);
-  /* print initial types */
-  declare_initial_types(policy_fp);
-  /* print "allow" at least necessary to configuration */
-  /* print "socket allow"				     */
-  default_allow(policy_fp);
+	if (domain_hash_table == NULL){
+		fprintf(stderr, "bug? domain table is not initialized.\n");
+		exit(1);
+	}
 
+	/* calculate relationship between file and label. */
+	create_file_label_table(domain_hash_table);	
 
-  /*used to sort file_context*/
-  TMP_fp = tmpfile();
-  if (TMP_fp == NULL){
-    fprintf(stderr,"Error opening tmpfile\n");
-    exit(1);
-  }
-
-  if (domain_hash_table == NULL){
-    fprintf(stderr, "bug? domain table is not initialized.\n");
-    exit(1);
-  }
-
-  /* calculate relationship between file and label. */
-  create_file_label_table(domain_hash_table);	
-#ifdef DIRSEARCH
-	create_dir_label_table(); 
-	//	print_dir_label_tab();
-#endif
-
-
-	//	print_file_label_tab();
+	if(gDir_search) {
+		create_dir_label_table(); 
+	}
 
 	modify_rules();
 
-#ifdef DIRSEARCH
-	make_dir_list();
-#endif
+	if(gDir_search) {
+		make_dir_list();
+	}
+
 
 	/* print "type .." of label on files */
 	out_file_type(policy_fp);
 	out_net_type(policy_fp);
-
+	
 	/* print "allow ..." */
 	out_allow(policy_fp,unconfined_fp,confined_fp);
-
+	
 	/* print "domain_auto_trans or domain_trans " */
 	out_domain_trans(policy_fp);
 
@@ -189,23 +236,28 @@ void convert(char *outdir){
 
 	out_userhelper_context(userhelper_context_fp);
 
-#ifdef DEBUG
-	//print_user();
-#endif
+	print_profile(profile_fp);
+	
+	if(gBusybox) {
+		out_busybox_contexts(busybox_fp);
+	}
+
 	if(policy_fp!=NULL)
-	  fclose(policy_fp);
+		fclose(policy_fp);
 	if(file_context_fp != NULL)
-	  fclose(file_context_fp);
+		fclose(file_context_fp);
 	if(unconfined_fp!=NULL)
-	  fclose(unconfined_fp);
+		fclose(unconfined_fp);
 	if(confined_fp!=NULL)
-	  fclose(confined_fp);
+		fclose(confined_fp);
 	if(customizable_types_fp!=NULL)
-	  fclose(customizable_types_fp);
+		fclose(customizable_types_fp);
 	if(homedir_template_fp!= NULL)
-	  fclose(homedir_template_fp);
+		fclose(homedir_template_fp);
 	if(userhelper_context_fp!=NULL)
-	  fclose(userhelper_context_fp);
+		fclose(userhelper_context_fp);
+	if(profile_fp!=NULL && profile_fp != stdout)
+		fclose(profile_fp);
 
 }
 
@@ -1265,15 +1317,17 @@ void out_fs_trans_acl(FILE *fp, DOMAIN *domain){
 void out_adm_other_acl(FILE *fp, DOMAIN *domain){
   int i;
   ADMIN_OTHER_RULE rule;
-  
+  char *macro;
   fprintf(fp, "##allowpriv rule\n");
   for(i = 0; i<domain->admin_rule_array_num; i++){
     rule = domain->admin_rule_array[i];
     if(rule.deny_flag==1){
       continue;
     }
-    fprintf(fp, "allow_admin_%s(%s)\n", rule.rule, domain->name);
     
+    macro = joint_str("allow_admin_",rule.rule);
+    out_optimized_macro(fp, macro, domain->name, NULL);
+    free(macro);
   }
   fprintf(fp, "##end of allowpriv rule\n");
   /*allowpriv part_relabel is in out_file_acl.c*/
@@ -1334,9 +1388,9 @@ out_acls(FILE *outfp, DOMAIN *domain)
 {
 
         out_file_acl(outfp, domain);
-#ifdef DIRSEARCH
-	out_dir_search(outfp,domain);
-#endif
+	if(gDir_search) {
+		out_dir_search(outfp,domain);
+	}
 	out_tmp_all(outfp,domain);
 	out_net_socket_acl(outfp,domain);
 	out_net_netif_acl(outfp,domain);
@@ -1911,115 +1965,107 @@ void out_domain_trans_child_dir(FILE *, TRANS_RULE *, char *);
 
 /**
  *  @name:	out_domain_trans
- *  @about:	print domain_trans by using rulebuf
+ *  @about:	print domain_trans by using gDomain_trans_rules
  *  @args:	outfp (FILE *) -> output file descripter
  *  @return:	none
- *  @notes:	rulebuf is global variable
+ *  @notes:	gDomain_trans_rules is global variable
  */
-void out_domain_trans(FILE *outfp){
-  int i;
-  TRANS_RULE t;
-  FILE_LABEL *label;
-  char *name;/*domain name*/
-  int len;
-  int disable_trans_defined=0;
-  char *boolean_name=NULL;
-  /* print domain_auto_trans */
-  for (i = 0; i < domain_trans_rule_num; i++){
-    /* search target path's file label */
-    t = rulebuf[i];
-
-    disable_trans_defined = check_disable_trans_boolean_defined(t.child);
-    if(disable_trans_defined){
-
-      label = search_element(file_label_table, t.path);
-      if (label == NULL){
-	fprintf(stderr, "bug line %d\n", __LINE__);
-	exit(1);
-      }      
-      fprintf(outfp,"ifdef(`enable_mcs',`\n");
-
-      if(!ntarray_check_exist(converter_conf.mcs_range_trans_entry  ,t.path)){
-	fprintf(outfp,"range_transition unconfined_domain %s s0;\n",label->labelname);
-      }
-      fprintf(outfp,"')\n");    
-
-      boolean_name = get_disable_trans_boolean_name(t.child);
-      fprintf(outfp,"if(%s){}else{\n",boolean_name);
-      free(boolean_name);
-    }
-
-
-    name = strdup(t.parent);
-    len = strlen(name);	
-    /* convert "_r" to "_t" */
-    if(strcmp(name,"unconfined_domain")!=0){
-      if (len < 2){
-	fprintf(stderr, "bug line %d\n", __LINE__);
-      }
-      name[len-1] = 't';
-    }
+void out_domain_trans(FILE *outfp) {
+	int i;
+	TRANS_RULE t;
+	FILE_LABEL *label;
+	char *name;/*domain name*/
+	int len;
+	int disable_trans_defined=0;
+	char *boolean_name=NULL;
+	/* print domain_auto_trans */
+	for (i = 0; i < gDomain_trans_rule_num; i++) {
+		/* search target path's file label */
+		t = gDomain_trans_rules[i];		
+		disable_trans_defined = check_disable_trans_boolean_defined(t.child);
+		if(disable_trans_defined) {			
+			label = search_element(file_label_table, t.path);
+			if (label == NULL){
+				fprintf(stderr, "bug line %s %d\n", __FILE__, __LINE__);
+				exit(1);
+			}      
+			fprintf(outfp,"ifdef(`enable_mcs',`\n");
+			
+			if(!ntarray_check_exist(converter_conf.mcs_range_trans_entry  ,t.path)){
+				fprintf(outfp,"range_transition unconfined_domain %s s0;\n",label->labelname);
+			}
+			fprintf(outfp,"')\n");    
+			
+			boolean_name = get_disable_trans_boolean_name(t.child);
+			fprintf(outfp,"if(%s){}else{\n",boolean_name);
+			free(boolean_name);
+		}
+		
+		name = strdup(t.parent);
+		len = strlen(name);	
+		/* convert "_r" to "_t" */
+		if(strcmp(name,"unconfined_domain")!=0){
+			if (len < 2){
+				fprintf(stderr, "bug line %d\n", __LINE__);
+			}
+			name[len-1] = 't';
+		}
        
-    if(strcmp(name,"unconfined_domain")==0){
-   
-      ;
-    }else if(search_element(domain_hash_table, name) == NULL){
-      fprintf(stderr, "Warning: domain %s does not exists for \"domain_trans %s %s\" rule. Skipped.\n", name, t.parent,t.path);
-      continue;
-    }else if(search_element(domain_hash_table, t.child) == NULL){
-      error_print(__FILE__, __LINE__, "bug! Aborted");
-      exit(1);
-    }
-
-    if(t.path == NULL){
-      /*dynamic transition rule*/
-      fprintf(outfp, "domain_dyn_trans(%s,%s)\n", name, t.child);
-      continue;
-    }
-
-    label = search_element(file_label_table, t.path);
-    if (label == NULL){
-      fprintf(stderr, "bug line %d\n", __LINE__);
-      exit(1);
-    }
-    if (t.auto_flag == 1){
-      fprintf(outfp, "domain_auto_trans(%s,%s,%s)\n", name,label->labelname, t.child);
-      label = search_element(dir_label_table, t.path);
-      if(label)
-	fprintf(outfp, "domain_auto_trans(%s,%s,%s)\n", name,label->labelname, t.child);
-
-
-    } else {
-      fprintf(outfp, "domain_trans(%s,%s,%s)\n", name, label->labelname, t.child);
-      label = search_element(dir_label_table, t.path);
-      if(label)
-	fprintf(outfp, "domain_trans(%s,%s,%s)\n", name, label->labelname, t.child);
-    }
-    
-    
-    /*
-     * when entry point is directory(<dir>/ * or <dir>/ **) and a file under the directory is labeled,
-     * then output domain_auto_trans for label of the file.
-     */ 
-    out_domain_trans_child_dir(outfp, &t,name);
-
-    free(name);
-    if(disable_trans_defined){
-      /*close if(_disable_trans){}else{q*/
-      fprintf(outfp,"}\n");
-    }
-
-
-  }
+		if(strcmp(name,"unconfined_domain")==0){
+			;
+		}else if(search_element(domain_hash_table, name) == NULL) {
+			fprintf(stderr, "Warning: domain %s does not exists for \"domain_trans %s %s\" rule. Skipped.\n", name, t.parent,t.path);
+			continue;
+		}else if(search_element(domain_hash_table, t.child) == NULL) {
+			error_print(__FILE__, __LINE__, "bug! Aborted");
+			exit(1);
+		}
+		
+		if(t.path == NULL) {
+			/*dynamic transition rule*/
+			fprintf(outfp, "domain_dyn_trans(%s,%s)\n", name, t.child);
+			continue;
+		}
+		
+		label = search_element(file_label_table, t.path);
+		if (label == NULL) {
+			fprintf(stderr, "bug line %d\n", __LINE__);
+			exit(1);
+		}
+		if (t.auto_flag == 1) {
+			fprintf(outfp, "domain_auto_trans(%s,%s,%s)\n", name,label->labelname, t.child);
+			label = search_element(dir_label_table, t.path);
+			if(label)
+				fprintf(outfp, "domain_auto_trans(%s,%s,%s)\n", name,label->labelname, t.child);
+		} else {
+			fprintf(outfp, "domain_trans(%s,%s,%s)\n", name, label->labelname, t.child);
+			label = search_element(dir_label_table, t.path);
+			if(label)
+				fprintf(outfp, "domain_trans(%s,%s,%s)\n", name, label->labelname, t.child);
+		}
+		
+		
+		/*
+		 * when entry point is directory(<dir>/ * or <dir>/ **) and a file under the directory is labeled,
+		 * then output domain_auto_trans for label of the file.
+		 */ 
+		out_domain_trans_child_dir(outfp, &t,name);
+		
+		free(name);
+		if(disable_trans_defined) {
+			/*close if(_disable_trans){}else{q*/
+			fprintf(outfp,"}\n");
+		}
+	}
 }
 
 /**
  *  @name:	out_domain_trans_child_dir
- *  @about:	print domain_trans by using rulebuf
+ *  @about:	print domain_trans by using gDomain_trans_rules
  * 		attention:wildcard isn't supported,the program of the same name isn't supported.
  *  @args:	outfp (FILE *) -> output file descripter
  *  @return:	none
- *  @notes:	rulebuf is global variable
+ *  @notes:	gDomain_trans_rules is global variable
  */
 void out_domain_trans_child_dir(FILE *outfp, TRANS_RULE *t, char *domain_name){
 	FILE_LABEL *label;

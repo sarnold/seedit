@@ -26,8 +26,8 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <dirent.h>
-#include <flask.h>
-#include <selinux.h>
+#include <selinux/flask.h>
+#include <selinux/selinux.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
@@ -36,6 +36,7 @@
 #include "action.h"
 #include <seedit/parse.h>
 #include <seedit/common.h>
+#include "out_macro.h"
 
 /**
  *  this is used in "print_allow_consider_child".
@@ -206,205 +207,230 @@ static void print_allow(char *, FILE_LABEL *,int, FILE *);
  *  @return:	none
  */
 static void print_allow_consider_child(char *domain, char *filename, int allowed, FILE *outfp, int state){
-  FILE_LABEL *label;
-  HASH_NODE **file_label_array=NULL;
-  HASH_NODE **dir_label_array=NULL;
-  DOMAIN *domain_info;
-  int i;
-  int r;
-  int child_flag = 0;
-  struct stat buf;
+	FILE_LABEL *label;
+	HASH_NODE **file_label_array=NULL;
+	HASH_NODE **dir_label_array=NULL;
+	DOMAIN *domain_info;
+	int i;
+	int r;
+	int child_flag = 0;
+	struct stat buf;
+	label = search_element(file_label_table,filename);
+	if(label ==NULL){
+		bug_and_die("");
+	}
+	if(state == FILE_ITSELF){
+		/* allow /hoge/foo r,s; if foo is dir, does not output for file label under foo, but dir label
+		 */   
+		if(gDir_search) {
+			r = lstat(filename, &buf);
+			if (r==0 && S_ISLNK(buf.st_mode)) {
+				print_allow(domain, label, allowed, outfp);
+			} else if (r==0 && S_ISDIR(buf.st_mode)){
+				label = search_element(dir_label_table,filename);
+				if(label ==NULL){
+					bug_and_die("");
+				}
+				print_allow(domain, label, allowed, outfp);
+			} else if (r==0) {
+				print_allow(domain, label, allowed, outfp);
+			} else {/*when file does not exist, output for dir label*/
+				label = search_element(dir_label_table,filename);
+				if(label ==NULL) {
+					bug_and_die("");
+				}
+				print_allow(domain, label, allowed, outfp);
+			}
+		} else {
+			print_allow(domain, label, allowed, outfp);
+		}
+	} else {
 
-  label = search_element(file_label_table,filename);
-  if(label ==NULL){
-    fprintf(stderr, "bug line %d\n", __LINE__);
-    exit(1);
-  }
-  if(state == FILE_ITSELF){
-    /* allow /hoge/foo r,s; if foo is dir, does not output for file label under foo, but dir label
-     */   
-    r = lstat(filename, &buf);
-    if (r==0 && S_ISLNK(buf.st_mode)){
-      print_allow(domain, label, allowed, outfp);
-    }else if (r==0 && S_ISDIR(buf.st_mode)){
-      label = search_element(dir_label_table,filename);
-      if(label ==NULL){
-	fprintf(stderr, "bug line %d\n", __LINE__);
-	exit(1);
-      }
-      print_allow(domain, label, allowed, outfp);
-    }else if (r==0){
-      print_allow(domain, label, allowed, outfp);
-    }else{/*when file does not exist, output for dir label*/
-      label = search_element(dir_label_table,filename);
-      if(label ==NULL){
-	fprintf(stderr, "bug line %d\n", __LINE__);
-	exit(1);
-      }
-      print_allow(domain, label, allowed, outfp);
-    }
-  }else{
-    print_allow(domain, label, allowed, outfp);
-    label = search_element(dir_label_table,filename);
-    if(label ==NULL){
-      fprintf(stderr, "bug line %d\n", __LINE__);
-      exit(1);
-    }
-    print_allow(domain, label, allowed, outfp);    
-  }
+		print_allow(domain, label, allowed, outfp);
+		if(gDir_search) {
+			label = search_element(dir_label_table,filename);
+			if(label ==NULL){
+				bug_and_die("");
+			}
+		}
+		print_allow(domain, label, allowed, outfp);    
+	}
 
-  domain_info=(DOMAIN *)search_element(domain_hash_table,domain);
-  if (domain_info == NULL){
-    fprintf(stderr, "this must be bug\n");
-    exit(1);
-  }	
-
-  file_label_array = create_hash_array(file_label_table);
-  for (i = 0; i < file_label_table->element_num; i++){
-    label = (FILE_LABEL *)file_label_array[i]->data;
-    
-    child_flag = 0;
-    if (state == FILE_DIRECT_CHILD){
-      child_flag = chk_child_file(filename, label->filename);
-    }else if(state == FILE_ITSELF){
-      child_flag =0;
-    }else{
-      child_flag = chk_child_dir(filename, label->filename);
-    }    
-    
-    if (child_flag == 1){ 
-      if (search_element(domain_info->appeared_file_name, label->filename) == NULL){
-	/* register it with child_buf_table and print later	*/
-	register_child_buf_table(&file_child_buf_table, label->filename, filename, allowed);
-      }
-    }
-  }  
-  free(file_label_array);
-
-#ifdef DIRSEARCH
-  dir_label_array = create_hash_array(dir_label_table);
-  for (i = 0; i < dir_label_table->element_num; i++){
-    label = (FILE_LABEL *)dir_label_array[i]->data;    
-    child_flag = 0;
-    if(state != FILE_ALL_CHILD)
-      continue;
-    child_flag = chk_child_dir(filename, label->filename);
-    if (child_flag == 1){
-      if (search_element(domain_info->appeared_file_name, label->filename) == NULL){
-	register_child_buf_table(&dir_child_buf_table, label->filename, filename, allowed);
-      }
-    }    
-  }
-  free(dir_label_array);
-  
-#endif
-
+	
+	domain_info=(DOMAIN *)search_element(domain_hash_table,domain);
+	if (domain_info == NULL){
+		fprintf(stderr, "this must be bug\n");
+		exit(1);
+	}	
+	
+	file_label_array = create_hash_array(file_label_table);
+	for (i = 0; i < file_label_table->element_num; i++){
+		label = (FILE_LABEL *)file_label_array[i]->data;
+		
+		child_flag = 0;
+		if (state == FILE_DIRECT_CHILD){
+			child_flag = chk_child_file(filename, label->filename);
+		}else if(state == FILE_ITSELF){
+			child_flag =0;
+		}else{
+			child_flag = chk_child_dir(filename, label->filename);
+		}    
+		
+		if (child_flag == 1){ 
+			if (search_element(domain_info->appeared_file_name, label->filename) == NULL){
+				/* register it with child_buf_table and print later	*/
+				register_child_buf_table(&file_child_buf_table, label->filename, filename, allowed);
+			}
+		}
+	}  
+	free(file_label_array);
+	
+	if(gDir_search) {
+		dir_label_array = create_hash_array(dir_label_table);
+		for (i = 0; i < dir_label_table->element_num; i++){
+			label = (FILE_LABEL *)dir_label_array[i]->data;    
+			child_flag = 0;
+			if(state != FILE_ALL_CHILD)
+				continue;
+			child_flag = chk_child_dir(filename, label->filename);
+			if (child_flag == 1){
+				if (search_element(domain_info->appeared_file_name, label->filename) == NULL){
+					register_child_buf_table(&dir_child_buf_table, label->filename, filename, allowed);
+				}
+			}    
+		}
+		free(dir_label_array);
+	}
 }
 
 /*print permissions related to files*/
 /*devflag is whether output "chr_file, blk_file" or not*/
-void print_file_allow(DOMAIN *domain, char *type, int devflag, int allowed, FILE *outfp){  
-  char *domain_name = domain->name;
-  ADMIN_OTHER_RULE *adm_array;
-  int num;
-  int i;
-  int devcreateflag=0;
-  int part_relabelflag=0;
-  int setattrflag=0;
-  adm_array = domain->admin_rule_array;
-  num = domain->admin_rule_array_num;
+void print_file_allow(DOMAIN *domain, char *type, int devflag, int allowed, FILE *outfp) {
+	char *domain_name = domain->name;
+	ADMIN_OTHER_RULE *adm_array;
+	int num;
+	int i;
+	int devcreateflag=0;
+	int part_relabelflag=0;
+	int setattrflag=0;
+	adm_array = domain->admin_rule_array;
+	num = domain->admin_rule_array_num;
 
-  /* check for allowseop part_relabel, allowpriv devcreate*/
-  for(i=0 ;i<num ;i++){
-    if(strcmp(adm_array[i].rule, "part_relabel") == 0){
-      part_relabelflag=1;
-    }
-    if(strcmp(adm_array[i].rule, "devcreate") == 0){
-      devcreateflag=1;
-    }   
-    if(strcmp(adm_array[i].rule, "setattr") == 0){
-      setattrflag=1;
-    }
-  }     
+	/* check for allowseop part_relabel, allowpriv devcreate*/
+	for(i=0 ;i<num ;i++){
+		if(strcmp(adm_array[i].rule, "part_relabel") == 0) {
+			part_relabelflag=1;
+		}
+		if(strcmp(adm_array[i].rule, "devcreate") == 0) {
+			devcreateflag=1;
+		}   
+		if(strcmp(adm_array[i].rule, "setattr") == 0) {
+			setattrflag=1;
+		}
+	}
+
+	if(gDiet_by_attr || gProfile) {
+		if(allowed == (WRITE_PRM|READ_PRM|SEARCH_PRM)){
+			out_optimized_macro(outfp,"allow_file_wrs",domain_name,type);
+			if(devflag){	    
+				out_optimized_macro(outfp,"allow_file_dev_wrs",domain_name,type);
+			} 
+			return;
+		}
+		if(allowed == (READ_PRM|SEARCH_PRM)){
+			out_optimized_macro(outfp,"allow_file_rs",domain_name,type);
+			if(devflag){	    
+				out_optimized_macro(outfp,"allow_file_dev_rs",domain_name,type);
+			} 
+			return;
+		}
+		if(allowed == (READ_PRM|EXECUTE_PRM|SEARCH_PRM)){
+			out_optimized_macro(outfp,"allow_file_rxs",domain_name,type);
+			if(devflag){	    
+				out_optimized_macro(outfp,"allow_file_dev_rxs",domain_name,type);
+			} 
+			return;
+		}
+	}
   
- 
-  
-  if (allowed & READ_PRM){
-    fprintf(outfp, "allow_file_r(%s,%s)\n", domain_name,type);	
-    if(devflag){
-      fprintf(outfp, "allow_file_dev_r(%s,%s)\n", domain_name,type);	
-    }
-  }
+	if (allowed & READ_PRM){
+		out_optimized_macro(outfp,"allow_file_r",domain_name,type);
+		if(devflag){	    
+			out_optimized_macro(outfp,"allow_file_dev_r",domain_name,type);
+		}
+	}
 	
-  if (allowed & WRITE_PRM){     
-    fprintf(outfp, "allow_file_w(%s,%s)\n", domain_name,type);
-    if(devflag){
-      fprintf(outfp, "allow_file_dev_w(%s,%s)\n", domain_name,type);
-    }
-    if(devcreateflag){
-      fprintf(outfp, "#allowpriv devcreate\n");
-      fprintf(outfp, "allow_file_devcreate(%s,%s)\n", domain_name,type);
-    }
-    if(part_relabelflag){
-      fprintf(outfp, "#allowseop part_relabel\n");
-      fprintf(outfp, "allow_file_relabel(%s,%s)\n", domain_name,type);
-    }
-  }
+	if (allowed & WRITE_PRM){
+		out_optimized_macro(outfp,"allow_file_w",domain_name,type);
+		if(devflag){    
+			out_optimized_macro(outfp,"allow_file_dev_w",domain_name,type);
+		}
+		if(devcreateflag){
+			fprintf(outfp, "#allowpriv devcreate\n");
+			fprintf(outfp, "allow_file_devcreate(%s,%s)\n", domain_name,type);
+		}
+		if(part_relabelflag){
+			fprintf(outfp, "#allowseop part_relabel\n");
+			fprintf(outfp, "allow_file_relabel(%s,%s)\n", domain_name,type);
+		}
+	}
   
-  if(allowed & EXECUTE_PRM){
-    fprintf(outfp, "allow_file_x(%s,%s)\n", domain_name, type);   
-    if(devflag){
-      fprintf(outfp, "allow_file_dev_x(%s,%s)\n", domain_name, type);   
-    }
-  }
-  if (allowed & SEARCH_PRM){
-    fprintf(outfp, "allow_file_s(%s,%s)\n", domain_name, type);
-    if(devflag){    
-      fprintf(outfp, "allow_file_dev_s(%s,%s)\n", domain_name, type);
-    }
-    if(setattrflag){
-      fprintf(outfp, "#allowpriv setattr\n");
-      fprintf(outfp, "allow_file_setattr(%s,%s)\n", domain_name,type);
-    }
-  }
-  if(allowed & OVERWRITE_PRM){
-    fprintf(outfp, "allow_file_o(%s,%s)\n", domain_name, type);
-    if(devflag){
-      fprintf(outfp, "allow_file_dev_o(%s,%s)\n", domain_name, type);
-    }
-    if(part_relabelflag){
-      fprintf(outfp, "allow_file_relabel(%s,%s)\n", domain_name, type);
-    }
-  }
+	if(allowed & EXECUTE_PRM){    
+		out_optimized_macro(outfp,"allow_file_x",domain_name,type);
+		if(devflag){
+			out_optimized_macro(outfp,"allow_file_dev_x",domain_name,type);	    
+		}
+	}
+	if (allowed & SEARCH_PRM){	      
+		out_optimized_macro(outfp,"allow_file_s",domain_name,type);      
+		if(devflag){    
+			fprintf(outfp, "allow_file_dev_s(%s,%s)\n", domain_name, type);
+		}
+		if(setattrflag){
+			fprintf(outfp, "#allowpriv setattr\n");	    
+			out_optimized_macro(outfp, "allow_file_setattr", domain_name, type);   
+		}
+	}
+	if(allowed & OVERWRITE_PRM){
+		out_optimized_macro(outfp, "allow_file_o", domain_name, type);
+		if(devflag){
+			out_optimized_macro(outfp, "allow_file_dev_o", domain_name, type);
+		}
+		if(part_relabelflag){
+			out_optimized_macro(outfp, "allow_file_relabel", domain_name, type);
+		}
+	}
 
-  if(allowed & APPEND_PRM){
-    fprintf(outfp, "allow_file_a(%s,%s)\n", domain_name, type);
-    if(devflag){
-      fprintf(outfp, "allow_file_dev_a(%s,%s)\n", domain_name, type);
-    }
-  }
+	if(allowed & APPEND_PRM){
+		out_optimized_macro(outfp, "allow_file_a", domain_name, type);
+		if(devflag){
+			out_optimized_macro(outfp, "allow_file_dev_a\n", domain_name, type);
+		}
+	}
   
-  if(allowed & ERASE_PRM){
-    fprintf(outfp, "allow_file_e(%s,%s)\n", domain_name, type); 
-    if(devflag){
-      fprintf(outfp, "allow_file_dev_e(%s,%s)\n", domain_name, type); 
-    }
-  }
+	if(allowed & ERASE_PRM){
+		out_optimized_macro(outfp, "allow_file_e", domain_name, type); 
+		if(devflag){
+			out_optimized_macro(outfp, "allow_file_dev_e", domain_name, type); 
+		}
+	}
+	
+	if(allowed & CREATE_PRM){
+		out_optimized_macro(outfp, "allow_file_c", domain_name, type);
+		if(devflag){
+			out_optimized_macro(outfp, "allow_file_dev_c", domain_name, type); 
+		}
+	}
 
-  if(allowed & CREATE_PRM){
-    fprintf(outfp, "allow_file_c(%s,%s)\n", domain_name, type);
-    if(devflag){
-      fprintf(outfp, "allow_file_dev_c(%s,%s)\n", domain_name, type); 
-    }
-  }
-
-  if(allowed & SETATTR_PRM){
-    fprintf(outfp, "allow_file_t(%s,%s)\n", domain_name,type);
-    if(devflag){
-      fprintf(outfp, "allow_file_dev_t(%s,%s)\n", domain_name, type);
-    }
-  }
-
+	if(allowed & SETATTR_PRM){
+		out_optimized_macro(outfp, "allow_file_t", domain_name,type);
+		if(devflag){
+			out_optimized_macro(outfp, "allow_file_dev_t", domain_name, type);
+		}
+	}
+	if(allowed & EXECMOD_PRM){
+		out_optimized_macro(outfp, "allow_file_m", domain_name,type);
+	}
 }
 
 /*Check whether |domain| is allowed to access device file under |filename|*/
@@ -561,18 +587,19 @@ static void print_child_allow(char *domain, FILE *outfp){
     }
     clear_child_buf_table(&file_child_buf_table);
   }
-#ifdef DIRSEARCH
-  if(dir_child_buf_table !=NULL){
-    num = dir_child_buf_table ->element_num;  
-    array = create_hash_array(dir_child_buf_table);
-    for (i = 0; i < num; i++){
-      tmp = (CHILD_ALLOW_BUF *)array[i]->data;
-      label =(FILE_LABEL *)search_element(dir_label_table, tmp->filename);
-      print_allow(domain, label, tmp->perm, outfp);
-    }
-    clear_child_buf_table(&dir_child_buf_table);
+
+  if(gDir_search) {
+	  if(dir_child_buf_table !=NULL){
+		  num = dir_child_buf_table ->element_num;  
+		  array = create_hash_array(dir_child_buf_table);
+		  for (i = 0; i < num; i++){
+			  tmp = (CHILD_ALLOW_BUF *)array[i]->data;
+			  label =(FILE_LABEL *)search_element(dir_label_table, tmp->filename);
+			  print_allow(domain, label, tmp->perm, outfp);
+		  }
+		  clear_child_buf_table(&dir_child_buf_table);
+	  }
   }
-#endif
 }
 
 /**
@@ -701,38 +728,36 @@ save_prev_label(char *path, char *tmp_label)
  *  @args:	d (DOMAIN *) -> domain buffer list
  *  @return:	none
  */
-static void
-out_file_type_trans(FILE *outfp, DOMAIN *d)
-{
+static void out_file_type_trans(FILE *outfp, DOMAIN *d) {
 	FILE_TMP_RULE e;
 	int i;
-	FILE_LABEL *l;
-
+	FILE_LABEL *l = NULL;
+	
 	if (d->tmp_rule_array_num == 0)
 		return;
-
+	
 	fprintf(outfp, "\n####file_type_auto_trans rule\n");
 
-	for (i = 0; i < d->tmp_rule_array_num; i++)
-	{
+	for (i = 0; i < d->tmp_rule_array_num; i++) {
 		e = d->tmp_rule_array[i];
-
-#ifdef DIRSEARCH
-		l = (FILE_LABEL *)search_element(dir_label_table,e.path);
-		if(l==NULL)
-#endif
-		  l = (FILE_LABEL *)search_element(file_label_table, e.path);
-
+		
+		if(gDir_search) {
+			l = (FILE_LABEL *)search_element(dir_label_table,e.path);
+			if (l == NULL){
+				l = (FILE_LABEL *)search_element(file_label_table, e.path);
+			}
+		} else {
+			l = (FILE_LABEL *)search_element(file_label_table, e.path);
+		}
+		
 		save_prev_label(e.path, e.name);
-
-		if (l == NULL)
-		{
+	
+		if (l == NULL) {
 			fprintf(stderr, "bug\n");
 			exit(1);
 		}
 		fprintf(outfp, "file_type_auto_trans(%s,%s,%s)\n", d->name, l->labelname, e.name);
 	}
-
 	fprintf(outfp, "####\n");
 }
 

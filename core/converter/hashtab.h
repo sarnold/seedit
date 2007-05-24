@@ -57,6 +57,6 @@ int delete_element(HASH_TABLE *, char *);
 void *search_element(HASH_TABLE *, char *);
 void handle_all_element(HASH_TABLE *,int (*)(void *));
 HASH_NODE **create_hash_array(HASH_TABLE *);
-
+int update_element(HASH_TABLE *t, void *data, char *key);
 #endif
  

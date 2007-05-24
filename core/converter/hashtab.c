@@ -198,6 +198,7 @@ insert_element(HASH_TABLE *t, void *e, char *key)
 	return 0;
 }
 
+
 /**
  *  @name:	delete_element
  *  @about:	if element related to key doesn't exist,return -1
@@ -317,6 +318,51 @@ search_element(HASH_TABLE *t, char *key)
 	return NULL;
 }
 
+/**
+ *  @name:	update_element
+ *  @about:	can't find "key":return -1
+ *  @args:	t (HASH_TABLE *) -> hash table
+ *  @args:	key (char *) -> hash key
+ *  @args:	data: update data
+ *  @return:	return value on success, return NULL in failure
+ */
+int update_element(HASH_TABLE *t, void *data, char *key) {
+	int i;
+	HASH_NODE *buf;
+	HASH_NODE *p;
+
+	if(t == NULL || key == NULL)
+		return -1;
+
+	/* calclate hash value */
+	i = hash_func(key, t->tab_size);
+	buf = t->buf;
+
+	/* element is not stored */
+	if (buf[i].data == NULL)
+		return -1;
+
+	/* return data mutched specified key */
+	if (strcmp(buf[i].key, key) == 0) {
+		buf[i].data = data;
+		return 0;
+	} else {
+		p = buf[i].next;
+		if (p == NULL)
+			return -1;
+		
+		do {
+			if (strcmp(p->key, key) == 0) {
+				p->data = data;
+				return 0;
+			} else {
+				p = p->next;
+			}
+		} while (p != NULL);
+	}
+
+	return -1;
+}
 /**
  *  @name:	handle_all_element
  *  @about:	execute "func(element)" to all elements in hash table.

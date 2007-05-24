@@ -208,8 +208,8 @@ static void set_domain_trans_label(){
   int st;
   char *s;
 
-  for (i = 0; i < domain_trans_rule_num; i++){
-    t = rulebuf[i];
+  for (i = 0; i < gDomain_trans_rule_num; i++){
+    t = gDomain_trans_rules[i];
     label = (FILE_LABEL *)my_malloc(sizeof(FILE_LABEL));
 
     if(t.path == NULL)
@@ -415,9 +415,9 @@ void out_file_type(FILE *out){
   out_fp = out;
   declared_type_table = create_hash_table(FILE_LABEL_TABLE_SIZE);	
   handle_all_element(file_label_table, print_type);
-#ifdef DIRSEARCH
-  handle_all_element(dir_label_table, print_type);
-#endif
+  if(gDir_search) {
+	  handle_all_element(dir_label_table, print_type);
+  }
 }
 
 /**
@@ -500,9 +500,8 @@ void out_file_contexts_general(FILE *file_contexts, int (*not_generate_condition
   char prev_fc_str[MAX_FILENAME]="";//to eleminate multiple same specification
   char *tmp_file_table[MAX_TMP_FILE];
   int tmp_file_table_size = 0;
-#ifdef DIRSEARCH
   HASH_NODE **dir_label_array ;
-#endif
+
   char *filename=NULL;
   int r;
   FILE *file_tmp_fp; /*output fc for normal files temporally*/
@@ -571,23 +570,23 @@ void out_file_contexts_general(FILE *file_contexts, int (*not_generate_condition
   }
   fclose(file_tmp_fp);
 
-#ifdef DIRSEARCH
-  fprintf(file_contexts, "#These labels are to support dir:search permission\n");
-  dir_label_array = create_hash_array(dir_label_table);
-  for (i = 0; i<dir_label_table->element_num; i++){
-    fl =dir_label_array[i]->data;
-    if(not_generate_condition(fl->filename))
-      continue;
+  if(gDir_search) {
+	  fprintf(file_contexts, "#These labels are to support dir:search permission\n");
+	  dir_label_array = create_hash_array(dir_label_table);
+	  for (i = 0; i<dir_label_table->element_num; i++){
+		  fl =dir_label_array[i]->data;
+		  if(not_generate_condition(fl->filename))
+			  continue;
     
-    r = lstat(fl->filename, &buf);
-    if ( r==0 && S_ISLNK(buf.st_mode))/*Skip symbolic link*/
-      continue;
-   
-    fprintf(file_contexts, "%s\tgen_context(system_u:object_r:%s,s0)\n", fl->filename, fl->labelname);
-    
+		  r = lstat(fl->filename, &buf);
+		  if ( r==0 && S_ISLNK(buf.st_mode))/*Skip symbolic link*/
+			  continue;
+		  
+		  fprintf(file_contexts, "%s\tgen_context(system_u:object_r:%s,s0)\n", fl->filename, fl->labelname);
+		  
+	  }
+	  fprintf(file_contexts, "#End of dir:search\n");
   }
-  fprintf(file_contexts, "#End of dir:search\n");
-#endif
   
   return;  
 }
@@ -687,9 +686,7 @@ void out_file_contexts_user_home_dir(FILE *out){
 
 /*out file contexts for ~/ */
 void out_file_contexts_home_dir(FILE *outfp){
-#ifdef DIRSEARCH
   HASH_NODE **dir_label_array ;
-#endif
   int i;
   int j;
   FILE_LABEL *fl;
@@ -746,30 +743,29 @@ void out_file_contexts_home_dir(FILE *outfp){
   
   /*out file contexts for individual user home*/
 
-
-  
-#ifdef DIRSEARCH
-  fprintf(outfp, "#These labels are to support dir:search permission\n");
-  dir_label_array = create_hash_array(dir_label_table);
-  for (i = 0; i<dir_label_table->element_num; i++){
-    fl =dir_label_array[i]->data;
-    if(fl->filename[0]!='~')
-      continue;
-    if(strcmp((fl->filename)+1,"/")==0){
-      for(j=0; converter_conf.homedir_list[j]!=NULL ;j++){
-	homedir = converter_conf.homedir_list[j];
-	fprintf(outfp, "%s\tgen_context(system_u:object_r:%s,s0)\n",homedir,  fl->labelname);
-	fprintf(outfp, "%s/[^/]+\tgen_context(system_u:object_r:%s,s0)\n",homedir,  fl->labelname);
-      }
-    }else{
-      for(j=0; converter_conf.homedir_list[j]!=NULL ;j++){
-	homedir = converter_conf.homedir_list[j];
-	fprintf(outfp, "%s/[^/]*%s\tgen_context(system_u:object_r:%s,s0)\n",homedir, (fl->filename)+1, fl->labelname);
-      }
-    }
+  if (gDir_search) {
+	  fprintf(outfp, "#These labels are to support dir:search permission\n");
+	  dir_label_array = create_hash_array(dir_label_table);
+	  for (i = 0; i<dir_label_table->element_num; i++){
+		  fl =dir_label_array[i]->data;
+		  if(fl->filename[0]!='~')
+			  continue;
+		  if(strcmp((fl->filename)+1,"/")==0){
+			  for(j=0; converter_conf.homedir_list[j]!=NULL ;j++){
+				  homedir = converter_conf.homedir_list[j];
+				  fprintf(outfp, "%s\tgen_context(system_u:object_r:%s,s0)\n",homedir,  fl->labelname);
+				  fprintf(outfp, "%s/[^/]+\tgen_context(system_u:object_r:%s,s0)\n",homedir,  fl->labelname);
+			  }
+		  }else{
+			  for(j=0; converter_conf.homedir_list[j]!=NULL ;j++){
+				  homedir = converter_conf.homedir_list[j];
+				  fprintf(outfp, "%s/[^/]*%s\tgen_context(system_u:object_r:%s,s0)\n",homedir, (fl->filename)+1, fl->labelname);
+			  }
+		  }
+	  }
+	  fprintf(outfp, "#End of dir:search\n");
   }
-  fprintf(outfp, "#End of dir:search\n");
-#endif
+
   fprintf(outfp,"##### End of Home directories\n");
 
 }

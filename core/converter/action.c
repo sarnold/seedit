@@ -556,13 +556,13 @@ int register_file_rule(char *path){
   filename = get_filename(path, state);  
   add_file_user_list(filename);
 
-#ifdef DIRSEARCH
-  dir_list = get_dir_list(filename,converter_conf.homedir_list);
-  if(dir_list!=NULL){
-    /*label all parent directory*/
-    label_parent_dir(dir_list);
-  }  
-#endif
+  if(gDir_search) {
+	  dir_list = get_dir_list(filename,converter_conf.homedir_list);
+	  if(dir_list!=NULL){
+		  /*label all parent directory*/
+		  label_parent_dir(dir_list);
+	  }  
+  }
 
   add_filerule_to_domain(current_domain, filename, get_tmp_perm(), state);
   
@@ -934,8 +934,8 @@ free_domain_tab()
 /**
  *  Functions related to domain transition
  */
-TRANS_RULE *rulebuf=NULL;
-int domain_trans_rule_num=0;
+TRANS_RULE *gDomain_trans_rules=NULL;
+int gDomain_trans_rule_num=0;
 
 /**
  *  @name:	print_domain_trans
@@ -949,9 +949,9 @@ print_domain_trans()
 	int i;
 	TRANS_RULE t;
 
-	for (i = 0; i < domain_trans_rule_num; i++)
+	for (i = 0; i < gDomain_trans_rule_num; i++)
 	{
-		t = rulebuf[i];
+		t = gDomain_trans_rules[i];
 		printf("trans:%s %s %s\n", t.parent,t.path, t.child);
 	}
 }
@@ -974,14 +974,13 @@ void register_one_domain_trans(char *from_domain, char *path){
     add_file_user_list(filename);
   }
 
-#ifdef DIRSEARCH
-  dir_list = get_dir_list(filename, converter_conf.homedir_list);
-  if(dir_list!=NULL){
-    /*label all parent directory*/
-    label_parent_dir(dir_list);
-  }  
-#endif
-
+  if(gDir_search){
+	  dir_list = get_dir_list(filename, converter_conf.homedir_list);
+	  if(dir_list!=NULL){
+		  /*label all parent directory*/
+		  label_parent_dir(dir_list);
+	  } 
+  }
 
   d = search_domain_hash(current_domain);
 
@@ -1002,11 +1001,11 @@ void register_one_domain_trans(char *from_domain, char *path){
     work.auto_flag = 1;
   }
   
-  tmp = (TRANS_RULE *)extend_array(rulebuf, &(domain_trans_rule_num), sizeof(TRANS_RULE));
+  tmp = (TRANS_RULE *)extend_array(gDomain_trans_rules, &(gDomain_trans_rule_num), sizeof(TRANS_RULE));
   
-  tmp[domain_trans_rule_num-1] = work;
+  tmp[gDomain_trans_rule_num-1] = work;
   
-  rulebuf = tmp;  
+  gDomain_trans_rules = tmp;  
 
   if (state == FILE_DIRECT_CHILD){
     /* when allow <dir>* is described, add dummy permission to dummy domain. */
@@ -1164,15 +1163,15 @@ free_domain_trans()
 	int i;
 	TRANS_RULE t;
 
-	for (i = 0; i < domain_trans_rule_num; i++)
+	for (i = 0; i < gDomain_trans_rule_num; i++)
 	{
-		t = rulebuf[i];
+		t = gDomain_trans_rules[i];
 		free(t.parent);
 		free(t.path);
 		free(t.child);
 	}
-	free(rulebuf);
-	domain_trans_rule_num = 0;
+	free(gDomain_trans_rules);
+	gDomain_trans_rule_num = 0;
 }
 
 /**
@@ -1894,13 +1893,14 @@ void include_rule(char *str){
 /*intended to be used from other file*/
 int append_file_rule(char *domain_name, char *filename, int perm, int state){
   char **dir_list;
-#ifdef DIRSEARCH
-  dir_list = get_dir_list(filename, converter_conf.homedir_list);
-  if(dir_list!=NULL){
-    /*label all parent directory*/
-    label_parent_dir(dir_list);
-  }  
-#endif
+
+  if(gDir_search) {
+	  dir_list = get_dir_list(filename, converter_conf.homedir_list);
+	  if(dir_list!=NULL){
+		  /*label all parent directory*/
+		  label_parent_dir(dir_list);
+	  }  
+  }
   
   add_filerule_to_domain(domain_name, filename, perm, state);
   

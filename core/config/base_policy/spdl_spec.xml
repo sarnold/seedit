@@ -110,9 +110,6 @@
 	  <permission value="rlimitinh"/>
 	  <permission value="fork"/>
 	  <permission value="share"/>
-	  <permission value="execmem"/>
-	  <permission value="execstack"/>
-	  <permission value="execheap"/>
 	</rule>
 	<rule value="allow">
 	  <domain value="global"/>
@@ -263,12 +260,6 @@
 	  <permission value="send"/>
 	  <permission value="recv"/>
         </rule>
-	<rule value="allow">
-	  <domain value="global"/>
-	  <type value="file_type"/>
-	  <secclass value="file"/>
-	  <permission value="execmod"/>
-	</rule>
 	<rule value="allow">
 	  <domain value="global"/>
 	  <type value="self"/>
@@ -897,6 +888,41 @@
       </rules>
     </option>
     
+ <option category="priv" value="execmem">
+      <macro value="allow_admin_execmem"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="self"/>
+	  <secclass value="process"/>
+	  <permission value="execmem"/>
+	</rule>
+      </rules>
+    </option>
+    
+  <option category="priv" value="execstack">
+      <macro value="allow_admin_execstack"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="self"/>
+	  <secclass value="process"/>
+	  <permission value="execstack"/>
+	</rule>
+      </rules>
+    </option>
+    
+  <option category="priv" value="execheap">
+      <macro value="allow_admin_execheap"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="self"/>
+	  <secclass value="process"/>
+	  <permission value="execheap"/>
+	</rule>
+      </rules>
+    </option>
 
 
     <option category="priv" value="quotaon">
@@ -1262,6 +1288,17 @@
       </rules>
     </option>
    
+   <option value="m">
+      <macro value="allow_file_m"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="file"/>
+	  <permission value="execmod"/>
+	</rule>
+      </rules>
+    </option>
    
  
     <option internal="yes" value="relabel">

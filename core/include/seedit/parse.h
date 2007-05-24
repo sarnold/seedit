@@ -134,6 +134,7 @@ char *get_sourcefile();
 #define DOMAIN_EXECUTE_PRM      0x400
 #define VIEW_PRM                0x800
 #define LINK_PRM                0x1000
+#define EXECMOD_PRM             0x2000
 
 #define READ_STR		"r"
 #define WRITE_STR		"w"
@@ -147,6 +148,7 @@ char *get_sourcefile();
 #define DOMAIN_EXECUTE_STR      "dx"
 #define VIEW_STR                "v"
 #define LINK_STR                "l"
+#define EXECMOD_STR             "m"
 
 /**
  *  permission of SIGNAL

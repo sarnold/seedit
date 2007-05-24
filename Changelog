@@ -1,3 +1,15 @@
+*2007/05/24
+ - Support memory protection permissions for more security against buffer overrun attacks
+   - Support execmem, execheap,execstack permissions.
+     like,  allowpriv execmem; 
+   - support execmod permission, you have to use file permission "m" to allow execmod.
+   - Above permissions are only rarely used.
+ - Added size optimize option: -t.
+	-t 1: size optimization by attribute(Under construction, only stub)
+	-t 2: size optimization by not supporting dir search permission.
+ - Support busybox_contexts file by --busybox option(will be removed in the future however).
+ - Some clean ups
+
 *2007/05/19
  Fixed bug of RBAC for CentOS5.
 

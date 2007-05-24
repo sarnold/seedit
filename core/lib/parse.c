@@ -76,6 +76,8 @@ int str_to_perm(char *s){
 	  return SETATTR_PRM;
 	}else if (strcmp(s,DOMAIN_EXECUTE_STR)==0){
 	  return DOMAIN_EXECUTE_PRM;
+	}else if (strcmp(s,EXECMOD_STR)==0){
+	  return EXECMOD_PRM;
 	}else if(strcmp(s, WILDCARD_STR) == 0){
 	  return READ_PRM|WRITE_PRM|EXECUTE_PRM|APPEND_PRM|SEARCH_PRM|OVERWRITE_PRM|ERASE_PRM|CREATE_PRM|SETATTR_PRM;
 	}
@@ -98,6 +100,8 @@ int str_to_key_perm(char *s){
     return SETATTR_PRM;
   }else if (strcmp(s,LINK_STR)==0){
     return LINK_PRM;
+  }else if (strcmp(s,EXECMOD_STR)==0){
+    return EXECMOD_PRM;
   }else if(strcmp(s, WILDCARD_STR) == 0){
     return VIEW_PRM|READ_PRM|WRITE_PRM|SEARCH_PRM|LINK_PRM|CREATE_PRM|SETATTR_PRM;
   }

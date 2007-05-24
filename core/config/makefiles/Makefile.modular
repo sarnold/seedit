@@ -36,7 +36,7 @@ policy:
 	grep system_u $(OUTDIR)/userhelper_context.tmp >  $(OUTDIR)/userhelper_context
 	rm $(OUTDIR)/userhelper_context.tmp
 	$(CHECKMODULE) $(OUTDIR)/policy.conf -M -o $(OUTDIR)/base.mod
-	$(SEMODULE_PACKAGE)  -s $(BASEPOLICYDIR)/seusers -m $(OUTDIR)/base.mod -f $(OUTDIR)/file_contexts -o$(OUTDIR)/base.pp
+	$(SEMODULE_PACKAGE) -m $(OUTDIR)/base.mod -f $(OUTDIR)/file_contexts -o$(OUTDIR)/base.pp
 	
 install: policy
 	cp $(OUTDIR)/file_contexts $(CONTEXTSDIR)/files/

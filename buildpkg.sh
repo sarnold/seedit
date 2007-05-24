@@ -9,13 +9,13 @@ RPMROOT=~/rpm
 
 #Followign values differs from distro
 #For, cos4, ax2, fc6 , they are configured later
-SAMPLE_POLICY_TYPE=fc6
+SAMPLE_POLICY_TYPE=cos5
 AUDITCONF=\\%\\{_sysconfdir\\}\\/audit\\/audit.rules
 #AUDITCONF=\\%\\{_sysconfdir\\}\\/audit.rules
 MODULAR=y
 CUSTOMIZABLE_TYPES=y
 PAM_INCLUDE_SUPPORT=y
-AUDIT_OBJ_TYPE_SUPPORT=n
+AUDIT_OBJ_TYPE_SUPPORT=y
 #If distro have DESKTOP_FILE_UTILS, then y
 HAVE_DESKTOP_FILE_UTILS=y
 

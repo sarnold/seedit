@@ -21,6 +21,8 @@ allow /usr/share/** r,s;
 allow /etc/sysconfig/* r,s;
 allow /var/spool/mail/** r,s;
 allow  /var/run/nscd/** r,s;
+allow /var/run/setrans/** r,o,s;
+allowcom -ipc mcstransd_t w;
 
 allownet -protocol tcp,udp -port * client;
 

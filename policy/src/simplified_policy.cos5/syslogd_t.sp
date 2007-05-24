@@ -13,4 +13,7 @@ allowcom -unix login_t r,w;
 allow /etc/syslog.conf r,s;
 allow /var/log/* r,w,s;
 allowtmp -dir /dev -name dev_log_t r,w,s;
+#Add by seedit-generator
+allow /var/log/news/** s,r,w;
+allowpriv cap_dac_override;
 }

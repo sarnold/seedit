@@ -169,6 +169,9 @@ X based GUI for SELinux Policy Editor
 
 
 %changelog
+* Thu May 24 2007 Yuichi Nakamura<ynakam@hitachisoft.jp> 2.1.2-1
+  See Changelog in /usr/share/doc/seedit
+
 * Thu Apr 12 2007 Yuichi Nakamura<ynakam@hitachisoft.jp> 2.1.1-1
  - Merged bug fix until 2.1.0-5
  - Other bug fixes

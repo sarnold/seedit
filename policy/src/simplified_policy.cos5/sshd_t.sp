@@ -48,4 +48,7 @@ allowpriv setsecurity;
 allowkey gdm_t l,s ;
 allowkey kernel_t l ;
 allowpriv cap_chown;
+#Add by seedit-generator
+allowkey kernel_t s ;
+allowpriv cap_sys_tty_config;
 }

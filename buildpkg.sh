@@ -3,7 +3,7 @@
 #Fix these valuables for your environment
 VERSION=2.1.2
 #BETA=-beta7
-DISTRO=fc6
+DISTRO=cos5
 SVNROOT=~/seedit.sourceforge/trunk/
 RPMROOT=~/rpm
 

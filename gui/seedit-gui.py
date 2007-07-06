@@ -172,7 +172,7 @@ class seeditInitializeWindow(seeditCommon):
 
         vbox = gtk.VBox()
         window.add(vbox)
-        label = gtk.Label(_("You have to initialize before using SELinux Policy Editor. If OK, press initialize button."))
+        label = gtk.Label(_("You have to initialize before using SELinux Policy Editor. And policy is replaced with seedit's original policy. If OK, press initialize button."))
         vbox.pack_start(label,False,False,5)
         hbox = gtk.HBox()
         button1 = gtk.Button(_("Initialize"))

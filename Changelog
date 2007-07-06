@@ -1,3 +1,7 @@
+*2007/07/06 
+ Fixed initialize message for seedit-gui
+ When uninstall, extra audit configuration is removed from audit.rules.
+
 *2007/05/24 2.1.2
  - Support memory protection permissions for more security against buffer overrun attacks
    - Support execmem, execheap,execstack permissions.

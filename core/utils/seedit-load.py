@@ -268,7 +268,7 @@ print "Audit chdir:"
 print gAuditChdirFlag
 
 try:
-    opts, args = getopt.getopt(sys.argv[1:], "atnvei", ["audit","test","noaudit","verbose","init"])
+    opts, args = getopt.getopt(sys.argv[1:], "atnveir", ["audit","test","noaudit","verbose","init","remove-audit"])
 except getopt.GetoptError:
     printUsage()
 
@@ -295,6 +295,10 @@ for opt,arg in opts:
         if(gBehavior!=""):
             printUsage()
         gBehavior="load"
+    elif opt in ("-r","--remove-audit"):
+        if(gBehavior!=""):
+            printUsage()
+        gBehavior="remove-audit"
 
 if gBehavior=="":
     gBehavior="load"
@@ -303,6 +307,10 @@ if os.path.exists("/usr/share/seedit/sepolicy/seedit-rbac-init"):
     print "Error: You have to initialize RBAC."
     print "Type /usr/share/seedit/script/seedit-installhelper.sh upgrade"
     sys.exit(1)
+
+if gBehavior == "remove-audit":
+    removeAuditChdir()
+    sys.exit(0)
 
 #Handles logging for chdir syscall
 if gBehavior != "test":

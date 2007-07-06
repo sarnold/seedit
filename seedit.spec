@@ -16,7 +16,7 @@
 %define sample_policy_type fc6
 
 Name: seedit         
-Version: 2.1.2
+Version: 2.1.3
 Release: %{buildnum}%{?dist}
 Summary: SELinux Policy Editor:Core component
 Group:  System Environment/Base        
@@ -117,6 +117,11 @@ fi
 if [ $1 = 2 ]; then
 	#Mark to initialize RBAC config when upgrade
 	touch %{_datadir}/%{name}/sepolicy/need-rbac-init
+fi
+
+%preun
+if [ $1 = 0 ]; then
+	%{_sbindir}/seedit-load -r
 fi
 
 %postun policy

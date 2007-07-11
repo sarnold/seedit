@@ -421,11 +421,13 @@ extern int gDiet_by_attr;
 #define OPTIMIZE_THRESHOLD 3
 /*-p option*/
 extern int gProfile;
-/*--busybox option*/
-extern int gBusybox;
 
 /* whether dir search permission is supported or not */
 extern int gDir_search;
+
+/*--disable-boolean option*/
+extern int gNoBool;
+
 #define bug_and_die(msg) { fprintf(stderr,"Bug in file %s in line %d, message:%s,exitting..\n",__FILE__, __LINE__, msg);exit(1);}
 
 

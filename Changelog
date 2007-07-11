@@ -1,3 +1,7 @@
+*2007/07/11
+ Removed --busybox option support because this option is not useful.
+ Add --disable-boolean option
+
 *2007/07/06 
  Fixed initialize message for seedit-gui
  When uninstall, extra audit configuration is removed from audit.rules.

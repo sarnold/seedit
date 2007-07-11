@@ -85,26 +85,6 @@ FILE *openfile(char *outdir, char *filename){
   return fp;
 }
 
-void out_busybox_contexts(FILE *fp) {
-	int i;
-	TRANS_RULE t;
-	FILE_LABEL *label;
-	for (i = 0; i < gDomain_trans_rule_num; i++) {
-		char *applet_name;
-		t = gDomain_trans_rules[i];		
-		label = search_element(file_label_table, t.path);
-		if (label == NULL){
-			fprintf(stderr, "bug line %d,%s\n", __LINE__,__FILE__);
-			exit(1);
-		}
-		applet_name = get_name_from_path(label->filename);
-		if(applet_name) {
-			fprintf(fp, "%s\tgen_context(system_u:object_r:%s,s0)\n", applet_name, label->labelname);
-			free(applet_name);
-		}
-	}
-}
-
 /*Declare macros useful for size optimization*/
 void declare_optimize_macro(FILE *policy_fp) {
 	fprintf(policy_fp, "define(`allow_file_wrs',`\n" \
@@ -140,8 +120,7 @@ void convert(char *outdir) {
 	FILE *homedir_template_fp = stdout;
 	FILE *userhelper_context_fp = stdout;
 	FILE *profile_fp = stdout;
-	FILE *busybox_fp = stdout;
-
+       
 	if(outdir != NULL) {
 		policy_fp= openfile(outdir,"generated.conf");
 		file_context_fp = openfile(outdir,"file_contexts.m4");
@@ -151,9 +130,7 @@ void convert(char *outdir) {
 		userhelper_context_fp=openfile(outdir,"userhelper_context.m4");
 		if(gProfile)
 			profile_fp = openfile(outdir, "profile.data");
-		if(gBusybox)
-			busybox_fp = openfile(outdir, "busybox_contexts.m4");
-	}  
+      	}  
 
 	/* print default files */
 	include_file(get_base_policy_files()->security_class, policy_fp);
@@ -238,10 +215,6 @@ void convert(char *outdir) {
 
 	print_profile(profile_fp);
 	
-	if(gBusybox) {
-		out_busybox_contexts(busybox_fp);
-	}
-
 	if(policy_fp!=NULL)
 		fclose(policy_fp);
 	if(file_context_fp != NULL)
@@ -1623,7 +1596,9 @@ out_allow(FILE *outfp,FILE *unconfined_fp,FILE *confined_fp)
 
 		if(domain->program_flag){
 		  prefix = get_prefix(domain->name);
-		  fprintf(outfp,"bool %s_disable_trans false;\n",prefix);
+		  if(!gNoBool){
+			  fprintf(outfp,"bool %s_disable_trans false;\n",prefix);
+		  }
 		  free(prefix);
 		}
 		
@@ -1996,8 +1971,11 @@ void out_domain_trans(FILE *outfp) {
 			}
 			fprintf(outfp,"')\n");    
 			
+			
 			boolean_name = get_disable_trans_boolean_name(t.child);
+			if(!gNoBool) {
 			fprintf(outfp,"if(%s){}else{\n",boolean_name);
+			}
 			free(boolean_name);
 		}
 		
@@ -2054,7 +2032,8 @@ void out_domain_trans(FILE *outfp) {
 		free(name);
 		if(disable_trans_defined) {
 			/*close if(_disable_trans){}else{q*/
-			fprintf(outfp,"}\n");
+			if (!gNoBool)
+				fprintf(outfp,"}\n");
 		}
 	}
 }

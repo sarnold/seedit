@@ -1,3 +1,7 @@
+*2007/07/12
+ Add -r <root> option for cross development.
+   stat, opendir will use <root>/filename as input.
+
 *2007/07/11
  Removed --busybox option support because this option is not useful.
  Add --disable-boolean option

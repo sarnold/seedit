@@ -64,7 +64,7 @@ extern int yylex(void);
 %token NETLINK
 %token CONNECT
 %token FS
-%token DIR
+%token DIRECTORY
 %token TCP
 %token UDP
 %token NETIFOPT
@@ -174,9 +174,9 @@ ALLOW_DEF  : ALLOW PATH  PERMISSIONS ';' {register_file_rule($2);}
            |ALLOW IDENTIFIER  PERMISSIONS ';' {register_file_rule($2);}
 ;
 
-ALLOWTMP_DEF : ALLOWTMP DIR PATH NAME IDENTIFIER ';' {register_tmp_file_acl($3,$5,0);}
-| ALLOWTMP DIR PATH NAME IDENTIFIER PERMISSIONS ';' { register_tmp_file_acl($3,$5,1);}            
-| ALLOWTMP DIR PATH NAME  ASTERISK PERMISSIONS ';' {  register_tmp_file_acl($3,$5,1); }
+ALLOWTMP_DEF : ALLOWTMP DIRECTORY PATH NAME IDENTIFIER ';' {register_tmp_file_acl($3,$5,0);}
+| ALLOWTMP DIRECTORY PATH NAME IDENTIFIER PERMISSIONS ';' { register_tmp_file_acl($3,$5,1);}            
+| ALLOWTMP DIRECTORY PATH NAME  ASTERISK PERMISSIONS ';' {  register_tmp_file_acl($3,$5,1); }
 | ALLOWTMP FS IDENTIFIER NAME IDENTIFIER ';' { register_tmp_fs_acl($3,$5,0);}
 | ALLOWTMP FS IDENTIFIER NAME IDENTIFIER PERMISSIONS ';' { register_tmp_fs_acl($3,$5,1);}
 | ALLOWTMP FS PATH NAME  ASTERISK PERMISSIONS ';' {  register_tmp_file_acl($3,$5,1); }

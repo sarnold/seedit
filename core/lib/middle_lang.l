@@ -90,7 +90,7 @@ unprivport {return(UNPRIVPORT);}
 >=1024 {return(UNPRIVPORT);}
 >1023 {return(UNPRIVPORT);}
 1024- {return(UNPRIVPORT);}
--dir {return(DIR);}
+-dir {return(DIRECTORY);}
 -fs {return(FS);}
 -name {return(NAME);}
 -unix {return(UNIX);}

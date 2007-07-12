@@ -261,7 +261,7 @@ void label_parent_dir(char **dir_list){
   for(i=0;dir_list[i]!=NULL;i++){
 
     memset(&buf,0,sizeof(buf));
-    r = stat(dir_list[i],&buf);
+    r = root_stat(dir_list[i],&buf, gRoot, stat);
     if(dir_list[i][0]=='~'||(r==0 && S_ISDIR(buf.st_mode))||r!=0){
       
       s = insert_element(all_dirs_table, "1", dir_list[i]);
@@ -294,7 +294,7 @@ void label_child_dir(char *path){
 
   strip_slash(path);
   
-  if ((dp = opendir(path)) == NULL){
+  if ((dp = root_opendir(path, gRoot)) == NULL){
     fprintf(stderr, "Warning!! dir open err %s\n", path);
     return ;
   }
@@ -310,8 +310,9 @@ void label_child_dir(char *path){
     }else{
       sprintf(fullname, "%s/%s", path, p->d_name);
     }
-  
-    r = stat(fullname, &buf);
+
+    r = root_stat(fullname, &buf, gRoot, stat);
+    
     if (r==0&&S_ISDIR(buf.st_mode)){
       add_filerule_to_domain(DUMMY_DOMAIN_NAME, fullname, READ_PRM, FILE_ALL_CHILD);
     }
@@ -349,6 +350,11 @@ int get_file_state(char *path){
     state = FILE_DIRECT_CHILD;
   }else{
     state = FILE_ITSELF;
+    /*
+    if (path[len -1]=='/') {
+	    state |= FILE_DIR;
+	    }
+    */
   }
   return state;
 }
@@ -401,7 +407,7 @@ int overwrite_file_rule(FILE_ACL_RULE *array, int array_num, FILE_ACL_RULE rule)
 	}
       }
       if(rule.state==FILE_DIRECT_CHILD){
-	if(chk_child_file(rule.path,value.path)==1){
+	  if(chk_child_file(rule.path,value.path, gRoot)==1){
 	  array[i]=rule;
 	  overwritten =1;
 	}
@@ -740,7 +746,7 @@ int register_tmp_file_acl(char *path, char *e_name, int permission_flag){
   
   memset(&buf,0,sizeof(buf));
   /* if the file named "path" doesn't exist or isn't directory */
-  if (stat(path, &buf) == -1 ||!(S_ISDIR(buf.st_mode))){
+  if (root_stat(path, &buf, gRoot, stat) == -1 ||!(S_ISDIR(buf.st_mode))){
     //    action_error("Filename %s must be directory\n", path);
     //exit(1);
   }  

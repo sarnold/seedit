@@ -519,7 +519,7 @@ void out_file_contexts_general(FILE *file_contexts, int (*not_generate_condition
     memset(&buf,0,sizeof(buf));
     filename = file_name_buf[i];
     /*if file doesn't exist or dir, output file_contexts as dir*/
-    if (stat(filename, &buf) == -1 ||S_ISDIR(buf.st_mode) ) {
+    if (root_stat(filename, &buf, gRoot, stat) == -1 ||S_ISDIR(buf.st_mode) ) {
       
       outfp = file_contexts;
       if(not_generate_condition(filename))
@@ -577,8 +577,7 @@ void out_file_contexts_general(FILE *file_contexts, int (*not_generate_condition
 		  fl =dir_label_array[i]->data;
 		  if(not_generate_condition(fl->filename))
 			  continue;
-    
-		  r = lstat(fl->filename, &buf);
+		  r = root_stat(fl->filename, &buf, gRoot, lstat);
 		  if ( r==0 && S_ISLNK(buf.st_mode))/*Skip symbolic link*/
 			  continue;
 		  

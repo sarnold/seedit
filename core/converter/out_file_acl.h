@@ -23,8 +23,6 @@
 #define OUT_FILE_ACL_H
 
 void out_file_acl(FILE *, DOMAIN *);
-int chk_child_dir(char *, char *);
-int chk_child_file(char *, char *);
 void print_file_allow(DOMAIN *,char*,int,int, FILE*);
 int check_dev_flag(DOMAIN *domain, char *filename);
 

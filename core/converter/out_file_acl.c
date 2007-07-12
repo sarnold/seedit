@@ -223,7 +223,7 @@ static void print_allow_consider_child(char *domain, char *filename, int allowed
 		/* allow /hoge/foo r,s; if foo is dir, does not output for file label under foo, but dir label
 		 */   
 		if(gDir_search) {
-			r = lstat(filename, &buf);
+			r = root_stat(filename, &buf, gRoot, lstat);
 			if (r==0 && S_ISLNK(buf.st_mode)) {
 				print_allow(domain, label, allowed, outfp);
 			} else if (r==0 && S_ISDIR(buf.st_mode)){
@@ -269,7 +269,7 @@ static void print_allow_consider_child(char *domain, char *filename, int allowed
 		
 		child_flag = 0;
 		if (state == FILE_DIRECT_CHILD){
-			child_flag = chk_child_file(filename, label->filename);
+			child_flag = chk_child_file(filename, label->filename, gRoot);
 		}else if(state == FILE_ITSELF){
 			child_flag =0;
 		}else{
@@ -489,7 +489,7 @@ char **find_to_domain(char *filename){
 	to_domain = extend_ntarray(to_domain, e.to_domain);      
       break;
     case FILE_DIRECT_CHILD:
-      if(chk_child_file(e.filename, filename)==1){
+        if(chk_child_file(e.filename, filename, gRoot)==1){
 	to_domain = extend_ntarray(to_domain, e.to_domain);      
       }
       break;
@@ -662,6 +662,9 @@ save_prev_label(char *path, char *tmp_label)
 	{				/*do nothing if SELinux is off */
 		return;
 	}
+	/*This operation is unneeded for cross development*/
+	if (gRoot)
+		return;
 	
 	memset(&buf,0,sizeof(buf));
 	r = stat(path, &buf);

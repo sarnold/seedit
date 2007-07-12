@@ -61,12 +61,15 @@ typedef struct rbac_domain_t RBAC;
  *  this stores File Rule
  */
 /*To represent state */
-/*  allow <filename>*/
+/*  allow <filename or directory>*/
 #define FILE_ITSELF 0x01
 /*allow <dir>*     */
 #define FILE_DIRECT_CHILD 0x02
 /*allow <dir>**    */
 #define FILE_ALL_CHILD 0x04
+/* allow <directory> */
+#define FILE_DIR 0x08
+
 typedef struct file_acl_rule_t{
   DOMAIN		*domain;	/* domain                */
   char		*path;		/* path name             */
@@ -427,6 +430,9 @@ extern int gDir_search;
 
 /*--disable-boolean option*/
 extern int gNoBool;
+
+/*Path to root file system*/
+extern char *gRoot;
 
 #define bug_and_die(msg) { fprintf(stderr,"Bug in file %s in line %d, message:%s,exitting..\n",__FILE__, __LINE__, msg);exit(1);}
 

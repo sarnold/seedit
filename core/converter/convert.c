@@ -2060,7 +2060,7 @@ void out_domain_trans_child_dir(FILE *outfp, TRANS_RULE *t, char *domain_name){
 	for (i = 0; i < file_label_table->element_num; i++){
 	  label = (FILE_LABEL *)file_label_array[i]->data;
 	  if(t->state == FILE_DIRECT_CHILD){
-	    if (chk_child_file(t->path, label->filename) == 1){
+     	      if (chk_child_file(t->path, label->filename, gRoot) == 1){
 	      fprintf(outfp, "domain_auto_trans(%s,%s,%s)\n", domain_name, label->labelname, t->child);
 	    }
 	  }
@@ -2075,7 +2075,7 @@ void out_domain_trans_child_dir(FILE *outfp, TRANS_RULE *t, char *domain_name){
 	for (i = 0; i < dir_label_table->element_num; i++){
 	  label = (FILE_LABEL *)dir_label_array[i]->data;
 	  if(t->state == FILE_DIRECT_CHILD){
-	    if (chk_child_file(t->path, label->filename) == 1){
+              if (chk_child_file(t->path, label->filename, gRoot) == 1){
 	      fprintf(outfp, "domain_auto_trans(%s,%s,%s)\n", domain_name, label->labelname, t->child);
 	    }
 	  }

@@ -706,85 +706,53 @@ chop_slash(char *s)
 	}
 }
 
-/**
- *  @name:	check_child_file	
- *  @about:	check child file name 
- *  @args:	old_s (char *) -> old file name
- *  @args:	t (char *) -> target file name
- *  @return:	if t is the file under s return 1
- */
-int
-chk_child_file(char *old_s, char *t)
-{
+/*
+  If t is directly under dir s then return 1
+  "root" is path to root file system for cross development
+  if not cross development, root will be NULL
+*/
+int chk_child_file(char *s, char *t, char *root){
+	char *s2;
+	char *name;
 	int len_s;
 	int len_t;
-	char *s;
-	DIR *dp;
-	char *fullname;
-	int fullnamelen;
-	struct dirent *p;
 	struct stat buf;
 
-	s = strdup(old_s);
-	chop_slash(s);
-
-	len_s = strlen(s);
 	len_t = strlen(t);
 
-	if (len_s >= len_t)
-	{
-		free(s);
-		return 0;
+	s2 = strdup(s);
+	chop_slash(s2);
+
+	len_s = strlen(s2);
+
+	if (len_s >= len_t) {
+		goto notchild;
 	}
 
-	if (strncmp(s, t, len_s) != 0)
-	{
-		free(s);
-		return 0;
+	if (t[len_t - 1] == '/')
+		goto notchild;
+	root_stat(t, &buf, root, stat);
+	if (S_ISDIR(buf.st_mode)) {		
+		goto notchild;
 	}
 
-	stat(t, &buf);
-	if (S_ISDIR(buf.st_mode))
-	{
-		free(s);
-		return 0;
+	if (strncmp(s2, t, len_s) != 0)
+		goto notchild;
+	
+	if (strcmp(s2,"/") == 0){
+		name = &t[len_s];
+	} else {
+		name = &t[len_s + 1];
 	}
 
-	if ((dp = opendir(s)) == NULL)
-	{
-		return 0;
-	}
-
-	while ((p = readdir(dp)) != NULL)
-	{
-		if(strcmp(p->d_name, "..") == 0 ||
-		   strcmp(p->d_name, ".") ==0)
-			continue;
-
-		fullnamelen = strlen(s) + strlen(p->d_name);
-		fullname = (char *)malloc(sizeof(char)*(2+fullnamelen));
-		if (strcmp(s, "/") == 0)
-		{
-			sprintf(fullname, "%s%s", s, p->d_name);
-		}
-		else
-		{
-			sprintf(fullname, "%s/%s", s, p->d_name);
-		}
-
-		if (strcmp(fullname, t) == 0)
-		{
-			free(fullname);
-			free(s);
-			closedir(dp);
-			return 1;
-		}
-		free(fullname);
-	}
-
-	free(s);
-	closedir(dp);
-
+	if (strchr(name, '/'))
+		goto notchild;
+	
+	free(s2);
+	return 1;
+	
+ notchild:
+	free(s2);
 	return 0;
 }
 
@@ -879,3 +847,33 @@ char *get_name_from_path(char *path) {
 	}
 	return NULL;
 }
+
+/*do stat() to root+path */
+int root_stat(char *path, struct stat *buf, char *root, int (*statfunc)(const char *p, struct stat *b)) {
+	char *realpath;
+	int rc;
+	if(root) {
+		realpath = joint_str(root, path);
+		rc = statfunc(realpath,buf);	
+		free(realpath);
+	} else {
+		return statfunc(path, buf);
+	}
+
+	return rc;
+} 
+
+DIR *root_opendir(const char *name, char *root) {
+	DIR *d;
+	char *realpath;
+	if(root) {
+		realpath = joint_str(root, (char *)name);
+	} else {
+		realpath = strdup(name);
+	}
+       
+	d = opendir(realpath);
+	free(realpath);
+	return d;
+}
+

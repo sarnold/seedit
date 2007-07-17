@@ -26,4 +26,5 @@ clean:
 	$(MAKE) -C converter clean
 	$(MAKE) -C utils clean
 	$(MAKE) -C restorecon clean
-
+test: all
+	cd testdata; make 	

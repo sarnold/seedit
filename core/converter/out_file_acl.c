@@ -212,35 +212,29 @@ static void print_allow_consider_child(char *domain, char *filename, int allowed
 	HASH_NODE **dir_label_array=NULL;
 	DOMAIN *domain_info;
 	int i;
-	int r;
 	int child_flag = 0;
-	struct stat buf;
+
 	label = search_element(file_label_table,filename);
 	if(label ==NULL){
 		bug_and_die("");
 	}
-	if(state == FILE_ITSELF){
+	if(state == FILE_FILE||state == FILE_DIR){
 		/* allow /hoge/foo r,s; if foo is dir, does not output for file label under foo, but dir label
 		 */   
 		if(gDir_search) {
-			r = root_stat(filename, &buf, gRoot, lstat);
-			if (r==0 && S_ISLNK(buf.st_mode)) {
-				print_allow(domain, label, allowed, outfp);
-			} else if (r==0 && S_ISDIR(buf.st_mode)){
-				label = search_element(dir_label_table,filename);
+			if (state == FILE_FILE) {
+				label = search_element(file_label_table,filename);
 				if(label ==NULL){
 					bug_and_die("");
 				}
-				print_allow(domain, label, allowed, outfp);
-			} else if (r==0) {
-				print_allow(domain, label, allowed, outfp);
-			} else {/*when file does not exist, output for dir label*/
-				label = search_element(dir_label_table,filename);
-				if(label ==NULL) {
+
+			} else {
+				label = search_element(dir_label_table,filename);	
+				if(label ==NULL){
 					bug_and_die("");
 				}
-				print_allow(domain, label, allowed, outfp);
 			}
+			print_allow(domain, label, allowed, outfp);	
 		} else {
 			print_allow(domain, label, allowed, outfp);
 		}
@@ -265,12 +259,20 @@ static void print_allow_consider_child(char *domain, char *filename, int allowed
 	
 	file_label_array = create_hash_array(file_label_table);
 	for (i = 0; i < file_label_table->element_num; i++){
+		int s;
 		label = (FILE_LABEL *)file_label_array[i]->data;
 		
 		child_flag = 0;
 		if (state == FILE_DIRECT_CHILD){
-			child_flag = chk_child_file(filename, label->filename, gRoot);
-		}else if(state == FILE_ITSELF){
+			if (label->dir_flag) {
+				s = 0;
+			} else {
+				s = 1;
+			}
+
+			child_flag = chk_child_file(filename, label->filename, s);
+			//			printf("Debug:%s %s %s,%d %d\n", domain, filename, label->filename, label->dir_flag, child_flag);
+		}else if(state == FILE_FILE || state == FILE_DIR){
 			child_flag =0;
 		}else{
 			child_flag = chk_child_dir(filename, label->filename);
@@ -296,6 +298,7 @@ static void print_allow_consider_child(char *domain, char *filename, int allowed
 			if (child_flag == 1){
 				if (search_element(domain_info->appeared_file_name, label->filename) == NULL){
 					register_child_buf_table(&dir_child_buf_table, label->filename, filename, allowed);
+
 				}
 			}    
 		}
@@ -473,38 +476,44 @@ int check_dev_flag(DOMAIN *domain, char *filename){
 }
 
 
-char **find_to_domain(char *filename){
-  int i;
-  char **to_domain = NULL;
-  ENTRY_POINT e;
-  int state;
-  //  to_domain = extend_ntarray(to_domain, xxxx);
-  for(i=0; i<g_entry_point_array_num;i++){
-    e = g_entry_point_array[i];
-    state = e.state;
+char **find_to_domain(char *filename) {
+	int i;
+	char **to_domain = NULL;
+	ENTRY_POINT e;
+	int state;
+	int s;
+	//  to_domain = extend_ntarray(to_domain, xxxx);
+	for (i=0; i<g_entry_point_array_num; i++) {
+		e = g_entry_point_array[i];
+		state = e.state;
     
-    switch(state){
-    case FILE_ITSELF:
-      if(strcmp(filename, e.filename)==0)
-	to_domain = extend_ntarray(to_domain, e.to_domain);      
-      break;
-    case FILE_DIRECT_CHILD:
-        if(chk_child_file(e.filename, filename, gRoot)==1){
-	to_domain = extend_ntarray(to_domain, e.to_domain);      
-      }
-      break;
-    case FILE_ALL_CHILD:
-      if(chk_child_dir(e.filename, filename)==1){
-	to_domain = extend_ntarray(to_domain, e.to_domain);      
-      }
-      break;
-    default:
-      break;
-    }
-
-  }
-  
-  return to_domain;
+		switch(state) {
+		case FILE_FILE:
+			if (strcmp(filename, e.filename)==0)
+				to_domain = extend_ntarray(to_domain, e.to_domain);      
+			break;
+		case FILE_DIRECT_CHILD:
+			if (search_element(all_dirs_table, filename)) {
+				s = 0;
+			} else {
+				s = 1;
+			}
+			if (chk_child_file(e.filename, filename, s)==1) {
+				to_domain = extend_ntarray(to_domain, e.to_domain);      
+			}
+			break;
+		case FILE_ALL_CHILD:
+			if(chk_child_dir(e.filename, filename)==1) {
+				to_domain = extend_ntarray(to_domain, e.to_domain);      
+			}
+			break;
+		default:
+			break;
+		}
+		
+	}
+	
+	return to_domain;
 }
 
 /*handles dx permission*/
@@ -545,6 +554,9 @@ void print_domain_execute(DOMAIN *domain, FILE_LABEL *label,  int devflag, FILE 
 static void print_allow(char *domain, FILE_LABEL *label, int allowed, FILE *outfp){
 	DOMAIN *d;
 	int devflag =0;
+	char *filename;
+	char *c;
+	char *childstr="";
 
 	d = (DOMAIN *)search_element(domain_hash_table, domain);
 
@@ -552,7 +564,14 @@ static void print_allow(char *domain, FILE_LABEL *label, int allowed, FILE *outf
 	if (allowed == DENY_PRM){
 	  return;
 	}
-	fprintf(outfp, "\n#%s:%s:%s\n",label->labelname, label->filename, perm_to_str(allowed));
+	filename = strdup(label->filename);
+	c = strstr(filename, DUMMY_FILE_NAME);
+	if (c) {
+		*c = '\0';
+		childstr ="<child dirs>";
+	}
+
+	fprintf(outfp, "\n#%s:%s%s:%s\n",label->labelname, filename, childstr, perm_to_str(allowed));
 	
 	devflag = check_dev_flag(d, label->filename);
 	
@@ -561,6 +580,7 @@ static void print_allow(char *domain, FILE_LABEL *label, int allowed, FILE *outf
 	if(allowed & DOMAIN_EXECUTE_PRM){
 	  print_domain_execute(d,label,devflag, outfp);
 	}
+	free(filename);
 }
 
 /**
@@ -662,10 +682,6 @@ save_prev_label(char *path, char *tmp_label)
 	{				/*do nothing if SELinux is off */
 		return;
 	}
-	/*This operation is unneeded for cross development*/
-	if (gRoot)
-		return;
-	
 	memset(&buf,0,sizeof(buf));
 	r = stat(path, &buf);
 	if(r!=0){
@@ -683,7 +699,6 @@ save_prev_label(char *path, char *tmp_label)
 
 	while ((dent = readdir(fp)) != NULL)
 	{
-		//    printf("%s\n", dent->d_name);
 		fullpath = malloc(sizeof(char)*(strlen(path) + strlen(dent->d_name) + 4));
 		sprintf(fullpath, "%s/%s", path, dent->d_name);
 		memset(&buf,0,sizeof(buf));
@@ -753,9 +768,11 @@ static void out_file_type_trans(FILE *outfp, DOMAIN *d) {
 			l = (FILE_LABEL *)search_element(file_label_table, e.path);
 		}
 		
-		save_prev_label(e.path, e.name);
+		if(gOutFileTypeTransContext)
+			save_prev_label(e.path, e.name);
 	
-		if (l == NULL) {
+		if (l == NULL) 
+		{
 			fprintf(stderr, "bug\n");
 			exit(1);
 		}

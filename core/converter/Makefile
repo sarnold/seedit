@@ -24,7 +24,7 @@ seedit-converter.o:action.h initial_policy.h  security_class.h out_macro.h
 
 hashtab.o: hashtab.h
 
-file_label.o: hashtab.h file_label.h global.h 
+file_label.o: hashtab.h file_label.h global.h  action.h
 
 convert.o: file_label.h action.h hashtab.h convert.h  out_file_acl.h initial_policy.h security_class.h global.h out_macro.h
 

@@ -61,8 +61,8 @@ typedef struct rbac_domain_t RBAC;
  *  this stores File Rule
  */
 /*To represent state */
-/*  allow <filename or directory>*/
-#define FILE_ITSELF 0x01
+/*  allow <filename(not directory)>*/
+#define FILE_FILE 0x01
 /*allow <dir>*     */
 #define FILE_DIRECT_CHILD 0x02
 /*allow <dir>**    */
@@ -74,7 +74,7 @@ typedef struct file_acl_rule_t{
   DOMAIN		*domain;	/* domain                */
   char		*path;		/* path name             */
   int		allowed;	/* toggle for permission */
-  int  state; /* FILE_DIRECT_CHILD   FILE_ALL_CHILD FILE_ITSELF */
+  int  state; /* FILE_DIRECT_CHILD   FILE_ALL_CHILD FILE_FILE FILE_DIR */
 } FILE_ACL_RULE; 
 
 
@@ -269,10 +269,9 @@ typedef struct trans_rule_t
 {
 	char		*parent;
 	char		*path;
-  int state; /*state of path : FILE_DIRECT_CHILD   FILE_ALL_CHILD FILE_ITSELF */
+	int state; /*state of path : FILE_DIRECT_CHILD   FILE_ALL_CHILD FILE_DIR FILE_FILE */
 	char		*child;
 	int		auto_flag;	/* if the transition is "domain_auto_trans",then 1 */
-
 } TRANS_RULE;
 
 /**
@@ -282,7 +281,8 @@ typedef struct file_label_t
 {
 	char		*filename;
 	char		*labelname;
-	char		rec_flag;	/* if the label is inherited by child directory, this is 1,else 0 */
+	char		label_child_dir; /*If child dirs have to be labeled then 1 */
+	int             dir_flag;        /* if filename is directory this is 1*/
 } FILE_LABEL;
 
 
@@ -318,7 +318,7 @@ typedef struct user_role_t
 
 typedef struct entry_point_table_t{
   char *filename; /*wildcard is not permitted*/
-  int state; /*state of filename */ /* FILE_DIRECT_CHILD   FILE_ALL_CHILD FILE_ITSELF */
+  int state; /*state of filename */ /* FILE_DIRECT_CHILD   FILE_ALL_CHILD FILE_FILE FILE_DIR */
   char *to_domain;/*to domain*/
 } ENTRY_POINT;
 
@@ -431,10 +431,13 @@ extern int gDir_search;
 /*--disable-boolean option*/
 extern int gNoBool;
 
-/*Path to root file system*/
-extern char *gRoot;
+extern int  gOutFileTypeTransContext;
+
+extern  int gMoreWarning;
 
 #define bug_and_die(msg) { fprintf(stderr,"Bug in file %s in line %d, message:%s,exitting..\n",__FILE__, __LINE__, msg);exit(1);}
 
+/*dummy name, unprintable*/
+#define DUMMY_FILE_NAME "\xff" "childdir" "\xff"
 
 #endif

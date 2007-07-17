@@ -3,7 +3,7 @@
 #! SELinux Policy Editor, a simple editor for SELinux policies
 #! Copyright (C) 2006 Yuichi Nakamura
 sysconfdir =/etc
-CONVERTER=/usr/bin/seedit-converter
+CONVERTER=/usr/bin/seedit-converter --out_file_type_trans-contexts
 LOADPOLICY=/usr/sbin/load_policy
 CHECKPOLICY=/usr/bin/checkpolicy
 FIXFILES=/sbin/fixfiles

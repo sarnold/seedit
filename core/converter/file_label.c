@@ -111,7 +111,6 @@ FILE_LABEL *init_file_label(char *path, int state) {
 	} else {	
 		label->dir_flag = 1;
 	}
-	//	printf("Debug: %s %s %d\n", label->filename, label->labelname, label->label_child_dir);
 	return label;
 }
 
@@ -198,26 +197,26 @@ one_domain_file_label(void *domain)
  *  @args:	labelname (char *) -> label name
  *  @return:	none
  */
-static void
-insert_force(char *path, char *labelname)
-{
+static void insert_force(char *path, char *labelname) {
 	FILE_LABEL *l;
 	char *filename;
 	int state;
 	state = get_file_state(path); 
 	filename = get_filename(path, state);
 
-	if ((l = search_element(file_label_table, filename)) == NULL)
-	{
+	if ((l = search_element(file_label_table, filename)) == NULL) {
 		l = (FILE_LABEL *)my_malloc(sizeof(FILE_LABEL));
 		l->filename = strdup(filename);
 		l->labelname = strdup(labelname);
-		l->label_child_dir = 1;
-		l->dir_flag = 1;
+		if (state == FILE_FILE) {
+			l->label_child_dir = 0;
+			l->dir_flag = 0;
+		} else {
+			l->label_child_dir = 0;
+			l->dir_flag = 1;
+		}
 		insert_element(file_label_table, l, l->filename);
-	}
-	else
-	{
+	} else {
 		free(l->labelname);
 		l->labelname = strdup(labelname);
 	}

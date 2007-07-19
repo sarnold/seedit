@@ -30,7 +30,7 @@
 #include "action.h"
 #include "hashtab.h"
 #include "convert.h"
-#include "out_file_acl.h"
+#include "out_file_rule.h"
 #include "initial_policy.h"
 #include <seedit/common.h>
 #include <seedit/parse.h>

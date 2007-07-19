@@ -631,9 +631,9 @@ static void print_child_allow(char *domain, FILE *outfp){
 static FILE *file_out_fp;
 static int print_domain_allow(DOMAIN *domain){
 
-  FILE_ACL_RULE *array;
+  FILE_RULE *array;
   int array_num;
-  FILE_ACL_RULE rule;
+  FILE_RULE rule;
   int i;
   FILE_LABEL *label;
    

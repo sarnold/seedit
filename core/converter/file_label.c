@@ -158,7 +158,7 @@ static void register_file_label_table(FILE_LABEL *label) {
  *  @args:	file_acl (void *) -> 
  *  @return:	return 0 on success
  */
-static int add_file_label(FILE_ACL_RULE file_rule) {
+static int add_file_label(FILE_RULE file_rule) {
 	FILE_LABEL *label;
 	FILE_LABEL *tmp;
 	char *s;
@@ -220,7 +220,7 @@ static int
 one_domain_file_label(void *domain)
 {
 	DOMAIN *d;
-	FILE_ACL_RULE *file_rule_array;
+	FILE_RULE *file_rule_array;
 	int file_rule_array_num;
 	int i;
 	d = domain;

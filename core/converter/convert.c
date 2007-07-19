@@ -1691,7 +1691,7 @@ int user_roles_other_role(char *user, char *role){
 
 
 /*if rule is changed, changed rule is returned*/
-FILE_ACL_RULE append_homedir_rule_to_domain(DOMAIN *domain, FILE_ACL_RULE rule, char **home_prefix_list){
+FILE_RULE append_homedir_rule_to_domain(DOMAIN *domain, FILE_RULE rule, char **home_prefix_list){
   
   char *path;
   int i;
@@ -1768,8 +1768,8 @@ void append_homedir_rule(){
   int i,j;
   DOMAIN *domain;
   HASH_NODE **domain_array;
-  FILE_ACL_RULE rule;
-  FILE_ACL_RULE rule_after;
+  FILE_RULE rule;
+  FILE_RULE rule_after;
   int rule_num_orig;
 
   homedir_list = converter_conf.homedir_list;
@@ -1830,7 +1830,7 @@ void register_dirs(DOMAIN *domain, char **dir_list) {
 
 	dirshash = domain->dir_list;  
 	if (dirshash ==NULL) {
-		dirshash = create_hash_table(FILE_ACL_TABLE_SIZE);
+		dirshash = create_hash_table(FILE_RULE_TABLE_SIZE);
 		if (dirshash == NULL) {
 			yyerror("memory shortage\n");
 			exit(1);
@@ -1855,9 +1855,9 @@ void register_dirs(DOMAIN *domain, char **dir_list) {
 /*for each domain, make dir_list hash table*/
  void make_dir_list() {
 	 HASH_NODE **domain_array;
-	 FILE_ACL_RULE *acl_array;
+	 FILE_RULE *acl_array;
 	 int i;
-	 FILE_ACL_RULE acl;
+	 FILE_RULE acl;
 	 int j;
 	 char **dir_list;
 	 DOMAIN *domain;

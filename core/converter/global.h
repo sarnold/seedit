@@ -39,7 +39,7 @@
 #define CRONTAB_TYPE            "system_cron_spool_t"
 #define DUMMY_DOMAIN_NAME	"dummy_domain_t"
 #define DUMMY_ROLE_NAME	"dummy_role_r"
-#define FILE_ACL_TABLE_SIZE	1024
+#define FILE_RULE_TABLE_SIZE	1024
 
 #define INITRC_DIR              "/etc/rc.d/init.d"
 
@@ -70,12 +70,12 @@ typedef struct rbac_domain_t RBAC;
 /* allow <directory> */
 #define FILE_DIR 0x08
 
-typedef struct file_acl_rule_t{
+typedef struct file_rule_t{
   DOMAIN		*domain;	/* domain                */
   char		*path;		/* path name             */
   int		allowed;	/* toggle for permission */
   int  state; /* FILE_DIRECT_CHILD   FILE_ALL_CHILD FILE_FILE FILE_DIR */
-} FILE_ACL_RULE; 
+} FILE_RULE; 
 
 
 /**
@@ -207,7 +207,7 @@ struct domain_t {
 
   
   /* File */
-  FILE_ACL_RULE *file_rule_array;
+  FILE_RULE *file_rule_array;
   int file_rule_array_num;
   HASH_TABLE	*appeared_file_name;   /*key:file name that appeared in allow/deny, value:1*/
 

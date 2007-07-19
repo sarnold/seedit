@@ -160,52 +160,10 @@ static void register_file_label_table(FILE_LABEL *label) {
  */
 static int add_file_label(FILE_RULE file_rule) {
 	FILE_LABEL *label;
-	FILE_LABEL *tmp;
-	char *s;
 
 	label = init_file_label(file_rule.path, file_rule.state);
-	/*
-	  label->filename = strdup(file_rule.path);
-	  label->labelname = make_label(file_rule.path);
-	  label->label_child_dir = 0;
-	  if (file_rule.state == FILE_DIRECT_CHILD){
-	  label->label_child_dir = 1;
-	  } 
-	  if (file_rule.state == FILE_FILE) {
-	  label->dir_flag = 0;
-	  } else {	
-	  label->dir_flag = 1;
-	  }
-	*/
-
 	register_file_label_table(label);
-	/*
-	  if ((tmp = search_element(file_label_table, label->filename)) == NULL){
-	  if (strchr(label->filename, '/') != NULL){
-	  if (register_label_table(label->labelname) == -2){
-	  s=resolve_label_conflict(label->labelname);
-	  if (strcmp(label->filename, "/proc") != 0){
-	  fprintf(stderr,
-	  "Warning label name conflict is detected.Label for %s was %s but replaced by %s.\n",
-	  label->filename, label->labelname, s);
-	  }
-	  free(label->labelname);
-	  label->labelname = s;
-	  }
-	  }
-	  
-	  insert_element(file_label_table, label, label->filename);
-	  } else {  
-	  if (label->dir_flag == 1){
-	  tmp->dir_flag = 1;
-	  }
-	  if (label->label_child_dir == 1){
-	  tmp->label_child_dir =1;
-	  }
-	  }
-	*/
-  
-	//printf("Debug:%s %s %d %d %s\n", label->filename, label->labelname, label->dir_flag, file_rule.allowed, file_rule.domain->name);
+
 	return 0;
 }
 
@@ -275,9 +233,6 @@ static void set_domain_trans_label() {
 	int i;
 	TRANS_RULE t;
 	FILE_LABEL *label;
-	FILE_LABEL *tmp;
-	int st;
-	char *s;
 	
 	for (i = 0; i < gDomain_trans_rule_num; i++){
 		t = gDomain_trans_rules[i];
@@ -285,46 +240,8 @@ static void set_domain_trans_label() {
 		if(t.path == NULL)
 			continue;
 		label = init_file_label(t.path, t.state);
-		
-    /*
-      label->filename = strdup(t.path);
-      label->labelname = make_label(t.path); 
-      label->label_child_dir = 0;
-      if (t.state == FILE_DIRECT_CHILD) {
-      label->label_child_dir = 1;
-      }
-      if (t.state == FILE_FILE) {
-      label->dir_flag = 0;
-      } else {	
-      label->dir_flag = 1;
-      }
-    */
-
 		register_file_label_table(label);
 	}
-    /*
-      tmp = search_element(file_label_table, label->filename);
-      if (tmp == NULL) {
-      if (register_label_table(label->labelname) == -2)	{
-      s=resolve_label_conflict(label->labelname);
-      free(label->labelname);
-      label->labelname = s;
-      fprintf(stderr,
-      "Warning label name conflict is detected.Label for %s was %s but replaced by %s.\n",
-      label->filename, label->labelname, s);
-      }
-      st = insert_element(file_label_table, label, label->filename);
-      } else {
-      if (label->dir_flag == 1){
-      tmp->dir_flag = 1;
-      }
-      if (label->label_child_dir == 1){
-      tmp->label_child_dir =1;
-      }
-      }
-
-    */
-  
 	return;
 }
 

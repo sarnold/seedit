@@ -873,4 +873,30 @@ char *get_name_from_path(char *path) {
 }
 
 
+/**
+ *  @name:	include_file
+ *  @about:	output the content of "filename" to "outfp"
+ *  @args:	filename (char *) -> filename
+ *  @args:	outfp (FILE *) -> output file descripter
+ *  @return:	return 0 on success, return -1 in failure.
+ */
+int include_file(char *filename, FILE *outfp)
+{
+	FILE *fp;
+	char buf[1024];
 
+	if ((fp=fopen(filename,"r")) == NULL) {
+		fprintf(stderr, "file open error %s\n", filename);
+		return -1;
+	}
+
+	fprintf(outfp, "#start of file:%s\n\n", filename);
+	while (fgets(buf, sizeof(buf), fp) != NULL) {
+		fprintf(outfp, "%s", buf);
+	}
+	fprintf(outfp, "#end of file:%s\n\n", filename);
+
+	fclose(fp);
+
+	return 0;
+}

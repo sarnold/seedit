@@ -61,7 +61,7 @@ char *get_user_from_path(char *path, char **homedir_list);
 char **joint_ntarray(char **a1, char **a2);
 char *get_type_from_context(security_context_t context);
 char *get_name_from_path(char *path);
-
+int include_file(char *f, FILE *);
 #define ROOT_LABEL		"rootdir_t"
 
 

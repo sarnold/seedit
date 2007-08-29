@@ -178,7 +178,6 @@ void convert(char *outdir) {
 		make_dir_list();
 	}
 
-
 	/* print "type .." of label on files */
 	out_file_type(policy_fp);
 	out_net_type(policy_fp);

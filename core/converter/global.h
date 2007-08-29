@@ -435,6 +435,9 @@ extern int  gOutFileTypeTransContext;
 
 extern  int gMoreWarning;
 
+extern char *gInFileTypeTransContext;
+
+
 #define bug_and_die(msg) { fprintf(stderr,"Bug in file %s in line %d, message:%s,exitting..\n",__FILE__, __LINE__, msg);exit(1);}
 
 /*dummy name, unprintable*/

@@ -691,6 +691,15 @@ void out_file_contexts_file_type_trans(FILE *file_contexts){
   char *tmp_file_table[MAX_TMP_FILE];
   int tmp_file_table_size = 0;
   int i;
+  int rc = 0;
+
+  fprintf(file_contexts, "#These files are labeled by file_type_auto_trans\n");
+  if(gInFileTypeTransContext) {
+	  rc = include_file(gInFileTypeTransContext, file_contexts);
+	  if (rc) {
+		  fprintf(stderr, "Warning:File open error for -c option.\n;");
+	  }
+  }
  /*sort tmpfile opened by tmpfile() */
   rewind(TMP_fp);
 
@@ -706,7 +715,6 @@ void out_file_contexts_file_type_trans(FILE *file_contexts){
   qsort(tmp_file_table, tmp_file_table_size, sizeof(char *), compar);
        
   /*eleminate same line and output contents of TMP_FILE to file_contexts*/
-  fprintf(file_contexts, "#These files are labeled by file_type_auto_trans\n");
   for(i = 0;i < tmp_file_table_size; i++){
     strncpy(fc_str, tmp_file_table[i], sizeof(fc_str));
     if(strcmp(fc_str, prev_fc_str) != 0){

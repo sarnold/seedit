@@ -1,22 +1,16 @@
 #!/bin/sh
+# This program is helper for cross-development of policy
+# usage
+# seedit-cross.sh build
+#   generates policy under sepolicy dir
+# seedit-cross.sh install
+#   installs generated policy to $POLICYROOT
 
 M4=m4
 
-if [ -z $sysconfdir ]
-then
-    sysconfdir=$DESTDIR/etc
-fi
-if [ -z $CONVERTER ]
-then
-CONVERTER=/usr/bin/seedit-converter
-fi
-
-LOADPOLICY=/usr/sbin/load_policy
+CONVERTER=./seedit-converter
 CHECKPOLICY=/usr/bin/checkpolicy
-FIXFILES=/sbin/fixfiles
-RESTORECON=/usr/sbin/seedit-restorecon
-SELINUXTYPE=seedit
-POLICYROOT=./policy_mount
+POLICYROOT=./policy_root
 POLICYDIR=$POLICYROOT/policy
 CONTEXTSDIR=$POLICYROOT/contexts
 CONFDIR=./simplified_policy
@@ -24,7 +18,6 @@ BASEPOLICYDIR=./base_policy
 MACRODIR=./macros
 OUTDIR=./sepolicy
 INSTALL_PATH=$POLICYROOT
-SELINUXCONF=$sysconfdir/selinux/config
 POLICYVER=21
 OLD_FILE_CONTEXTS=$OUTDIR/file_contexts.m4.old
 FILE_CONTEXTS=$OUTDIR/file_contexts.m4

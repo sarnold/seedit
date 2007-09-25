@@ -21,6 +21,12 @@ uninstall:
 	$(MAKE) -C converter uninstall  prefix=$(prefix) sysconfdir=$(sysconfdir)
 	$(MAKE) -C utils uninstall   prefix=$(prefix) sysconfdir=$(sysconfdir)
 
+cross-install: all
+	mkdir -p $(DESTDIR)
+	cp converter/seedit-converter $(DESTDIR)
+	cp -r config/macros $(DESTDIR)
+	cp -r config/base_policy $(DESTDIR)
+	cp utils/seedit-cross.sh $(DESTDIR)
 clean:
 	$(MAKE) -C lib clean
 	$(MAKE) -C converter clean

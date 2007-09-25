@@ -65,7 +65,10 @@ install: dir installhelper-include
 		install -p -m 644 src/dynamic_contexts/dynamic_contexts $(prefix)/share/seedit/initialize/dynamic_contexts;\
 	fi
 
-
+cross-install:
+	mkdir -p $(DESTDIR)
+	cp -r src/simplified_policy.min $(DESTDIR)/simplified_policy
+	cp src/dynamic_contexts/dynamic_contexts.min $(DESTDIR)
 
 convert_test:  
 	mkdir -p policy

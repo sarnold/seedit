@@ -1,0 +1,12 @@
+This file describes cross development install.
+
+I assume you install seedit cross development kit under ~/seedit-cross.
+
+$ cd core
+$ make
+$ make cross-install DESTDIR=~/seedit-cross
+$ cd ..
+$ cd policy
+$ make cross-install DESTDIR=~/seedit-cross
+
+

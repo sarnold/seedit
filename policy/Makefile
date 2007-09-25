@@ -68,7 +68,7 @@ install: dir installhelper-include
 cross-install:
 	mkdir -p $(DESTDIR)
 	cp -r src/simplified_policy.min $(DESTDIR)/simplified_policy
-	cp src/dynamic_contexts/dynamic_contexts.min $(DESTDIR)
+	cp src/dynamic_contexts/dynamic_contexts.min $(DESTDIR)/dynamic_contexts
 
 convert_test:  
 	mkdir -p policy

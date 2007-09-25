@@ -1,5 +1,4 @@
 #!/bin/sh
-#Useful command for cross environment
 
 M4=m4
 
@@ -36,14 +35,6 @@ do_diff() {
     diff $OLD_FILE_CONTEXTS $FILE_CONTEXTS -r |cat >  fcdiff.m4.tmp
     m4  -Imacros -s $MACRODIR/mcs_macros.te fcdiff.m4.tmp > fcdiff.pre.tmp
     cat fcdiff.pre.tmp |grep -e "^[<>]"|sed -e 's/^[><][ \t]*//'|sed -e 's/[ \t]\+.*//'|sed -e 's/(.*//'|sort|sed s/"\[\^\/\]"//g > fcdiff.tmp   
-#    exec 3< fcdiff.tmp
-#    while read FLs 0<&3; do	
-#	for FL in $FLs; do 
-#	    diffstr="$diffstr $FL"
-#	done
-#    done
-#    exec 3<&-
-#    echo $diffstr > fcdiff   
     mv fcdiff.tmp $OUTDIR/fcdiff
     cp $FILE_CONTEXTS $OLD_FILE_CONTEXTS
 
@@ -53,9 +44,9 @@ do_convert() {
 	mkdir -p $OUTDIR;
 
 	m4 -s $CONFDIR/*.sp >$CONFDIR/all.sp;        
-#	$CONVERTER -p -i $CONFDIR/all.sp -o ./sepolicy -b ./base_policy -I  $CONFDIR/include
-#	$CONVERTER -t 0 -i $CONFDIR/all.sp -o $OUTDIR -b $BASEPOLICYDIR -I $CONFDIR/include  --profile-data $OUTDIR/profile.data --busybox
-	$CONVERTER -i $CONFDIR/all.sp -o $OUTDIR -b $BASEPOLICYDIR -I $CONFDIR/include 
+	$CONVERTER -p -i $CONFDIR/all.sp -o ./sepolicy -b ./base_policy -I  $CONFDIR/include
+	#$CONVERTER --disable-boolean -t 1 -i $CONFDIR/all.sp -o $OUTDIR -b $BASEPOLICYDIR -I $CONFDIR/include  --profile-data $OUTDIR/profile.data
+	$CONVERTER --disable-boolean -t 1 -i $CONFDIR/all.sp -o $OUTDIR -b $BASEPOLICYDIR -I $CONFDIR/include -c dynamic_contexts
 	$M4  -Imacros -s $MACRODIR/*.te $OUTDIR/generated.conf > $OUTDIR/policy.conf;
 	$M4  -Imacros -s $MACRODIR/mcs_macros.te $OUTDIR/file_contexts.m4 > $OUTDIR/file_contexts;
 	$M4  -Imacros -s $MACRODIR/mcs_macros.te $OUTDIR/userhelper_context.m4 > $OUTDIR/userhelper_context.tmp;
@@ -82,42 +73,14 @@ do_install() {
 	echo "#" >  $POLICYROOT/users/local.users
 }
 
-do_diffrelabel() {
-    do_install
-    if [ -e fcdiff.tmp ] ; then \
-	exec 3< fcdiff.tmp;\
-	while read FLs 0<&3; do \
-	for FL in $$FLs; do \
-	if [ -e $$FL ] ; then \
-	$(RESTORECON) $$FL -R -vv;\
-	fi;\
-	done; \
-	done; \
-	exec 3<&-;\
-	fi;
-    $(LOADPOLICY) $(POLICYDIR)/policy.$(POLICYVER)
-    diff $(OLD_FILE_CONTEXTS) $(FILE_CONTEXTS) -r |cat >  fcdiff.m4.tmp
-    $(M4)  -Imacros -s $(MACRODIR)/mcs_macros.te fcdiff.m4.tmp > fcdiff.pre.tmp
-    cat fcdiff.pre.tmp |grep -e "^[<>]"|sed -e 's/^[><][ \t]*//'|sed -e 's/[ \t]\+.*//'|sed -e 's/(.*//'|sort|sed s/"\[\^\/\]"//g > fcdiff.tmp
-    exec 3< fcdiff.tmp;\
-	while read FLs 0<&3; do \
-	for FL in $$FLs; do \
-	if [ -e $$FL ] ; then \
-	$(RESTORECON) $$FL -R -vv;\
-	fi;\
-	done;\
-	done; \
-	exec 3<&-;\
-	cp $(FILE_CONTEXTS) $(OLD_FILE_CONTEXTS)
-    rm fcdiff.tmp
-    rm fcdiff.m4.tmp
-    rm fcdiff.pre.tmp
-    
-}
 
 if [ $1 == "build" ] 
 then
     do_convert
+fi
+
+if [ $1 == "diff" ] 
+then
     do_diff
 fi
 

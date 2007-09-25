@@ -60,6 +60,7 @@ install: dir installhelper-include
 	mkdir -p $(prefix)/share/seedit/base_policy/contexts/
 	if [ -e src/dynamic_contexts/dynamic_contexts.$(DISTRO) ];then\
 		install -p -m 644 src/dynamic_contexts/dynamic_contexts.$(DISTRO) $(prefix)/share/seedit/initialize/dynamic_contexts;\
+
 	else \
 		install -p -m 644 src/dynamic_contexts/dynamic_contexts $(prefix)/share/seedit/initialize/dynamic_contexts;\
 	fi
@@ -79,11 +80,11 @@ convert_test:
 	cp /usr/share/seedit/Makefile policy/Makefile;\
 
 	cd policy ;make 
-	if [ -e $(DYNAMIC_CONTEXTS) ] ; then cat $(DYNAMIC_CONTEXTS) >> policy/sepolicy/file_contexts; fi
+	if [ -e $(DYNAMIC_CONTEXTS) ] ; then cat $(DYNAMIC_CONTEXTS) >> policy/sepolicy/file_contexts.m4; fi
 	if [ $(MODULAR) = "y" ]; then \
 		$(SEMODULE_PACKAGE) -s $(BASEPOLICYDIR)/seusers -m policy/sepolicy/base.mod -f policy/sepolicy/file_contexts -o policy/sepolicy/base.pp;\
 	fi
-	if [ -e $(DYNAMIC_CONTEXTS) ] ; then cat $(DYNAMIC_CONTEXTS) >> policy/sepolicy/file_contexts; fi
+	if [ -e $(DYNAMIC_CONTEXTS) ] ; then cat $(DYNAMIC_CONTEXTS) >> policy/sepolicy/file_contexts.m4; fi
 
 clean:
 	rm -rf policy

@@ -8,7 +8,7 @@ then
 fi
 if [ -z $CONVERTER ]
 then
-CONVERTER=/home/ynakam/seedit/branches/2.2.0/core/converter/seedit-converter
+CONVERTER=/usr/bin/seedit-converter
 fi
 
 LOADPOLICY=/usr/sbin/load_policy

@@ -1,2 +1,0 @@
-audit(1147185242.613:8): avc:  denied  { write } for  pid=2426 comm="httpd" name="httpd" dev=hda3 ino=162022 scontext=user_u:system_r:httpd_t tcontext=system_u:object_r:dir_var_log_httpd_t tclass=dir
-audit(1147187583.847:18): avc:  denied  { write } for  pid=3330 comm="httpd" name="httpd" dev=hda3 ino=162022 scontext=user_u:system_r:httpd_t tcontext=system_u:object_r:dir_var_log_httpd_t tclass=dir

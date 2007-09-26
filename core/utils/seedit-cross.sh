@@ -59,7 +59,6 @@ do_install() {
 	cp $OUTDIR/file_contexts $CONTEXTSDIR/files/
 	cp $OUTDIR/customizable_types $CONTEXTSDIR
 	cp $OUTDIR/userhelper_context $CONTEXTSDIR
-	cp $OUTDIR/busybox_contexts $CONTEXTSDIR
 	cp -r $BASEPOLICYDIR/contexts/*  $CONTEXTSDIR
 	echo "" > $CONTEXTSDIR/files/file_contexts.homedirs
 	echo "#" >  $POLICYROOT/users/system.users

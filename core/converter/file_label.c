@@ -675,6 +675,7 @@ void out_file_contexts_special_file(FILE *file_contexts){
   for(i=0; proc_mount_point_list[i]!=NULL ;i++){
     fprintf(file_contexts, "%s(/.*)?             <<none>>\n",proc_mount_point_list[i]);
   }
+  fprintf(file_contexts, "/selinux(/.*)?	<<none>>\n");
   fprintf(file_contexts, "####End of special files\n");
   fprintf(file_contexts, "####Start of dummy files for MCS, modular policy\n");
   fprintf(file_contexts, "\n");

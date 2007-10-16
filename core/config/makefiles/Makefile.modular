@@ -31,7 +31,7 @@ policy:
 	m4 -s $(CONFDIR)/*.sp >$(CONFDIR)/all.sp;
 	$(CONVERTER) -i $(CONFDIR)/all.sp -o $(OUTDIR) -b $(BASEPOLICYDIR) -I $(CONFDIR)/include ;
 	if [ -e $(BASEPOLICYDIR)/dynamic_contexts ]; then \
-		cat $(BASEPOLICYDIR)/dynamic_contexts >> $(OUTDIR)/file_contexts.m4
+		cat $(BASEPOLICYDIR)/dynamic_contexts >> $(OUTDIR)/file_contexts.m4;\
 	fi;	
 	$(M4)  -Imacros -s $(MACRODIR)/*.te $(OUTDIR)/generated.conf > $(OUTDIR)/policy.conf;
 	$(M4)  -Imacros -s $(MACRODIR)/mcs_macros.te $(OUTDIR)/file_contexts.m4 > $(OUTDIR)/file_contexts;

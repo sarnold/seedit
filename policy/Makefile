@@ -6,7 +6,7 @@
 SELINUXTYPE=seedit
 sysconfdir = $(DESTDIR)/etc
 prefix ?= $(DESTDIR)/usr
-DISTRO ?= fc6
+DISTRO ?= f8
 MODULAR ?= y
 AUDITRULES ?= /etc/audit/audit.rules
 
@@ -60,7 +60,6 @@ install: dir installhelper-include
 	mkdir -p $(prefix)/share/seedit/base_policy/contexts/
 	if [ -e src/dynamic_contexts/dynamic_contexts.$(DISTRO) ];then\
 		install -p -m 644 src/dynamic_contexts/dynamic_contexts.$(DISTRO) $(prefix)/share/seedit/initialize/dynamic_contexts;\
-
 	else \
 		install -p -m 644 src/dynamic_contexts/dynamic_contexts $(prefix)/share/seedit/initialize/dynamic_contexts;\
 	fi

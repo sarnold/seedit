@@ -682,6 +682,7 @@ void out_file_contexts_special_file(FILE *file_contexts){
   fprintf(file_contexts," ifdef(`enable_mcs', `\n");
   fprintf(file_contexts, "HOME_ROOT/dummy -b <<none>>\n");
   fprintf(file_contexts, "HOME_DIR/dummy -b  <<none>>\n");
+  fprintf(file_contexts, "/dummy/dummy-USER -b  gen_context(system_u:object_r:ROLE_dummy_t,s0)\n");
   fprintf(file_contexts,"')\n");
   fprintf(file_contexts, "####End of dummy files\n");
 }

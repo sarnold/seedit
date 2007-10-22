@@ -4,7 +4,7 @@
 VERSION=2.2.0
 #BETA=-beta7
 DISTRO=f8
-SVNROOT=~/seedit.sourceforge/trunk/
+SVNROOT=~/seedit/trunk/
 RPMROOT=~/rpm
 
 #Followign values differs from distro

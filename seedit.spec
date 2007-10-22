@@ -16,7 +16,7 @@
 %define sample_policy_type fc6
 
 Name: seedit         
-Version: 2.1.3
+Version: 2.2.0
 Release: %{buildnum}%{?dist}
 Summary: SELinux Policy Editor:Core component
 Group:  System Environment/Base        

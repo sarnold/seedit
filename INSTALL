@@ -65,12 +65,14 @@ $ su    <--- Note if you "su -", you have to define values again.
 # make install
 # cd ../policy
 # make install
+
+You have to do following if you install GUI.
 # cd ../gui
 # make install
 # cp desktop/seedit.gui.desktop /usr/share/applications/seedit-gui.desktop
-
 
 3. Initialize 
 You have to initialize seedit by
 /usr/sbin/seedit-init 
 and reboot.
+

@@ -1,3 +1,16 @@
+*2007/10/22
+ 1) Now seedit-conveter does not use local file information.
+ You can cross-develop policy for embedded devices.
+ 
+ 2) /etc/selinux/seedit/contexts/files/customizable_types 
+    is generated. Here, types that are used for file type transition is registered.
+
+ 2) Following options are added to seedit-conveter
+   -c: <file>: Input label-file relationship for files that are labeled by file_type trans. Usually it is /usr/share/seedit/base_policy/dynamic_contexts.
+   --more-warning: Show more warning useful to avoid misconfiguration.
+   --disable-boolean: Do not output conditional policy
+   --out-file_type_trans-context: Search local file tree and find files that are labeled by file_type_trans, and output list to file_contexts file.     
+
 *2007/07/12
  Add -r <root> option for cross development.
    stat, opendir will use <root>/filename as input.

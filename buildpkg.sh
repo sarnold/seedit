@@ -1,9 +1,9 @@
 #!/bin/sh
 
 #Fix these valuables for your environment
-VERSION=2.1.3
+VERSION=2.2.0
 #BETA=-beta7
-DISTRO=fc6
+DISTRO=f8
 SVNROOT=~/seedit.sourceforge/trunk/
 RPMROOT=~/rpm
 
@@ -53,6 +53,7 @@ then
     PAM_INCLUDE_SUPPORT=y
     AUDIT_OBJ_TYPE_SUPPORT=y
 fi
+
 #Fedora Core5 specific
 if [ $DISTRO = "fc5" ]
 then
@@ -65,6 +66,17 @@ then
     AUDIT_OBJ_TYPE_SUPPORT=y
 fi
 
+#Fedora8 
+if [ $DISTRO = "f8" ]
+then
+    HAVE_DESKTOP_FILE_UTILS=y
+    SAMPLE_POLICY_TYPE=f8
+    AUDITCONF=\\%\\{_sysconfdir\\}\\/audit\\/audit.rules
+    MODULAR=y
+    CUSTOMIZABLE_TYPES=y
+    PAM_INCLUDE_SUPPORT=y
+    AUDIT_OBJ_TYPE_SUPPORT=y
+fi
 
 
 mkdir -p archive

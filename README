@@ -2,6 +2,7 @@ SELinux Policy Editor is a tool to make SELinux easy.
 For how to use, 
 see documentation at http://seedit.sourceforge.net/. 
 If you have question, please e-mail to himainu-ynakam@miomio.jp(Yuichi Nakamura).
+
 1. Installed contents
 (1) Commands
 - /usr/bin/audit2spdl
@@ -99,7 +100,7 @@ BETA=-beta5
 -> when beta release beta number is here. Do not forget "-" 
 
 DISTRO=fc6
--> DISTRO. fc6,fc5,cos4 is supported.
+-> DISTRO. fc6,fc5,cos4,f8 is supported.
 
 RELEASE=1
 -> This is not used..

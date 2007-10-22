@@ -1,0 +1,4 @@
+/dev/log gen_context(system_u:object_r:dev_log_t,s0)
+/etc/fstab      gen_context(system_u:object_r:etc_runtime_t,s0)
+/etc/mtab gen_context(system_u:object_r:etc_runtime_t,s0)
+/etc/ld.so.cache gen_context(system_u:object_r:ldconfig_cache_t,s0)

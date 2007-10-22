@@ -1,7 +1,7 @@
 /*
 #! SELinux Policy Editor, a simple editor for SELinux policies
 #! Copyright (C) 2003 Hitachi Software Engineering Co., Ltd.
-#! Copyright (C) 2005 - 2007 Yuichi Nakamura
+#! Copyright (C) 2005, 2006 Yuichi Nakamura
 #! 
 #! This program is free software; you can redistribute it and/or modify
 #! it under the terms of the GNU General Public License as published by
@@ -28,7 +28,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <unistd.h>
+#include <dirent.h>
 #include <ctype.h>
 #include <stdarg.h>
 #include "global.h"
@@ -38,7 +40,6 @@
 #include "file_label.h"
 #include "hashtab.h"
 #include "initial_policy.h"
-#include <sys/stat.h>
 
 /**
  *  Buffer for error message
@@ -68,7 +69,7 @@ ENTRY_POINT *g_entry_point_array =NULL;
 int g_entry_point_array_num = 0;
 
 char *make_role_to_domain(char *name);
-void label_parent_dir(char **dir_list, char *filename, int state);
+void label_parent_dir(char **dir_list);
 int add_filerule_to_domain(char *domain_name, char *filename, int perm, int state);
 
 
@@ -242,33 +243,38 @@ int register_file_deny(char *path){
   return 0;
 }
 
-void label_parent_dir(char **dir_list, char *filename, int state){
-	int i;
-	int s;
 
-	if (all_dirs_table == NULL){
-		all_dirs_table = create_hash_table(FILE_RULE_TABLE_SIZE);
-		if (all_dirs_table == NULL){
-			yyerror("memory shortage\n");
-			exit(1);
-		}
-	}
-	for(i=0;dir_list[i]!=NULL;i++){		
-		if(strcmp(filename, dir_list[i])==0){
-			if (state == FILE_FILE) {
-				continue;
-			}
-		}
-		s = insert_element(all_dirs_table, "1", dir_list[i]);
-		if(s==-2) {
-			;
-		} else if (s<0) {
-			bug_and_die("");
-		}
-		add_filerule_to_domain(DUMMY_DOMAIN_NAME, dir_list[i], READ_PRM, FILE_ALL_CHILD);
 
-	}
-	return;
+
+void label_parent_dir(char **dir_list){
+  int i;
+  int s;
+  int r;
+  struct stat buf;
+  if (all_dirs_table == NULL){
+    all_dirs_table = create_hash_table(FILE_ACL_TABLE_SIZE);
+    if (all_dirs_table == NULL){
+      yyerror("memory shortage\n");
+      exit(1);
+    }
+  }
+  for(i=0;dir_list[i]!=NULL;i++){
+
+    memset(&buf,0,sizeof(buf));
+    r = root_stat(dir_list[i],&buf, gRoot, stat);
+    if(dir_list[i][0]=='~'||(r==0 && S_ISDIR(buf.st_mode))||r!=0){
+      
+      s = insert_element(all_dirs_table, "1", dir_list[i]);
+            
+      if(s==-2){
+	;
+      }else if( s<0){
+	fprintf(stderr, "system error in line %d\n", __LINE__);
+	exit(1);
+      }
+    }
+  }
+  return;
 }
 
 
@@ -279,27 +285,40 @@ void label_parent_dir(char **dir_list, char *filename, int state){
  *  @args:	path (char *) -> full path name 
  *  @return:	none
  */
-void label_child_dir(char *path) {
-	char *fullname;
-	strip_slash(path);
-	int s;
-	
-	if(strcmp(path, "/") == 0 ){
-		fullname = joint_str(path, DUMMY_FILE_NAME);	
-	} else {
-		fullname = joint_3_str(path, "/", DUMMY_FILE_NAME);	
-	}
-	if(gDir_search) {
-		s = insert_element(all_dirs_table, "1", fullname);
-		if(s==-2) {
-			;
-		} else if (s<0) {
-			bug_and_die("");
-		}
-	}
-	add_filerule_to_domain(DUMMY_DOMAIN_NAME, fullname, READ_PRM, FILE_ALL_CHILD);	
+void label_child_dir(char *path){
+  DIR *dp;
+  struct dirent *p;
+  struct stat buf;
+  int r;
+  char fullname[PATH_MAX];
 
-	return;
+  strip_slash(path);
+  
+  if ((dp = root_opendir(path, gRoot)) == NULL){
+    fprintf(stderr, "Warning!! dir open err %s\n", path);
+    return ;
+  }
+
+  while ((p = readdir(dp)) != NULL){
+    if (strcmp(p->d_name, "..") == 0 ||
+	strcmp(p->d_name, ".") == 0){
+      continue;
+    }
+    
+    if (strcmp(path, "/") == 0)	{
+      sprintf(fullname, "%s%s", path, p->d_name);
+    }else{
+      sprintf(fullname, "%s/%s", path, p->d_name);
+    }
+
+    r = root_stat(fullname, &buf, gRoot, stat);
+    
+    if (r==0&&S_ISDIR(buf.st_mode)){
+      add_filerule_to_domain(DUMMY_DOMAIN_NAME, fullname, READ_PRM, FILE_ALL_CHILD);
+    }
+  }
+
+  closedir(dp);
 }
 
 int register_tmp_all(char *path){
@@ -320,27 +339,28 @@ int register_tmp_all(char *path){
 }
 
 
-int get_file_state(char *path) {
-	int len;
-	int state;
-	len = strlen(path);
+int get_file_state(char *path){
+  int len;
+  int state;
+  len = strlen(path);
   
-	if(path[len-3]=='/' && path[len-2]=='*' && path[len-1]=='*'){
-		state = FILE_ALL_CHILD;
-	}else if(path[len-2]=='/' && path[len-1]=='*'){
-		state = FILE_DIRECT_CHILD;
-	} else {
-		if (path[len -1]=='/') {
-			state = FILE_DIR;
-		} else {
-			state = FILE_FILE ;
-		}
-	}
-	return state;
+  if(path[len-3]=='/' && path[len-2]=='*' && path[len-1]=='*'){
+    state = FILE_ALL_CHILD;
+  }else if(path[len-2]=='/' && path[len-1]=='*'){
+    state = FILE_DIRECT_CHILD;
+  }else{
+    state = FILE_ITSELF;
+    /*
+    if (path[len -1]=='/') {
+	    state |= FILE_DIR;
+	    }
+    */
+  }
+  return state;
 }
 
 /*strip **,*,/ */
-char *get_filename(char *path, int state){
+char * get_filename(char *path, int state){
   char *buf;
   int len;
   buf = strdup(path);
@@ -371,87 +391,57 @@ char *get_filename(char *path, int state){
   return buf;
 }
 
-int overwrite_file_rule(FILE_RULE *array, int array_num, FILE_RULE rule) {
-	int i;
-	FILE_RULE value;
-	int overwritten = 0;
-	int s;
-	for(i = 0; i<array_num;i++) {
-		value = array[i];
+int overwrite_file_rule(FILE_ACL_RULE *array, int array_num, FILE_ACL_RULE rule){
+  int i;
+  FILE_ACL_RULE value;
+  int overwritten=0;
+  for(i = 0; i<array_num;i++){
+    value = array[i];
 
-		/*deny cancels allow rule for child dir*/
-		if(rule.allowed == DENY_PRM) {
-			if(rule.state == FILE_ALL_CHILD) {
-				if(chk_child_dir(rule.path,value.path) == 1) {
-					array[i] = rule;
-					overwritten = 1;
-				}
-			}
-			if(rule.state == FILE_DIRECT_CHILD) {
-				if(value.state == FILE_FILE) {
-					s = 1;
-				} else {
-					s = 0;
-				}
-				if(chk_child_file(rule.path,value.path, s) == 1) {
-					array[i] = rule;
-					overwritten = 1;
-				}
-			}
-			if(rule.state == FILE_FILE) {
-				if(strcmp(value.path,rule.path) == 0) {
-					array[i] = rule;
-					overwritten = 1;
-				}	 
-			}
-			continue;
-		}
-		    
-		if(strcmp(value.path,rule.path) == 0){
-			if(value.state == rule.state) {
-				/*Only deny /foo-> allow /foo, it is overwritten*/
-				if(value.allowed == DENY_PRM && rule.allowed!=DENY_PRM){
-					array[i] = rule; /*over written*/
-					overwritten = 1;
-				} else {
-					array[i].allowed = value.allowed | rule.allowed; /*OR operation*/
-					overwritten = 1;
-				}
-			}
-		}
+    /*deny cancels allow rule for child dir*/
+    if(rule.allowed==DENY_PRM){
+      if(rule.state==FILE_ALL_CHILD){
+	if(chk_child_dir(rule.path,value.path)==1){
+	  array[i]=rule;
+	  overwritten =1;
 	}
-	return overwritten;
+      }
+      if(rule.state==FILE_DIRECT_CHILD){
+	  if(chk_child_file(rule.path,value.path, gRoot)==1){
+	  array[i]=rule;
+	  overwritten =1;
+	}
+      }
+      if(strcmp(value.path,rule.path)==0){
+	array[i]=rule;
+	overwritten =1;
+      }	 
+      continue;
+    }
+
+    
+    if(strcmp(value.path,rule.path)==0){
+      if(value.state == rule.state){
+	/*Only deny /foo-> allow /foo, it is overwritten*/
+	if(value.allowed == DENY_PRM && rule.allowed!=DENY_PRM){
+	  array[i] = rule; /*over written*/
+	  overwritten =1;
+	}else{
+	  array[i].allowed = value.allowed | rule.allowed; /*OR operation*/
+	  overwritten =1;
+	}
+      }
+    }
+  }
+  return overwritten;
 }
 
 int add_filerule_to_domain(char *domain_name, char *filename, int perm, int state){
   DOMAIN *domain;
   HASH_TABLE *table;
-  FILE_RULE work;
-  FILE_RULE *tmp;
+  FILE_ACL_RULE work;
+  FILE_ACL_RULE *tmp;
   int overwritten=0;
-  struct stat buf;
-  int r;
-
-  if (gMoreWarning) {
-	  memset(&buf,0,sizeof(buf));
-	  r = stat(filename, &buf);
-	  if (r == 0) {
-		  if (state != FILE_FILE) {
-			  if (!S_ISDIR(buf.st_mode)) {
-				  snprintf(errmsg, sizeof(errmsg), 
-					   "File name %s is not directory, but it is configured as directory", filename);
-				  yywarn(errmsg);
-			  }
-		  } else {
-			  if(S_ISDIR(buf.st_mode)) {
-				   snprintf(errmsg, sizeof(errmsg), 
-					   "File name %s is directory, but it is configured as normal file", filename);
-				  yywarn(errmsg);
-			  }
-		  }
-	  }
-  }
-  
 
   strip_slash(filename); 
 
@@ -473,12 +463,12 @@ int add_filerule_to_domain(char *domain_name, char *filename, int perm, int stat
     overwritten = overwrite_file_rule(domain->file_rule_array, domain->file_rule_array_num, work);
    
     if(!overwritten){/*append*/
-      tmp = (FILE_RULE *)extend_array(domain->file_rule_array, &(domain->file_rule_array_num),sizeof(FILE_RULE));
+      tmp = (FILE_ACL_RULE *)extend_array(domain->file_rule_array, &(domain->file_rule_array_num),sizeof(FILE_ACL_RULE));
       tmp[domain->file_rule_array_num -1 ] = work;
       domain ->file_rule_array = tmp;
     }
   }else{/*initialize*/
-    tmp = (FILE_RULE *)extend_array(domain->file_rule_array, &(domain->file_rule_array_num),sizeof(FILE_RULE));
+    tmp = (FILE_ACL_RULE *)extend_array(domain->file_rule_array, &(domain->file_rule_array_num),sizeof(FILE_ACL_RULE));
     tmp[domain->file_rule_array_num -1 ] = work;
     domain ->file_rule_array = tmp;      
 
@@ -487,7 +477,7 @@ int add_filerule_to_domain(char *domain_name, char *filename, int perm, int stat
   /* create hash table for acl */
   table = domain->appeared_file_name;
   if (table == NULL){
-    table = create_hash_table(FILE_RULE_TABLE_SIZE);
+    table = create_hash_table(FILE_ACL_TABLE_SIZE);
     if (table == NULL){
       yyerror("memory shortage\n");
       exit(1);
@@ -572,19 +562,11 @@ int register_file_rule(char *path){
   filename = get_filename(path, state);  
   add_file_user_list(filename);
 
-  if (get_tmp_perm() == DENY_PRM) {
-	  if (state == FILE_DIR) {
-		  action_error("Directory can not be specified for deny rule\n");
-		  exit(1);
-	  }
-  }
-
   if(gDir_search) {
-	  dir_list = get_dir_list(filename,  converter_conf.homedir_list, 1);
+	  dir_list = get_dir_list(filename,converter_conf.homedir_list);
 	  if(dir_list!=NULL){
 		  /*label all parent directory*/
-		  label_parent_dir(dir_list, filename, state);
-		  free_ntarray(dir_list);
+		  label_parent_dir(dir_list);
 	  }  
   }
 
@@ -696,7 +678,7 @@ int register_tmp_fs_acl(char *fs, char *e_name, int permission_flag){
    * register P_DENY with dummy domain's File ACL
    * by this, tmp_name is registered to file_label_table
    */
-  add_filerule_to_domain(DUMMY_DOMAIN_NAME, tmp_name, DENY_PRM,  FILE_FILE);
+  add_filerule_to_domain(DUMMY_DOMAIN_NAME, tmp_name, DENY_PRM,  FILE_ITSELF);
   
   domain = search_domain_hash(current_domain);
   work.domain = domain;
@@ -725,6 +707,7 @@ if permission_flag is true,
 register permission for e_name.
  */
 int register_tmp_file_acl(char *path, char *e_name, int permission_flag){
+  struct stat buf;
   DOMAIN *domain;
   FILE_TMP_RULE work;
   FILE_TMP_RULE *tmp;
@@ -753,12 +736,20 @@ int register_tmp_file_acl(char *path, char *e_name, int permission_flag){
     e_name = new_name;
   }
 
+
   if(check_type_suffix(e_name) == 0){
     action_error("label must end with _t for allowtmp\n");
     exit(1);
   }
 
   strip_slash(path);
+  
+  memset(&buf,0,sizeof(buf));
+  /* if the file named "path" doesn't exist or isn't directory */
+  if (root_stat(path, &buf, gRoot, stat) == -1 ||!(S_ISDIR(buf.st_mode))){
+    //    action_error("Filename %s must be directory\n", path);
+    //exit(1);
+  }  
 
   tmp_name = check_tmp_name(e_name);
 
@@ -772,7 +763,7 @@ int register_tmp_file_acl(char *path, char *e_name, int permission_flag){
    * register P_DENY with dummy domain's File ACL
    * by this, tmp_name is registered to label_table
    */
-  add_filerule_to_domain(DUMMY_DOMAIN_NAME, tmp_name, DENY_PRM, FILE_FILE);
+  add_filerule_to_domain(DUMMY_DOMAIN_NAME, tmp_name, DENY_PRM, FILE_ITSELF);
 
   /*
    * This solves bug which happens when "allow exclusive" is described
@@ -983,22 +974,17 @@ void register_one_domain_trans(char *from_domain, char *path){
   ENTRY_POINT *entry_tmp;
   char **dir_list;
 
-  if (path != NULL){
+  if(path != NULL){
     state = get_file_state(path);
     filename = get_filename(path, state);  
     add_file_user_list(filename);
   }
-  if (state == FILE_DIR) {
-	  action_error("entry point can not be directory in domain_trans\n");
-	  exit(1);
-  }
 
   if(gDir_search){
-	  dir_list = get_dir_list(filename, converter_conf.homedir_list, 1);
+	  dir_list = get_dir_list(filename, converter_conf.homedir_list);
 	  if(dir_list!=NULL){
 		  /*label all parent directory*/
-		  label_parent_dir(dir_list, filename, state);
-		  free_ntarray(dir_list);
+		  label_parent_dir(dir_list);
 	  } 
   }
 
@@ -1915,11 +1901,10 @@ int append_file_rule(char *domain_name, char *filename, int perm, int state){
   char **dir_list;
 
   if(gDir_search) {
-	  dir_list = get_dir_list(filename, converter_conf.homedir_list, 1);
+	  dir_list = get_dir_list(filename, converter_conf.homedir_list);
 	  if(dir_list!=NULL){
 		  /*label all parent directory*/
-		  label_parent_dir(dir_list, filename, state);
-		  free_ntarray(dir_list);
+		  label_parent_dir(dir_list);
 	  }  
   }
   

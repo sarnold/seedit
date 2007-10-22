@@ -71,6 +71,7 @@ typedef struct context_t
 	char		type[TYPE_LEN];
 }	CONTEXT;
 
+int include_file(char *f, FILE *);
 void declare_initial_types(FILE *);
 void declare_initial_constrains(FILE *);
 void declare_attributes(FILE *);

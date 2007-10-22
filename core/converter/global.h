@@ -39,7 +39,7 @@
 #define CRONTAB_TYPE            "system_cron_spool_t"
 #define DUMMY_DOMAIN_NAME	"dummy_domain_t"
 #define DUMMY_ROLE_NAME	"dummy_role_r"
-#define FILE_RULE_TABLE_SIZE	1024
+#define FILE_ACL_TABLE_SIZE	1024
 
 #define INITRC_DIR              "/etc/rc.d/init.d"
 
@@ -61,8 +61,8 @@ typedef struct rbac_domain_t RBAC;
  *  this stores File Rule
  */
 /*To represent state */
-/*  allow <filename(not directory)>*/
-#define FILE_FILE 0x01
+/*  allow <filename or directory>*/
+#define FILE_ITSELF 0x01
 /*allow <dir>*     */
 #define FILE_DIRECT_CHILD 0x02
 /*allow <dir>**    */
@@ -70,12 +70,12 @@ typedef struct rbac_domain_t RBAC;
 /* allow <directory> */
 #define FILE_DIR 0x08
 
-typedef struct file_rule_t{
+typedef struct file_acl_rule_t{
   DOMAIN		*domain;	/* domain                */
   char		*path;		/* path name             */
   int		allowed;	/* toggle for permission */
-  int  state; /* FILE_DIRECT_CHILD   FILE_ALL_CHILD FILE_FILE FILE_DIR */
-} FILE_RULE; 
+  int  state; /* FILE_DIRECT_CHILD   FILE_ALL_CHILD FILE_ITSELF */
+} FILE_ACL_RULE; 
 
 
 /**
@@ -207,7 +207,7 @@ struct domain_t {
 
   
   /* File */
-  FILE_RULE *file_rule_array;
+  FILE_ACL_RULE *file_rule_array;
   int file_rule_array_num;
   HASH_TABLE	*appeared_file_name;   /*key:file name that appeared in allow/deny, value:1*/
 
@@ -269,9 +269,10 @@ typedef struct trans_rule_t
 {
 	char		*parent;
 	char		*path;
-	int state; /*state of path : FILE_DIRECT_CHILD   FILE_ALL_CHILD FILE_DIR FILE_FILE */
+  int state; /*state of path : FILE_DIRECT_CHILD   FILE_ALL_CHILD FILE_ITSELF */
 	char		*child;
 	int		auto_flag;	/* if the transition is "domain_auto_trans",then 1 */
+
 } TRANS_RULE;
 
 /**
@@ -281,8 +282,7 @@ typedef struct file_label_t
 {
 	char		*filename;
 	char		*labelname;
-	char		label_child_dir; /*If child dirs have to be labeled then 1 */
-	int             dir_flag;        /* if filename is directory this is 1*/
+	char		rec_flag;	/* if the label is inherited by child directory, this is 1,else 0 */
 } FILE_LABEL;
 
 
@@ -318,7 +318,7 @@ typedef struct user_role_t
 
 typedef struct entry_point_table_t{
   char *filename; /*wildcard is not permitted*/
-  int state; /*state of filename */ /* FILE_DIRECT_CHILD   FILE_ALL_CHILD FILE_FILE FILE_DIR */
+  int state; /*state of filename */ /* FILE_DIRECT_CHILD   FILE_ALL_CHILD FILE_ITSELF */
   char *to_domain;/*to domain*/
 } ENTRY_POINT;
 
@@ -431,16 +431,10 @@ extern int gDir_search;
 /*--disable-boolean option*/
 extern int gNoBool;
 
-extern int  gOutFileTypeTransContext;
-
-extern  int gMoreWarning;
-
-extern char *gInFileTypeTransContext;
-
+/*Path to root file system*/
+extern char *gRoot;
 
 #define bug_and_die(msg) { fprintf(stderr,"Bug in file %s in line %d, message:%s,exitting..\n",__FILE__, __LINE__, msg);exit(1);}
 
-/*dummy name, unprintable*/
-#define DUMMY_FILE_NAME "\xff" "childdir" "\xff"
 
 #endif

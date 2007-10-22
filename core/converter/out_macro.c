@@ -70,7 +70,7 @@ void init_tobe_used_attribute_table(FILE *attribute_profile){
 	char *count;
 	int th = OPTIMIZE_THRESHOLD;
 
-	tobe_used_attribute_table = create_hash_table(FILE_RULE_TABLE_SIZE);
+	tobe_used_attribute_table = create_hash_table(FILE_ACL_TABLE_SIZE);
 	
 	while(fgets(buf, sizeof(buf), attribute_profile)){
 		attribute = get_nth_tok_alloc(buf, " \t", 1);

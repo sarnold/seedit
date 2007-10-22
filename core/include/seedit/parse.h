@@ -189,6 +189,11 @@ char *get_sourcefile();
 #define ALL_STR                 "all"
 #define WILDCARD_STR            "*"
 
+/*To represent state*/
+#define FILE_ITSELF 0x01
+#define FILE_DIRECT_CHILD 0x02
+#define FILE_ALL_CHILD 0x04
+
 int yyerror(char *);
 int yywarn(char *);
 

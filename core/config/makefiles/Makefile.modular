@@ -30,17 +30,13 @@ policy:
 	mkdir -p $(OUTDIR);
 	m4 -s $(CONFDIR)/*.sp >$(CONFDIR)/all.sp;
 	$(CONVERTER) -i $(CONFDIR)/all.sp -o $(OUTDIR) -b $(BASEPOLICYDIR) -I $(CONFDIR)/include ;
-	if [ -e $(BASEPOLICYDIR)/dynamic_contexts ]; then \
-		cat $(BASEPOLICYDIR)/dynamic_contexts >> $(OUTDIR)/file_contexts.m4;\
-	fi;	
 	$(M4)  -Imacros -s $(MACRODIR)/*.te $(OUTDIR)/generated.conf > $(OUTDIR)/policy.conf;
 	$(M4)  -Imacros -s $(MACRODIR)/mcs_macros.te $(OUTDIR)/file_contexts.m4 > $(OUTDIR)/file_contexts;
-	$(M4) -D out_dummy -Imacros -s $(MACRODIR)/mcs_macros.te $(OUTDIR)/file_contexts.m4 > $(OUTDIR)/file_contexts.base;
 	$(M4)  -Imacros -s $(MACRODIR)/mcs_macros.te $(OUTDIR)/userhelper_context.m4 > $(OUTDIR)/userhelper_context.tmp;
 	grep system_u $(OUTDIR)/userhelper_context.tmp >  $(OUTDIR)/userhelper_context
 	rm $(OUTDIR)/userhelper_context.tmp
 	$(CHECKMODULE) $(OUTDIR)/policy.conf -M -o $(OUTDIR)/base.mod
-	$(SEMODULE_PACKAGE) -m $(OUTDIR)/base.mod -f $(OUTDIR)/file_contexts.base -o$(OUTDIR)/base.pp
+	$(SEMODULE_PACKAGE) -m $(OUTDIR)/base.mod -f $(OUTDIR)/file_contexts -o$(OUTDIR)/base.pp
 	
 install: policy
 	cp $(OUTDIR)/file_contexts $(CONTEXTSDIR)/files/

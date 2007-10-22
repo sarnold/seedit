@@ -6,7 +6,7 @@
 SELINUXTYPE=seedit
 sysconfdir = $(DESTDIR)/etc
 prefix ?= $(DESTDIR)/usr
-DISTRO ?= f8
+DISTRO ?= fc6
 MODULAR ?= y
 AUDITRULES ?= /etc/audit/audit.rules
 
@@ -64,10 +64,7 @@ install: dir installhelper-include
 		install -p -m 644 src/dynamic_contexts/dynamic_contexts $(prefix)/share/seedit/initialize/dynamic_contexts;\
 	fi
 
-cross-install:
-	mkdir -p $(DESTDIR)
-	cp -r src/simplified_policy.min $(DESTDIR)/simplified_policy
-	cp src/dynamic_contexts/dynamic_contexts.min $(DESTDIR)/dynamic_contexts
+
 
 convert_test:  
 	mkdir -p policy
@@ -82,11 +79,11 @@ convert_test:
 	cp /usr/share/seedit/Makefile policy/Makefile;\
 
 	cd policy ;make 
-	if [ -e $(DYNAMIC_CONTEXTS) ] ; then cat $(DYNAMIC_CONTEXTS) >> policy/sepolicy/file_contexts.m4; fi
+	if [ -e $(DYNAMIC_CONTEXTS) ] ; then cat $(DYNAMIC_CONTEXTS) >> policy/sepolicy/file_contexts; fi
 	if [ $(MODULAR) = "y" ]; then \
 		$(SEMODULE_PACKAGE) -s $(BASEPOLICYDIR)/seusers -m policy/sepolicy/base.mod -f policy/sepolicy/file_contexts -o policy/sepolicy/base.pp;\
 	fi
-	if [ -e $(DYNAMIC_CONTEXTS) ] ; then cat $(DYNAMIC_CONTEXTS) >> policy/sepolicy/file_contexts.m4; fi
+	if [ -e $(DYNAMIC_CONTEXTS) ] ; then cat $(DYNAMIC_CONTEXTS) >> policy/sepolicy/file_contexts; fi
 
 clean:
 	rm -rf policy

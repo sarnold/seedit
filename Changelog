@@ -13,6 +13,8 @@ speed to convert SPDL to SELinux policy has become faster.
    --disable-boolean: Do not output conditional policy
    --out-file_type_trans-context: Search local file tree and find files that are labeled by file_type_trans, and output list to file_contexts file.     
 
+ 4) For cross development install see INSTALL.cross
+	
 *2007/07/12
  Add -r <root> option for cross development.
    stat, opendir will use <root>/filename as input.

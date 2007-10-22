@@ -27,7 +27,7 @@ cross-install: all
 	cp -r config/macros $(DESTDIR)
 	cp -r config/base_policy $(DESTDIR)
 	cp utils/seedit-cross.sh $(DESTDIR)
-	cp lib/python/seedit utils $(DESTDIR)
+	cp -r lib/python/seedit utils $(DESTDIR)
 clean:
 	$(MAKE) -C lib clean
 	$(MAKE) -C converter clean

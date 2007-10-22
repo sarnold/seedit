@@ -17,3 +17,13 @@ define(`allow_file_dev_rs',`
 allow_file_dev_r($1,$2)
 allow_file_dev_s($1,$2)
 ')
+define(`allow_file_rxs',`
+allow_file_r($1,$2)
+allow_file_x($1,$2)
+allow_file_s($1,$2)
+')
+define(`allow_file_dev_rxs',`
+allow_file_dev_r($1,$2)
+allow_file_dev_x($1,$2)
+allow_file_dev_s($1,$2)
+')

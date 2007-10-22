@@ -24,10 +24,9 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <seedit/common.h>
-#include <sys/stat.h>
 #include <unistd.h>
 #include <sys/types.h>
-#include <dirent.h>
+
 /**
  *  @name:	chop_nl
  *  @about:	chop \n
@@ -491,69 +490,93 @@ void strip_slash(char *s){
 }
 
 /*
-get NULL terminated array, that contains parent dir and |path| it self for |path|.
+get NULL terminated array, that contains parent dirs.
+if |include_myself| is 1, then result will include |fullpath| itself.
+if |include_myself| is not 1, then result will not include |fullpath| itself.
 */
-char **get_dir_list(char *path,char **homedir_list){
-  char **list=NULL;
-  char **tmp_list;
-  char *p;
-  char *prev;
-  char *current;
-  int len;
-  int i;
-  char *work;
-  char delm[]="/";
+char **get_dir_list (char *fullpath,char **homedir_list, int include_myself) {
+	char **list=NULL;
+	char **tmp_list;
+	char *p;
+	char *prev;
+	char *current;
+	int len;
+	int i;
+	char *work;
+	char delm[]="/";
+	char *path;
+	char *c;
+		
+	path = strdup(fullpath);
 
-  if(path[0]!='/' && path[0]!='~'){
-    return NULL;
-  }
+	if(include_myself != 1) {
+		/*remove |fullpath| from  result*/
+		if(strcmp(path, "/")==0 || strcmp(path , "~/") == 0) {
+		} else {
+			c = strrchr(path,  '/');
+			if (c == path || c == path + 1){
+				/*such as path is /foo, ~/foo*/
+				*(c+1) = '\0';
+			} else if (c) {
+				*c = '\0';
+			}
+		}
+	}
+
+
+	if(path[0] != '/' && path[0] != '~') {
+		free(path);
+		return NULL;
+	}
   
-  if(path[0]=='~'){
-    list = get_dir_list(path+1, homedir_list);
-    for(i=0; list[i]!=NULL;i++){
-      work = strdup(list[i]);
-      list[i]=joint_str("~",work);
-      free(work);
-    }
-    for(i=0;homedir_list[i]!=NULL;i++){
-      tmp_list  = get_dir_list(homedir_list[i], homedir_list);
-      list = joint_ntarray(list, tmp_list);
-    } 
-    
-    return list;
-  }
-
-  work = strdup(path);
-  strip_slash(work);
-  list = extend_ntarray(list,"/");    
-  p = strtok(work, delm); 
-  if (p == NULL){
-    return list;
-  }
-
-  len = strlen(p);
-  current = (char *)my_malloc((len+3)*sizeof(char));
-  snprintf(current, len+2, "/%s",p);
-  list = extend_ntarray(list,current);    
-
-  while (p != NULL){
-    p = strtok(NULL, delm);
-    if(p!=NULL){
-      len = strlen(current)+2+strlen(p);
-      prev = strdup(current);
-      free(current);
-      current = (char *)my_malloc((len+3)*sizeof(char));
-      snprintf(current, len+2, "%s/%s", prev,p);
-      free(prev);
-      list = extend_ntarray(list,current);    
-    }
+	if (path[0] == '~') {
+		list = get_dir_list(path+1, homedir_list, 1);
+		for(i=0; list[i]!=NULL;i++) {
+			work = strdup(list[i]);
+			list[i]=joint_str("~",work);
+			free(work);
+		}
+		for(i=0; homedir_list[i] != NULL; i++){
+			tmp_list  = get_dir_list(homedir_list[i], homedir_list, 1);
+			list = joint_ntarray(list, tmp_list);
+		} 
+		free(path);
+		return list;
+	}
+	
+	work = strdup(path);
+	strip_slash(work);
+	list = extend_ntarray(list,"/");    
+	p = strtok(work, delm); 
+	if (p == NULL){
+		free(path);
+		return list;
+	}
+	
+	len = strlen(p);
+	current = (char *)my_malloc((len+3)*sizeof(char));
+	snprintf(current, len+2, "/%s",p);
+	list = extend_ntarray(list,current);    
+	
+  while (p != NULL) {
+	  p = strtok(NULL, delm);
+	  if(p!=NULL) {
+		  len = strlen(current)+2+strlen(p);
+		  prev = strdup(current);
+		  free(current);
+		  current = (char *)my_malloc((len+3)*sizeof(char));
+		  snprintf(current, len+2, "%s/%s", prev,p);
+		  free(prev);
+		  list = extend_ntarray(list,current);    
+	  }
   }
   if(is_home_dir(path, homedir_list)){
-    list = extend_ntarray(list,"~/");
+	  list = extend_ntarray(list,"~/");
   }
-
+  
   free(current);
   free(work);
+  free(path);
   return list;
 }
 
@@ -639,10 +662,14 @@ char *make_label(char *name)
 		{
 			head[i] = 's';
 		}
+		if (head[i] == (char)0xff) {
+			head[i] = '_';
+		}
 	}
 
 	label = (char *)my_malloc(sizeof(char)*(len+3));
-
+	if (head[0]=='_')
+		head++;
 	sprintf(label, "%s_t", head);
 	free(filename);
 
@@ -708,18 +735,16 @@ chop_slash(char *s)
 
 /*
   If t is directly under dir s then return 1
-  "root" is path to root file system for cross development
   if not cross development, root will be NULL
+  state: state of t FILE_DIR or FILE_DIR
 */
-int chk_child_file(char *s, char *t, char *root){
+int chk_child_file(char *s, char *t, int t_is_file){
 	char *s2;
 	char *name;
 	int len_s;
 	int len_t;
-	struct stat buf;
 
 	len_t = strlen(t);
-
 	s2 = strdup(s);
 	chop_slash(s2);
 
@@ -731,10 +756,9 @@ int chk_child_file(char *s, char *t, char *root){
 
 	if (t[len_t - 1] == '/')
 		goto notchild;
-	root_stat(t, &buf, root, stat);
-	if (S_ISDIR(buf.st_mode)) {		
+
+	if(! t_is_file)
 		goto notchild;
-	}
 
 	if (strncmp(s2, t, len_s) != 0)
 		goto notchild;
@@ -848,32 +872,31 @@ char *get_name_from_path(char *path) {
 	return NULL;
 }
 
-/*do stat() to root+path */
-int root_stat(char *path, struct stat *buf, char *root, int (*statfunc)(const char *p, struct stat *b)) {
-	char *realpath;
-	int rc;
-	if(root) {
-		realpath = joint_str(root, path);
-		rc = statfunc(realpath,buf);	
-		free(realpath);
-	} else {
-		return statfunc(path, buf);
+
+/**
+ *  @name:	include_file
+ *  @about:	output the content of "filename" to "outfp"
+ *  @args:	filename (char *) -> filename
+ *  @args:	outfp (FILE *) -> output file descripter
+ *  @return:	return 0 on success, return -1 in failure.
+ */
+int include_file(char *filename, FILE *outfp)
+{
+	FILE *fp;
+	char buf[1024];
+
+	if ((fp=fopen(filename,"r")) == NULL) {
+		fprintf(stderr, "file open error %s\n", filename);
+		return -1;
 	}
 
-	return rc;
-} 
-
-DIR *root_opendir(const char *name, char *root) {
-	DIR *d;
-	char *realpath;
-	if(root) {
-		realpath = joint_str(root, (char *)name);
-	} else {
-		realpath = strdup(name);
+	fprintf(outfp, "#start of file:%s\n\n", filename);
+	while (fgets(buf, sizeof(buf), fp) != NULL) {
+		fprintf(outfp, "%s", buf);
 	}
-       
-	d = opendir(realpath);
-	free(realpath);
-	return d;
+	fprintf(outfp, "#end of file:%s\n\n", filename);
+
+	fclose(fp);
+
+	return 0;
 }
-

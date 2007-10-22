@@ -24,8 +24,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <selinux/selinux.h>
-#include <sys/stat.h>
-#include <dirent.h>
 
 void chop_nl(char *);
 char *get_nth_tok(char *, char *, int);
@@ -51,11 +49,11 @@ char *make_role_to_domain(char *name);
 char *make_domain_to_role(char *name);
 
 void strip_slash(char *s);
-char **get_dir_list(char *path,char **homedir_list);
+char **get_dir_list(char *path,char **homedir_list, int include_myself);
 int ntarray_check_exist(char **array,char *str);
 char *make_label(char *name);
 int chk_child_dir(char *s, char *t);
-int chk_child_file(char *old_s, char *t, char *root);
+int chk_child_file(char *old_s, char *t, int state_t);
 
 int is_home_dir(char *path, char **homedir_list);
 char *match_home_dir(char *path, char **homedir_list);
@@ -63,10 +61,7 @@ char *get_user_from_path(char *path, char **homedir_list);
 char **joint_ntarray(char **a1, char **a2);
 char *get_type_from_context(security_context_t context);
 char *get_name_from_path(char *path);
-int root_stat(char *path, struct stat *buf, char *root, int (*statfunc)(const char *p, struct stat *b));
-DIR *root_opendir(const char *name, char *root);
-
-
+int include_file(char *f, FILE *);
 #define ROOT_LABEL		"rootdir_t"
 
 

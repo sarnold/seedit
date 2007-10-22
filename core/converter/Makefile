@@ -1,9 +1,9 @@
 CC		= gcc
-CFLAGS		?= -Wall -O2 -g -DDEBUG=1
+CFLAGS		?= -Wall -O2 -g 
 LD		= -lfl -lselinux 
 INCLUDE		= -I../include
 LDPATH		?= -L/usr/lib
-CONVERTEROBJS	=  action.o  file_label.o convert.o security_class.o initial_policy.o out_file_acl.o seedit-converter.o hashtab.o preprocess_include.o out_macro.o
+CONVERTEROBJS	=  action.o  file_label.o convert.o security_class.o initial_policy.o out_file_rule.o seedit-converter.o hashtab.o preprocess_include.o out_macro.o
 LIBSEEDIT = ../lib/libseedit.a
 prefix ?= /usr
 INSTALL_PATH	= $(prefix)
@@ -24,11 +24,11 @@ seedit-converter.o:action.h initial_policy.h  security_class.h out_macro.h
 
 hashtab.o: hashtab.h
 
-file_label.o: hashtab.h file_label.h global.h 
+file_label.o: hashtab.h file_label.h global.h  action.h
 
-convert.o: file_label.h action.h hashtab.h convert.h  out_file_acl.h initial_policy.h security_class.h global.h out_macro.h
+convert.o: file_label.h action.h hashtab.h convert.h  out_file_rule.h initial_policy.h security_class.h global.h out_macro.h
 
-out_file_acl.o: global.h hashtab.h action.h out_macro.h
+out_file_rule.o: global.h hashtab.h action.h out_macro.h
 out_macro.o: global.h hashtab.h out_macro.h
 
 initial_policy.o: initial_policy.h security_class.h  file_label.h global.h

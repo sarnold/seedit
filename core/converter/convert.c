@@ -30,7 +30,7 @@
 #include "action.h"
 #include "hashtab.h"
 #include "convert.h"
-#include "out_file_acl.h"
+#include "out_file_rule.h"
 #include "initial_policy.h"
 #include <seedit/common.h>
 #include <seedit/parse.h>
@@ -177,7 +177,6 @@ void convert(char *outdir) {
 	if(gDir_search) {
 		make_dir_list();
 	}
-
 
 	/* print "type .." of label on files */
 	out_file_type(policy_fp);
@@ -1691,7 +1690,7 @@ int user_roles_other_role(char *user, char *role){
 
 
 /*if rule is changed, changed rule is returned*/
-FILE_ACL_RULE append_homedir_rule_to_domain(DOMAIN *domain, FILE_ACL_RULE rule, char **home_prefix_list){
+FILE_RULE append_homedir_rule_to_domain(DOMAIN *domain, FILE_RULE rule, char **home_prefix_list){
   
   char *path;
   int i;
@@ -1768,8 +1767,8 @@ void append_homedir_rule(){
   int i,j;
   DOMAIN *domain;
   HASH_NODE **domain_array;
-  FILE_ACL_RULE rule;
-  FILE_ACL_RULE rule_after;
+  FILE_RULE rule;
+  FILE_RULE rule_after;
   int rule_num_orig;
 
   homedir_list = converter_conf.homedir_list;
@@ -1823,68 +1822,67 @@ void modify_rules(){
 
 }
 
-void register_dirs(DOMAIN *domain, char **dir_list){
-  HASH_TABLE *dirshash;
-  int i;
-  int s;
-  int r;
-  struct stat buf;
-  dirshash = domain->dir_list;  
-  if (dirshash ==NULL){
-    dirshash = create_hash_table(FILE_ACL_TABLE_SIZE);
-    if (dirshash == NULL){
-      yyerror("memory shortage\n");
-      exit(1);
-    }
-  }
-  domain -> dir_list = dirshash;
-  for(i=0;dir_list[i]!=NULL;i++){
-    memset(&buf,0,sizeof(buf));
-    r=stat(dir_list[i],&buf);
-    if(r==0 && S_ISDIR(buf.st_mode)){
-      s = insert_element(dirshash, "1", dir_list[i]);  
-      if(s==-2){
-	;
-      }else if(s<0){
-	fprintf(stderr, "system error in line %d\n", __LINE__);
-	exit(1);
-      }
-    }
-    if(strcmp(dir_list[i],"~/")==0){
-      s = insert_element(dirshash, "1", dir_list[i]);  
-    }
+void register_dirs(DOMAIN *domain, char **dir_list) {
+	HASH_TABLE *dirshash;
+	int i;
+	int s;
 
-  }  
+	dirshash = domain->dir_list;  
+	if (dirshash ==NULL) {
+		dirshash = create_hash_table(FILE_RULE_TABLE_SIZE);
+		if (dirshash == NULL) {
+			yyerror("memory shortage\n");
+			exit(1);
+		}
+	}
+
+	domain -> dir_list = dirshash;
+	for (i=0; dir_list[i] != NULL; i++) {
+		s = insert_element(dirshash, "1", dir_list[i]);  
+		if(s == -2){
+			;
+		} else if(s < 0) {
+			bug_and_die("");
+		}
+		if(strcmp(dir_list[i],"~/") == 0) {
+			s = insert_element(dirshash, "1", dir_list[i]);  
+		}
+	}
+		  
 }
 
 /*for each domain, make dir_list hash table*/
-void make_dir_list(){
-  HASH_NODE **domain_array;
-  FILE_ACL_RULE *acl_array;
-  int i;
-  FILE_ACL_RULE acl;
-  int j;
-  char **dir_list;
-  DOMAIN *domain;
-
-  domain_array = create_hash_array(domain_hash_table);
-  for (i = 0; i < domain_hash_table->element_num; i++){
-    domain = (DOMAIN *)domain_array[i]->data;
-    if(domain->file_rule_array == NULL)
-      continue;
-    acl_array = domain->file_rule_array;
-    for(j = 0; j<domain->file_rule_array_num;j++){
-      acl = acl_array[j];
+ void make_dir_list() {
+	 HASH_NODE **domain_array;
+	 FILE_RULE *acl_array;
+	 int i;
+	 FILE_RULE acl;
+	 int j;
+	 char **dir_list;
+	 DOMAIN *domain;
+	 
+	 domain_array = create_hash_array(domain_hash_table);
+	 for (i = 0; i < domain_hash_table->element_num; i++) {
+		 domain = (DOMAIN *)domain_array[i]->data;
+		 if(domain->file_rule_array == NULL)
+			 continue;
+		 acl_array = domain->file_rule_array;
+		 for(j = 0; j<domain->file_rule_array_num; j++) {
+			 acl = acl_array[j];
      
-      if(acl.allowed!=DENY_PRM){
-	dir_list = get_dir_list(acl.path, converter_conf.homedir_list);
-	if(dir_list!=NULL){
-	  register_dirs(domain, dir_list);
-	}
-      }
-    }
-  }
-}
+			 if(acl.allowed!=DENY_PRM) {
+				 dir_list = get_dir_list(acl.path, converter_conf.homedir_list, 0);
+				 if (acl.state == FILE_DIR) {
+					 dir_list = extend_ntarray(dir_list, acl.path);    
+				 }
+
+				 if(dir_list != NULL) {
+					 register_dirs(domain, dir_list);
+				 }
+			 }
+		 }
+	 }
+ }
 
 char *get_disable_trans_boolean_name(char *domain){
   char *prefix;
@@ -1969,8 +1967,7 @@ void out_domain_trans(FILE *outfp) {
 			if(!ntarray_check_exist(converter_conf.mcs_range_trans_entry  ,t.path)){
 				fprintf(outfp,"range_transition unconfined_domain %s s0;\n",label->labelname);
 			}
-			fprintf(outfp,"')\n");    
-			
+			fprintf(outfp,"')\n");			
 			
 			boolean_name = get_disable_trans_boolean_name(t.child);
 			if(!gNoBool) {
@@ -1991,10 +1988,10 @@ void out_domain_trans(FILE *outfp) {
        
 		if(strcmp(name,"unconfined_domain")==0){
 			;
-		}else if(search_element(domain_hash_table, name) == NULL) {
+		} else if (search_element(domain_hash_table, name) == NULL) {
 			fprintf(stderr, "Warning: domain %s does not exists for \"domain_trans %s %s\" rule. Skipped.\n", name, t.parent,t.path);
 			continue;
-		}else if(search_element(domain_hash_table, t.child) == NULL) {
+		} else if (search_element(domain_hash_table, t.child) == NULL) {
 			error_print(__FILE__, __LINE__, "bug! Aborted");
 			exit(1);
 		}
@@ -2006,29 +2003,32 @@ void out_domain_trans(FILE *outfp) {
 		}
 		
 		label = search_element(file_label_table, t.path);
+
 		if (label == NULL) {
-			fprintf(stderr, "bug line %d\n", __LINE__);
-			exit(1);
+			bug_and_die("");
 		}
-		if (t.auto_flag == 1) {
-			fprintf(outfp, "domain_auto_trans(%s,%s,%s)\n", name,label->labelname, t.child);
-			label = search_element(dir_label_table, t.path);
-			if(label)
-				fprintf(outfp, "domain_auto_trans(%s,%s,%s)\n", name,label->labelname, t.child);
+		if(t.state == FILE_DIR) {
+			bug_and_die("");
 		} else {
-			fprintf(outfp, "domain_trans(%s,%s,%s)\n", name, label->labelname, t.child);
-			label = search_element(dir_label_table, t.path);
-			if(label)
+			if (t.auto_flag == 1) {
+				fprintf(outfp, "domain_auto_trans(%s,%s,%s)\n", name,label->labelname, t.child);
+				label = search_element(dir_label_table, t.path);
+				if(label)
+					fprintf(outfp, "domain_auto_trans(%s,%s,%s)\n", name,label->labelname, t.child);
+			} else {
 				fprintf(outfp, "domain_trans(%s,%s,%s)\n", name, label->labelname, t.child);
+				label = search_element(dir_label_table, t.path);
+				if(label)
+					fprintf(outfp, "domain_trans(%s,%s,%s)\n", name, label->labelname, t.child);
+			}
+		} 
+		if (t.state != FILE_FILE) {
+			/*
+			 * when entry point is directory(<dir>/ * or <dir>/ **) and a file under the directory is labeled,
+			 * then output domain_auto_trans for label of the file.
+			 */ 
+			out_domain_trans_child_dir(outfp, &t,name);
 		}
-		
-		
-		/*
-		 * when entry point is directory(<dir>/ * or <dir>/ **) and a file under the directory is labeled,
-		 * then output domain_auto_trans for label of the file.
-		 */ 
-		out_domain_trans_child_dir(outfp, &t,name);
-		
 		free(name);
 		if(disable_trans_defined) {
 			/*close if(_disable_trans){}else{q*/
@@ -2046,47 +2046,55 @@ void out_domain_trans(FILE *outfp) {
  *  @return:	none
  *  @notes:	gDomain_trans_rules is global variable
  */
-void out_domain_trans_child_dir(FILE *outfp, TRANS_RULE *t, char *domain_name){
+void out_domain_trans_child_dir(FILE *outfp, TRANS_RULE *t, char *domain_name) {
 	FILE_LABEL *label;
 	HASH_NODE **file_label_array;	
 	HASH_NODE **dir_label_array;
-
+	int s = FILE_FILE;
 	int i;
-	if(t->state ==  FILE_ITSELF){
-	  return;
+	if(t->state ==  FILE_DIR||FILE_FILE) {
+		return;
 	}
 	file_label_array = create_hash_array(file_label_table);
-
-	for (i = 0; i < file_label_table->element_num; i++){
-	  label = (FILE_LABEL *)file_label_array[i]->data;
-	  if(t->state == FILE_DIRECT_CHILD){
-     	      if (chk_child_file(t->path, label->filename, gRoot) == 1){
-	      fprintf(outfp, "domain_auto_trans(%s,%s,%s)\n", domain_name, label->labelname, t->child);
-	    }
-	  }
-	  if(t->state == FILE_ALL_CHILD){
-	    if(chk_child_dir(t->path,label->filename)==1){
-	      fprintf(outfp, "domain_auto_trans(%s,%s,%s)\n", domain_name, label->labelname, t->child);
-	    }
-	  }
+	
+	for (i = 0; i < file_label_table->element_num; i++) {
+		label = (FILE_LABEL *)file_label_array[i]->data;
+		if(t->state == FILE_DIRECT_CHILD) {
+			if (label->dir_flag) {
+				s = 0;
+			} else {
+				s = 1;
+			}
+			if (chk_child_file(t->path, label->filename, s) == 1){
+				fprintf(outfp, "domain_auto_trans(%s,%s,%s)\n", domain_name, label->labelname, t->child);
+			}
+		}
+		if(t->state == FILE_ALL_CHILD) {
+			if(chk_child_dir(t->path,label->filename) == 1) {
+				fprintf(outfp, "domain_auto_trans(%s,%s,%s)\n", domain_name, label->labelname, t->child);
+			}
+		}
 	}
 	dir_label_array = create_hash_array(dir_label_table);
 	
-	for (i = 0; i < dir_label_table->element_num; i++){
-	  label = (FILE_LABEL *)dir_label_array[i]->data;
-	  if(t->state == FILE_DIRECT_CHILD){
-              if (chk_child_file(t->path, label->filename, gRoot) == 1){
-	      fprintf(outfp, "domain_auto_trans(%s,%s,%s)\n", domain_name, label->labelname, t->child);
-	    }
-	  }
-	  if(t->state == FILE_ALL_CHILD){
-	    if(chk_child_dir(t->path,label->filename)==1){
-	      fprintf(outfp, "domain_auto_trans(%s,%s,%s)\n", domain_name, label->labelname, t->child);
-	    }
-	  }
-	}
-	
-
+	for (i = 0; i < dir_label_table->element_num; i++) {
+		label = (FILE_LABEL *)dir_label_array[i]->data;
+		if(t->state == FILE_DIRECT_CHILD) {	
+			if (label->dir_flag) {
+				s = 0;
+			} else {
+				s = 1;
+			}
+			if (chk_child_file(t->path, label->filename, s) == 1){
+				fprintf(outfp, "domain_auto_trans(%s,%s,%s)\n", domain_name, label->labelname, t->child);
+			}
+		}
+		if(t->state == FILE_ALL_CHILD) {
+			if(chk_child_dir(t->path,label->filename)==1){
+				fprintf(outfp, "domain_auto_trans(%s,%s,%s)\n", domain_name, label->labelname, t->child);
+			}
+		}
+	}	
 	free(file_label_array);
 }
 

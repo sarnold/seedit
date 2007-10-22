@@ -1,7 +1,7 @@
 CC		= gcc
 LEX		= lex
 YACC		= yacc
-CFLAGS		?= -Wall -O2 -g -DDEBUG=1
+CFLAGS		?= -Wall -O2 -g 
 OBJS 	= y.tab.o lex.yy.o parse.o common.o
 TARGET = libseedit.a
 prefix ?= /usr

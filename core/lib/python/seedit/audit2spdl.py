@@ -665,6 +665,13 @@ def findNameInPath(path,name):
     return None
 
 def genFileAllow(rule,lines,index,domdoc):
+    
+    if gCross:
+        return __genFileAllowCross(rule,lines,index,domdoc)
+    else:
+        return __genFileAllow(rule,lines,index,domdoc)
+
+def __genFileAllow(rule,lines,index,domdoc):
     """
     return Dict
     ruletype:   type of SPDL element, this case, allowfile
@@ -676,7 +683,7 @@ def genFileAllow(rule,lines,index,domdoc):
     spRuleList=[]
     spRule = dict()
     line = lines[index]
-
+    
     path = guessFilePath(rule,lines,index)
   
     #for lnk_file class, need special treatment to obtain real fullpath
@@ -749,6 +756,44 @@ def genFileAllow(rule,lines,index,domdoc):
     spRuleList.append(spRule)
     
     return spRuleList
+
+def __genFileAllowCross(rule,lines,index,domdoc):
+    """
+    return Dict
+    ruletype:   type of SPDL element, this case, allowfile
+    domain:     domain
+    path:       full path
+    name:       only file name not fullpath
+    permission: list of permission     
+    """
+    spRuleList=[]
+    spRule = dict()
+    line = lines[index]
+
+    
+    permList = findFilePermission(domdoc,rule,"allowfile")
+    if not permList:
+        permList = findFilePermission(domdoc,rule,"allowdev")
+    if not permList:
+        return []
+
+    if rule["type"] == "security_t":
+        return None
+
+    spRule["ruletype"]="allowfile"
+    spRule["domain"]=rule["domain"]
+    spRule["type"]=rule["type"]
+    spRule["path"]=rule["name"]
+    if rule.has_key("path"):
+        spRule["path"]=rule["path"]
+    spRule["secclass"]=rule["secclass"]
+
+    spRule["permission"] = permList
+
+    spRuleList.append(spRule)
+    
+    return spRuleList
+
 
 def checkInternal(permissionTag,domdoc):
     """
@@ -861,18 +906,12 @@ def printResult(outList):
     # value List of tuple (filename, line, rule)
     outputStr = dict()
     for l in outList:
-
         (filename, line, rule) = l
-    #    sys.stdout.write(_("#SELinux deny log:\n%s") % line)
-     #   sys.stdout.write(_("#Suggested configuration\n"))
-     #   sys.stdout.write(_("File %s: \n%s\n") %(filename, rule))
         key = filename+rule
 
         if not outputStr.has_key(key):
             outputStr[key]=[]
         outputStr[key].append((filename,line,rule))
-  
-       
 
     for key in outputStr.keys():
         list=outputStr[key]
@@ -1676,8 +1715,8 @@ def SPDLstr(spRuleList,line):
     for spRule in spRuleList:
         fileName = domainToFileName(spRule["domain"])
         if spRule["domain"]=="unlabeled_t":
-            ruleStr = "#Broken domain, skipped."
-            return ruleStr
+            print "#Warning Broken domain, skipped."
+            continue
         ruleStr=""
         ruletype=spRule["ruletype"]
         if ruletype=="allowfile":
@@ -1744,3 +1783,7 @@ gVerboseFlag =False
 gRestoreconFlag = False
 
 gOutput="/etc/selinux/seedit/src/simplified_policy"
+
+# -c option 
+gCross = False
+

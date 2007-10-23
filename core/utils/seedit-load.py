@@ -27,6 +27,7 @@ import gettext
 gSeeditLoadConf="/usr/share/seedit/seedit-load.conf"
 gMakeFlags="CONFDIR=/etc/seedit/policy OUTDIR=/usr/share/seedit/sepolicy BASEPOLICYDIR=/usr/share/seedit/base_policy MACRODIR=/usr/share/seedit/macros"
 gAuditCtl="/sbin/auditctl"
+gCross=False
 
 def getConfinedDomains(filename):
     confinedDomains = []
@@ -225,16 +226,25 @@ def doCommand(command):
 
     return 0
 def doLoad():
-    loadCommand = "cd /usr/share/seedit; make diffrelabel "+gMakeFlags+" 2>&1" 
+    if gCross:
+        loadCommand = "./seedit-cross.sh build;./seedit-cross.sh install 2>&1" 
+    else:
+        loadCommand = "cd /usr/share/seedit; make diffrelabel "+gMakeFlags+" 2>&1" 
     return doCommand(loadCommand)
 
 def doInit():
+    if gCross:
+        return
+
     initCommand = "cd /usr/share/seedit; make relabel "+gMakeFlags+" 2>&1"
     print _("Initializing file labels it takes long time")
     return doCommand(initCommand)
 
 def doTest():
-    testCommand = "cd /usr/share/seedit; make policy "+gMakeFlags+"  2>&1" 
+    if gCross:
+        testCommand = "./seedit-cross.sh build  2>&1" 
+    else:
+        testCommand = "cd /usr/share/seedit; make policy "+gMakeFlags+"  2>&1" 
     return doCommand(testCommand)
 
 ####Main func
@@ -268,7 +278,7 @@ print "Audit chdir:"
 print gAuditChdirFlag
 
 try:
-    opts, args = getopt.getopt(sys.argv[1:], "atnveir", ["audit","test","noaudit","verbose","init","remove-audit"])
+    opts, args = getopt.getopt(sys.argv[1:], "atnveirc", ["audit","test","noaudit","verbose","init","remove-audit","cross"])
 except getopt.GetoptError:
     printUsage()
 
@@ -295,6 +305,8 @@ for opt,arg in opts:
         if(gBehavior!=""):
             printUsage()
         gBehavior="load"
+    elif opt in ("-c","--cross"):
+        gCross = True
     elif opt in ("-r","--remove-audit"):
         if(gBehavior!=""):
             printUsage()
@@ -313,7 +325,7 @@ if gBehavior == "remove-audit":
     sys.exit(0)
 
 #Handles logging for chdir syscall
-if gBehavior != "test":
+if gBehavior != "test" and gCross == False:
     removeAuditChdir()
     if gAuditChdirFlag==True:
         doAuditChdir()

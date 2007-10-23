@@ -26,7 +26,6 @@ import gettext
 from  seedit.ui.GUICommon import *
 from  seedit.ui.UILogic import *
 
-
 class openDomainDialog(gtk.Dialog, seeditCommon):
 
 	def getOpenDomain(self):

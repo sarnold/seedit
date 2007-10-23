@@ -35,6 +35,18 @@ install:
 	else \
 		install -p -m 644 pam.d/seedit-gui.noinclude   $(sysconfdir)/pam.d/seedit-gui;\
 	fi
+
+cross-install: 	
+	mkdir -p $(DESTDIR)
+	cp -r ./icons	$(DESTDIR)
+	mkdir -p $(DESTDIR)/seedit/ui
+	install -p -m 755 seedit/ui/*  $(DESTDIR)/seedit/ui
+	install -p -m 755 seedit-gui-cross.py $(DESTDIR)
+	install -p -m 755 seedit-gui-domain-manager.py $(DESTDIR)
+	install -p -m 755 seedit-gui-generate-policy.py $(DESTDIR)
+	install -p -m 755 seedit-gui-load.py $(DESTDIR)
+	install -p -m 755 seedit-gui-edit.py $(DESTDIR)
+
 clean:
 
 

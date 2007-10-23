@@ -38,7 +38,7 @@ if not os.path.exists(gIconPath+"icon.png"):
     gIconPath="./icons/"
 STATUS_COMMAND="./seedit-gui-status.py"
 DOMAIN_MANAGE_COMMAND="./seedit-gui-domain-manager.py"
-GENERATE_COMMAND="./seedit-gui-generate-policy.py"
+GENERATE_COMMAND="./seedit-gui-generate-policy.py -c"
 EDIT_COMMAND="./seedit-gui-edit.py"
 LOAD_COMMAND="./seedit-gui-load.py"
 

@@ -26,6 +26,7 @@ import gettext
 import threading
 import time
 import pango
+import getopt
 from  seedit.ui.GUICommon import *
 from  seedit.ui.UILogic import *
 from  seedit.audit2spdl import *
@@ -610,6 +611,17 @@ if __name__ == '__main__':
 	seedit.audit2spdl.gRestoreconFlag = True
 	seedit.audit2spdl.gHighSecurityFlag = True
 	gettext.install("seedit","/usr/share/locale")
+
+	try:
+		opts, args = getopt.getopt(sys.argv[1:], "c", ["cross"])
+	except getopt.GetoptError:
+		print "Error:Bad option"
+		sys.exit(1)
+		
+	for opt,arg in opts:
+		if opt in ("-c"):
+			seedit.audit2spdl.gCross = True
+			seedit.audit2spdl.gSpecXML = "./base_policy/spdl_spec.xml"
 	seeditGeneratePolicyWindow()
 	gtk.gdk.threads_init()
 	gtk.gdk.threads_enter()

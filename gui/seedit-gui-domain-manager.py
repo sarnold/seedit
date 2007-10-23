@@ -257,7 +257,7 @@ class createDomainTab(seeditCommon):
         if  string != None:
             self.mEditFrame.mTextBuffer.set_text(string)
             
-            self.mEditFrame.mToBeSavedFile= gSPPath+domain+".sp"
+            self.mEditFrame.mToBeSavedFile= gSPPath+"/"+domain+".sp"
             self.mEditFrame.mToBeSavedFileLabel.set_label(self.mEditFrame.mToBeSavedFile)
             self.mEditFrame.mPath = program
 

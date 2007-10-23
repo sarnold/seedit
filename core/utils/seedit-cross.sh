@@ -55,6 +55,9 @@ do_convert() {
 }
 
 do_install() {
+	mkdir -p $POLICYROOT/users
+	mkdir -p $POLICYDIR
+	mkdir -p $CONTEXTSDIR/files
 	cp $OUTDIR/policy.$POLICYVER $POLICYDIR
 	cp $OUTDIR/file_contexts $CONTEXTSDIR/files/
 	cp $OUTDIR/customizable_types $CONTEXTSDIR

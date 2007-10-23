@@ -3,6 +3,8 @@ For how to use,
 see documentation at http://seedit.sourceforge.net/. 
 If you have question, please e-mail to himainu-ynakam@miomio.jp(Yuichi Nakamura).
 
+About embedded devices see README.cross
+
 1. Installed contents
 (1) Commands
 - /usr/bin/audit2spdl

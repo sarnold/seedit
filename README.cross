@@ -1,0 +1,68 @@
+You can develop policy for cross development.
+This is useful to write policy for embedded devices.
+
+0. Prepare SELinux environment in your target system.
+ You need SELinux enabled kernel, libselinux, and SELinux commands.
+ You can download libselinux from http://www.nsa.gov/selinux.
+   To compile libselinux, you might have to set __thread as NULL like below.
+   $ make ARCH=<your arch> CC=<your cross compiler> CFLAGS=-D__thread=
+  
+ You can install SELinux commands easily by using BusyBox.
+ BusyBox 1.7.1 supports SELinux commands.
+  Enable SELinux in build option and you have to enable load_policy and setfiles and getenforce, setenforce.
+  
+
+1. INSTALL
+I assume you install seedit cross development kit under ~/seedit-cross.
+
+$ cd core
+$ make
+$ make cross-install DESTDIR=~/seedit-cross
+$ cd ..
+$ cd policy
+$ make cross-install DESTDIR=~/seedit-cross
+
+2. What is installed
+You will see following files and directories under ~/seedit-cross.
+
+* audit2spdl
+ This is audit2spdl, generate policy from log.
+ 
+
+* dynamic_contexts  
+ Here, files that are labeled by file type transision is registered.
+ Usually, you do not edit this.
+
+* seedit/            
+ Python module for audit2spdl.
+
+* seedit-cross.sh
+ Script that converts SPDL to SELinux policy.
+
+* base_policy/  and macros/
+  Files used by seedit-converter to convert SPDL to SELinux policy.
+* seedit-converter
+  Program to convert SPDL, internally called from seedit-cross.sh.
+
+* simplified_policy/
+ Least set of polcy written in SPDL.
+
+3. Writing policy
+I assume you are in ~/seedit-converter.
+
+1) Install minimum policy to target system.
+ $ ./seedit-cross.sh build
+ $ ./seedit-cross.sh install
+
+ Then you will see policy_root dir.
+ in policy_root, files that can be installed under /etc/selinux/seedit
+ is generated.
+
+ Copy these files and dirs under policy_root by ssh or NFS or something else.
+
+
+2) Load and relabel in target system.
+ In target system, you have to load and relabel.
+
+ 
+

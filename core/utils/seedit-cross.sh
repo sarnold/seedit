@@ -52,12 +52,16 @@ do_convert() {
 	cp $OUTDIR/policy.$POLICYVER $OUTDIR/policy
 	cp $OUTDIR/file_contexts $OUTDIR/contexts/files
 	cp $OUTDIR/customizable_types $OUTDIR/contexts
+	if [ ! -e $OLD_FILE_CONTEXTS ]; then
+	    cp $FILE_CONTEXTS $OLD_FILE_CONTEXTS
+        fi
 }
 
 do_install() {
 	mkdir -p $POLICYROOT/users
 	mkdir -p $POLICYDIR
 	mkdir -p $CONTEXTSDIR/files
+	cp $OUTDIR/fcdiff $POLICYROOT
 	cp $OUTDIR/policy.$POLICYVER $POLICYDIR
 	cp $OUTDIR/file_contexts $CONTEXTSDIR/files/
 	cp $OUTDIR/customizable_types $CONTEXTSDIR

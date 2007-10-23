@@ -51,18 +51,28 @@ You will see following files and directories under ~/seedit-cross.
 I assume you are in ~/seedit-converter.
 
 1) Install minimum policy to target system.
- $ ./seedit-cross.sh build
- $ ./seedit-cross.sh install
-
+ $ ./seedit-load -cd
  Then you will see policy_root dir.
  in policy_root, files that can be installed under /etc/selinux/seedit
  is generated.
 
  Copy these files and dirs under policy_root by ssh or NFS or something else.
 
-
 2) Load and relabel in target system.
- In target system, you have to load and relabel.
-
+ In target system, you have to load policy and relabel.
+ # load_policy
+ # restorecon -R /
  
-
+3) When you modify policy
+ $ ./seedit-load -c
+ will convert SPDL. Conveted policy is outputted in sepolicy/ dir.
+ When you see it is OK to transfer policy to target machine,
+ $ ./seedit-load -c -d
+ policy is deployed to policy_root/ dir.
+ You can copy it /etc/selinux/seedit in your target.
+ And you will see useful file /etc/selinux/seedit/fcdiff.
+ In fcdiff file, file names are listed. Files those labels may be changed are listed.
+ You can reflect policy change by following commands.
+ #load_policy
+ # restorecon -f fcdiff -R -v
+ 

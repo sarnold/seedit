@@ -191,14 +191,16 @@ def doAuditChdirAll():
 
 
 def printUsage():
-    sys.stderr.write("seedit-load [-l(--load)] [-t(--test)] [-v(--verbose)] [-i (--init)]")
+    sys.stderr.write("seedit-load [-l(--load)] [-t(--test)] [-v(--verbose)] [-i (--init)] [-c(--cross)] [-d(--deploy)]")
     sys.stderr.write(_("\t-l\tDefault behavior.Load Symplified Policy to kernel, and restore label if labeling has been changed\n"))  
     sys.stderr.write(_("\t-t\tTest of seedit-converter\n"))
     sys.stderr.write(_("\t-i\tInitialize all file labels. This takes time.\n"))
     sys.stderr.write(_("\t-v\tVerbose output\n"))
     sys.stderr.write(_("\t-e\tVerbose output, to stderr\n"))
-    sys.stderr.write(_("\t-n\tDo not audit chdir logs(Effective only after FC5\n)"))
-    sys.stderr.write(_("\n-a\tAudit all chdir logs(Will generate lots of logs\n"))
+    sys.stderr.write(_("\t-n\tDo not audit chdir logs(Effective only after FC5)\n"))
+    sys.stderr.write(_("\t-a\tAudit all chdir logs(Will generate lots of logs\n"))
+    sys.stderr.write(_("\t-c\tCross build policy, only valid for cross development install.\n"))
+    sys.stderr.write(_("\t-d\tMust be used with -c. Deploy poilcy to ./policy_root.\n"))
     sys.stderr.write(_("\t l,i,t option conflicts each other.\n"))
     sys.exit(1)
 
@@ -227,10 +229,18 @@ def doCommand(command):
     return 0
 def doLoad():
     if gCross:
-        loadCommand = "./seedit-cross.sh build;./seedit-cross.sh install 2>&1" 
+        loadCommand = "./seedit-cross.sh build 2>&1" 
     else:
         loadCommand = "cd /usr/share/seedit; make diffrelabel "+gMakeFlags+" 2>&1" 
     return doCommand(loadCommand)
+
+def doDeploy():
+    if gCross:
+        loadCommand = "./seedit-cross.sh build 2>&1; ./seedit-cross.sh diff; ./seedit-cross.sh install 2>&1" 
+        return doCommand(loadCommand)
+    else:
+        return
+
 
 def doInit():
     if gCross:
@@ -278,7 +288,7 @@ print "Audit chdir:"
 print gAuditChdirFlag
 
 try:
-    opts, args = getopt.getopt(sys.argv[1:], "atnveirc", ["audit","test","noaudit","verbose","init","remove-audit","cross"])
+    opts, args = getopt.getopt(sys.argv[1:], "atnveircd", ["audit","test","noaudit","verbose","init","remove-audit","cross","deploy"])
 except getopt.GetoptError:
     printUsage()
 
@@ -307,6 +317,8 @@ for opt,arg in opts:
         gBehavior="load"
     elif opt in ("-c","--cross"):
         gCross = True
+    elif opt in ("-d", "--deploy"):
+        gBehavior="deploy"
     elif opt in ("-r","--remove-audit"):
         if(gBehavior!=""):
             printUsage()
@@ -314,6 +326,11 @@ for opt,arg in opts:
 
 if gBehavior=="":
     gBehavior="load"
+
+if gBehavior == "deploy":
+    if not gCross:
+        printUsage()
+
 
 if os.path.exists("/usr/share/seedit/sepolicy/seedit-rbac-init"):
     print "Error: You have to initialize RBAC."
@@ -340,6 +357,8 @@ elif gBehavior == "init":
     s= doInit()
 elif gBehavior =="test":
     s= doTest()
+elif gBehavior =="deploy":
+    s= doDeploy()
 
 if s<0:
     sys.exit(1)

@@ -24,7 +24,7 @@ import string
 import re
 import getopt
 import gettext
-from seedit import getAttr
+from seedit import *
 from stat import *
 gMatchpathcon = "/usr/sbin/matchpathcon -n"
 gAusearch = "/sbin/ausearch"
@@ -1748,7 +1748,6 @@ def SPDLstr(spRuleList,line):
 gFileClass = ["dir","file","lnk_file","sock_file", "fifo_file","chr_file","blk_file" ]
 
 #Path to simplified policy
-gSPPath="/etc/seedit/policy/all.sp"
 #
 gGeneratedPolicy="/usr/share/seedit/sepolicy/generated.conf"
 #Path to converter.conf

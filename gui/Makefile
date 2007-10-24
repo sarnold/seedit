@@ -41,11 +41,11 @@ cross-install:
 	cp -r ./icons	$(DESTDIR)
 	mkdir -p $(DESTDIR)/seedit/ui
 	install -p -m 755 seedit/ui/*  $(DESTDIR)/seedit/ui
-	install -p -m 755 seedit-gui.py $(DESTDIR)
-	install -p -m 755 seedit-gui-domain-manager.py $(DESTDIR)
-	install -p -m 755 seedit-gui-generate-policy.py $(DESTDIR)
-	install -p -m 755 seedit-gui-load.py $(DESTDIR)
-	install -p -m 755 seedit-gui-edit.py $(DESTDIR)
+	install -p -m 755 seedit-gui.py $(DESTDIR)/seedit-gui
+	install -p -m 755 seedit-gui-domain-manager.py $(DESTDIR)/seedit-gui-domain-manager
+	install -p -m 755 seedit-gui-generate-policy.py $(DESTDIR)/seedit-gui-generate-policy
+	install -p -m 755 seedit-gui-load.py $(DESTDIR)/seedit-gui-load
+	install -p -m 755 seedit-gui-edit.py $(DESTDIR)/seedit-gui-edit
 
 clean:
 

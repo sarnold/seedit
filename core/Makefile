@@ -30,6 +30,7 @@ cross-install: all
 	cp utils/audit2spdl.py $(DESTDIR)/audit2spdl
 	cp utils/seedit-load.py $(DESTDIR)/seedit-load
 	cp -r lib/python/seedit $(DESTDIR)
+	cp config/seedit.conf   $(DESTDIR)
 clean:
 	$(MAKE) -C lib clean
 	$(MAKE) -C converter clean

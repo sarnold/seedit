@@ -64,10 +64,10 @@ I assume you are in ~/seedit-converter.
  # restorecon -R /
  
 3) When you modify policy
- $ ./seedit-load -c
+ $ ./seedit-load -v
  will convert SPDL. Conveted policy is outputted in sepolicy/ dir.
  When you see it is OK to transfer policy to target machine,
- $ ./seedit-load -c -d
+ $ ./seedit-load -v -d
  policy is deployed to policy_root/ dir.
  You can copy it /etc/selinux/seedit in your target.
  And you will see useful file /etc/selinux/seedit/fcdiff.

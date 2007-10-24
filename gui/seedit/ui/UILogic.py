@@ -21,6 +21,7 @@ import os
 import sys
 import string
 import re
+from  seedit.seedit import *
 
  
 from xml.dom.minidom import parse, parseString

@@ -79,7 +79,6 @@ def readSeeditConf():
 
     try:
         input = open(conf, 'r')
-        print conf
     except:
         print "File Open Error:"+conf+"\n"  
     lines = input.readlines()

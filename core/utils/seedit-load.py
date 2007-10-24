@@ -326,11 +326,6 @@ for opt,arg in opts:
 if gBehavior=="":
     gBehavior="load"
 
-if gBehavior == "deploy":
-    if not gCross:
-        printUsage()
-
-
 if os.path.exists("/usr/share/seedit/sepolicy/seedit-rbac-init"):
     print "Error: You have to initialize RBAC."
     print "Type /usr/share/seedit/script/seedit-installhelper.sh upgrade"

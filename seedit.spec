@@ -143,7 +143,6 @@ Summary: GUI for SELinux Policy Editor
 Group: System Environment/Base
 Requires: usermode
 Requires: pygtk2
-Requires: pam >= 0.80-9
 BuildRequires: desktop-file-utils
 BuildRequires:  gettext
 Requires: %{name} = %{version}-%{release}, %{name}-policy = %{version}-%{release}

@@ -49,6 +49,7 @@ install: policy
 	cp $(OUTDIR)/file_contexts $(CONTEXTSDIR)/files/
 	if [ ! -e $(OUTDIR)/file_contexts.m4.old ] ; then \
 	   cp $(OUTDIR)/file_contexts.m4 $(OUTDIR)/file_contexts.m4.old;\
+	   cp $(OUTDIR)/file_contexts.m4.old $(CONTEXTSDIR)/files;\
 	fi;
 	cp $(OUTDIR)/file_contexts.m4 $(CONTEXTSDIR)/files/
 	cp $(OUTDIR)/customizable_types $(CONTEXTSDIR)

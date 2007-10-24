@@ -23,11 +23,11 @@ import re
 import getopt
 import string
 import gettext
+from seedit import *
 
-gSeeditLoadConf="/usr/share/seedit/seedit-load.conf"
+
 gMakeFlags="CONFDIR=/etc/seedit/policy OUTDIR=/usr/share/seedit/sepolicy BASEPOLICYDIR=/usr/share/seedit/base_policy MACRODIR=/usr/share/seedit/macros"
 gAuditCtl="/sbin/auditctl"
-gCross=False
 
 def getConfinedDomains(filename):
     confinedDomains = []
@@ -191,7 +191,7 @@ def doAuditChdirAll():
 
 
 def printUsage():
-    sys.stderr.write("seedit-load [-l(--load)] [-t(--test)] [-v(--verbose)] [-i (--init)] [-c(--cross)] [-d(--deploy)]")
+    sys.stderr.write("seedit-load [-l(--load)] [-t(--test)] [-v(--verbose)] [-i (--init)]  [-d(--deploy)]")
     sys.stderr.write(_("\t-l\tDefault behavior.Load Symplified Policy to kernel, and restore label if labeling has been changed\n"))  
     sys.stderr.write(_("\t-t\tTest of seedit-converter\n"))
     sys.stderr.write(_("\t-i\tInitialize all file labels. This takes time.\n"))
@@ -199,8 +199,7 @@ def printUsage():
     sys.stderr.write(_("\t-e\tVerbose output, to stderr\n"))
     sys.stderr.write(_("\t-n\tDo not audit chdir logs(Effective only after FC5)\n"))
     sys.stderr.write(_("\t-a\tAudit all chdir logs(Will generate lots of logs\n"))
-    sys.stderr.write(_("\t-c\tCross build policy, only valid for cross development install.\n"))
-    sys.stderr.write(_("\t-d\tMust be used with -c. Deploy poilcy to ./policy_root.\n"))
+    sys.stderr.write(_("\t-d\tDeploy poilcy to ./policy_root.Effective only cross development install.\n"))
     sys.stderr.write(_("\t l,i,t option conflicts each other.\n"))
     sys.exit(1)
 
@@ -288,7 +287,7 @@ print "Audit chdir:"
 print gAuditChdirFlag
 
 try:
-    opts, args = getopt.getopt(sys.argv[1:], "atnveircd", ["audit","test","noaudit","verbose","init","remove-audit","cross","deploy"])
+    opts, args = getopt.getopt(sys.argv[1:], "atnveird", ["audit","test","noaudit","verbose","init","remove-audit","deploy"])
 except getopt.GetoptError:
     printUsage()
 
@@ -315,8 +314,6 @@ for opt,arg in opts:
         if(gBehavior!=""):
             printUsage()
         gBehavior="load"
-    elif opt in ("-c","--cross"):
-        gCross = True
     elif opt in ("-d", "--deploy"):
         gBehavior="deploy"
     elif opt in ("-r","--remove-audit"):

@@ -1749,11 +1749,6 @@ gFileClass = ["dir","file","lnk_file","sock_file", "fifo_file","chr_file","blk_f
 
 #Path to simplified policy
 #
-gGeneratedPolicy="/usr/share/seedit/sepolicy/generated.conf"
-#Path to converter.conf
-gConverterConf="/usr/share/seedit/base_policy/converter.conf"
-#Path to spdl_spec.xml
-gSpecXML="/usr/share/seedit/base_policy/spdl_spec.xml"
 #labels defined by allow exclusive rule
 gExcLabelList=getExcLabelList(gGeneratedPolicy)
 
@@ -1762,7 +1757,7 @@ gExcLabelList=getExcLabelList(gGeneratedPolicy)
 gFsLabelList=getFsLabelList(gConverterConf)
 #list of domain defined in SPDL
 #Note that suffix of gRoleList is "_t" not "_r"
-( gDomainList, gRoleList ) = getDomainList(gSPPath)
+( gDomainList, gRoleList ) = getDomainList(gAllsp)
 
 gRootNodeName="spdl"
 #list of unlabeled types

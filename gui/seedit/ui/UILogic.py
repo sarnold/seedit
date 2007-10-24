@@ -37,9 +37,6 @@ SEEDIT_ERROR_SEEDIT_LOAD=-3
 
 gSELinuxConfigFile ="/etc/selinux/config"
 
-gSPPath="/etc/seedit/policy/"
-
-gSeedit_load= "/usr/sbin/seedit-load"
 gSetsebool="/usr/sbin/setsebool"
 gGetsebool="/usr/sbin/getsebool"
 gRestorecon="/sbin/restorecon"

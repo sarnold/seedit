@@ -20,6 +20,8 @@
 Functions commonly used by SELinux Policy Editor
 """
 import sys
+import os
+import string
 from xml.dom.minidom import parse, parseString
 
 def getAttr(node, attrName):
@@ -54,4 +56,58 @@ def readXML(filename):
     fh.close()
     return domdoc
 
-gSPPath="/etc/seedit/policy/all.sp"
+#This stores path to configs
+gConf = {'cross_flag': False ,
+         'all.sp' : '/etc/seedit/policy/all.sp',
+         'sppath' : '/etc/seedit/policy/',
+         'generated.conf': '/usr/share/seedit/sepolicy/generated.conf',
+         'seedit-load' : '/usr/sbin/seedit-load',
+         'seedit-load.conf' : '/usr/share/seedit/seedit-load.conf',
+         'converter.conf': '/usr/share/seedit/base_policy/converter.conf',
+         'spdl_spec.xml': '/usr/share/seedit/base_policy/spdl_spec.xml'
+         }
+
+def readSeeditConf():
+    files = ("./seedit.conf", "/usr/share/seedit/seedit.conf")
+    conf = ""
+    for f in files:
+        if os.path.exists(f):
+            conf = f
+    
+    if conf == "":
+        return
+
+    try:
+        input = open(conf, 'r')
+        print conf
+    except:
+        print "File Open Error:"+conf+"\n"  
+    lines = input.readlines()
+    for line in lines:
+        list = string.split(line)
+        try:
+            gConf[list[0]] = list[1]
+        except:
+            print  "Error in seedit.conf:"+line
+    input.close()
+  
+
+ 
+readSeeditConf()
+
+gGeneratedPolicy=gConf['generated.conf']
+#Path to converter.conf
+gConverterConf=gConf['converter.conf']
+#Path to spdl_spec.xml
+gSpecXML=gConf['spdl_spec.xml']
+if gConf['cross_flag'] == "true":
+    gCross = True
+else:
+    gCross = False
+
+gSeeditLoadConf=gConf['seedit-load.conf']
+gSPPath=gConf["sppath"]
+gAllsp=gConf["all.sp"]
+gSeedit_load= gConf["seedit-load"]
+gGeneratedPolicy=gConf["generated.conf"]
+

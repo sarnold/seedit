@@ -34,10 +34,9 @@ from seedit.audit2spdl import *
 import seedit.audit2spdl
 
 def printUsage():
-    sys.stderr.write("audit2spdl [-d] [-a] [-c] [-l] [-s] [-r] [-i <inputfile> ] \n")
+    sys.stderr.write("audit2spdl [-d] [-a] [-l] [-s] [-r] [-i <inputfile> ] \n")
     sys.stderr.write("\t-d\tread input from output of /bin/dmesg\n")
     sys.stderr.write("\t-a\tread input from /var/log/audit\n")
-    sys.stderr.write("\t-c\tfor cross development, does not guess fullpath\n")
     sys.stderr.write("\t-i\tread input from <inputfile>\n")
     sys.stderr.write("\t-l\tread input only after last load_policy and after startup of auditd\n")
     sys.stderr.write("\t-s\tGenerate more secure configuration\n")
@@ -51,7 +50,7 @@ if __name__ == '__main__':
 
 
 try:
-    opts, args = getopt.getopt(sys.argv[1:], "i:sdvarlo:c", ["input=","dmesg","verbose","audit","load_policy","output","secure"])
+    opts, args = getopt.getopt(sys.argv[1:], "i:sdvarlo:", ["input=","dmesg","verbose","audit","load_policy","output","secure"])
 except getopt.GetoptError:
     printUsage()
 
@@ -73,9 +72,6 @@ for opt,arg in opts:
         seedit.audit2spdl.gHighSecurityFlag=True
     elif opt in ("-r"):
         seedit.audit2spdl.gRestoreconFlag = True
-    elif opt in ("-c"):
-        seedit.audit2spdl.gCross = True
-        seedit.audit2spdl.gSpecXML = "./base_policy/spdl_spec.xml"
 
 domdoc=readSPDLSpec(gSpecXML)
 lines = readLog(input, gLoadPolicyFlag)

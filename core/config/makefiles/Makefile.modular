@@ -8,6 +8,7 @@ CHECKMODULE=/usr/bin/checkmodule
 SEMODULE_PACKAGE=/usr/bin/semodule_package
 SEMODULE=/usr/sbin/semodule
 FIXFILES=/sbin/fixfiles
+LOADPOLICY=/usr/sbin/load_policy
 RESTORECON=/usr/sbin/seedit-restorecon
 SELINUXTYPE=seedit
 POLICYROOT=$(sysconfdir)/selinux/$(SELINUXTYPE)
@@ -54,6 +55,10 @@ install: policy
 	echo "" > $(CONTEXTSDIR)/files/file_contexts.homedirs
 	echo "" >  $(POLICYROOT)/users/system.users
 	echo "" >  $(POLICYROOT)/users/local.users
+	 /usr/sbin/semodule -b $(OUTDIR)/base.pp -s seedit -n
+	#file_contexts is overwritten by semodule -b, have to restore
+	cp $(OUTDIR)/file_contexts $(CONTEXTSDIR)/files/
+
 
 relabel: install
 	$(SEMODULE) -b $(POLICYDIR)/base.pp
@@ -73,9 +78,7 @@ diffrelabel: install
 		done; \
 		exec 3<&-;\
 	fi;
-	$(SEMODULE) -b $(OUTDIR)/base.pp
-	#file_contexts is overwritten by semodule -b, have to restore
-	cp $(OUTDIR)/file_contexts $(CONTEXTSDIR)/files/
+	$(LOADPOLICY)
 	diff $(OLD_FILE_CONTEXTS) $(FILE_CONTEXTS) -r |cat >  fcdiff.m4.tmp
 	$(M4)  -Imacros -s $(MACRODIR)/mcs_macros.te fcdiff.m4.tmp > fcdiff.pre.tmp
 	cat fcdiff.pre.tmp |grep -e "^[<>]"|sed -e 's/^[><][ \t]*//'|sed -e 's/[ \t]\+.*//'|sed -e 's/(.*//'|sort|sed s/"\[\^\/\]"//g > fcdiff.tmp

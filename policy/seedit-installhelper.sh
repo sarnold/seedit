@@ -24,7 +24,7 @@ initialize_seedit() {
  fi
         ### Make binary policy to fit user's environment
         # Make binary policy into /usr/share/seedit/sepolicy
- /usr/sbin/seedit-load -d -v -n
+ /usr/sbin/seedit-load -d -v
  
  ###Setup auditd
  #Register dummy audit rule, this is necessary to display PATH entry in log 

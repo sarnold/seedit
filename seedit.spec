@@ -1,4 +1,3 @@
-%define buildnum 1
 %define python_sitelib %(%{__python} -c 'from distutils import sysconfig; print sysconfig.get_python_lib()')
 %define selinuxenabled /usr/sbin/selinuxenabled
 
@@ -13,11 +12,11 @@
 #Whether audit support obj_type field, after FC6 "y"
 %define audit_obj_type_support  y
 #Version of sample policy file
-%define sample_policy_type fc6
+%define sample_policy_type f8
 
 Name: seedit         
 Version: 2.2.0
-Release: %{buildnum}%{?dist}
+Release: 1%{?dist}
 Summary: SELinux Policy Editor:Core component
 Group:  System Environment/Base        
 License: GPL       
@@ -41,6 +40,7 @@ Command line utils is included in seedit package.
 
 %prep
 %setup -q
+#%patch -p0
 
 %build
 pushd core
@@ -119,11 +119,6 @@ if [ $1 = 2 ]; then
 	touch %{_datadir}/%{name}/sepolicy/need-rbac-init
 fi
 
-%preun
-if [ $1 = 0 ]; then
-	%{_sbindir}/seedit-load -r
-fi
-
 %postun policy
 if [ $1 = 0 ]; then
 	sed -i 's/^SELINUXTYPE=.*/SELINUXTYPE=targeted/g' %{_sysconfdir}/selinux/config
@@ -174,13 +169,17 @@ X based GUI for SELinux Policy Editor
 
 
 %changelog
-* Thu May 24 2007 Yuichi Nakamura<ynakam@hitachisoft.jp> 2.1.2-1
-  See Changelog in /usr/share/doc/seedit
+* Wed Oct 24 2007 Yuichi Nakamura <ynakam@hitachisoft.jp> 2.2.0-1
+- Version 2.2.0, works on F8.
 
+* Tue Aug 28 2007 Jesse Keating <jkeating@redhat.com> 2.1.1-3
+- Rebuild for ppc32 selinux issue.
+
+* Wed Apr 18 2007 Yuichi Nakamura<ynakam@hitachisoft.jp> 2.1.1-2
+ - Fixed install bug
 * Thu Apr 12 2007 Yuichi Nakamura<ynakam@hitachisoft.jp> 2.1.1-1
  - Merged bug fix until 2.1.0-5
  - Other bug fixes
-
 * Fri Feb 16 2007 Yuichi Nakamura<ynakam@hitachisoft.jp> 2.1.0-5
  - SELINUX= is set permissive when uninstall,
 because relabel fails in enforcing mode.

@@ -60,6 +60,7 @@ def readXML(filename):
 gConf = {'cross_flag': False ,
          'all.sp' : '/etc/seedit/policy/all.sp',
          'sppath' : '/etc/seedit/policy/',
+         'guipath' : '/usr/sbin/',
          'generated.conf': '/usr/share/seedit/sepolicy/generated.conf',
          'seedit-load' : '/usr/sbin/seedit-load',
          'seedit-load.conf' : '/usr/share/seedit/seedit-load.conf',
@@ -109,4 +110,5 @@ gSPPath=gConf["sppath"]
 gAllsp=gConf["all.sp"]
 gSeedit_load= gConf["seedit-load"]
 gGeneratedPolicy=gConf["generated.conf"]
+gGUIPath = gConf["guipath"]
 

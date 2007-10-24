@@ -1,0 +1,1 @@
+../../core/lib/python/seedit/__init__.py

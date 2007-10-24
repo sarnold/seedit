@@ -36,13 +36,14 @@ GUI_RMANAGE=6
 gIconPath= "/usr/share/icons/seedit/"
 if not os.path.exists(gIconPath+"icon.png"):
     gIconPath="./icons/"
-STATUS_COMMAND="/usr/sbin//seedit-gui-status"
-DOMAIN_MANAGE_COMMAND="/usr/sbin/seedit-gui-domain-manager"
-ROLE_MANAGE_COMMAND="/usr/sbin/seedit-gui-role-manager"
 
-GENERATE_COMMAND="/usr/sbin/seedit-gui-generate-policy"
-EDIT_COMMAND="/usr/sbin/seedit-gui-edit"
-LOAD_COMMAND="/usr/sbin/seedit-gui-load"
+STATUS_COMMAND=gGUIPath+"/seedit-gui-status"
+DOMAIN_MANAGE_COMMAND=gGUIPath+"/seedit-gui-domain-manager"
+ROLE_MANAGE_COMMAND=gGUIPath+"/seedit-gui-role-manager"
+
+GENERATE_COMMAND=gGUIPath+"/seedit-gui-generate-policy"
+EDIT_COMMAND=gGUIPath+"/seedit-gui-edit"
+LOAD_COMMAND=gGUIPath+"/seedit-gui-load"
 
 class seeditMainWindow(seeditCommon):
 
@@ -106,7 +107,8 @@ class seeditMainWindow(seeditCommon):
         generateIcon = gtk.gdk.pixbuf_new_from_file(gIconPath+"generate-policy.png")
         editIcon = gtk.gdk.pixbuf_new_from_file(gIconPath+"new.png")
 
-        model.append([_("Status"), statusIcon,GUI_STATUS])
+        if gCross == False:
+            model.append([_("Status"), statusIcon,GUI_STATUS])
         
         model.append([_("Manage domain"), newIcon,GUI_MANAGE])
 

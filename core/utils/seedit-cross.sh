@@ -37,9 +37,13 @@ do_convert() {
 	mkdir -p $OUTDIR;
 
 	m4 -s $CONFDIR/*.sp >$CONFDIR/all.sp;        
-	$CONVERTER -p -i $CONFDIR/all.sp -o ./sepolicy -b ./base_policy -I  $CONFDIR/include
+        #$CONVERTER -p -i $CONFDIR/all.sp -o ./sepolicy -b ./base_policy -I  $CONFDIR/include
 	#$CONVERTER --disable-boolean -t 1 -i $CONFDIR/all.sp -o $OUTDIR -b $BASEPOLICYDIR -I $CONFDIR/include  --profile-data $OUTDIR/profile.data
-	$CONVERTER --disable-boolean -t 1 -i $CONFDIR/all.sp -o $OUTDIR -b $BASEPOLICYDIR -I $CONFDIR/include -c dynamic_contexts
+	if $CONVERTER --disable-boolean -i $CONFDIR/all.sp -o $OUTDIR -b $BASEPOLICYDIR -I $CONFDIR/include -c dynamic_contexts; then
+		echo ""	
+	else
+		exit 1
+	fi 
 	$M4  -Imacros -s $MACRODIR/*.te $OUTDIR/generated.conf > $OUTDIR/policy.conf;
 	$M4  -Imacros -s $MACRODIR/mcs_macros.te $OUTDIR/file_contexts.m4 > $OUTDIR/file_contexts;
 	$M4  -Imacros -s $MACRODIR/mcs_macros.te $OUTDIR/userhelper_context.m4 > $OUTDIR/userhelper_context.tmp;

@@ -1778,6 +1778,3 @@ gRestoreconFlag = False
 
 gOutput="/etc/selinux/seedit/src/simplified_policy"
 
-# -c option 
-gCross = False
-

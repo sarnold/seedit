@@ -496,13 +496,16 @@ class seeditGeneratePolicyWindow(seeditCommon):
 		label = gtk.Label(_("Input:"))
 		hbox.pack_start(label, False, False,5)
 				
-		radio = gtk.RadioButton(None, _("audit.log"))
-		self.mInput = "audit.log"
-		radio.connect("toggled", self.radioCallBack, "audit.log")
-		hbox.pack_start(radio, False, False,5)
-		radio = gtk.RadioButton(radio, _("dmesg"))
-		radio.connect("toggled", self.radioCallBack, "dmesg")
-		hbox.pack_start(radio, False, False,5)
+		radio = None
+		if gCross == False:
+			radio = gtk.RadioButton(None, _("audit.log"))
+			self.mInput = "audit.log"
+			radio.connect("toggled", self.radioCallBack, "audit.log")
+			hbox.pack_start(radio, False, False,5)
+			radio = gtk.RadioButton(radio, _("dmesg"))
+			radio.connect("toggled", self.radioCallBack, "dmesg")
+			hbox.pack_start(radio, False, False,5)
+		
 		radio = gtk.RadioButton(radio, _("File"))
 		radio.connect("toggled", self.radioCallBack, "file")
 		hbox.pack_start(radio, False, False,5)

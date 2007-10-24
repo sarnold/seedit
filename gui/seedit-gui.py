@@ -24,7 +24,7 @@ import sys
 import os
 import gettext
 import gobject
-from  seedit.ui.GUICommon import *
+from seedit.ui.GUICommon import *
 from seedit.ui.UILogic import *
 
 GUI_STATUS=1
@@ -118,7 +118,8 @@ class seeditMainWindow(seeditCommon):
         
         model.append([_("Generate policy"), generateIcon,GUI_GENERATE])
         model.append([_("Edit policy"), editIcon,GUI_EDIT])
-        model.append([_("Apply policy\nrelabel"), defaultIcon,GUI_LOAD])
+        if gCross == False:
+            model.append([_("Apply policy\nrelabel"), defaultIcon,GUI_LOAD])
 
         noIconViewFlag=False #in old pygtk, no IconView widget
         try:

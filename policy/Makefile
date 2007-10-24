@@ -59,9 +59,9 @@ install: dir installhelper-include
 	echo $(DISTRO)
 	mkdir -p $(prefix)/share/seedit/base_policy/contexts/
 	if [ -e src/dynamic_contexts/dynamic_contexts.$(DISTRO) ];then\
-		install -p -m 644 src/dynamic_contexts/dynamic_contexts.$(DISTRO) $(prefix)/share/seedit/initialize/dynamic_contexts;\
+		install -p -m 644 src/dynamic_contexts/dynamic_contexts.$(DISTRO) $(prefix)/share/seedit/base_policy/dynamic_contexts;\
 	else \
-		install -p -m 644 src/dynamic_contexts/dynamic_contexts $(prefix)/share/seedit/initialize/dynamic_contexts;\
+		install -p -m 644 src/dynamic_contexts/dynamic_contexts $(prefix)/share/seedit/base_policy/dynamic_contexts;\
 	fi
 
 cross-install:

@@ -133,6 +133,7 @@ fi
 %config(noreplace) %{_sysconfdir}/%{name}/policy
 %config(noreplace) %{_sysconfdir}/selinux/%{name}
 %{_datadir}/%{name}/initialize/
+%{_datadir}/%{name}/base_policy/dynamic_contexts
 %{_sbindir}/seedit-init
 %ghost %{_datadir}/%{name}/sepolicy/need-init
 %ghost %{_datadir}/%{name}/sepolicy/need-rbac-init

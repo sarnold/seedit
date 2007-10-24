@@ -199,7 +199,7 @@ def printUsage():
     sys.stderr.write(_("\t-e\tVerbose output, to stderr\n"))
     sys.stderr.write(_("\t-n\tDo not audit chdir logs(Effective only after FC5)\n"))
     sys.stderr.write(_("\t-a\tAudit all chdir logs(Will generate lots of logs\n"))
-    sys.stderr.write(_("\t-d\tDeploy poilcy to ./policy_root.Effective only cross development install.\n"))
+    sys.stderr.write(_("\t-d\tDeploy poilcy to /etc/selinux/seedit. When cross install, it is installed in ./policy_root.\n"))
     sys.stderr.write(_("\t l,i,t option conflicts each other.\n"))
     sys.exit(1)
 
@@ -236,10 +236,11 @@ def doLoad():
 def doDeploy():
     if gCross:
         loadCommand = "./seedit-cross.sh build 2>&1; ./seedit-cross.sh diff; ./seedit-cross.sh install 2>&1" 
-        return doCommand(loadCommand)
-    else:
-        return
 
+    else:
+        loadCommand = "cd /usr/share/seedit; make install "+gMakeFlags+" 2>&1" 
+
+    return doCommand(loadCommand)
 
 def doInit():
     if gCross:

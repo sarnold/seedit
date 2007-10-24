@@ -47,6 +47,9 @@ policy:
 install: policy
 	cp $(OUTDIR)/policy.$(POLICYVER) $(POLICYDIR)
 	cp $(OUTDIR)/file_contexts $(CONTEXTSDIR)/files/
+	if [ ! -e $(OUTDIR)/file_contexts.m4.old ] ; then \
+	   cp $(OUTDIR)/file_contexts.m4 $(OUTDIR)/file_contexts.m4.old;\
+	fi;
 	cp $(OUTDIR)/file_contexts.m4 $(CONTEXTSDIR)/files/
 	cp $(OUTDIR)/customizable_types $(CONTEXTSDIR)
 	cp $(OUTDIR)/userhelper_context $(CONTEXTSDIR)

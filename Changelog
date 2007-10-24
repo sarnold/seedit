@@ -1,3 +1,6 @@
+*2007/10/23
+ - After install, only one reboot is necessary. 
+- Added -d option to seedit-load.
 *2007/10/22
  1) Now seedit-conveter does not use local file information.
  You can cross-develop policy for embedded devices.
@@ -14,6 +17,7 @@ speed to convert SPDL to SELinux policy has become faster.
    --out-file_type_trans-context: Search local file tree and find files that are labeled by file_type_trans, and output list to file_contexts file.     
 
  4) For cross development install see INSTALL.cross
+
 	
 *2007/07/12
  Add -r <root> option for cross development.

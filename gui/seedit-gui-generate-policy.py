@@ -64,7 +64,6 @@ class generatePolicyThread(threading.Thread):
 				input = os.popen("/sbin/ausearch -m avc,syscall,daemon_start")
 			else:				
 				filename = self.mDialog.mInputFileEntry.get_text()
-				
 				input = open(filename,"r")
 
 		
@@ -497,14 +496,13 @@ class seeditGeneratePolicyWindow(seeditCommon):
 		hbox.pack_start(label, False, False,5)
 				
 		radio = None
-		if gCross == False:
-			radio = gtk.RadioButton(None, _("audit.log"))
-			self.mInput = "audit.log"
-			radio.connect("toggled", self.radioCallBack, "audit.log")
-			hbox.pack_start(radio, False, False,5)
-			radio = gtk.RadioButton(radio, _("dmesg"))
-			radio.connect("toggled", self.radioCallBack, "dmesg")
-			hbox.pack_start(radio, False, False,5)
+		radio = gtk.RadioButton(None, _("audit.log"))
+		self.mInput = "audit.log"
+		radio.connect("toggled", self.radioCallBack, "audit.log")
+		hbox.pack_start(radio, False, False,5)
+		radio = gtk.RadioButton(radio, _("dmesg"))
+		radio.connect("toggled", self.radioCallBack, "dmesg")
+		hbox.pack_start(radio, False, False,5)
 		
 		radio = gtk.RadioButton(radio, _("File"))
 		radio.connect("toggled", self.radioCallBack, "file")
@@ -611,7 +609,8 @@ class seeditGeneratePolicyWindow(seeditCommon):
 
             
 if __name__ == '__main__':
-	seedit.audit2spdl.gRestoreconFlag = True
+	if gCross == False:
+		seedit.audit2spdl.gRestoreconFlag = True
 	seedit.audit2spdl.gHighSecurityFlag = True
 	gettext.install("seedit","/usr/share/locale")
 	seeditGeneratePolicyWindow()

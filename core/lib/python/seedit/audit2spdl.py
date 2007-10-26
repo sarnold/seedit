@@ -322,7 +322,7 @@ def getCandidatePathWithChroot(name, inode,pid, ppid):
 def countPATHEntry(logs):
     i = 0
     for l in logs:        
-        if(string.find(l,"type=PATH")>=0 or string.find(l,"type=AVC_PATH")>=0):
+        if(string.find(l,"name=")>=0 or string.find(l,"path=")>=0):
             i = i+1
     return i
              
@@ -332,37 +332,33 @@ def getPATHEntry(logs,inode):
     if numPATH==0:
         return ""
         
-    for l in logs:        
-        if(string.find(l,"type=PATH")>=0 or string.find(l,"type=AVC_PATH")>=0):
-            m=re.compile("name=\(null\)").search(l)
-            if m:
+    for l in logs:
+        m = re.compile(":.*avc.*:").search(l)
+        if m:
+            continue
+        m = re.compile("path=\S+").search(l)
+        if m:
+            path = string.split(m.group(),"=").pop()                
+            path = string.replace(path,"\"","")
+            return path
+        
+        if (string.find(l,"name=")>0):
+            m = re.compile("name=\S+").search(l)
+            path = string.split(m.group(),"=").pop()
+            path = string.replace(path,"\"","")
+            if path == "(null)":
                 if numPATH>1:
-                    #Search another PATH
                     continue
                 else:
-                    print "Warning name=(null) in PATH:%s" % (l)
+                    return ""
+            if numPATH==1 or inode==-1:
+                return path
+
+            ##Multiple PATH Entry
+            inodeInPATH=getInode(l)
+            if inodeInPATH == inode:
+                return path
             
-            m=re.compile("name=\S+").search(l)
-            if not m:
-                m = re.compile("path=\S+").search(l)
-
-            if m:
-                path = string.split(m.group(),"=").pop()
-                #remove "
-                path = string.replace(path,"\"","")
-                if numPATH==1 or inode==-1:
-                    return path
-
-
-                if string.find(l,"type=AVC_PATH") >=0:
-                    return path
-                
-                ##Multiple PATH Entry
-                inodeInPATH=getInode(l)
-                if inodeInPATH == inode:
-                    return path
-
-                ##else find other PATH entry
     return ""
                 
 def getCWDEntry(logs):
@@ -428,6 +424,7 @@ def guessPathByPATHEntry(lines,index):
         else:
             return realpath
     else:
+        print "#####"+path
         #need to joint CWD
         cwd = getCWDEntry(logs)
         if cwd=="":
@@ -498,11 +495,12 @@ def guessFilePath(rule,lines,index):
         return rule["type"]
 
     path = guessPathByInoDir(line)
-    if path=="":
-   
+    if path=="":   
         path= guessPathByPATHEntry(lines,index)    
-    if path =="":
-        path = guessPathByLocate(line)
+    
+    if gCross == False:
+        if path =="":
+            path = guessPathByLocate(line)
 
         
     updateInoPath(path,line)
@@ -657,6 +655,7 @@ Error: returns None
 def findNameInPath(path,name):
    
     (head,tail)=os.path.split(path)
+
     while head!="/":
         if os.path.basename(head)==name:
             return  head
@@ -666,10 +665,7 @@ def findNameInPath(path,name):
 
 def genFileAllow(rule,lines,index,domdoc):
     
-    if gCross:
-        return __genFileAllowCross(rule,lines,index,domdoc)
-    else:
-        return __genFileAllow(rule,lines,index,domdoc)
+    return __genFileAllow(rule,lines,index,domdoc)
 
 def __genFileAllow(rule,lines,index,domdoc):
     """
@@ -685,7 +681,7 @@ def __genFileAllow(rule,lines,index,domdoc):
     line = lines[index]
     
     path = guessFilePath(rule,lines,index)
-  
+
     #for lnk_file class, need special treatment to obtain real fullpath
     if rule["secclass"]=="lnk_file":
         if rule["type"]=="bin_sh_t":
@@ -693,9 +689,10 @@ def __genFileAllow(rule,lines,index,domdoc):
             if rule["name"]=="sh":
                 path ="/bin/sh"
         elif not os.path.islink(path):
-            p2 = findNameInPath(path,rule["name"])
-            if p2:
-                path=p2
+            if path:
+                p2 = findNameInPath(path,rule["name"])
+                if p2:
+                    path=p2
         elif os.path.islink(path):
             if "create" in rule["permission"]:
                 ##if creating link, now we have real full path
@@ -1336,22 +1333,24 @@ def getRelatedLog(lines, index):
     i = start -1
     while i>0:
         line = lines[i]
-        if auid == getUniqueAuditId(line):
-            result.insert(0,line)
-        else:
-            break
+        if (string.find(line,"audit") != -1):          
+            if auid == getUniqueAuditId(line):
+                result.insert(0,line)
+            else:
+                break
+        
         i = i-1
     
     l = len(lines)    
     i = start+1
     while i < l:
         line = lines[i]
-        
-        if auid == getUniqueAuditId(line):
-            result.append(line)
-        else:
-            break
-        
+        if (string.find(line,"audit") != -1):
+            if auid == getUniqueAuditId(line):
+                result.append(line)
+            else:
+                break
+    
         i = i+1
 
     return result

@@ -170,7 +170,7 @@ X based GUI for SELinux Policy Editor
 
 
 %changelog
-* Wed Oct 24 2007 Yuichi Nakamura <ynakam@hitachisoft.jp> 2.2.0-1
+* Tue Oct 30 2007 Yuichi Nakamura <ynakam@hitachisoft.jp> 2.2.0-1
 - Version 2.2.0, works on F8.
 - Removed libsepol from requires and buildrequires.
 - In uninstall time, unneeded rules are removed from audit.rules.

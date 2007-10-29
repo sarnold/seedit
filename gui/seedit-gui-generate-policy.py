@@ -98,7 +98,6 @@ class generatePolicyThread(threading.Thread):
 			if self.mDialog.mSkipSearchFlag:
 				if rule and rule.has_key("secclass") and rule.has_key("permission") and syscall!=5:
 					#syscall 5 is open, for open system call, log is not skipped
-					print syscall
 					if rule["secclass"]=="dir" and "search" in rule["permission"]:
 						continue
 			if(rule):
@@ -422,7 +421,6 @@ class seeditGeneratePolicyWindow(seeditCommon):
 				if isRestorecon:
 					value = re.sub("/\*[\s\t]*$","/** ",value)
 					
-				print value
 				if dirFlag:
 					value = re.sub(path ,path+"/* ",value)
 

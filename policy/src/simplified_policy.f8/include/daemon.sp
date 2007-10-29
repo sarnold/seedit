@@ -3,7 +3,7 @@
 
 #Common Access rights for daemons
 
-allow dev_log_t r,w,s;
+allow devlog_t r,w,s;
 allowcom -unix syslogd_t r,w;
 allowtmp -dir /var/run -name auto r,w,s;
 

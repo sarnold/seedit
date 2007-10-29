@@ -63,7 +63,7 @@ initialize_seedit() {
       fi
  fi
  rm /usr/share/seedit/sepolicy/need-init
-
+ /sbin/chkconfig setroubleshoot off
 }
 
 uninstall_seedit() {

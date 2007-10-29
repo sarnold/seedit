@@ -1,4 +1,4 @@
-/dev/log gen_context(system_u:object_r:dev_log_t,s0)
+/dev/log gen_context(system_u:object_r:devlog_t,s0)
 /etc/asound.state gen_context(system_u:object_r:etc_runtime_t,s0)
 /etc/blkid.tab gen_context(system_u:object_r:etc_runtime_t,s0)
 /etc/blkid.tab.old gen_context(system_u:object_r:etc_runtime_t,s0)

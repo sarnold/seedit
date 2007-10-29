@@ -32,4 +32,8 @@ allow system_crond_tmp_t r,s,a;
 
 allowpriv netlink;
 allowpriv cap_sys_tty_config;
+#Add by seedit-generator
+allowcom -ipc initrc_t w;
+allow /etc/selinux/config  r,s;
+allowpriv getsecurity;
 }

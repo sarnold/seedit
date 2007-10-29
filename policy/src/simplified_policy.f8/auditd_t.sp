@@ -24,4 +24,6 @@ allowfs proc_pid_self  w;
 #Add by seedit-generator
 allow /usr/bin/** x,r,s;
 allow /bin/** x,r,s;
+#Add by seedit-generator
+allow /etc/audisp/** r,s;
 }

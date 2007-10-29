@@ -25,8 +25,8 @@ Source0: http://osdn.dl.sourceforge.jp/selpe/23577/%{name}-%{version}.tar.gz
 Source1: seedit-gui.desktop
 Source2: seedit-gui.png
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{betatag}-root-%(%{__id_u} -n)
-BuildRequires:  libselinux-devel >= 1.19, libsepol-devel >= 1.1.1, byacc, flex
-Requires:  checkpolicy, m4, audit, libselinux >= 1.19, libsepol >= 1.1.1
+BuildRequires:  libselinux-devel >= 1.19, byacc, flex
+Requires:  checkpolicy, m4, audit, libselinux >= 1.19
 Provides: seedit-converter = %{version}-%{release}
 
 %description
@@ -125,6 +125,7 @@ if [ $1 = 0 ]; then
 	if [ %{selinuxenabled} ]; then
 		sed -i 's/^SELINUX=.*/SELINUX=permissive/g' %{_sysconfdir}/selinux/config
 	fi
+	sed -i '/# Added by seedit/,/# End of seedit/ d' %{auditrules}
 	touch /.autorelabel
 fi
 
@@ -171,6 +172,8 @@ X based GUI for SELinux Policy Editor
 %changelog
 * Wed Oct 24 2007 Yuichi Nakamura <ynakam@hitachisoft.jp> 2.2.0-1
 - Version 2.2.0, works on F8.
+- Removed libsepol from requires and buildrequires.
+- In uninstall time, unneeded rules are removed from audit.rules.
 
 * Tue Aug 28 2007 Jesse Keating <jkeating@redhat.com> 2.1.1-3
 - Rebuild for ppc32 selinux issue.

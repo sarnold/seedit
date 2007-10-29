@@ -32,7 +32,9 @@ initialize_seedit() {
          cat $AUDITRULES | sed -e 's!-a exit,always -S chroot!!g' > $AUDITRULES.tmp
   mv $AUDITRULES.tmp $AUDITRULES
      
+  echo "# Added by seedit" >> $AUDITRULES
   echo "-a exit,always -S chroot" >> $AUDITRULES
+  echo "# End of seedit" >> $AUDITRULES
  fi
  /sbin/chkconfig auditd on
  

@@ -1,6 +1,7 @@
 You can develop policy for cross development.
 This is useful to write policy for embedded devices.
 
+
 0. Prepare SELinux environment in your target system.
  You need SELinux enabled kernel, libselinux, and SELinux commands.
  You can download libselinux from http://www.nsa.gov/selinux.
@@ -13,6 +14,8 @@ This is useful to write policy for embedded devices.
   
 
 1. INSTALL
+You have to download tar ball of seedit(after 2.2.0).
+
 I assume you install seedit cross development kit under ~/seedit-cross.
 
 $ cd core
@@ -63,6 +66,10 @@ I assume you are in ~/seedit-converter.
  # load_policy
  # restorecon -R /
  
+ Modify files under ./simplified_polcy.
+ These files are  written by SPDL.
+ For SPDL, see http://seedit.sourceforge.net/documentation.html
+ 
 3) When you modify policy
  $ ./seedit-load -v
  will convert SPDL. Conveted policy is outputted in sepolicy/ dir.
@@ -70,9 +77,20 @@ I assume you are in ~/seedit-converter.
  $ ./seedit-load -v -d
  policy is deployed to policy_root/ dir.
  You can copy it /etc/selinux/seedit in your target.
- And you will see useful file /etc/selinux/seedit/fcdiff.
+
+ In below, you  have to work on target.
+ You will see useful file /etc/selinux/seedit/fcdiff.
  In fcdiff file, file names are listed. Files those labels may be changed are listed.
  You can reflect policy change by following commands.
  #load_policy
  # restorecon -f fcdiff -R -v
  
+4) Supporting tools
+   You can use audit2spdl tool.
+   $./audit2spdl -i  <log file> -l 
+   will analyze log file like audit2allow, and generate policy that you need.
+   $./seedit-gui-generate-policy
+   is GUI version of audit2spdl.
+   You can create new domain  by GUI.
+   $./seedit-gui-domain-manager
+

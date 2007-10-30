@@ -28,6 +28,8 @@ from seedit.seedit import *
 
 gMakeFlags="CONFDIR=/etc/seedit/policy OUTDIR=/usr/share/seedit/sepolicy BASEPOLICYDIR=/usr/share/seedit/base_policy MACRODIR=/usr/share/seedit/macros"
 gAuditCtl="/sbin/auditctl"
+gStartStr ="# Added by seedit"
+gEndStr = "# End of seedit"
 
 def getConfinedDomains(filename):
     confinedDomains = []
@@ -72,12 +74,14 @@ def removeAuditChdirFromAuditRulesFile():
 
     lines=fh.readlines()
     lineBuf=[]
-    reg = re.compile("-a exit,always -S chdir")
+    sreg = re.compile(gStartStr)
+    flag = True
     for line in lines:
-        m = reg.search(line)
+        m = sreg.search(line)
         if m:
-            continue
-        lineBuf.append(line)
+            flag = False
+	if flag:
+        	lineBuf.append(line)
 
     fh.close()
 
@@ -126,6 +130,8 @@ def doAuditChdir():
     if confinedDomains==None:
         return
 
+    command = gAuditCtl+" -a exit,always -S chroot"
+    forkExec(command, gVerboseFlag)
     for domain in confinedDomains:
         command = gAuditCtl+" -a exit,always -S chdir -F obj_type="+domain
         command = command +" >/dev/null 2>&1 "
@@ -140,14 +146,14 @@ def doAuditChdir():
 
     lines = fh.readlines()
     lineBuf=[]
-    lineBuf.append("# Added by seedit\n")
     for line in lines:
         lineBuf.append(line)
-    
+    lineBuf.append(gStartStr+"\n")
+    lineBuf.append("-a exit,always -S chroot\n") 
     for domain in confinedDomains:
         s = "-a exit,always -S chdir -F obj_type="+domain+"\n"
         lineBuf.append(s)
-    lineBuf.append("# End of seedit\n")
+    lineBuf.append(gEndStr+"\n")
 
     try:
         fh = open(filename,"w")
@@ -338,7 +344,7 @@ if gBehavior == "remove-audit":
     sys.exit(0)
 
 #Handles logging for chdir syscall
-if gBehavior != "test" and gCross == False:
+if gBehavior not in  ("test","deploy") and gCross == False:
     removeAuditChdir()
     if gAuditChdirFlag==True:
         doAuditChdir()
@@ -355,6 +361,11 @@ elif gBehavior =="test":
     s= doTest()
 elif gBehavior =="deploy":
     s= doDeploy()
+    removeAuditChdir()
+    if gAuditChdirFlag == True and gCross == False:
+	doAuditChdir()
+    if gAuditChdirAllFlag == True and gCross == False:
+	doAuditChdirAll()
 
 if s<0:
     sys.exit(1)

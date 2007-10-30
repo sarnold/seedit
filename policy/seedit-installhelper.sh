@@ -26,18 +26,7 @@ initialize_seedit() {
         # Make binary policy into /usr/share/seedit/sepolicy
  /usr/sbin/seedit-load -d -v
  
- ###Setup auditd
- #Register dummy audit rule, this is necessary to display PATH entry in log 
- if [ -e $AUDITRULES ]; then
-         cat $AUDITRULES | sed -e 's!-a exit,always -S chroot!!g' > $AUDITRULES.tmp
-  mv $AUDITRULES.tmp $AUDITRULES
-     
-  echo "# Added by seedit" >> $AUDITRULES
-  echo "-a exit,always -S chroot" >> $AUDITRULES
-  echo "# End of seedit" >> $AUDITRULES
- fi
  /sbin/chkconfig auditd on
- 
 
  ### Config restorecond
  # label of ld.so.cache can be broken, so have to watch

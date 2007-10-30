@@ -140,12 +140,14 @@ def doAuditChdir():
 
     lines = fh.readlines()
     lineBuf=[]
+    lineBuf.append("# Added by seedit\n")
     for line in lines:
         lineBuf.append(line)
     
     for domain in confinedDomains:
         s = "-a exit,always -S chdir -F obj_type="+domain+"\n"
         lineBuf.append(s)
+    lineBuf.append("# End of seedit\n")
 
     try:
         fh = open(filename,"w")

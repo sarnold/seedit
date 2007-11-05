@@ -48,6 +48,8 @@ deny /dev/kmem;
 deny /dev/mem;
 deny /dev/port;
 deny /var/log;
+deny /etc/seedit/**;
+deny /etc/selinux/seedit/**;
 
 allow /usr/share/locale/** r,s;
 

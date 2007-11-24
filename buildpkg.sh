@@ -125,8 +125,8 @@ if [ -e seedit-$VERSION.tar.gz ]
 then
  rm seedit-$VERSION.tar.gz
 fi
-mv seedit-$VERSION/gui/desktop/seedit-gui.desktop $RPMROOT/SOURCES
-mv seedit-$VERSION/gui/icons/seedit-gui.png $RPMROOT/SOURCES
+cp seedit-$VERSION/gui/desktop/seedit-gui.desktop $RPMROOT/SOURCES
+cp seedit-$VERSION/gui/icons/seedit-gui.png $RPMROOT/SOURCES
 tar czvf seedit-$VERSION$BETA.tar.gz seedit-$VERSION
 cp seedit-$VERSION$BETA.tar.gz archive
 mv seedit-$VERSION$BETA.tar.gz $RPMROOT/SOURCES

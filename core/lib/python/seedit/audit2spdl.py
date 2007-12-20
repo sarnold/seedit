@@ -728,6 +728,10 @@ def __genFileAllow(rule,lines,index,domdoc):
     spRule["name"]=rule["name"]
     spRule["secclass"]=rule["secclass"]
 
+    ## convert path to directory name
+    if rule["secclass"] == "dir" and path != "":
+        if re.search("^dir_", rule["type"]):
+            path = path +"/"        
          
     ##make grab
     if rule["secclass"] == "dir":

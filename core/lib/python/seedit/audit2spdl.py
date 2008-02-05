@@ -91,7 +91,7 @@ def readLog(input, loadPolicyFlag):
                     n = popNum(line) # Count number of related log
                     if  n > 0:
                         for lp in range(n):
-                            linebuf.pop()
+                            lineBuf.pop()
                     
                     continue            
             

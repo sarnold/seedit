@@ -54,7 +54,7 @@ You will see following files and directories under ~/seedit-cross.
 I assume you are in ~/seedit-converter.
 
 1) Install minimum policy to target system.
- $ ./seedit-load -cd
+ $ ./seedit-load -v -d
  Then you will see policy_root dir.
  in policy_root, files that can be installed under /etc/selinux/seedit
  is generated.

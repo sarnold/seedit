@@ -30,6 +30,9 @@ gMakeFlags="CONFDIR=/etc/seedit/policy OUTDIR=/usr/share/seedit/sepolicy BASEPOL
 gAuditCtl="/sbin/auditctl"
 gStartStr ="# Added by seedit"
 gEndStr = "# End of seedit"
+gConfinedDomainFile = "/usr/share/seedit/sepolicy/confined_domains"
+if gCross:
+	gConfinedDomainFile = "./sepolicy/confined_domains"
 
 def getConfinedDomains(filename):
     confinedDomains = []
@@ -108,7 +111,7 @@ def forkExec(command,verbose=False):
 
 def removeAuditChdir():
      removeAuditChdirFromAuditRulesFile()
-     confinedDomains=getConfinedDomains("/usr/share/seedit/sepolicy/confined_domains")
+     confinedDomains=getConfinedDomains(gConfinedDomainFile)
      command = gAuditCtl+" -d exit,always -S chdir"+"  >/dev/null 2>&1 "
      
      forkExec(command,gVerboseFlag)
@@ -126,7 +129,7 @@ def removeAuditChdir():
 #audit chdir syscall to obtain full path when program chroots
 #audit only for confined domains
 def doAuditChdir():
-    confinedDomains=getConfinedDomains("/usr/share/seedit/sepolicy/confined_domains")
+    confinedDomains=getConfinedDomains(gConfinedDomainFile)
     if confinedDomains==None:
         return
 
@@ -361,7 +364,8 @@ elif gBehavior =="test":
     s= doTest()
 elif gBehavior =="deploy":
     s= doDeploy()
-    removeAuditChdir()
+    if gCross == False:
+        removeAuditChdir()
     if gAuditChdirFlag == True and gCross == False:
 	doAuditChdir()
     if gAuditChdirAllFlag == True and gCross == False:

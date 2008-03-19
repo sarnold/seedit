@@ -719,6 +719,13 @@ int register_tmp_fs_acl(char *fs, char *e_name, int permission_flag){
   return 0;
 }
 
+void register_type(char *label) {
+    char path[] = "DUMMY_FILE_NAME";
+    if (tmp_label_table == NULL)
+        tmp_label_table = create_hash_table(LABEL_LIST_SIZE / 2);
+    insert_element(tmp_label_table, strdup(path), label);
+    return;
+}
 /*
 register allowtmp
 if permission_flag is true, 

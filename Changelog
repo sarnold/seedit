@@ -1,3 +1,7 @@
+*2008/03/19
+ - New SPDL syntax "type".
+ - Bugfix in load_policy for cross development
+
 *2007/12/20
 Fixed bug in audit2spdl
 

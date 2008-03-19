@@ -55,6 +55,7 @@ digit   [0-9]
 domain {return(DOMAIN);}
 role   {return(ROLE);}
 user   {return(USER);}
+type   {return(TYPE);}
 allow {return(ALLOW);}
 allowtmp {return(ALLOWTMP);}
 allownet {return(ALLOWNET);}

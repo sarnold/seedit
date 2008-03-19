@@ -205,6 +205,18 @@ program /usr/sbin/httpd;
        mean nothing in more strict policy where there is not unconfined domain.
 \end{enumerate}
 
+\section{Define type label:type}
+Note: This is an advanced feature. 
+You can define type manually, and can give defined type by chcon.
+\begin{enumerate}
+	\item Syntax
+		\begin{enumerate}
+		\item type {\it label};
+		\end{enumerate}
+	\item Meaning\\
+		Define new type named {\it label}.
+\end{enumerate}
+
 
 \section{Access control to normal files:allow/deny}
 \subsection{allow}\label{section:allow}
@@ -215,7 +227,7 @@ program /usr/sbin/httpd;
 	\end{enumerate}
   \item Meaning\\
 	\begin{enumerate}
-	 \item  Allow access to file.
+	 \item  Allow access to file. {\it label} named by type syntax can also be used.
 	\end{enumerate}
   \item Specifying filename\\
 	\begin{itemize}

@@ -37,6 +37,7 @@ int register_comment(char *);
 int register_role(char *);
 int register_user(char *);
 void register_domain(char *, int);
+void register_type(char *);
 void register_program(char **paths_list, int create_domain_name_flag);
 int register_file_rule(char *);
 int register_file_deny(char *);

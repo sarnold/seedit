@@ -6,12 +6,21 @@ This is useful to write policy for embedded devices.
  You need SELinux enabled kernel, libselinux, and SELinux commands.
  You can download libselinux from http://www.nsa.gov/selinux.
    To compile libselinux, you might have to set __thread as NULL like below.
-   $ make ARCH=<your arch> CC=<your cross compiler> CFLAGS=-D__thread=
-  
- You can install SELinux commands easily by using BusyBox.
- BusyBox 1.7.1 supports SELinux commands.
-  Enable SELinux in build option and you have to enable load_policy and setfiles and getenforce, setenforce.
-  
+   $ make ARCH=<your arch> CC=<your cross compiler> CFLAGS=-D__thread= EMBEDDED=y
+   EMBEDDED=y is option to make small libselinux and remove dependency on libsepol, 
+   it is supported from libsepol 2.0.35.
+
+   And you have to cross-compile and install libsepol in your cross-compiling host, 
+   BusyBox requires libsepol on build time.
+   $ make CC=<your cross compiler>
+   and copy libsepol.so and libsepol.so.1 to LIBDIR for your cross-compiler.
+   * Note:
+    If you use libselinux 2.0.35 or later you do not have to transfer libsepol to your target board.
+    You only need to install libsepol on your cross-compile host machine.
+
+   You can install SELinux commands easily by using BusyBox.
+   BusyBox 1.9.1 supports SELinux commands.
+   Enable SELinux in build option and you have to enable load_policy and setfiles and getenforce, setenforce.
 
 1. INSTALL
 You have to download tar ball of seedit(after 2.2.0).

@@ -14,6 +14,7 @@ allow /etc/resolv.conf r,s;
 allow /etc/environment r,s;
 allow /etc/hosts.allow r,s;
 allow /etc/hosts.deny r,s;
+allow etc_runtime_t r,s;
 #Protect tmp file
 include tmpfile.sp
 

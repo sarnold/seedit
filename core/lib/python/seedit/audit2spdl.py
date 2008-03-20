@@ -653,6 +653,10 @@ returns /usr/foo/share/foo
 Error: returns None
 """
 def findNameInPath(path,name):
+    if os.path.isabs(path):
+        pass
+    else:
+        return None
    
     (head,tail)=os.path.split(path)
 
@@ -1615,7 +1619,8 @@ def allowfileStr(spRule):
     
     path = spRule["path"]
     if path =="":
-        str = "#"+str
+	if gCross == False:
+            str = "#"+str
         str = _("#Failed to generate, because failed to obtain fullpath.\n") +str
 
     if gRestoreconFlag:

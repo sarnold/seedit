@@ -246,7 +246,7 @@ def doLoad():
 
 def doDeploy():
     if gCross:
-        loadCommand = "./seedit-cross.sh build 2>&1; ./seedit-cross.sh diff; ./seedit-cross.sh install 2>&1" 
+        loadCommand = "./seedit-cross.sh build 2>&1 && ./seedit-cross.sh diff; ./seedit-cross.sh install 2>&1" 
 
     else:
         loadCommand = "cd /usr/share/seedit; make install "+gMakeFlags+" 2>&1" 

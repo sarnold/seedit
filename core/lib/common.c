@@ -810,6 +810,16 @@ char *match_home_dir(char *path, char **homedir_list){
   return NULL;
 }
 
+int in_homedir_list(char *path, char **homedir_list){
+ int i;
+ for (i=0 ; homedir_list[i]!=NULL; i++) {
+     if(strcmp(path,homedir_list[i]) == 0) {
+         return 1;
+     }  
+ } 
+ return 0;
+}
+
 int is_home_dir(char *path, char **homedir_list){
   if (match_home_dir(path, homedir_list)==NULL)
     return 0;

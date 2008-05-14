@@ -1952,6 +1952,8 @@ void out_domain_trans(FILE *outfp) {
 	int len;
 	int disable_trans_defined=0;
 	char *boolean_name=NULL;
+	char *special_domain_list[] = {"unconfined_domain", "domain", NULL};
+
 	/* print domain_auto_trans */
 	for (i = 0; i < gDomain_trans_rule_num; i++) {
 		/* search target path's file label */
@@ -1980,14 +1982,16 @@ void out_domain_trans(FILE *outfp) {
 		name = strdup(t.parent);
 		len = strlen(name);	
 		/* convert "_r" to "_t" */
-		if(strcmp(name,"unconfined_domain")!=0){
+		//if(strcmp(name,"unconfined_domain")!=0){
+		if(!check_exist_in_list(name, special_domain_list)) {
 			if (len < 2){
 				fprintf(stderr, "bug line %d\n", __LINE__);
 			}
 			name[len-1] = 't';
 		}
        
-		if(strcmp(name,"unconfined_domain")==0){
+//		if(strcmp(name,"unconfined_domain")==0){
+		if(check_exist_in_list(name, special_domain_list)) {
 			;
 		} else if (search_element(domain_hash_table, name) == NULL) {
 			fprintf(stderr, "Warning: domain %s does not exists for \"domain_trans %s %s\" rule. Skipped.\n", name, t.parent,t.path);

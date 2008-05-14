@@ -1071,6 +1071,18 @@ char *resolve_domain_conflict(char *path){
   return new_domain;
 }
 
+void register_program_entry_force(char **paths_list)
+{
+  char **list = NULL;
+  char *domain = "domain";
+  DOMAIN *current;
+  current =  search_domain_hash(current_domain);
+  current -> program_flag = 1;
+  list=add_strlist(list, domain,1); 
+  register_domain_trans(list ,paths_list);
+ 
+}
+
 void register_program(char **paths_list, int create_domain_name_flag){
   char **list=NULL;
   char *domain="unconfined_domain";

@@ -104,6 +104,7 @@ extern int yylex(void);
 %token DENY
 %token DOMAIN_TRANS
 %token PROGRAM
+%token PROGRAM_ENTRY_FORCE
 %token PATH
 %token GLOBAL_DOMAIN
 %token IDENTIFIER
@@ -206,6 +207,7 @@ DENY_DEF :DENY PATH ';'{register_file_deny($2);}
 DOMAIN_TRANS_DEFS:DOMAIN_TRANS_DEF
                  |DOMAIN_TRANS_DEFS DOMAIN_TRANS_DEF
                  |PROGRAM_DEF
+                 |PROGRAM_ENTRY_FORCE_DEF
 ;
 
 DOMAIN_TRANS_DEF:DOMAIN_TRANS DOMAINS_DEF PATHS_DEF ';' {register_domain_trans(domains_list,paths_list);}
@@ -214,6 +216,9 @@ DOMAIN_TRANS_DEF:DOMAIN_TRANS DOMAINS_DEF PATHS_DEF ';' {register_domain_trans(d
 ;
 
 PROGRAM_DEF:PROGRAM PATHS_DEF ';' {register_program(paths_list,0);}
+;
+
+PROGRAM_ENTRY_FORCE_DEF:PROGRAM_ENTRY_FORCE PATHS_DEF ';' {register_program_entry_force(paths_list);}
 ;
 
 /*domain name is automatically defined*/

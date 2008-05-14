@@ -1,3 +1,10 @@
+*2008/05/14
+- New syntax program_entry_force
+  Example:
+  domain foo_t;
+  program_entry_force /bin/foo;
+  /bin/foo is assigned foo_t when executed from any domain.
+
 *2008/03/19
  - New SPDL syntax "type".
  - Bugfix in load_policy for cross development

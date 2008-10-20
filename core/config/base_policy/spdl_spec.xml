@@ -1501,6 +1501,56 @@
       </rules>
     </option>
 
+
+    <option suboption="recv" value="raw">
+      <macro value="allow_network_raw_recv"/>
+      <rules>
+        <rule value="allow">
+          <domain value="domain"/>
+            <type value="type"/>
+            <secclass value="rawip_socket"/>
+          <permission value="bind"/><permission value="listen"/><permission value="accept"/><permission value="connect"/><permission value="create"/><permission value="shutdown"/><permission value="getattr"/><permission value="getopt"/><permission value="setopt"/><permission value="ioctl"/><permission value="lock"/><permission value="setattr"/>
+        </rule>
+         <rule value="allow">
+          <domain value="domain"/>
+          <type value="type"/>
+         <secclass value="rawip_socket"/>
+          <permission value="read"/>
+          </rule>
+  	  <rule value="allow">
+          <domain value="domain"/>
+          <type value="self"/>
+          <secclass value="capability"/>
+          <permission value="net_raw"/>
+          </rule>
+          </rules>
+    </option>
+
+    <option suboption="send" value="raw">
+      <macro value="allow_network_raw_send"/>
+      <rules>
+        <rule value="allow">
+          <domain value="domain"/>
+            <type value="type"/>
+            <secclass value="rawip_socket"/>
+          <permission value="bind"/><permission value="listen"/><permission value="accept"/><permission value="connect"/><permission value="create"/><permission value="shutdown"/><permission value="getattr"/><permission value="getopt"/><permission value="setopt"/><permission value="ioctl"/><permission value="lock"/><permission value="setattr"/>
+        </rule>
+         <rule value="allow">
+          <domain value="domain"/>
+          <type value="type"/>
+         <secclass value="rawip_socket"/>
+          <permission value="write"/>
+          <permission value="append"/>
+          </rule>
+  	  <rule value="allow">
+          <domain value="domain"/>
+          <type value="self"/>
+          <secclass value="capability"/>
+          <permission value="net_raw"/>
+          </rule>
+          </rules>
+    </option>
+
     <option suboption="use" value="raw">
       <macro value="allow_network_raw_use"/>
       <rules>

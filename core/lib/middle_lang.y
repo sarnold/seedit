@@ -254,8 +254,8 @@ ALLOWNET PROTOCOLOPT TCPUDP_DEF DOMAINOPT DOMAINS_DEF USE ';' {register_net_sock
 domains_list = add_strlist(domains_list,"domain",1);  
 register_net_sock_acl(ALLOW_RULE, NET_RAW,NET_USE,NULL, domains_list);  
 }
-|ALLOWNET PROTOCOLOPT RAW PORT_PERM_DEF ';' {
-register_net_sock_acl(ALLOW_RULE, NET_RAW, behavior, NULL, NULL);
+|ALLOWNET PROTOCOLOPT RAW SEND_RECV_PERM_DEF ';' {
+register_net_sock_acl(ALLOW_RULE, NET_RAW, permission, NULL, NULL);
 }
 /*allownet -netif <nic name> send|recv*/
 |ALLOWNET PROTOCOLOPT PROTOCOL_DEF NETIFOPT IDENTIFIER_LIST_DEF SEND_RECV_PERM_DEF';' {register_net_netif_acl(ALLOW_RULE, protocol,string_list,permission);}

@@ -502,10 +502,10 @@ static void out_raw_socket_rule(FILE *outfp, NET_SOCKET_RULE rule){
   char *domain;
   domain = rule.domain->name;
   if(rule.protocol & NET_RAW){
-    if(rule.behavior & NET_SERVER){
+    if(rule.behavior & NET_SEND){
       fprintf(outfp,"allow_network_raw_send(%s,domain)\n",domain);
     }
-    if(rule.behavior & NET_CLIENT){
+    if(rule.behavior & NET_RECV){
       fprintf(outfp,"allow_network_raw_recv(%s,domain)\n",domain);
     }
     if(rule.behavior & NET_USE){

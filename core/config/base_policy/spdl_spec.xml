@@ -29,6 +29,12 @@
 	</rule>
 	<rule disabled="yes" value="allow">
 	  <domain value="global"/>
+	  <type value="self"/>
+	  <secclass value="capability2"/>
+	  <permission value="*"/>
+	</rule>
+	<rule disabled="yes" value="allow">
+	  <domain value="global"/>
 	  <type value="global"/>
 	  <secclass value="netlink_firewall_socket"/>
 	  <permission value="nlmsg_read"/>
@@ -123,6 +129,7 @@
 	  <secclass value="capability"/>
 	  <permission value="lease"/>
 	</rule>
+
 	<rule value="allow">
 	  <domain value="file_type"/>
 	  <type value="fs_type"/>
@@ -923,6 +930,17 @@
 	</rule>
       </rules>
     </option>
+  <option category="priv" value="mmap_zero">
+      <macro value="allow_admin_mmap_zero"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="self"/>
+	  <secclass value="memprotect"/>
+	  <permission value="mmap_zero"/>
+	</rule>
+      </rules>
+    </option>
 
 
     <option category="priv" value="quotaon">
@@ -1123,6 +1141,7 @@
 	  <secclass value="dir"/>
 	  <permission value="read"/>
 	  <permission value="search"/>
+	  <permission value="open"/>
 	</rule>
       </rules>
     </option>
@@ -1137,6 +1156,7 @@
 	  <permission value="read"/>
 	  <permission value="lock"/>
 	  <permission value="ioctl"/>
+	  <permission value="open"/>
 	</rule>
 	<rule value="allow">
 	  <domain value="domain"/>
@@ -1144,6 +1164,7 @@
 	  <secclass value="dir"/>
 	  <permission value="lock"/>
 	  <permission value="ioctl"/>
+	  <permission value="open"/>
 	</rule>
       </rules>
     </option>
@@ -1157,12 +1178,14 @@
 	  <type value="type"/>
 	  <secclass value="dir"/><secclass value="file"/><secclass value="lnk_file"/><secclass value="sock_file"/><secclass value="fifo_file"/>
 	  <permission value="execute"/>
+	  <permission value="open"/>
 	</rule>
 	<rule value="allow">
 	  <domain value="domain"/>
 	  <type value="type"/>
 	  <secclass value="file"/>
 	  <permission value="execute_no_trans"/>
+	  <permission value="open"/>
 	</rule>
       </rules>
     </option>
@@ -1183,6 +1206,7 @@
 	  <permission value="unlink"/>
 	  <permission value="link"/>
 	  <permission value="rename"/>
+	  <permission value="open"/>
 	</rule>
 	<rule value="allow">
 	  <domain value="domain"/>
@@ -1190,6 +1214,7 @@
 	  <secclass value="dir"/>
 	  <permission value="reparent"/>
 	  <permission value="rmdir"/>
+	  <permission value="open"/>
 	</rule>
       </rules>
     </option>
@@ -1203,6 +1228,7 @@
 	  <type value="type"/>
 	  <secclass value="file"/><secclass value="lnk_file"/><secclass value="sock_file"/><secclass value="fifo_file"/>
 	  <permission value="write"/>
+	  <permission value="open"/>
 	</rule>
       </rules>
     </option>
@@ -1218,6 +1244,7 @@
 	  <type value="type"/>
 	  <secclass value="file"/><secclass value="lnk_file"/><secclass value="sock_file"/><secclass value="fifo_file"/>
 	  <permission value="append"/>
+	  <permission value="open"/>
 	</rule>
       </rules>
     </option>
@@ -1236,6 +1263,7 @@
 	  <permission value="rmdir"/>
 	  <permission value="write"/>
 	  <permission value="rename"/>
+	  <permission value="open"/>
 	</rule>
 	<rule value="allow">
 	  <domain value="domain"/>
@@ -1243,6 +1271,7 @@
 	  <secclass value="file"/><secclass value="lnk_file"/><secclass value="sock_file"/><secclass value="fifo_file"/>
 	  <permission value="unlink"/>
 	  <permission value="rename"/>
+	  <permission value="open"/>
 	</rule>
       </rules>
     </option>
@@ -1261,7 +1290,7 @@
 	  <permission value="create"/>
 	  <permission value="write"/>
 	  <permission value="link"/>
-
+	  <permission value="open"/>
 	</rule>
 	<rule value="allow">
 	  <domain value="domain"/>
@@ -1269,7 +1298,7 @@
 	  <secclass value="file"/><secclass value="lnk_file"/><secclass value="sock_file"/><secclass value="fifo_file"/>
 	  <permission value="create"/>
 	  <permission value="link"/>
-
+	  <permission value="open"/>
 	</rule>
       </rules>
     </option>
@@ -1284,6 +1313,7 @@
 	  <type value="type"/>
 	  <secclass value="dir"/><secclass value="file"/><secclass value="lnk_file"/><secclass value="sock_file"/><secclass value="fifo_file"/>
 	  <permission value="setattr"/>
+	  <permission value="open"/>
 	</rule>
       </rules>
     </option>
@@ -1296,6 +1326,7 @@
 	  <type value="type"/>
 	  <secclass value="file"/>
 	  <permission value="execmod"/>
+	  <permission value="open"/>
 	</rule>
       </rules>
     </option>
@@ -1371,6 +1402,7 @@
 	  <permission value="ioctl"/>
 	  <permission value="read"/>
 	  <permission value="lock"/>
+	  <permission value="open"/>
 	</rule>
       </rules>
     </option>
@@ -1382,6 +1414,7 @@
 	  <type value="type"/>
 	  <secclass value="chr_file"/><secclass value="blk_file"/>
 	  <permission value="execute"/>
+	  <permission value="open"/>
 	</rule>
       </rules>
     </option>
@@ -1396,6 +1429,7 @@
 	  <permission value="write"/>
 	  <permission value="setattr"/>
 	  <permission value="append"/>
+	  <permission value="open"/>
 	</rule>
       </rules>
     </option>
@@ -1409,6 +1443,7 @@
 	  <type value="type"/>
 	  <secclass value="chr_file"/><secclass value="blk_file"/>
 	  <permission value="write"/>
+	  <permission value="open"/>
 	</rule>
       </rules>
     </option>
@@ -1421,6 +1456,7 @@
 	  <type value="type"/>
 	  <secclass value="chr_file"/><secclass value="blk_file"/>
 	  <permission value="append"/>
+	  <permission value="open"/>
 	</rule>
       </rules>
     </option>    
@@ -1433,6 +1469,7 @@
 	  <secclass value="chr_file"/><secclass value="blk_file"/>
 	  <permission value="unlink"/>
 	  <permission value="rename"/>
+	  <permission value="open"/>
 	</rule>
       </rules>
     </option>
@@ -1446,6 +1483,7 @@
 	  <secclass value="chr_file"/><secclass value="blk_file"/>
 	  <permission value="create"/>
 	  <permission value="link"/>
+	  <permission value="open"/>
 	</rule>
       </rules>
     </option>
@@ -1651,6 +1689,7 @@
 	  <type value="type"/>
 	  <secclass value="node"/>
 	  <permission value="tcp_send"/>
+	  <permission value="sendto"/>
 	</rule>
       </rules>
     </option>
@@ -1662,6 +1701,7 @@
 	  <type value="type"/>
 	  <secclass value="node"/>
 	  <permission value="udp_send"/>
+	  <permission value="sendto"/>
 	</rule>
       </rules>
     </option>
@@ -1673,6 +1713,7 @@
 	  <type value="type"/>
 	  <secclass value="node"/>
 	  <permission value="rawip_send"/>
+	  <permission value="sendto"/>
 	</rule>
       </rules>
     </option>
@@ -1685,6 +1726,7 @@
 	  <type value="type"/>
 	  <secclass value="node"/>
 	  <permission value="tcp_recv"/>
+	  <permission value="recvfrom"/>
 	</rule>
       </rules>
     </option>
@@ -1696,6 +1738,7 @@
 	  <type value="type"/>
 	  <secclass value="node"/>
 	  <permission value="udp_recv"/>
+	  <permission value="recvfrom"/>
 	</rule>
       </rules>
     </option>
@@ -1707,6 +1750,7 @@
 	  <type value="type"/>
 	  <secclass value="node"/>
 	  <permission value="rawip_recv"/>
+	  <permission value="recvfrom"/>
 	</rule>
       </rules>
     </option>

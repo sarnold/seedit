@@ -25,7 +25,7 @@
 	  <type value="global"/>
 	  <secclass value="unix_stream_socket"/>
 	  <permission value="newconn"/>
-	  <permission value="acceptfrom"/>
+c	  <permission value="acceptfrom"/>
 	</rule>
 	<rule disabled="yes" value="allow">
 	  <domain value="global"/>
@@ -33,6 +33,16 @@
 	  <secclass value="capability2"/>
 	  <permission value="*"/>
 	</rule>
+	<rule disabled="yes" value="allow">
+	  <domain value="global"/>
+	  <type value="self"/>
+	  <secclass value="packet"/>
+	  <permission value="flow_in"/>
+	  <permission value="flow_out"/>
+	</rule>
+
+	
+
 	<rule disabled="yes" value="allow">
 	  <domain value="global"/>
 	  <type value="global"/>
@@ -262,11 +272,20 @@
       <rules>
         <rule value="allow">
 	  <domain value="global"/>
-	  <type value="unlabeled_t"/>
+	  <type value="global"/>
 	  <secclass value="packet"/>
 	  <permission value="send"/>
 	  <permission value="recv"/>
+	  <permission value="forward_in"/>
+	  <permission value="forward_out"/>
         </rule>
+	<rule value="allow">
+	  <domain value="global"/>
+	  <type value="global"/>
+	  <secclass value="peer"/>
+	  <permission value="*"/>
+        </rule>	
+
 	<rule value="allow">
 	  <domain value="global"/>
 	  <type value="self"/>
@@ -941,8 +960,17 @@
 	</rule>
       </rules>
     </option>
-
-
+  <option category="priv" value="sefcap">
+      <macro value="allow_admin_setfcap"/>
+      <rules>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="self"/>
+	  <secclass value="capability"/>
+	  <permission value="setfcap"/>
+	</rule>
+      </rules>
+    </option>
     <option category="priv" value="quotaon">
       <macro value="allow_admin_quotaon"/>
       <rules>
@@ -1156,8 +1184,15 @@
 	  <permission value="read"/>
 	  <permission value="lock"/>
 	  <permission value="ioctl"/>
+	</rule>
+	<rule value="allow">
+	  <domain value="domain"/>
+	  <type value="type"/>
+	  <secclass value="file"/><secclass value="fifo_file"/>
 	  <permission value="open"/>
 	</rule>
+	
+
 	<rule value="allow">
 	  <domain value="domain"/>
 	  <type value="type"/>
@@ -1178,14 +1213,12 @@
 	  <type value="type"/>
 	  <secclass value="dir"/><secclass value="file"/><secclass value="lnk_file"/><secclass value="sock_file"/><secclass value="fifo_file"/>
 	  <permission value="execute"/>
-	  <permission value="open"/>
 	</rule>
 	<rule value="allow">
 	  <domain value="domain"/>
 	  <type value="type"/>
 	  <secclass value="file"/>
 	  <permission value="execute_no_trans"/>
-	  <permission value="open"/>
 	</rule>
       </rules>
     </option>
@@ -1206,7 +1239,6 @@
 	  <permission value="unlink"/>
 	  <permission value="link"/>
 	  <permission value="rename"/>
-	  <permission value="open"/>
 	</rule>
 	<rule value="allow">
 	  <domain value="domain"/>
@@ -1214,7 +1246,6 @@
 	  <secclass value="dir"/>
 	  <permission value="reparent"/>
 	  <permission value="rmdir"/>
-	  <permission value="open"/>
 	</rule>
       </rules>
     </option>
@@ -1228,13 +1259,9 @@
 	  <type value="type"/>
 	  <secclass value="file"/><secclass value="lnk_file"/><secclass value="sock_file"/><secclass value="fifo_file"/>
 	  <permission value="write"/>
-	  <permission value="open"/>
 	</rule>
       </rules>
     </option>
-
-    
-
 
     <option value="a">
       <macro value="allow_file_a"/>
@@ -1244,7 +1271,6 @@
 	  <type value="type"/>
 	  <secclass value="file"/><secclass value="lnk_file"/><secclass value="sock_file"/><secclass value="fifo_file"/>
 	  <permission value="append"/>
-	  <permission value="open"/>
 	</rule>
       </rules>
     </option>
@@ -1263,7 +1289,6 @@
 	  <permission value="rmdir"/>
 	  <permission value="write"/>
 	  <permission value="rename"/>
-	  <permission value="open"/>
 	</rule>
 	<rule value="allow">
 	  <domain value="domain"/>
@@ -1271,13 +1296,9 @@
 	  <secclass value="file"/><secclass value="lnk_file"/><secclass value="sock_file"/><secclass value="fifo_file"/>
 	  <permission value="unlink"/>
 	  <permission value="rename"/>
-	  <permission value="open"/>
 	</rule>
       </rules>
     </option>
-
-
-
 
     <option value="c">
       <macro value="allow_file_c"/>
@@ -1290,7 +1311,6 @@
 	  <permission value="create"/>
 	  <permission value="write"/>
 	  <permission value="link"/>
-	  <permission value="open"/>
 	</rule>
 	<rule value="allow">
 	  <domain value="domain"/>
@@ -1298,7 +1318,6 @@
 	  <secclass value="file"/><secclass value="lnk_file"/><secclass value="sock_file"/><secclass value="fifo_file"/>
 	  <permission value="create"/>
 	  <permission value="link"/>
-	  <permission value="open"/>
 	</rule>
       </rules>
     </option>
@@ -1313,7 +1332,6 @@
 	  <type value="type"/>
 	  <secclass value="dir"/><secclass value="file"/><secclass value="lnk_file"/><secclass value="sock_file"/><secclass value="fifo_file"/>
 	  <permission value="setattr"/>
-	  <permission value="open"/>
 	</rule>
       </rules>
     </option>
@@ -1326,7 +1344,6 @@
 	  <type value="type"/>
 	  <secclass value="file"/>
 	  <permission value="execmod"/>
-	  <permission value="open"/>
 	</rule>
       </rules>
     </option>
@@ -1414,7 +1431,6 @@
 	  <type value="type"/>
 	  <secclass value="chr_file"/><secclass value="blk_file"/>
 	  <permission value="execute"/>
-	  <permission value="open"/>
 	</rule>
       </rules>
     </option>
@@ -1429,7 +1445,6 @@
 	  <permission value="write"/>
 	  <permission value="setattr"/>
 	  <permission value="append"/>
-	  <permission value="open"/>
 	</rule>
       </rules>
     </option>
@@ -1443,7 +1458,6 @@
 	  <type value="type"/>
 	  <secclass value="chr_file"/><secclass value="blk_file"/>
 	  <permission value="write"/>
-	  <permission value="open"/>
 	</rule>
       </rules>
     </option>
@@ -1456,7 +1470,6 @@
 	  <type value="type"/>
 	  <secclass value="chr_file"/><secclass value="blk_file"/>
 	  <permission value="append"/>
-	  <permission value="open"/>
 	</rule>
       </rules>
     </option>    
@@ -1469,7 +1482,6 @@
 	  <secclass value="chr_file"/><secclass value="blk_file"/>
 	  <permission value="unlink"/>
 	  <permission value="rename"/>
-	  <permission value="open"/>
 	</rule>
       </rules>
     </option>
@@ -1483,7 +1495,6 @@
 	  <secclass value="chr_file"/><secclass value="blk_file"/>
 	  <permission value="create"/>
 	  <permission value="link"/>
-	  <permission value="open"/>
 	</rule>
       </rules>
     </option>

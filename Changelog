@@ -1,3 +1,7 @@
+*2009/01/12 
+- Support new permission in kernel 2.6.27
+
+	
 *2008/10/20
 - allownet -protocol raw send,recv support
 

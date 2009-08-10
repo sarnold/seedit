@@ -105,6 +105,7 @@ extern int yylex(void);
 %token DOMAIN_TRANS
 %token PROGRAM
 %token PROGRAM_ENTRY_FORCE
+%token CLASS
 %token PATH
 %token GLOBAL_DOMAIN
 %token IDENTIFIER
@@ -208,6 +209,7 @@ DOMAIN_TRANS_DEFS:DOMAIN_TRANS_DEF
                  |DOMAIN_TRANS_DEFS DOMAIN_TRANS_DEF
                  |PROGRAM_DEF
                  |PROGRAM_ENTRY_FORCE_DEF
+                 |CLASS_DEF
 ;
 
 DOMAIN_TRANS_DEF:DOMAIN_TRANS DOMAINS_DEF PATHS_DEF ';' {register_domain_trans(domains_list,paths_list);}
@@ -217,6 +219,8 @@ DOMAIN_TRANS_DEF:DOMAIN_TRANS DOMAINS_DEF PATHS_DEF ';' {register_domain_trans(d
 
 PROGRAM_DEF:PROGRAM PATHS_DEF ';' {register_program(paths_list,0);}
 ;
+
+CLASS_DEF:CLASS FILENAME ';' {register_class($2);}
 
 PROGRAM_ENTRY_FORCE_DEF:PROGRAM_ENTRY_FORCE PATHS_DEF ';' {register_program_entry_force(paths_list);}
 ;

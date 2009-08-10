@@ -274,6 +274,15 @@ typedef struct trans_rule_t
 	int		auto_flag;	/* if the transition is "domain_auto_trans",then 1 */
 } TRANS_RULE;
 
+
+/*For domain trans by class statements*/
+typedef struct class_trans_rule_t
+{
+  char *parent;
+  char *entrypoint;
+  char *child;
+} CLASS_TRANS_RULE;
+
 /**
  *  association of file with label
  */
@@ -359,6 +368,9 @@ extern int g_entry_point_array_num;
  */
 extern TRANS_RULE *gDomain_trans_rules;			/* the body is in action.c			*/
 extern int gDomain_trans_rule_num;
+
+extern CLASS_TRANS_RULE *gClass_trans_rules;
+extern int gClass_trans_rule_num;
 
 /**
  *  relationship between user adn role

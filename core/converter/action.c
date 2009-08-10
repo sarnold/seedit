@@ -959,6 +959,9 @@ free_domain_tab()
 TRANS_RULE *gDomain_trans_rules=NULL;
 int gDomain_trans_rule_num=0;
 
+CLASS_TRANS_RULE *gClass_trans_rules=NULL;
+int gClass_trans_rule_num=0;
+
 /**
  *  @name:	print_domain_trans
  *  @about:	print domai trans rule
@@ -1126,6 +1129,53 @@ void register_program(char **paths_list, int create_domain_name_flag){
   register_domain_trans(list ,paths_list);
  
 }
+
+char *get_class_label(char *class){
+  int len;
+  int i;
+  char *result;
+  
+  len = strlen(class);
+
+
+  for (i=0; i<len; i++) {
+    if(class[i]=='.') {
+      class[i] = '_';
+    }
+  }
+
+  result = joint_str(class, "_t");
+  
+  return result;
+
+}
+
+void register_class(char *class) {
+  char *entrypoint;
+  char *from_domain="domain";
+  CLASS_TRANS_RULE work;
+  CLASS_TRANS_RULE *tmp;
+
+  entrypoint = get_class_label(class);
+  register_type(entrypoint);
+
+  work.parent = strdup(from_domain);
+  work.entrypoint = strdup(entrypoint);
+  work.child = strdup(current_domain);
+
+  tmp = (CLASS_TRANS_RULE *)extend_array(gClass_trans_rules, &(gClass_trans_rule_num), sizeof(CLASS_TRANS_RULE));
+  tmp[gClass_trans_rule_num-1] = work;
+  gClass_trans_rules = tmp;
+
+  /*
+   * register P_DENY with dummy domain's File ACL
+   * by this, entrypoint is registered to file_label_table
+   */
+  add_filerule_to_domain(DUMMY_DOMAIN_NAME, entrypoint, DENY_PRM,  FILE_FILE);
+  
+  return;
+}
+
 
 /**
  *  @name:	register_domain_trans

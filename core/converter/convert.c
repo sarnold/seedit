@@ -1947,12 +1947,19 @@ void out_domain_trans_child_dir(FILE *, TRANS_RULE *, char *);
 void out_domain_trans(FILE *outfp) {
 	int i;
 	TRANS_RULE t;
+	CLASS_TRANS_RULE ct;
 	FILE_LABEL *label;
 	char *name;/*domain name*/
 	int len;
 	int disable_trans_defined=0;
 	char *boolean_name=NULL;
 	char *special_domain_list[] = {"unconfined_domain", "domain", NULL};
+
+	/*print domain_auto_trans for class statements*/
+	for (i = 0; i< gClass_trans_rule_num; i++) {
+	  ct = gClass_trans_rules[i];
+	  fprintf(outfp, "domain_auto_trans(%s,%s,%s)\n", ct.parent,ct.entrypoint, ct.child);
+	}
 
 	/* print domain_auto_trans */
 	for (i = 0; i < gDomain_trans_rule_num; i++) {

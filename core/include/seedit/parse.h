@@ -39,6 +39,7 @@ int register_user(char *);
 void register_domain(char *, int);
 void register_type(char *);
 void register_program(char **paths_list, int create_domain_name_flag);
+void register_class(char *class);
 void register_program_entry_force(char **paths_list);
 int register_file_rule(char *);
 int register_file_deny(char *);

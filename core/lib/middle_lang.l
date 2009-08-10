@@ -123,6 +123,7 @@ general {yylval=strdup("general");return(GENERAL);}
 deny {return(DENY);}
 program {return(PROGRAM);}
 program_entry_force {return(PROGRAM_ENTRY_FORCE);}
+class {return(CLASS);}
 domain_trans {return(DOMAIN_TRANS);}
 exclusive {return(EXCLUSIVE_FILE);}
 include {return(INCLUDE);}
